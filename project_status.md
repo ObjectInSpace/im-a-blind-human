@@ -59,7 +59,19 @@ code path runs clean in-process. Log confirms: `Resolved SendAnnouncementNotific
   the log keeps a stale tail otherwise (burned ~20 min on this — always rotate + read by this-run marker).
 - MelonLoader remote-API 502s at startup are harmless (offline game-id lookup); interop already generated locally.
 
-## Menu narration — WORKING (confirmed in-game 2026-05-31)
+## Menu roles + values — WORKING (confirmed in-game 2026-05-31)
+- Focused control speaks label + role + value, and in-place value changes (slider drag / toggle / dropdown
+  cycle) re-announce the new value (MenuNarrator tracks last value while focus stays put).
+- Dropdowns (fullscreen/resolution/language): name from GameObject name (Humanized), value from TMP_Dropdown
+  caption. Detect dropdown BEFORE toggle (these rows carry a stray Toggle).
+- Sound sliders: name from SoundSettingsVolumeSlider._groupNameText (LocalizeStringEvent; read its driven
+  TMP_Text since GetLocalizedString() didn't bind), value from _valueText. Component found via parent search.
+- Sensitivity sliders: FakeSlider — name from row-label scan (first non-numeric TMP in the row), value from
+  FakeSlider._valueText. Both classes in ns `_Code.Infrastructure.Settings.Sound`.
+- ControlDescriber + Il2CppRaw (reusable raw-IL2CPP helpers: GetClass/GetMethod/GetComponent[InChildren|InParent]
+  /ReadObjectField/InvokeStringGetter). All component-by-type + TMP reads go through raw IL2CPP.
+
+## Menu narration (label-only) — WORKING (confirmed in-game 2026-05-31)
 - Main menu speaks: "new game, settings, quit, collections, ...". Settings speaks live labels:
   "volume slider, english, typing effect, fullscreen, windows, vsync, back".
 - Focus tracking: poll `EventSystem.current.currentSelectedGameObject` in OnUpdate (MenuNarrator.Tick).
