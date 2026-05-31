@@ -41,6 +41,10 @@
     <Reference Include="UnityEngine.UIModule"><HintPath>$(Il2CppAsm)\UnityEngine.UIModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.UI"><HintPath>$(Il2CppAsm)\UnityEngine.UI.dll</HintPath><Private>false</Private></Reference>
 
+    <!-- Text + EventSystem (menu narration reads labels and tracks focus) -->
+    <Reference Include="Unity.TextMeshPro"><HintPath>$(Il2CppAsm)\Unity.TextMeshPro.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Il2CppRTLTMPro"><HintPath>$(Il2CppAsm)\Il2CppRTLTMPro.dll</HintPath><Private>false</Private></Reference>
+
     <!-- Game + dialogue assemblies (hook targets; added incrementally as we use them) -->
     <Reference Include="Assembly-CSharp"><HintPath>$(Il2CppAsm)\Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
   </ItemGroup>

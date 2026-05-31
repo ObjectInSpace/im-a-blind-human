@@ -59,6 +59,35 @@ code path runs clean in-process. Log confirms: `Resolved SendAnnouncementNotific
   the log keeps a stale tail otherwise (burned ~20 min on this — always rotate + read by this-run marker).
 - MelonLoader remote-API 502s at startup are harmless (offline game-id lookup); interop already generated locally.
 
+## Menu narration — WORKING (confirmed in-game 2026-05-31)
+- Main menu speaks: "new game, settings, quit, collections, ...". Settings speaks live labels:
+  "volume slider, english, typing effect, fullscreen, windows, vsync, back".
+- Focus tracking: poll `EventSystem.current.currentSelectedGameObject` in OnUpdate (MenuNarrator.Tick).
+- Label reading: RAW IL2CPP (bypasses the interop dual-naming wall — see below). Resolve TMP_Text class by
+  NATIVE name ("TMPro","TMP_Text"), resolve GameObject.GetComponentInChildren(Type,bool) + TMP_Text.get_text
+  via il2cpp_class_get_method_from_name, invoke via il2cpp_runtime_invoke, marshal string back. Fallback to
+  GameObject name for image-only controls (main menu). `raw resolve: tmpClass=True gcic=True getText=True`.
+- NOTE: MenuNarrator.Tick calls _speech.Speak directly, so spoken labels do NOT appear under the AccessMod
+  `Speak:` log line — verify menu narration BY EAR, not by log.
+
+## Menu narration — earlier findings / dead ends (kept for the reuse pipeline)
+- Focus tracking CONFIRMED working: poll `EventSystem.current.currentSelectedGameObject` in OnUpdate; it changes
+  as the user arrows (logged NewGame -> Settings -> Exit). The polling approach is correct.
+- IL2CPP JIT WALL (important, recurring): generic component lookups DO NOT JIT in this Il2CppInterop build —
+  `GetComponentsInChildren<Component>(bool)` (open OR closed generic) and the `(Il2CppSystem.Type, bool)` overload
+  (compiler picks a System.Type overload, won't bind) both fail. Errors seen: "Method not found:
+  GameObject.GetComponentsInChildren(Boolean)". Do NOT keep retrying generic GetComponents variants.
+- Strongly-typed `GetComponent<TMP_Text>()` also fails: "Could not load type 'TMPro.TMP_Text' from assembly
+  'Unity.TextMeshPro'" at JIT. Avoid compile-time TMP_Text too.
+- MAIN MENU items are IMAGE/SPRITE based: `MainMenuSignLineElement` holds Image/AnimatedImage, NO text field.
+  So their accessible name is NOT a text component — it must come from the GameObject name (NewGame/Settings/Exit)
+  mapped to a localization key. This is the bespoke-control case the plan flagged. Settings-screen controls likely
+  DO have RTLTextMeshPro labels (different path) — not yet confirmed live.
+- NEXT approach (decided after the above): (a) get the single text component via the NON-generic
+  `GetComponentInChildren(Il2CppSystem.Type)` if it binds, else read the GO-name->Loc mapping; (b) for the main
+  menu specifically, map GO names to localized strings. Need to read the game's Localization tables for the menu
+  keys. Stop using GetComponents enumeration.
+
 ## Pending proof (USER)
 - Narrator ON (Ctrl+Win+Enter). On launch expect spoken "...mod loaded. Press F8 to test...". Press F8 → "Screen
   reader test...". If voiced → Phase 0 GO (native confirmed). If silent despite clean log → NO-GO, switch
