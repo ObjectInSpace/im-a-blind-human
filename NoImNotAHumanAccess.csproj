@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>NoImNotAHumanAccess</AssemblyName>
+    <RootNamespace>NoImNotAHumanAccess</RootNamespace>
+    <!-- IL2CPP interop assemblies are not CLS/ref-safe; silence the noise, keep real warnings. -->
+    <NoWarn>CS0436;CS0114;CS0108;CS0626;CS8632</NoWarn>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Deterministic>true</Deterministic>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- We only compile src/. decompiled/ and artifacts/ hold reference C# for reading, not building. -->
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="src\**\*.cs" />
+  </ItemGroup>
+
+  <!-- Path to the game's MelonLoader install. Override on the command line if your install differs. -->
+  <PropertyGroup>
+    <GameDir Condition="'$(GameDir)' == ''">D:\SteamLibrary\steamapps\Common\No, I'm not a Human</GameDir>
+    <MelonDir>$(GameDir)\MelonLoader</MelonDir>
+    <Il2CppAsm>$(MelonDir)\Il2CppAssemblies</Il2CppAsm>
+    <MelonNet6>$(MelonDir)\net6</MelonNet6>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- MelonLoader core + IL2CPP interop runtime -->
+    <Reference Include="MelonLoader"><HintPath>$(MelonNet6)\MelonLoader.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Il2CppInterop.Runtime"><HintPath>$(MelonNet6)\Il2CppInterop.Runtime.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Il2Cppmscorlib"><HintPath>$(Il2CppAsm)\Il2Cppmscorlib.dll</HintPath><Private>false</Private></Reference>
+
+    <!-- Unity engine modules we hook against -->
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(Il2CppAsm)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.AccessibilityModule"><HintPath>$(Il2CppAsm)\UnityEngine.AccessibilityModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.InputLegacyModule"><HintPath>$(Il2CppAsm)\UnityEngine.InputLegacyModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.UIModule"><HintPath>$(Il2CppAsm)\UnityEngine.UIModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.UI"><HintPath>$(Il2CppAsm)\UnityEngine.UI.dll</HintPath><Private>false</Private></Reference>
+
+    <!-- Game + dialogue assemblies (hook targets; added incrementally as we use them) -->
+    <Reference Include="Assembly-CSharp"><HintPath>$(Il2CppAsm)\Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+</Project>
