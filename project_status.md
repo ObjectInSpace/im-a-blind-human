@@ -61,6 +61,23 @@ and `src/Dialogue/DialoguePatches.cs`. Wired in `AccessMod.OnInitializeMelon` vi
   only if the block-ahead timing feels wrong.
 - **Build:** `dotnet build -c Release` green, 0/0. Deployed to `<game>\Mods\`.
 
+**Position-in-list + category announcement (CONFIRMED in-game 2026-06-01).** Shared primitive in
+`ControlDescriber`: `ResolveGroup(go)` climbs to the nearest ancestor holding 2+ selectable controls (the group),
+counts active selectables and the focused ordinal. `DescribePosition` appends ", N of M"; `DescribeGroupLabel`
+scans the group for a header TMP (skipping members' own captions) for the category name. `MenuNarrator` appends
+position on every focus change and prepends the category name when focus enters a NEW group. Helps BOTH dialogue
+choices (HoverableButton) and menus (UISelectable) — neither is a uGUI Selectable subclass, so there is no
+Navigation index; position is derived from the transform tree.
+- Selectable detection (raw IL2CPP, verified namespaces): HoverableButton = `_Code.Characters.DialogSystem`,
+  UISelectable = `_Code.Utils.UI`; plus typed uGUI Slider/Toggle and raw TMP_Dropdown.
+- Settings are laid out per category, so counts reset per group ("Sound, 1 of 3" then "Vibration, 1 of 4") — this
+  is desired, confirmed by user.
+- KNOWN GAP: main menu reads labels but NOT position. Its items are `MainMenuSignLineElement` (sprite-only, only
+  IPointer* handlers, NO ISelectHandler), laid out in a circle — they don't flow through EventSystem selection like
+  real controls. Position there is a separate investigation (how keyboard focus moves on the circle menu). Deferred.
+- TODO (user-requested, next): `EDialogButtonStyle` readout for dialogue choices (Energy/Gun/ConsumablesGet/Give
+  etc. on HoverableButton._selectedStyle) — speak the choice's mechanical style where it carries meaning.
+
 **Phase 0 — native output proof (CONFIRMED; menu narration also working).** The native announcement path runs
 clean and was confirmed in-game (NVDA via Unity AssistiveSupport). Menu roles/values working.
 

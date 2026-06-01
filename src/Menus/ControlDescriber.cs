@@ -115,6 +115,184 @@ namespace NoImNotAHumanAccess.Menus
             catch { return string.Empty; }
         }
 
+        // ---- Position in list ("2 of 3") ----
+        //
+        // Neither the dialogue choice buttons (HoverableButton) nor the menu rows (UISelectable) are uGUI
+        // Selectable subclasses — they implement ISelectHandler directly — so there is no Navigation graph or
+        // built-in index to read. We derive position from the transform tree: find the nearest ancestor that
+        // contains 2+ selectable descendants (the "group"), then count the active selectable members and the
+        // focused control's ordinal among them, in hierarchy order. The ancestor climb (not just direct siblings)
+        // tolerates one layer of per-item wrapper objects. A group of 1 yields no position (single buttons stay
+        // clean). A one-time diagnostic logs the first count so the numbers can be verified in-game.
+
+        private static IntPtr _hoverableButtonClass;
+        private static IntPtr _uiSelectableClass;
+        private static bool _selectableResolved;
+
+        private static void EnsureSelectableResolved()
+        {
+            if (_selectableResolved) return;
+            _selectableResolved = true;
+            // Namespaces are the RUNTIME names (interop strips the Il2Cpp prefix): HoverableButton lives in
+            // _Code.Characters.DialogSystem, UISelectable in _Code.Utils.UI. Verified against the interop assembly.
+            _hoverableButtonClass = Il2CppRaw.GetClass("Assembly-CSharp.dll", "_Code.Characters.DialogSystem", "HoverableButton");
+            _uiSelectableClass = Il2CppRaw.GetClass("Assembly-CSharp.dll", "_Code.Utils.UI", "UISelectable");
+        }
+
+        /// <summary>
+        /// True if <paramref name="go"/> is itself a navigable control: a dialogue choice button, a menu
+        /// selectable, or a standard uGUI Slider/Toggle/Dropdown. Used to identify the members of a list group.
+        /// Checks the object itself (not children) so a row container isn't double-counted with its control.
+        /// </summary>
+        private static bool IsSelectable(GameObject go)
+        {
+            if (go == null) return false;
+            EnsureSelectableResolved();
+            EnsureTmpResolved();
+            if (_hoverableButtonClass != IntPtr.Zero && Il2CppRaw.GetComponent(go, _hoverableButtonClass) != IntPtr.Zero) return true;
+            if (_uiSelectableClass != IntPtr.Zero && Il2CppRaw.GetComponent(go, _uiSelectableClass) != IntPtr.Zero) return true;
+            // Standard uGUI controls (typed interop works for UnityEngine.UI here).
+            if (go.GetComponent<Slider>() != null) return true;
+            if (go.GetComponent<Toggle>() != null) return true;
+            if (_dropdownClass != IntPtr.Zero && Il2CppRaw.GetComponent(go, _dropdownClass) != IntPtr.Zero) return true;
+            return false;
+        }
+
+        /// <summary>
+        /// The list group a focused control belongs to: the group container, the focused control's 1-based
+        /// position, and the member count. <see cref="Group"/> is null when the control isn't part of a
+        /// multi-item group (so single controls produce no position and no category announcement).
+        /// </summary>
+        public readonly struct GroupContext
+        {
+            public readonly Transform? Group;
+            public readonly int Index;
+            public readonly int Total;
+            public GroupContext(Transform? group, int index, int total) { Group = group; Index = index; Total = total; }
+            public bool HasGroup => Group != null && Total >= 2;
+            /// <summary>Stable id of the group container for change-detection, or 0 if none.</summary>
+            public int GroupId => Group != null ? Group.gameObject.GetInstanceID() : 0;
+        }
+
+        /// <summary>
+        /// Resolve the focused control's list group: climb to the nearest ancestor whose subtree holds 2+
+        /// selectables (tolerating one layer of per-item wrappers), then count members and the focused ordinal.
+        /// Never throws.
+        /// </summary>
+        public static GroupContext ResolveGroup(GameObject go)
+        {
+            try
+            {
+                if (go == null || go.transform == null) return default;
+
+                Transform? group = null;
+                Transform? t = go.transform.parent;
+                int climb = 0;
+                while (t != null && climb++ < 4)
+                {
+                    if (CountSelectables(t, go, out _, out _) >= 2) { group = t; break; }
+                    t = t.parent;
+                }
+                if (group == null) return default;
+
+                int total = CountSelectables(group, go, out int index, out bool found);
+                if (!found || total < 2) return default;
+
+                return new GroupContext(group, index, total);
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[ControlDescriber] ResolveGroup: {e.Message}");
+                return default;
+            }
+        }
+
+        /// <summary>" N of M" suffix for the position within a group, or empty for a non-group control. Leading
+        /// space included so callers can append directly.</summary>
+        public static string DescribePosition(in GroupContext ctx) =>
+            ctx.HasGroup ? $", {ctx.Index} of {ctx.Total}" : string.Empty;
+
+        /// <summary>
+        /// A spoken category/header name for a group container, or empty if none is found. Heuristic: the first
+        /// TMP_Text in the group's subtree that is NOT inside one of the selectable members (i.e. a header label,
+        /// not a control's own caption) and isn't value-like. Containers are often named for layout ('Buttons',
+        /// 'Content') so the GameObject name is a poor fallback and is deliberately not used.
+        /// </summary>
+        public static string DescribeGroupLabel(Transform group)
+        {
+            if (group == null) return string.Empty;
+            try
+            {
+                EnsureTmpResolved();
+                return ScanForGroupHeader(group, 0) ?? string.Empty;
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[ControlDescriber] DescribeGroupLabel: {e.Message}");
+                return string.Empty;
+            }
+        }
+
+        /// <summary>Find a header TMP in the group subtree, skipping selectable members' own subtrees.</summary>
+        private static string? ScanForGroupHeader(Transform t, int depth)
+        {
+            if (t == null || depth > 5) return null;
+            GameObject go = t.gameObject;
+            // Don't descend into a control's own subtree — its text is the control's caption, not a header.
+            if (depth > 0 && go.activeInHierarchy && IsSelectable(go)) return null;
+
+            if (go.activeInHierarchy)
+            {
+                IntPtr tmp = Il2CppRaw.GetComponent(go, _tmpTextClass);
+                if (tmp != IntPtr.Zero)
+                {
+                    string? text = Il2CppRaw.InvokeStringGetter(tmp, _tmpGetText);
+                    if (!string.IsNullOrWhiteSpace(text))
+                    {
+                        string c = Clean(text!);
+                        if (c.Length > 0 && !IsValueLike(c)) return c;
+                    }
+                }
+            }
+            int kids = t.childCount;
+            for (int i = 0; i < kids; i++)
+            {
+                string? r = ScanForGroupHeader(t.GetChild(i), depth + 1);
+                if (r != null) return r;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Count active selectable controls in <paramref name="root"/>'s subtree (hierarchy order), and report the
+        /// 1-based ordinal of <paramref name="target"/> among them. A selectable is not descended into (a control's
+        /// own children — e.g. its label — are not separate members).
+        /// </summary>
+        private static int CountSelectables(Transform root, GameObject target, out int targetIndex, out bool found)
+        {
+            int count = 0;
+            targetIndex = 0;
+            found = false;
+            CountSelectablesRec(root, target, ref count, ref targetIndex, ref found, 0);
+            return count;
+        }
+
+        private static void CountSelectablesRec(Transform t, GameObject target, ref int count, ref int targetIndex,
+                                                ref bool found, int depth)
+        {
+            if (t == null || depth > 6) return;
+            GameObject go = t.gameObject;
+            if (go.activeInHierarchy && IsSelectable(go))
+            {
+                count++;
+                if (go.GetInstanceID() == target.GetInstanceID()) { targetIndex = count; found = true; }
+                return; // don't descend into a control's own subtree
+            }
+            int kids = t.childCount;
+            for (int i = 0; i < kids; i++)
+                CountSelectablesRec(t.GetChild(i), target, ref count, ref targetIndex, ref found, depth + 1);
+        }
+
         // ---- TMP reads via raw IL2CPP (dual-naming wall) ----
 
         private static IntPtr _tmpTextClass;

@@ -17,6 +17,7 @@ namespace NoImNotAHumanAccess.Menus
     {
         private readonly ISpeechOutput _speech;
         private int _lastSelectedId;
+        private int _lastGroupId; // group container of the last focused control, for category-change detection
         private string _lastSpoken = string.Empty;
         private string _lastValue = string.Empty; // value of the focused control, for in-place change detection
 
@@ -36,9 +37,23 @@ namespace NoImNotAHumanAccess.Menus
 
                 if (id != _lastSelectedId)
                 {
-                    // Focus moved to a new control: speak the full description (label, role, value).
+                    // Focus moved to a new control: speak the full description (label, role, value) plus its
+                    // position within a list group ("2 of 3") when it's part of one — dialogue choices and
+                    // multi-row menus both benefit; single controls get no suffix. When focus enters a NEW group
+                    // (e.g. moving from the Sound category to Vibration in settings), announce the category name
+                    // first so the user knows they've crossed into a new section.
                     _lastSelectedId = id;
-                    string description = ControlDescriber.Describe(selected);
+                    var group = ControlDescriber.ResolveGroup(selected);
+                    string description = ControlDescriber.Describe(selected) + ControlDescriber.DescribePosition(group);
+
+                    if (group.HasGroup && group.GroupId != _lastGroupId)
+                    {
+                        string category = ControlDescriber.DescribeGroupLabel(group.Group!);
+                        if (!string.IsNullOrWhiteSpace(category))
+                            description = $"{category}, {description}";
+                    }
+                    _lastGroupId = group.GroupId;
+
                     _lastValue = ControlDescriber.ReadValue(selected);
                     if (string.IsNullOrWhiteSpace(description) || description == _lastSpoken) return;
                     _lastSpoken = description;
