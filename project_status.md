@@ -56,9 +56,15 @@ close-up with highlightable objects. Three systems needed, re-prioritized:
     fallback → button GO name. NAME-ONLY by design (user-confirmed): the description plays as Yarn dialogue on interact,
     already narrated. Logs `[RoomViewNarrator] highlight: '<name>' (via <how>, buttonGo='<go>')` per change — diagnostic
     to verify the button→view hierarchy assumption (the one unconfirmed link; full readout built on it with GO-name
-    fallback so something always speaks). New Il2CppRaw.GetParentGameObject. CONFIRM in-game: open a room photo, move
-    the highlight, do names track + read sensibly? If 'via gameobject'/junk names dominate → the parent-walk missed;
-    read the log's buttonGo to find the real hierarchy.
+    fallback so something always speaks). New Il2CppRaw.GetParentGameObject.
+    **FIRST TEST FAILED (bedroom, 2026-06-01): nothing read.** Log: `resolved: roomDisplayer=True narrative=True` but
+    ZERO `highlight:` lines → Tick ran, never saw a non-null `_selectedButton`. Added EDGE-TRIGGERED diagnostics
+    (deployed): logs `RoomDisplayer found/gone (entered/left room photo)` + `_selectedButton read as null while in room
+    photo`. NEXT RUN disambiguates: (a) no "found" line → FindObjectOfType(RoomDisplayer) misses; (b) "found"+"null
+    button" → wrong field or hover not stored in _selectedButton; (c) highlight lines appear → works now. SUSPECT:
+    RoomDisplayer uses GraphicRaycaster+EventSystem (uGUI) → highlighted button may be readable via
+    `EventSystem.current.currentSelectedGameObject` (SAME path MenuNarrator polls) rather than _selectedButton. If
+    case (b), switch the source to EventSystem.
   - OBJECT CLOSE-UPS (fridge/phone/radio/etc.) — NOT yet built. Have OnPointerEntered(name, narrativeDescription,
     gameplayDescription) + on-screen desc TMPs → full name+description readout. Build after the room photo is confirmed.
 - **SYS-C — describe the view.** List the objects in the active close-up; descriptions already authored (narrative +

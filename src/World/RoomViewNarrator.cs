@@ -36,6 +36,10 @@ namespace NoImNotAHumanAccess.World
 
         private IntPtr _lastButton = IntPtr.Zero; // de-dupe: only speak when the highlight changes
 
+        // Edge-triggered diagnostics (so the log shows the FAILURE path, not only successful highlights):
+        private bool _displayerWasPresent;        // log once on found / lost transitions
+        private bool _loggedNullButtonWhilePresent; // log the "found displayer but null button" case once per presence
+
         public RoomViewNarrator(ISpeechOutput speech) => _speech = speech;
 
         /// <summary>Poll the current room-photo highlight; speak it when it changes. Call every frame.</summary>
@@ -47,12 +51,38 @@ namespace NoImNotAHumanAccess.World
                 if (_roomDisplayerClass == IntPtr.Zero) return;
 
                 IntPtr displayer = Il2CppRaw.FindObjectOfType(_roomDisplayerClass);
-                if (displayer == IntPtr.Zero) { _lastButton = IntPtr.Zero; return; } // not in a room photo
+                if (displayer == IntPtr.Zero)
+                {
+                    if (_displayerWasPresent)
+                    {
+                        MelonLogger.Msg("[RoomViewNarrator] RoomDisplayer gone (left room photo).");
+                        _displayerWasPresent = false;
+                    }
+                    _lastButton = IntPtr.Zero;
+                    return; // not in a room photo
+                }
+                if (!_displayerWasPresent)
+                {
+                    MelonLogger.Msg("[RoomViewNarrator] RoomDisplayer found (entered room photo).");
+                    _displayerWasPresent = true;
+                    _loggedNullButtonWhilePresent = false;
+                }
 
                 IntPtr button = Il2CppRaw.ReadObjectField(displayer, _roomDisplayerClass, "_selectedButton");
                 if (button == _lastButton) return; // no change (includes both-null while idle)
                 _lastButton = button;
-                if (button == IntPtr.Zero) return; // highlight cleared — say nothing
+                if (button == IntPtr.Zero)
+                {
+                    // Diagnostic: displayer present but the selection field reads null. Log once per presence so we
+                    // can tell "wrong field / selection model" from "displayer never found". Not spammed per frame.
+                    if (!_loggedNullButtonWhilePresent)
+                    {
+                        MelonLogger.Msg("[RoomViewNarrator] _selectedButton read as null while in room photo " +
+                                        "(field name wrong, or highlight uses a different field/model).");
+                        _loggedNullButtonWhilePresent = true;
+                    }
+                    return; // highlight cleared — say nothing
+                }
 
                 Speak(button);
             }
