@@ -36,9 +36,33 @@
 - Build: .NET SDK 10 (`dotnet build NoImNotAHumanAccess.csproj`). Output DLL → `<game>\Mods\`.
 
 ## Current Phase
-**Phase 0 — native output proof (awaiting ear-confirmation).** Built + deployed; the native announcement
-code path runs clean in-process. Log confirms: `Resolved SendAnnouncementNotification_Injected ICall`,
-`available=True`, `Speak: ...` with NO exception. User must confirm Narrator actually voices it.
+**Phase 2 — dialogue narration (CONFIRMED in-game 2026-06-01).** All three dialogue/narration surfaces are
+hooked and confirmed working by ear (dialogue, speaker attribution, intro cutscene narration). Diagnostic
+per-line logging has been stripped; only one-time confirmations remain. New files: `src/Dialogue/DialogueNarrator.cs`
+and `src/Dialogue/DialoguePatches.cs`. Wired in `AccessMod.OnInitializeMelon` via `HarmonyInstance`; added
+`0Harmony.dll` reference. `Il2CppRaw.ReadStringField` added for reading IL2CPP string FIELDS by offset.
+
+- **Three hooked surfaces (all Harmony postfixes, MethodInfo resolved by reflection from the loaded interop
+  assemblies — NOT typed `[HarmonyPatch(typeof(...))]`, to dodge the interop dual-naming wall):**
+  1. `Il2Cpp_Code.DialogSystem.SubtitlesView.UpdateText(string)` — subtitles / info popups.
+  2. `Il2CppYarn.Unity.LineView.RunLine(LocalizedLine, Action)` — character dialogue. Reads `LocalizedLine.RawText`
+     (a FIELD, read by offset) + `CharacterName` (a GETTER) via raw IL2CPP; speaks `"Speaker: line"`, not
+     double-prefixing when RawText already leads with the name.
+  3. `Il2Cpp_Code.Utils.CustomYarnReading.CustomYarnReader.GetNodeContent(string) -> Il2CppStringArray` —
+     intro/ending cutscene narration. `EndingView` (reused for the opening; see `EEnding.Intro`) is Timeline-driven
+     with no method choke point, so we hook the node-content reader and join+speak its returned lines.
+- **DialogueNarrator:** cleans TMP rich-text via `ControlDescriber.Clean`, optional speaker prefix, dedupes
+  consecutive identical lines (absorbs typewriter re-entry), speaks with `interrupt: true`.
+- **KEY LESSON (cost us the empty-read bug):** `Il2CppRaw.GetClass` needs the ORIGINAL IL2CPP image name + `.dll`
+  (`YarnSpinner.Unity.dll`, ns `Yarn.Unity`), NOT the `Il2Cpp`-prefixed interop filename. Wrong name → zero class
+  handle → silent null/empty field+getter reads. The interop type's own static ctor shows the correct image name.
+- **KNOWN TRADEOFF:** intro narration is spoken as one block when the node resolves, not paced to the on-screen
+  timeline reveal (no per-line choke point exists). Acceptable; revisit with a per-frame `_subtitlesText` TMP watch
+  only if the block-ahead timing feels wrong.
+- **Build:** `dotnet build -c Release` green, 0/0. Deployed to `<game>\Mods\`.
+
+**Phase 0 — native output proof (CONFIRMED; menu narration also working).** The native announcement path runs
+clean and was confirmed in-game (NVDA via Unity AssistiveSupport). Menu roles/values working.
 
 ### Native announcement: how it works (important, hard-won)
 - Entry point = `UnityEngine.Accessibility.AccessibilityManager.SendAnnouncementNotification(string)` (internal).

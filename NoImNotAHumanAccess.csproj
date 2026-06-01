@@ -29,9 +29,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- MelonLoader core + IL2CPP interop runtime -->
+    <!-- MelonLoader core + IL2CPP interop runtime + Harmony (dialogue/subtitle hook) -->
     <Reference Include="MelonLoader"><HintPath>$(MelonNet6)\MelonLoader.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="Il2CppInterop.Runtime"><HintPath>$(MelonNet6)\Il2CppInterop.Runtime.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="0Harmony"><HintPath>$(MelonNet6)\0Harmony.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="Il2Cppmscorlib"><HintPath>$(Il2CppAsm)\Il2Cppmscorlib.dll</HintPath><Private>false</Private></Reference>
 
     <!-- Unity engine modules we hook against -->

@@ -159,6 +159,15 @@ namespace NoImNotAHumanAccess.Interop
             return IntPtr.Zero;
         }
 
+        /// <summary>Read a <see cref="string"/>-typed instance field by name from an object pointer, marshaled to
+        /// managed. Null if the object/class/field is missing or the field is null. Use for IL2CPP string FIELDS
+        /// (read by offset), as opposed to <see cref="InvokeStringGetter"/> for string getter METHODS.</summary>
+        public static unsafe string? ReadStringField(IntPtr objPtr, IntPtr klass, string fieldName)
+        {
+            IntPtr strPtr = ReadObjectField(objPtr, klass, fieldName);
+            return strPtr == IntPtr.Zero ? null : IL2CPP.Il2CppStringToManaged(strPtr);
+        }
+
         /// <summary>Invoke a parameterless getter on an object pointer, returning a managed string (or null).</summary>
         public static unsafe string? InvokeStringGetter(IntPtr objPtr, IntPtr method)
         {

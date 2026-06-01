@@ -1,5 +1,6 @@
 using System;
 using MelonLoader;
+using NoImNotAHumanAccess.Dialogue;
 using NoImNotAHumanAccess.Menus;
 using NoImNotAHumanAccess.Speech;
 using UnityEngine;
@@ -10,14 +11,16 @@ using UnityEngine;
 namespace NoImNotAHumanAccess
 {
     /// <summary>
-    /// Mod entry point. Native screen-reader output (Phase 0) is proven; current scope adds menu narration:
-    /// the focused UI control is spoken as the player navigates with the game's own arrows/Enter/Escape/Tab.
-    /// Dialogue/subtitle hooks and the full navigable AccessibilityNode hierarchy come next.
+    /// Mod entry point. Native screen-reader output (Phase 0) is proven; current scope adds menu narration
+    /// (the focused UI control is spoken as the player navigates with the game's own arrows/Enter/Escape/Tab)
+    /// and dialogue narration (a Harmony hook on the game's central subtitle sink speaks each rendered line).
+    /// The full navigable AccessibilityNode hierarchy comes next.
     /// </summary>
     public sealed class AccessMod : MelonMod
     {
         private ISpeechOutput? _speech;
         private MenuNarrator? _menuNarrator;
+        private DialogueNarrator? _dialogueNarrator;
 
         // F8 = manual repeat/test trigger. The game's UI/world maps do not bind F8
         // (verified key set: arrows/WASD/enter/space/escape/tab/page/home/end/q/e/f/shift/backspace).
@@ -31,6 +34,10 @@ namespace NoImNotAHumanAccess
                 _speech = new NativeAnnouncer();
                 LoggerInstance.Msg($"Speech channel: {_speech.Name}, available={_speech.IsAvailable}");
                 _menuNarrator = new MenuNarrator(_speech);
+
+                // Dialogue: hook the game's central subtitle sink and speak each rendered line.
+                _dialogueNarrator = new DialogueNarrator(_speech);
+                DialoguePatches.Apply(HarmonyInstance, _dialogueNarrator);
             }
             catch (Exception e)
             {
