@@ -23,10 +23,13 @@ namespace NoImNotAHumanAccess
         private MenuNarrator? _menuNarrator;
         private DialogueNarrator? _dialogueNarrator;
         private HudNarrator? _hudNarrator;
+        private StatusNarrator? _statusNarrator;
 
-        // F8 = manual repeat/test trigger. The game's UI/world maps do not bind F8
-        // (verified key set: arrows/WASD/enter/space/escape/tab/page/home/end/q/e/f/shift/backspace).
+        // F8 = manual repeat/test trigger; F9 = on-demand status readout (day/phase/energy/items). The game's
+        // UI/world maps bind neither F-key (verified key set: arrows/WASD/enter/space/escape/tab/page/home/end/
+        // q/e/f/shift/backspace).
         private const KeyCode RepeatKey = KeyCode.F8;
+        private const KeyCode StatusKey = KeyCode.F9;
 
         public override void OnInitializeMelon()
         {
@@ -44,6 +47,9 @@ namespace NoImNotAHumanAccess
                 // World HUD: hook the interaction-prompt sink and speak "press [action] to [subject]" prompts.
                 _hudNarrator = new HudNarrator(_speech);
                 WorldPatches.Apply(HarmonyInstance, _hudNarrator);
+
+                // Status key (F9): on-demand readout of day/phase/energy/items via the Zenject-resolved controllers.
+                _statusNarrator = new StatusNarrator(_speech);
             }
             catch (Exception e)
             {
@@ -64,6 +70,11 @@ namespace NoImNotAHumanAccess
             if (Input.GetKeyDown(RepeatKey))
             {
                 Speak("Screen reader test. Menu narration is active.");
+            }
+
+            if (Input.GetKeyDown(StatusKey))
+            {
+                _statusNarrator?.Announce();
             }
         }
 

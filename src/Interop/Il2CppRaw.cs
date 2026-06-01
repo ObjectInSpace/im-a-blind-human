@@ -189,5 +189,76 @@ namespace NoImNotAHumanAccess.Interop
             if (exc != IntPtr.Zero || str == IntPtr.Zero) return null;
             return IL2CPP.Il2CppStringToManaged(str);
         }
+
+        /// <summary>Invoke a parameterless getter returning a 32-bit value (int, or an int-backed enum) on an object
+        /// pointer. Returns <paramref name="fallback"/> on any failure. Use for interface/property getters like
+        /// <c>get_Day</c>/<c>get_DayActions</c> where there is no directly-readable backing field by name.</summary>
+        public static unsafe int InvokeInt32Getter(IntPtr objPtr, IntPtr method, int fallback = -1)
+        {
+            if (objPtr == IntPtr.Zero || method == IntPtr.Zero) return fallback;
+            IntPtr exc = IntPtr.Zero;
+            IntPtr boxed = IL2CPP.il2cpp_runtime_invoke(method, objPtr, (void**)0, ref exc);
+            if (exc != IntPtr.Zero || boxed == IntPtr.Zero) return fallback;
+            // Value-type returns come back boxed; the unboxed payload sits one object header in.
+            return *(int*)IL2CPP.il2cpp_object_unbox(boxed);
+        }
+
+        /// <summary>Invoke a method taking a single value-type-by-int argument and returning a 32-bit value (e.g.
+        /// <c>IConsumablesController.Count(EConsumable)</c>, where the enum is passed as its underlying int).
+        /// Returns <paramref name="fallback"/> on failure.</summary>
+        public static unsafe int InvokeInt32MethodWithEnum(IntPtr objPtr, IntPtr method, int enumValue, int fallback = -1)
+        {
+            if (objPtr == IntPtr.Zero || method == IntPtr.Zero) return fallback;
+            int arg = enumValue;
+            void** args = stackalloc void*[1];
+            args[0] = &arg;
+            IntPtr exc = IntPtr.Zero;
+            IntPtr boxed = IL2CPP.il2cpp_runtime_invoke(method, objPtr, args, ref exc);
+            if (exc != IntPtr.Zero || boxed == IntPtr.Zero) return fallback;
+            return *(int*)IL2CPP.il2cpp_object_unbox(boxed);
+        }
+
+        /// <summary>Invoke a method taking one object (reference) argument and returning an object pointer (e.g.
+        /// Zenject <c>DiContainer.Resolve(System.Type)</c>). Returns zero on failure or thrown exception.</summary>
+        public static unsafe IntPtr InvokeObjectMethodWithObject(IntPtr objPtr, IntPtr method, IntPtr arg)
+        {
+            if (objPtr == IntPtr.Zero || method == IntPtr.Zero) return IntPtr.Zero;
+            void** args = stackalloc void*[1];
+            args[0] = (void*)arg;
+            IntPtr exc = IntPtr.Zero;
+            IntPtr result = IL2CPP.il2cpp_runtime_invoke(method, objPtr, args, ref exc);
+            return exc != IntPtr.Zero ? IntPtr.Zero : result;
+        }
+
+        /// <summary>Invoke a parameterless getter returning an object pointer (e.g. <c>SceneContext.get_Container</c>).
+        /// Returns zero on failure.</summary>
+        public static unsafe IntPtr InvokeObjectGetter(IntPtr objPtr, IntPtr method)
+        {
+            if (objPtr == IntPtr.Zero || method == IntPtr.Zero) return IntPtr.Zero;
+            IntPtr exc = IntPtr.Zero;
+            IntPtr result = IL2CPP.il2cpp_runtime_invoke(method, objPtr, (void**)0, ref exc);
+            return exc != IntPtr.Zero ? IntPtr.Zero : result;
+        }
+
+        /// <summary>
+        /// Find the first live object of an IL2CPP class via <c>UnityEngine.Object.FindObjectOfType(Type)</c>,
+        /// invoked raw. Only works for UnityEngine.Object-derived classes (MonoBehaviour/Component) — the Zenject
+        /// <c>SceneContext</c> qualifies. Returns the object pointer or zero.
+        /// </summary>
+        public static unsafe IntPtr FindObjectOfType(IntPtr klass)
+        {
+            if (klass == IntPtr.Zero) return IntPtr.Zero;
+            IntPtr objClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "Object");
+            // FindObjectOfType(Type) is the 1-arg overload (the 2-arg one adds includeInactive in newer Unity).
+            IntPtr method = GetMethod(objClass, "FindObjectOfType", 1);
+            if (method == IntPtr.Zero) return IntPtr.Zero;
+            IntPtr typeObj = TypeObject(klass);
+            if (typeObj == IntPtr.Zero) return IntPtr.Zero;
+            void** args = stackalloc void*[1];
+            args[0] = (void*)typeObj;
+            IntPtr exc = IntPtr.Zero;
+            IntPtr result = IL2CPP.il2cpp_runtime_invoke(method, IntPtr.Zero, args, ref exc); // static
+            return exc != IntPtr.Zero ? IntPtr.Zero : result;
+        }
     }
 }

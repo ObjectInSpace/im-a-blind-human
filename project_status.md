@@ -37,10 +37,33 @@
 
 ## Current Phase
 
-**IN PROGRESS — Phase: interaction prompts & world HUD.** Dialogue + menus are done and committed (HEAD `bb8dc53`).
-The remaining gap is the moment-to-moment first-person world: a blind player has no signal for what they're looking
-at, what's interactable, "press E to…" prompts, or state changes (day/phase, notifications). READ-ONLY decompile
-investigation is COMPLETE (2026-06-01); surfaces mapped below, first hook recommended. Nothing built yet.
+**IN PROGRESS — Phase: interaction prompts & world HUD.** Dialogue + menus done. Interaction prompt CONFIRMED
+in-game (see below). Status key BUILT + DEPLOYED 2026-06-01, awaiting in-game confirmation.
+
+### Status key (F9) — BUILT + DEPLOYED 2026-06-01, awaiting in-game confirmation
+On-demand readout of day / time-of-day / energy / held items. Files: `src/World/GameStateAccess.cs` (Zenject-resolve
++ raw reads), `src/World/StatusNarrator.cs` (compose + speak), wired to F9 in `AccessMod.OnUpdate`. Build green 0/0.
+- DATA SOURCES (verified): `IDayNightController.{Day, CurrentTimeOfDay(=ETimeOfDay Day0/Night1), DayActions,
+  MaxDayActions}` — all plain getter props. **Energy IS day-actions** (no separate energy meter exists; spoken as
+  "N of M energy"). Items: `IConsumablesController.Count(EConsumable)` over the EConsumable enum.
+- INSTANCE ACCESS — the unproven part (user chose to try this first): controllers are Zenject-injected non-MonoBehaviour
+  interfaces (`FindObjectOfType` can't reach them). We `FindObjectOfType(Zenject.SceneContext)` → `get_Container` →
+  non-generic `DiContainer.Resolve(System.Type)` with the interface's type object. Generic `Resolve<T>` would not JIT
+  (open-generic wall), so non-generic only. ALL via raw IL2CPP (new `Il2CppRaw` helpers: InvokeInt32Getter,
+  InvokeInt32MethodWithEnum, InvokeObjectMethodWithObject, InvokeObjectGetter, FindObjectOfType).
+- ON NEXT TEST RUN (in a gameplay scene, not main menu): press F9. Log line `[GameStateAccess] resolved: dayNight=True
+  consumables=True getDay=True count=True` = the Zenject path works. If any `False`: the resolve path failed →
+  FALLBACK is capture-on-init Harmony hooks on DayNightController/ConsumablesController ctor/Init (see movement-model
+  memo). Then confirm the spoken status is correct by ear. Image/ns guesses to re-check on miss: SceneContext image
+  `Zenject.dll` ns `Zenject`; controllers image `Assembly-CSharp.dll` ns `_Code.Infrastructure.{DayNight,Consumables}`.
+- NOT YET BUILT: "current room + who's here" (4th status field the user wanted). RoomsManager has NO CurrentRoom
+  property — needs a Harmony postfix on `RoomsManager.OnRoomEntered(ARoom)` to stash current ERoom + read
+  `ARoom.AliveCharactersInside` (List<ECharacterType>). Deferred to after the Zenject path is confirmed, since it's a
+  different mechanism (hook, not resolve). ERoom={Kitchen,Office,BigRoom,Bathroom,Pantry,Entrance,Bedroom};
+  ECharacterType=large NPC enum.
+
+### Interaction prompts & world HUD — investigation + first hook (history below)
+READ-ONLY decompile investigation COMPLETE (2026-06-01); surfaces mapped below.
 
 ### Investigation findings (2026-06-01, read-only — decompile bodies are Cpp2IL stubs, signatures only)
 

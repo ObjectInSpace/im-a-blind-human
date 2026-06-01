@@ -4,6 +4,15 @@ Expands `PLAN.md` Phase 4 ("gameplay completeness pass") into a concrete, priori
 verified by decompile investigation (2026-06-01). Dialogue, menus, and the interaction prompt are DONE; this is what
 remains to make the game *playable* blind, not just *perceivable*.
 
+> **PRIORITY UPDATE (user-described gameplay loop, 2026-06-01).** The game is mostly dialog/choice-driven; walking is
+> just *scaffold* to reach the next dialog trigger (a static object like the TV/phone/door, or an NPC). NPCs you let
+> into the house are *stationary* (they teleport between rooms, don't roam while you walk). The big decisions
+> (shoot/don't-shoot, energy costs) live *inside dialog* — already covered by the dialogue/choice hooks. Consequences:
+> **Navigation (D) drops hard** — "go to the door" is the whole ask, not navigate-a-house; it collapses toward feature
+> C (find the few triggers in this room). **Status key (B)** is wanted now and treated as a standalone feature,
+> separate from navigation. **A + B + C** are the live work; **D** is low priority; the decision layer needs no new
+> work. See the `project_nimnah_gameplay_loop` memory for the full description.
+
 ## Framing: reactive vs. proactive
 
 Everything shipped so far is **reactive** — the game pushes an event (a line, a focused control, a "press E"
