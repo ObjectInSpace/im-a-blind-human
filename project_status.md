@@ -37,8 +37,29 @@
 
 ## Current Phase
 
-**IN PROGRESS — Phase: interaction prompts & world HUD.** Dialogue + menus done. Interaction prompt CONFIRMED
-in-game (see below). Status key BUILT + DEPLOYED 2026-06-01, awaiting in-game confirmation.
+**IN PROGRESS — Phase: world orientation (re-planned 2026-06-01 on corrected gameplay model).** Dialogue + menus done;
+interaction prompt CONFIRMED. **F9 (status) and F10 (orientation) both FAILED in-game** — root cause: the Zenject
+`SceneContext` lookup returned zero, so IPlayerService + the status controllers never resolved (the game-assembly
+FindObjectOfType path itself works — OrientationNarrator logged provider=True). See the reconsidered plan below.
+
+### CORRECTED GAMEPLAY MODEL + reconsidered plan (2026-06-01)
+The game is a HYBRID: (1) first-person walk/aim between DOOR/world objects, then (2) interacting opens a STILL PHOTO
+close-up with highlightable objects. Three systems needed, re-prioritized:
+- **P0 — unbreak service access.** `FindObjectOfType(Zenject.SceneContext)` failed. Either verify the SceneContext
+  type identity (image/ns/name) or capture `IPlayerService` via a Harmony hook on a view `Init(...)` that receives it
+  (many do). Unblocks F9 status AND nav-pose reads. The whole Zenject-resolve assumption is the suspect.
+- **SYS-B — read the highlighted object (do first after P0; highest value, no Zenject dep).** Close-up views fire
+  `OnPointerEntered(name, narrativeDescription, gameplayDescription, EConsumable)` (FridgeCloseUpView ~22790) and hold
+  on-screen description TMPs (`_narrativeDescription`/`_gameplayDescription` on Consumable/Mushroomlist close-ups).
+  Hook/read these → speak the highlighted object + description. Dialogue-sink + ControlDescriber patterns.
+- **SYS-C — describe the view.** List the objects in the active close-up; descriptions already authored (narrative +
+  gameplay), so likely NO image descriptions needed for v1.
+- **SYS-A — lead the player to world objects (nav steering).** The original F10 idea; needs P0 (player pose) + a
+  MoveXZ/TeleportTo steering probe. Lower priority — the real object interaction happens in the close-up (SYS-B/C).
+- `ACloseUpView` family: Fridge/Phone/Radio/Consumable/Mushroomlist (object-specific photos), `ICloseUpsController.
+  IsAnyCloseUpActive`. Detail in the navigation memo.
+
+### (Below: the F9/F10 builds as-shipped — both currently non-functional pending P0.)
 
 ### Orientation "what's around me" (F10) — BUILT + DEPLOYED 2026-06-01, awaiting in-game confirmation
 What the user actually wants from F10: the interactables in the current room and WHERE they are relative to the
