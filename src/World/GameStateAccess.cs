@@ -22,10 +22,8 @@ namespace NoImNotAHumanAccess.World
     /// </summary>
     public sealed class GameStateAccess
     {
-        // --- IL2CPP class/method handles (resolved lazily, cached in Il2CppRaw) ---
-        private const string GameAsm = "Assembly-CSharp.dll";
-        private const string ZenjectAsm = "Zenject.dll";
-
+        // Controller instances are resolved from the Zenject container via ZenjectResolver; method handles below are
+        // bound off the resolved instances' classes.
         private IntPtr _dayNight;       // IDayNightController instance ptr
         private IntPtr _consumables;    // IConsumablesController instance ptr
         private bool _resolveAttempted;
@@ -111,8 +109,8 @@ namespace NoImNotAHumanAccess.World
 
             try
             {
-                _dayNight = ResolveFromContainer("_Code.Infrastructure.DayNight", "IDayNightController");
-                _consumables = ResolveFromContainer("_Code.Infrastructure.Consumables", "IConsumablesController");
+                _dayNight = ZenjectResolver.Resolve("_Code.Infrastructure.DayNight", "IDayNightController");
+                _consumables = ZenjectResolver.Resolve("_Code.Infrastructure.Consumables", "IConsumablesController");
 
                 if (_dayNight != IntPtr.Zero)
                 {
@@ -136,57 +134,6 @@ namespace NoImNotAHumanAccess.World
             {
                 MelonLogger.Warning($"[GameStateAccess] EnsureResolved threw: {e.Message}");
             }
-        }
-
-        /// <summary>
-        /// Resolve a single interface instance from the live Zenject container. Returns zero (and logs) on any miss
-        /// so the caller can fall back. The interface type comes from the game assembly; <c>Resolve</c> is the
-        /// non-generic <c>object Resolve(System.Type)</c> on <c>DiContainer</c>.
-        /// </summary>
-        private IntPtr ResolveFromContainer(string runtimeNamespace, string interfaceName)
-        {
-            IntPtr sceneCtxClass = Il2CppRaw.GetClass(ZenjectAsm, "Zenject", "SceneContext");
-            if (sceneCtxClass == IntPtr.Zero)
-            {
-                MelonLogger.Warning("[GameStateAccess] Zenject.SceneContext class not found.");
-                return IntPtr.Zero;
-            }
-            IntPtr sceneCtx = Il2CppRaw.FindObjectOfType(sceneCtxClass);
-            if (sceneCtx == IntPtr.Zero)
-            {
-                MelonLogger.Warning("[GameStateAccess] No live SceneContext in scene (not in gameplay yet?).");
-                return IntPtr.Zero;
-            }
-
-            // SceneContext.Container is on the Context base; the getter resolves on the instance's class fine.
-            IntPtr getContainer = Il2CppRaw.GetMethod(IL2CPP.il2cpp_object_get_class(sceneCtx), "get_Container", 0);
-            IntPtr container = Il2CppRaw.InvokeObjectGetter(sceneCtx, getContainer);
-            if (container == IntPtr.Zero)
-            {
-                MelonLogger.Warning("[GameStateAccess] SceneContext.Container was null.");
-                return IntPtr.Zero;
-            }
-
-            IntPtr ifaceClass = Il2CppRaw.GetClass(GameAsm, runtimeNamespace, interfaceName);
-            IntPtr typeObj = Il2CppRaw.TypeObject(ifaceClass);
-            if (typeObj == IntPtr.Zero)
-            {
-                MelonLogger.Warning($"[GameStateAccess] Type object for {runtimeNamespace}.{interfaceName} not found.");
-                return IntPtr.Zero;
-            }
-
-            IntPtr containerClass = IL2CPP.il2cpp_object_get_class(container);
-            IntPtr resolve = Il2CppRaw.GetMethod(containerClass, "Resolve", 1);
-            if (resolve == IntPtr.Zero)
-            {
-                MelonLogger.Warning("[GameStateAccess] DiContainer.Resolve(Type) not found.");
-                return IntPtr.Zero;
-            }
-
-            IntPtr instance = Il2CppRaw.InvokeObjectMethodWithObject(container, resolve, typeObj);
-            if (instance == IntPtr.Zero)
-                MelonLogger.Warning($"[GameStateAccess] Resolve({interfaceName}) returned null.");
-            return instance;
         }
     }
 }

@@ -1,53 +1,54 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Il2CppInterop.Runtime;
 using MelonLoader;
 using NoImNotAHumanAccess.Interop;
+using NoImNotAHumanAccess.Menus;
 using NoImNotAHumanAccess.Speech;
+using UnityEngine;
 
 namespace NoImNotAHumanAccess.World
 {
     /// <summary>
-    /// "Where am I" readout (bound to a key in <see cref="AccessMod"/>). The game is dialog-driven with sparse rooms
-    /// (1–2 interactables each), so a blind player's main spatial need is simply: which room am I in, who's here, and
-    /// where's the way out. This reads the current <c>ARoom</c> (captured by <see cref="WorldPatches"/>'s
-    /// <c>OnRoomEntered</c> hook into <see cref="RoomTracker"/>) and speaks:
-    /// room name + living occupants + the room's door and where it leads.
+    /// "What can I interact with, and where is it relative to me" readout (bound to F10 in <see cref="AccessMod"/>).
+    /// The game is first-person aim-to-interact, so the player's spatial question is a world bearing: which way to
+    /// turn to face each currently-selectable thing. We enumerate the game's live interactable set and, for each one
+    /// the game currently offers (its <c>CanShowHint</c> is true — i.e. selectable right now, respecting time-of-day/
+    /// lock state), speak its name and a coarse direction + distance relative to where the player is facing.
     ///
-    /// All reads are raw IL2CPP off the live <c>ARoom</c> pointer:
-    /// - room name: <c>get_RoomType</c> → <c>ERoom</c> (int), mapped to a label;
-    /// - occupants: the protected <c>AliveCharactersInside</c> <c>List&lt;ECharacterType&gt;</c>, read via
-    ///   <c>get_Count</c>/<c>get_Item</c>, each int mapped to a character label;
-    /// - exit: the room's <c>View</c> (an <c>ARoomView</c>) field → its <c>_doorTrigger</c> (a <c>DoorTrigger</c>)
-    ///   field → <c>_linkedRoom</c> <c>ERoom</c> field, mapped to a label.
+    /// Sources:
+    /// - Interactables: <c>ActionableObjectsViewProvider.ActionableObjectViews</c> (an <c>AActionableObjectView[]</c>;
+    ///   the provider is a MonoBehaviour, so found via <c>FindObjectOfType</c>). Each view's world position comes from
+    ///   its managed <c>transform.position</c>; its name from the GameObject name (humanized) — robust without
+    ///   resolving the LocalizedString subject; upgrade later if names read poorly by ear.
+    /// - "Selectable now": the view's <c>CanShowHint</c> bool getter — the game's own "show a hint for this" signal.
+    /// - Player pose: <c>IPlayerService.Position</c> + <c>LookDirection</c>, resolved from the Zenject container (same
+    ///   path <see cref="GameStateAccess"/> uses; controllers aren't MonoBehaviours so FindObjectOfType can't reach them).
     ///
-    /// Hub-and-spoke layout: each room view holds a single <c>_doorTrigger</c>, so "the exit" is one linked room.
-    /// Degrades to a spoken fallback if nothing is captured yet (e.g. pressed before entering a room). Never throws.
+    /// Bearing is coarse (ahead / behind / to your left / to your right) + near/far, matching sparse rooms (1–2 things)
+    /// where a blind player needs "which way to turn", not survey-grade precision. Never throws.
     /// </summary>
     public sealed class OrientationNarrator
     {
-        private const string RoomsNs = "_Code.Infrastructure.Rooms";
         private const string GameAsm = "Assembly-CSharp.dll";
 
         private readonly ISpeechOutput _speech;
 
-        // Lazily-resolved handles (cached in Il2CppRaw; we cache the resolved bool to avoid re-resolving each press).
-        // ARoomView/DoorTrigger/List classes are taken from each instance at read time (il2cpp_object_get_class), so
-        // only ARoom + its RoomType getter need pre-resolving here.
+        // Lazily-resolved handles.
         private bool _resolved;
-        private IntPtr _aRoomClass;
-        private IntPtr _getRoomType;
+        private IntPtr _viewProviderClass, _getViews;       // ActionableObjectsViewProvider + get_ActionableObjectViews
+        private IntPtr _viewClass, _getCanShowHint;          // AActionableObjectView + get_CanShowHint
+        private IntPtr _playerService, _getPosition, _getLookDirection;
 
         public OrientationNarrator(ISpeechOutput speech) => _speech = speech;
 
-        /// <summary>Speak the current-room orientation, interrupting so a repeat press re-reads.</summary>
+        /// <summary>Speak the currently-selectable interactables with bearings, interrupting so a repeat re-reads.</summary>
         public void Announce()
         {
             try
             {
                 string? text = Describe();
-                _speech.Speak(text ?? "Location not available right now.", interrupt: true);
+                _speech.Speak(text ?? "Nothing to interact with right now.", interrupt: true);
             }
             catch (Exception e)
             {
@@ -57,62 +58,80 @@ namespace NoImNotAHumanAccess.World
 
         private string? Describe()
         {
-            IntPtr room = RoomTracker.CurrentRoom;
-            if (room == IntPtr.Zero) return null;
             EnsureResolved();
 
-            var sb = new StringBuilder();
+            // Player pose for bearings.
+            Vector3 pos = _playerService != IntPtr.Zero ? Il2CppRaw.InvokeVector3Getter(_playerService, _getPosition) : Vector3.zero;
+            Vector3 look = _playerService != IntPtr.Zero ? Il2CppRaw.InvokeVector3Getter(_playerService, _getLookDirection) : Vector3.forward;
 
-            // Room name.
-            int roomType = Il2CppRaw.InvokeInt32Getter(room, _getRoomType);
-            sb.Append(RoomName(roomType));
+            // Live interactable set.
+            IntPtr provider = _viewProviderClass != IntPtr.Zero ? Il2CppRaw.FindObjectOfType(_viewProviderClass) : IntPtr.Zero;
+            if (provider == IntPtr.Zero) return null;
+            IntPtr arrayPtr = Il2CppRaw.InvokeObjectGetter(provider, _getViews);
+            IntPtr[] views = Il2CppRaw.ReadObjectArray(arrayPtr);
+            if (views.Length == 0) return null;
 
-            // Occupants (living characters in the room).
-            string occupants = DescribeOccupants(room);
-            if (occupants.Length > 0) sb.Append(". ").Append(occupants);
-
-            // Exit: room.View._doorTrigger._linkedRoom.
-            string exit = DescribeExit(room);
-            if (exit.Length > 0) sb.Append(". ").Append(exit);
-
-            sb.Append('.');
-            return sb.ToString();
-        }
-
-        private string DescribeOccupants(IntPtr room)
-        {
-            // AliveCharactersInside is a protected List<ECharacterType> field on ARoom.
-            IntPtr list = Il2CppRaw.ReadObjectField(room, _aRoomClass, "AliveCharactersInside");
-            if (list == IntPtr.Zero) return string.Empty;
-
-            IntPtr listClass = IL2CPP.il2cpp_object_get_class(list);
-            IntPtr getCount = Il2CppRaw.GetMethod(listClass, "get_Count", 0);
-            IntPtr getItem = Il2CppRaw.GetMethod(listClass, "get_Item", 1);
-            int count = Il2CppRaw.InvokeInt32Getter(list, getCount, fallback: 0);
-            if (count <= 0) return string.Empty;
-
-            var names = new List<string>();
-            for (int i = 0; i < count; i++)
+            var parts = new List<string>();
+            foreach (IntPtr v in views)
             {
-                int ch = Il2CppRaw.InvokeInt32MethodWithEnum(list, getItem, i, fallback: -1);
-                if (ch >= 0) names.Add(CharacterName(ch));
+                if (v == IntPtr.Zero) continue;
+                // Only things the game currently offers as interactable.
+                if (!Il2CppRaw.InvokeBoolGetter(v, _getCanShowHint)) continue;
+
+                string name = HumanizeName(Il2CppRaw.GetUnityObjectName(v));
+                Vector3 target = Il2CppRaw.GetComponentWorldPosition(v);
+                string bearing = Bearing(pos, look, target);
+                parts.Add(bearing.Length > 0 ? $"{name}, {bearing}" : name);
             }
-            if (names.Count == 0) return string.Empty;
-            return names.Count == 1 ? $"{names[0]} is here" : string.Join(", ", names) + " are here";
+
+            if (parts.Count == 0) return null;
+            return string.Join(". ", parts) + ".";
         }
 
-        private string DescribeExit(IntPtr room)
+        /// <summary>
+        /// Coarse direction + distance of <paramref name="target"/> relative to a player at <paramref name="pos"/>
+        /// facing <paramref name="look"/>. Uses the horizontal plane only (XZ); "left/right" from the signed angle,
+        /// "ahead/behind" from the forward dot, plus near/far by distance. Returns "" if essentially on top of it.
+        /// </summary>
+        private static string Bearing(Vector3 pos, Vector3 look, Vector3 target)
         {
-            // room.View (protected IRoomView field, concretely an ARoomView) -> _doorTrigger -> _linkedRoom.
-            IntPtr view = Il2CppRaw.ReadObjectField(room, _aRoomClass, "View");
-            if (view == IntPtr.Zero) return string.Empty;
-            IntPtr viewClass = IL2CPP.il2cpp_object_get_class(view);
-            IntPtr door = Il2CppRaw.ReadObjectField(view, viewClass, "_doorTrigger");
-            if (door == IntPtr.Zero) return string.Empty;
-            IntPtr doorClass = IL2CPP.il2cpp_object_get_class(door);
-            int linked = Il2CppRaw.ReadInt32Field(door, doorClass, "_linkedRoom", fallback: -1);
-            if (linked < 0) return string.Empty;
-            return $"The door leads to the {RoomName(linked).ToLowerInvariant()}";
+            Vector3 to = target - pos;
+            to.y = 0f;
+            float dist = to.magnitude;
+            if (dist < 0.5f) return "right here";
+
+            Vector3 fwd = look; fwd.y = 0f;
+            if (fwd.sqrMagnitude < 1e-4f) fwd = Vector3.forward;
+            fwd.Normalize();
+            Vector3 dir = to / dist;
+
+            float forwardDot = Vector3.Dot(fwd, dir);                         // 1 ahead, -1 behind
+            float rightDot = Vector3.Dot(Vector3.Cross(Vector3.up, fwd), dir); // >0 right, <0 left
+
+            string facing;
+            if (forwardDot > 0.5f) facing = "ahead";
+            else if (forwardDot < -0.5f) facing = "behind you";
+            else facing = rightDot >= 0f ? "to your right" : "to your left";
+            // For the ahead/behind cone, add the side so the player knows which way to turn.
+            if ((facing == "ahead" || facing == "behind you") && Mathf.Abs(rightDot) > 0.25f)
+                facing += rightDot >= 0f ? " and right" : " and left";
+
+            string range = dist < 2.5f ? "close" : dist < 6f ? "" : "far";
+            return range.Length > 0 ? $"{facing}, {range}" : facing;
+        }
+
+        /// <summary>Turn a GameObject name into something speakable: drop common suffixes, split underscores.</summary>
+        private static string HumanizeName(string? raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return "object";
+            string s = raw;
+            // Strip a trailing "(Clone)" and numeric/index suffixes like "_01".
+            int clone = s.IndexOf("(Clone)", StringComparison.OrdinalIgnoreCase);
+            if (clone >= 0) s = s.Substring(0, clone);
+            s = s.Replace('_', ' ').Trim();
+            // Reuse the shared cleaner (also collapses whitespace / strips stray markup).
+            string cleaned = ControlDescriber.Clean(s);
+            return string.IsNullOrWhiteSpace(cleaned) ? "object" : cleaned;
         }
 
         private void EnsureResolved()
@@ -121,54 +140,30 @@ namespace NoImNotAHumanAccess.World
             _resolved = true;
             try
             {
-                _aRoomClass = Il2CppRaw.GetClass(GameAsm, RoomsNs, "ARoom");
-                _getRoomType = Il2CppRaw.GetMethod(_aRoomClass, "get_RoomType", 0);
-                MelonLogger.Msg($"[OrientationNarrator] resolved: aRoom={_aRoomClass != IntPtr.Zero} " +
-                                $"getRoomType={_getRoomType != IntPtr.Zero}");
+                _viewProviderClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure.ActionableObjects", "ActionableObjectsViewProvider");
+                if (_viewProviderClass != IntPtr.Zero)
+                    _getViews = Il2CppRaw.GetMethod(_viewProviderClass, "get_ActionableObjectViews", 0);
+
+                _viewClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure.ActionableObjects", "AActionableObjectView");
+                if (_viewClass != IntPtr.Zero)
+                    _getCanShowHint = Il2CppRaw.GetMethod(_viewClass, "get_CanShowHint", 0);
+
+                _playerService = ZenjectResolver.Resolve("_Code.Infrastructure.Player", "IPlayerService");
+                if (_playerService != IntPtr.Zero)
+                {
+                    IntPtr psClass = IL2CPP.il2cpp_object_get_class(_playerService);
+                    _getPosition = Il2CppRaw.GetMethod(psClass, "get_Position", 0);
+                    _getLookDirection = Il2CppRaw.GetMethod(psClass, "get_LookDirection", 0);
+                }
+
+                MelonLogger.Msg($"[OrientationNarrator] resolved: provider={_viewProviderClass != IntPtr.Zero} " +
+                                $"getViews={_getViews != IntPtr.Zero} canShowHint={_getCanShowHint != IntPtr.Zero} " +
+                                $"player={_playerService != IntPtr.Zero} getPos={_getPosition != IntPtr.Zero}");
             }
             catch (Exception e)
             {
                 MelonLogger.Warning($"[OrientationNarrator] EnsureResolved threw: {e.Message}");
             }
         }
-
-        // ERoom: Kitchen, Office, BigRoom, Bathroom, Pantry, Entrance, Bedroom.
-        private static string RoomName(int e) => e switch
-        {
-            0 => "Kitchen",
-            1 => "Office",
-            2 => "Big room",
-            3 => "Bathroom",
-            4 => "Pantry",
-            5 => "Entrance",
-            6 => "Bedroom",
-            _ => "Unknown room",
-        };
-
-        // ECharacterType — only the names likely to appear as room occupants are mapped to readable labels; anything
-        // unmapped falls back to a generic label so an unexpected value never crashes or reads as a raw number.
-        private static string CharacterName(int e) => e switch
-        {
-            0 => "Sanya",
-            2 => "the courier",
-            3 => "the neighbour",
-            4 => "Esenin",
-            6 => "the daughter",
-            8 => "the fan",
-            9 => "the prophet",
-            11 => "the widow",
-            12 => "the scammer",
-            13 => "the doctor",
-            16 => "the hunter",
-            22 => "Luka",
-            26 => "the blind man",
-            27 => "the marauder",
-            28 => "the nun",
-            29 => "the taxi driver",
-            30 => "the firefighter",
-            32 => "the teacher",
-            33 => "Edgar",
-            _ => "someone",
-        };
     }
 }

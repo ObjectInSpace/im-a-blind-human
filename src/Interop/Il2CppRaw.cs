@@ -241,6 +241,75 @@ namespace NoImNotAHumanAccess.Interop
         }
 
         /// <summary>
+        /// Read an IL2CPP reference array's elements as object pointers, via Il2CppInterop's
+        /// <c>Il2CppReferenceArray</c> wrapper (which knows the correct element layout). Empty if the pointer is zero.
+        /// Used for getters that return <c>T[]</c> (e.g. <c>ActionableObjectViews</c>).
+        /// </summary>
+        public static IntPtr[] ReadObjectArray(IntPtr arrayPtr)
+        {
+            if (arrayPtr == IntPtr.Zero) return Array.Empty<IntPtr>();
+            var arr = new Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<
+                Il2CppInterop.Runtime.InteropTypes.Il2CppObjectBase>(arrayPtr);
+            int len = arr.Length;
+            if (len <= 0) return Array.Empty<IntPtr>();
+            var result = new IntPtr[len];
+            for (int i = 0; i < len; i++)
+            {
+                var e = arr[i];
+                result[i] = e == null ? IntPtr.Zero : IL2CPP.Il2CppObjectBaseToPtr(e);
+            }
+            return result;
+        }
+
+        /// <summary>Read a UnityEngine.Object's <c>name</c> (via <c>get_name</c>) from an object pointer, raw.
+        /// Null on failure. Works for any Component/GameObject pointer.</summary>
+        public static string? GetUnityObjectName(IntPtr objPtr)
+        {
+            if (objPtr == IntPtr.Zero) return null;
+            IntPtr objClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "Object");
+            IntPtr getName = GetMethod(objClass, "get_name", 0);
+            return InvokeStringGetter(objPtr, getName);
+        }
+
+        /// <summary>Read a Component's world position: <c>Component.get_transform()</c> then
+        /// <c>Transform.get_position()</c>, raw. Returns <c>Vector3.zero</c> on failure.</summary>
+        public static Vector3 GetComponentWorldPosition(IntPtr componentPtr)
+        {
+            if (componentPtr == IntPtr.Zero) return Vector3.zero;
+            IntPtr compClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "Component");
+            IntPtr getTransform = GetMethod(compClass, "get_transform", 0);
+            IntPtr transform = InvokeObjectGetter(componentPtr, getTransform);
+            if (transform == IntPtr.Zero) return Vector3.zero;
+            IntPtr trClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "Transform");
+            IntPtr getPosition = GetMethod(trClass, "get_position", 0);
+            return InvokeVector3Getter(transform, getPosition);
+        }
+
+        /// <summary>Invoke a parameterless bool getter on an object pointer. Returns <paramref name="fallback"/> on
+        /// failure (treats a thrown getter as the fallback).</summary>
+        public static unsafe bool InvokeBoolGetter(IntPtr objPtr, IntPtr method, bool fallback = false)
+        {
+            if (objPtr == IntPtr.Zero || method == IntPtr.Zero) return fallback;
+            IntPtr exc = IntPtr.Zero;
+            IntPtr boxed = IL2CPP.il2cpp_runtime_invoke(method, objPtr, (void**)0, ref exc);
+            if (exc != IntPtr.Zero || boxed == IntPtr.Zero) return fallback;
+            return *(bool*)IL2CPP.il2cpp_object_unbox(boxed);
+        }
+
+        /// <summary>Invoke a parameterless getter returning a <see cref="Vector3"/> by value (e.g.
+        /// <c>IPlayerService.get_Position</c>, <c>Transform.get_position</c>). Returns <c>Vector3.zero</c> on failure.
+        /// The boxed return is unboxed and read as three floats.</summary>
+        public static unsafe Vector3 InvokeVector3Getter(IntPtr objPtr, IntPtr method)
+        {
+            if (objPtr == IntPtr.Zero || method == IntPtr.Zero) return Vector3.zero;
+            IntPtr exc = IntPtr.Zero;
+            IntPtr boxed = IL2CPP.il2cpp_runtime_invoke(method, objPtr, (void**)0, ref exc);
+            if (exc != IntPtr.Zero || boxed == IntPtr.Zero) return Vector3.zero;
+            float* f = (float*)IL2CPP.il2cpp_object_unbox(boxed);
+            return new Vector3(f[0], f[1], f[2]);
+        }
+
+        /// <summary>
         /// Find the first live object of an IL2CPP class via <c>UnityEngine.Object.FindObjectOfType(Type)</c>,
         /// invoked raw. Only works for UnityEngine.Object-derived classes (MonoBehaviour/Component) — the Zenject
         /// <c>SceneContext</c> qualifies. Returns the object pointer or zero.

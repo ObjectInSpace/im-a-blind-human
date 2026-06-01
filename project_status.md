@@ -40,23 +40,31 @@
 **IN PROGRESS — Phase: interaction prompts & world HUD.** Dialogue + menus done. Interaction prompt CONFIRMED
 in-game (see below). Status key BUILT + DEPLOYED 2026-06-01, awaiting in-game confirmation.
 
-### Orientation "where am I" (F10) — BUILT + DEPLOYED 2026-06-01, awaiting in-game confirmation
-Stage 1a of navigation. The game is dialog-driven with sparse rooms (1–2 things each, user-confirmed), so the main
-spatial need is "which room, who's here, where's the exit" — likely the whole navigation feature; build + use it
-before any steering. Files: `src/World/RoomTracker.cs` (holds current ARoom ptr), `src/World/OrientationNarrator.cs`
-(reads + speaks), room-capture hook added to `WorldPatches`, wired to F10 in `AccessMod`. Build green 0/0.
-- CURRENT ROOM: captured via Harmony postfix on `RoomsManager.OnRoomEntered(ARoom)` (private, arity-1; no CurrentRoom
-  property exists) → stashed in `RoomTracker.CurrentRoom`. Interop type `Il2Cpp_Code.Infrastructure.Rooms.RoomsManager`.
-- READS (raw IL2CPP off the live ARoom ptr): room name = `get_RoomType` → ERoom; occupants = protected
-  `AliveCharactersInside` List<ECharacterType> via get_Count/get_Item; exit = `View` field (ARoomView) → `_doorTrigger`
-  field (DoorTrigger) → `_linkedRoom` ERoom field. Hub-and-spoke: each ARoomView has ONE _doorTrigger.
-- Speaks e.g. "Kitchen. Esenin is here. The door leads to the entrance." ERoom map: 0 Kitchen,1 Office,2 Big room,
-  3 Bathroom,4 Pantry,5 Entrance,6 Bedroom. ECharacterType partially mapped (common occupants); unmapped → "someone".
-- ON NEXT TEST RUN: log `[WorldPatches] Patched ...RoomsManager.OnRoomEntered(ARoom)` = hook resolved;
-  `[OrientationNarrator] resolved: aRoom=True getRoomType=True` on first F10. Then enter a room, press F10, confirm by
-  ear. If room name wrong → ERoom order; if "someone" for a known NPC → extend the CharacterName map; if exit silent →
-  `View`/`_doorTrigger`/`_linkedRoom` field names to re-check. NEXT (Stage 1b): cycle the room's ObjectsViews/
-  CharacterViews (in ARoomView) one-per-press with coarse direction. Stage 2 (maybe never): guided travel.
+### Orientation "what's around me" (F10) — BUILT + DEPLOYED 2026-06-01, awaiting in-game confirmation
+What the user actually wants from F10: the interactables in the current room and WHERE they are relative to the
+player. Game is first-person aim-to-interact (user-confirmed), so "relative" = a WORLD BEARING (which way to turn).
+"Selectable now" = the game's current interactable set, no seen/unseen tracking needed (user-confirmed). Files:
+`src/World/OrientationNarrator.cs`, `src/World/ZenjectResolver.cs` (shared resolve, extracted from GameStateAccess),
+new `Il2CppRaw` helpers. Wired F10 in AccessMod. Build green 0/0.
+- SOURCE: `ActionableObjectsViewProvider.ActionableObjectViews` (AActionableObjectView[]; provider is a MonoBehaviour →
+  FindObjectOfType). ns `_Code.Infrastructure.ActionableObjects`. Filter each by `get_CanShowHint` (the game's own
+  "offer this now" signal). Name = GameObject name humanized (NOT the LocalizedString subject — robust; upgrade later
+  if names read poorly). Position = Component.get_transform→get_position (raw). Player pose = IPlayerService
+  (Zenject-resolved, ns `_Code.Infrastructure.Player`) get_Position + get_LookDirection (Vector3 getters).
+- BEARING: XZ-plane; forward dot → ahead/behind, right dot (cross(up,fwd)) → left/right, +near/far by distance.
+  Speaks e.g. "Fridge, to your left, close. Television, ahead, far."
+- NEW Il2CppRaw helpers: ReadObjectArray (via Il2CppReferenceArray<Il2CppObjectBase>), InvokeBoolGetter,
+  InvokeVector3Getter, GetUnityObjectName, GetComponentWorldPosition. (`il2cpp_array_addr_with_size` does NOT exist in
+  this interop build; use the Il2CppReferenceArray wrapper. UnityEngine.Component has no public (IntPtr) ctor; read
+  name/position via raw getters instead of wrapping.)
+- ON NEXT TEST RUN: first F10 logs `[OrientationNarrator] resolved: provider=True getViews=True canShowHint=True
+  player=True getPos=True`. Then in a room, press F10, confirm by ear: are the right things listed, names sensible,
+  and directions correct (turn and re-press — bearings should shift)? Tune: if names are junk GameObject names →
+  switch to resolving the RaycastTargetHint subject; if directions inverted → flip the rightDot sign or look-vector.
+- DROPPED from the earlier room-summary build: RoomTracker + the RoomsManager.OnRoomEntered hook were removed (that
+  approach was room-name/occupants/exit; user redirected to interactable-bearings). The OnRoomEntered hook + ERoom/
+  ECharacterType maps are documented in the navigation memo for if/when the deferred status-key "current room" field
+  is built.
 
 ### Status key (F9) — BUILT + DEPLOYED 2026-06-01, awaiting in-game confirmation
 On-demand readout of day / time-of-day / energy / held items. Files: `src/World/GameStateAccess.cs` (Zenject-resolve
