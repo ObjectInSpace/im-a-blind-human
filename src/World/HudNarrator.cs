@@ -29,13 +29,16 @@ namespace NoImNotAHumanAccess.World
         public HudNarrator(ISpeechOutput speech) => _speech = speech;
 
         /// <summary>
-        /// Handle one interaction prompt. Cleans markup, composes "{action} {subject}", drops empties and the
-        /// consecutive duplicate that re-firing produces, then speaks (interrupting, so a fresh prompt cuts off the
-        /// tail of a stale one rather than queueing). Never throws into the game.
+        /// Handle one interaction prompt. Cleans markup, composes "{action} {subject}" plus an energy-cost suffix
+        /// when the prompt carries one, drops empties and the consecutive duplicate that re-firing produces, then
+        /// speaks (interrupting, so a fresh prompt cuts off the tail of a stale one rather than queueing). Never
+        /// throws into the game.
         /// </summary>
         /// <param name="subject">The thing being acted on (noun), e.g. "cigarettes", "door".</param>
         /// <param name="action">The verb prompt, e.g. "take", "open".</param>
-        public void OnHint(string? subject, string? action)
+        /// <param name="icon">The <c>ERaycastHintIcon</c> as its underlying int — the action's energy cost shown on
+        /// the HUD (None=0, Energy=1, EnergyX2=2, AllEnergy=3, Save=4). Mapped to a spoken suffix.</param>
+        public void OnHint(string? subject, string? action, int icon = 0)
         {
             try
             {
@@ -50,6 +53,11 @@ namespace NoImNotAHumanAccess.World
 
                 if (text.Length == 0) return;
 
+                // Append the energy cost the HUD shows for this action, so a blind player hears what a sighted one
+                // sees on the prompt icon. Part of the deduped phrase, so a cost change on the same target re-speaks.
+                string cost = EnergyCostSuffix(icon);
+                if (cost.Length > 0) text = $"{text}, {cost}";
+
                 if (text == _lastSpoken) return;
                 _lastSpoken = text;
 
@@ -60,6 +68,18 @@ namespace NoImNotAHumanAccess.World
                 MelonLogger.Warning($"[HudNarrator] OnHint threw: {e.Message}");
             }
         }
+
+        /// <summary>
+        /// Map <c>ERaycastHintIcon</c> to a spoken energy-cost suffix. Save (4) is not an energy cost, so it gets no
+        /// suffix; None (0) and any unknown value also yield nothing.
+        /// </summary>
+        private static string EnergyCostSuffix(int icon) => icon switch
+        {
+            1 => "1 energy",     // Energy
+            2 => "2 energy",     // EnergyX2
+            3 => "all energy",   // AllEnergy
+            _ => string.Empty,   // None / Save / unknown
+        };
 
         /// <summary>
         /// The prompt was hidden (player looked away / conditions lapsed). We don't announce the disappearance, but

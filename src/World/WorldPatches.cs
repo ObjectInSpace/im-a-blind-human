@@ -70,12 +70,15 @@ namespace NoImNotAHumanAccess.World
         }
 
         /// <summary>
-        /// Postfix on the interaction-prompt sink. Parameter names match the original (<c>subject</c>, <c>action</c>)
-        /// so Harmony injects them; the original's <c>target</c>/<c>icon</c> params are intentionally not declared.
+        /// Postfix on the interaction-prompt sink. Parameter names match the original (<c>subject</c>,
+        /// <c>action</c>, <c>icon</c>) so Harmony injects them; the original's <c>target</c> Transform is
+        /// intentionally not declared. <c>icon</c> is the <c>ERaycastHintIcon</c> enum, taken as its underlying
+        /// <see cref="int"/> so we don't bind the interop enum type (None=0, Energy=1, EnergyX2=2, AllEnergy=3,
+        /// Save=4); the narrator maps it to a spoken energy-cost suffix.
         /// </summary>
-        private static void ShowHintPostfix(string subject, string action)
+        private static void ShowHintPostfix(string subject, string action, int icon)
         {
-            _narrator?.OnHint(subject, action);
+            _narrator?.OnHint(subject, action, icon);
         }
 
         // ---------------- Prompt hidden: HUDPresenter.HideHint() ----------------

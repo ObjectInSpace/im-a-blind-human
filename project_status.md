@@ -108,8 +108,11 @@ resolves cleanly. De-dupes consecutive identical hints (prompt likely re-fires w
   backwards in-game (e.g. "cigarettes take"), swap the order in `HudNarrator.OnHint`. Also confirm the strings are
   resolved display text, not localization KEYS (if keys leak through, resolve upstream from RaycastTargetHint's
   LocalizedStrings instead).
-- OPTIONAL FOLLOW-UP once confirmed: append energy cost from `ERaycastHintIcon icon` when `!= None` (None/Energy/
-  EnergyX2/AllEnergy/Save) — currently the icon param is dropped. Decide by ear whether it adds value or noise.
+- ENERGY-COST SUFFIX — BUILT + DEPLOYED 2026-06-01 (not yet ear-confirmed). `ShowHintPostfix` now takes `int icon`
+  (ERaycastHintIcon as underlying int, no interop-enum bind); `HudNarrator.EnergyCostSuffix` appends ", 1 energy" /
+  ", 2 energy" / ", all energy" for Energy/EnergyX2/AllEnergy; None+Save+unknown = no suffix (Save isn't a cost).
+  Suffix is part of the deduped phrase so a cost change on the same target re-speaks. The "view entrance" door was
+  a None/Save prompt, so confirm the suffix by ear on the first energy-costing action.
 
 - Reusable infra already in place: raw-IL2CPP helpers (`Il2CppRaw` incl. `ReadStringField`/`ReadInt32Field`),
   reflection-resolved Harmony patching pattern (`DialoguePatches`), `ISpeechOutput` channel, `ControlDescriber`.
