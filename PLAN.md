@@ -66,6 +66,9 @@ The native path is the "most correct" output channel but the **newest and least 
 4.1 Identify any non-text accessibility gaps (timed events, QTEs, spatial/visual puzzles, anything requiring sight) and design audio/announce substitutes — match the sighted experience, cheats only if unavoidable (project principle).
 4.2 Config (volume/verbosity/hotkeys), README, packaging.
 
+> Concrete, prioritized expansion of 4.1 grounded in verified surfaces: **`docs/world-accessibility-roadmap.md`**
+> (room/presence orientation → status key → spatial awareness → navigation probe → threat layer).
+
 ## 6. Open questions deferred to implementation
 - Exact dialogue/VN driver class names (resolved in Phase 1 decompile).
 - Whether native `SendAnnouncement` interrupts or queues, and whether we need our own queue.
