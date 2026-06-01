@@ -3,6 +3,7 @@ using MelonLoader;
 using NoImNotAHumanAccess.Dialogue;
 using NoImNotAHumanAccess.Menus;
 using NoImNotAHumanAccess.Speech;
+using NoImNotAHumanAccess.World;
 using UnityEngine;
 
 [assembly: MelonInfo(typeof(NoImNotAHumanAccess.AccessMod), "No I'm Not a Human Access", "0.0.1", "objectinspace")]
@@ -21,6 +22,7 @@ namespace NoImNotAHumanAccess
         private ISpeechOutput? _speech;
         private MenuNarrator? _menuNarrator;
         private DialogueNarrator? _dialogueNarrator;
+        private HudNarrator? _hudNarrator;
 
         // F8 = manual repeat/test trigger. The game's UI/world maps do not bind F8
         // (verified key set: arrows/WASD/enter/space/escape/tab/page/home/end/q/e/f/shift/backspace).
@@ -38,6 +40,10 @@ namespace NoImNotAHumanAccess
                 // Dialogue: hook the game's central subtitle sink and speak each rendered line.
                 _dialogueNarrator = new DialogueNarrator(_speech);
                 DialoguePatches.Apply(HarmonyInstance, _dialogueNarrator);
+
+                // World HUD: hook the interaction-prompt sink and speak "press [action] to [subject]" prompts.
+                _hudNarrator = new HudNarrator(_speech);
+                WorldPatches.Apply(HarmonyInstance, _hudNarrator);
             }
             catch (Exception e)
             {

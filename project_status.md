@@ -37,19 +37,80 @@
 
 ## Current Phase
 
-**NEXT UP — Phase: interaction prompts & world HUD (investigation first, nothing built yet).** Dialogue + menus
-are done and committed (HEAD `bb8dc53`). The remaining gap is the moment-to-moment first-person world: a blind
-player has no signal for what they're looking at, what's interactable, "press E to…" prompts, or state changes
-(day/phase, notifications). Start with a READ-ONLY decompile investigation (no code), then report surfaces +
-recommend the first hook before building — the same understand-the-choke-point-first approach that made dialogue
-go smoothly.
-- Candidate surfaces to map in `decompiled/Assembly-CSharp/`: `AInteractableObject` (+ subclasses) for the
-  interactable/targeting model; `_Code.Infrastructure.ControlsViewer` / `ControlView` for on-screen control
-  prompts; `EInfoMessageType` + `SubtitlesView.ShowSubtitlePopup(EInfoMessageType/string)` for popups/notifications
-  (note: the subtitle sink hook from Phase 2 covers `UpdateText` but `ShowSubtitlePopup` is a separate entry).
-- Questions to answer: how the game decides the currently-targeted/interactable object and where its prompt text
-  comes from; whether prompts flow through a hookable method (best) or need a watcher; highest-value first hook
-  (likely the interaction prompt — core gameplay loop).
+**IN PROGRESS — Phase: interaction prompts & world HUD.** Dialogue + menus are done and committed (HEAD `bb8dc53`).
+The remaining gap is the moment-to-moment first-person world: a blind player has no signal for what they're looking
+at, what's interactable, "press E to…" prompts, or state changes (day/phase, notifications). READ-ONLY decompile
+investigation is COMPLETE (2026-06-01); surfaces mapped below, first hook recommended. Nothing built yet.
+
+### Investigation findings (2026-06-01, read-only — decompile bodies are Cpp2IL stubs, signatures only)
+
+**The interaction-prompt model (the core loop) — fully mapped:**
+- `RaycastSource : MonoBehaviour` (camera-mounted) has `ARaycastTarget Target { get; set; }` updated every frame in
+  `Update()` — this is "what the player is looking at." (`_Code...`, ~line 3049 in the decompile.)
+- `ARaycastTarget : MonoBehaviour` (abstract) is the per-object focus target: `OnFocused`/`OnLostFocus`/
+  `OnTargetedCorrectConditions`/`OnTargetedWrongConditions`, holds `IHUDPresenter HUDPresenter` + a
+  `LinkedActionableObject`. Subclass `RaycastTargetHint` carries the prompt data: `LocalizedString _subjectLocalizationKey`,
+  `LocalizedString _actionLocalizationKey`, `ERaycastHintIcon _icon`. (~line 4593.)
+- `AInteractableObject : MonoBehaviour, IInteractable` (abstract, ~line 10739) is the interactable base: holds a
+  `RaycastTargetHint _raycastTarget`, abstract `Interact()`, `HardConditions`/`SoftConditions`, `EnergyCost`. Many
+  concrete subclasses (CatInteractable, CigaretteInteractable, …).
+- **THE CHOKE POINT:** `HUDPresenter : IHUDPresenter` (~line 5390, a plain class — NOT a MonoBehaviour) is where the
+  prompt is actually shown: `UniTask ShowHint(string subject, string action, Transform target, ERaycastHintIcon icon)`
+  and `UniTask HideHint()` (~line 5839). By the time `ShowHint` is called, `subject`/`action` are ALREADY resolved
+  display strings (the LocalizedStrings on RaycastTargetHint are evaluated upstream) — so a hook here gets clean text
+  with NO localization work needed. This is the dialogue-`UpdateText` pattern repeating: one resolved-string sink.
+  `ERaycastHintIcon` = { None, Energy, EnergyX2, AllEnergy, Save } — energy-cost hint for the action.
+- `ActionableObjectsManager : IActionableObjectsManager` (~line 24883) orchestrates the `IActionableObjectView[]` but
+  does NOT expose the current target; targeting lives on `RaycastSource.Target`. No need to hook the manager.
+
+**State-change / notification popups:**
+- Production path: `DialogManager.ShowSubtitlePopup(EInfoMessageType, float)` and `.ShowSubtitlePopup(string)`
+  (~line 30483; `DialogManager` is the real impl — the other `ShowSubtitlePopup` overloads at 31387/31753/32036 belong
+  to `MockDialogManager`/`DialogView`/`FakeDialogRunner` test doubles, ignore them).
+- `EInfoMessageType` (~line 35034) is a fixed enum: DayEnd, NightEnd, Fridge, CantSleepDay/Night, SomebodyWasMurdered,
+  WindowNailedUp1/2, FoundMushroom, Apple, INeedToNailUpWindows, NoMoreRadioToday, NoMoreBeer, BodyEaterVisit, Clocks.
+- These resolve through `_Code.DialogSystem.SubtitlesView.ShowDialogForTime(EInfoMessageType, TimeSpan)` /
+  `ShowDialogForTime(string, TimeSpan)` which queue `(string, TimeSpan)` and (very likely) reach the EXISTING Phase-2
+  `SubtitlesView.UpdateText(string)` hook. **OPEN QUESTION (runtime-only, bodies are stubs):** confirm by ear whether
+  a triggered popup (e.g. DayEnd) already speaks via the Phase-2 UpdateText hook. If yes → notifications are FREE,
+  no new hook. If the enum path bypasses UpdateText, hook `DialogManager.ShowSubtitlePopup(EInfoMessageType)` and map
+  the enum to a phrase (the localized text is internal, but the enum names are self-describing).
+
+**On-screen control prompts (persistent key-hint row):**
+- `ControlsListView : MonoBehaviour` holds `ControlView[] _controls` (~line 28730). Each `ControlView` (~line 28904)
+  has `InitKey(string key, EControl control)` (glyph) + `SetDescription(string description)` (label) + `SetAvailability`.
+- HUD orchestration via `IHUDPresenter`: `SetupAndShowControlsView(EControlsList)`, `SetControlsAvailability(EControl,
+  bool)`, `HideControlsView()`, `SetHintAvailability(bool)`. Lower priority than the interaction prompt.
+
+### FIRST HOOK — CONFIRMED IN-GAME 2026-06-01
+Both hooks resolved + patched (log: `[WorldPatches] Patched Il2Cpp_Code.Menues.HUD.HUDPresenter.ShowHint(...)` and
+`.HideHint()`). Heard "view entrance" by ear approaching a door — chain confirmed end-to-end: interop name (incl.
+"Menues" misspelling) correct, resolve-by-arity worked, strings are resolved DISPLAY TEXT (not loc keys), phrasing
+order right (verb+noun: action="view", subject="entrance"). The door is a look-closer interactable (verb "view"),
+faithful to the on-screen HUD prompt — not a bug. Below is the as-built record.
+Harmony-postfix `HUDPresenter.ShowHint(string subject, string action, Transform target, ERaycastHintIcon icon)` →
+speak `"{action} {subject}"` (e.g. "take cigarettes", "open door"). Postfix `HideHint()` resets the dedupe so
+re-targeting the same object re-speaks. Highest-value, lowest-effort surface, the core gameplay loop. Same
+reflection-resolved patching pattern as `DialoguePatches`; `HUDPresenter` is a plain managed class so the MethodInfo
+resolves cleanly. De-dupes consecutive identical hints (prompt likely re-fires while looking at the same object) like
+`DialogueNarrator` dedupes typewriter re-entry.
+- NEW FILES: `src/World/HudNarrator.cs` (text sink + dedupe) and `src/World/WorldPatches.cs` (ShowHint + HideHint
+  hooks, resolve-by-arity 4/0). Wired in `AccessMod.OnInitializeMelon` after the dialogue hooks. Build green 0/0;
+  DLL deployed to `<game>\Mods\`.
+- UNVERIFIED INFERENCE (the one runtime risk): interop type name `Il2Cpp_Code.Menues.HUD.HUDPresenter` (note the
+  game's spelling "Menues"), built by the same `Il2Cpp`+decompiled-namespace rule the working DialoguePatches uses.
+  IL2CPP interop DLLs don't introspect via plain reflection outside the MelonLoader runtime (GetTypes returns 0), so
+  this could only be confirmed at runtime. ON NEXT TEST RUN: rotate `MelonLoader\Latest.log`, launch, look for
+  `[WorldPatches] Patched ...HUDPresenter.ShowHint(...)` (success) vs `Could not resolve ...` (name miss → check the
+  real interop namespace; candidates if "Menues" is wrong: `Menus`, or HUDPresenter living under a different ns).
+  Then look at an interactable in-game and confirm the prompt speaks by ear.
+- DEDUPE-PHRASING NOTE TO RE-CHECK BY EAR: assumed `action`=verb, `subject`=noun → "{action} {subject}". If it reads
+  backwards in-game (e.g. "cigarettes take"), swap the order in `HudNarrator.OnHint`. Also confirm the strings are
+  resolved display text, not localization KEYS (if keys leak through, resolve upstream from RaycastTargetHint's
+  LocalizedStrings instead).
+- OPTIONAL FOLLOW-UP once confirmed: append energy cost from `ERaycastHintIcon icon` when `!= None` (None/Energy/
+  EnergyX2/AllEnergy/Save) — currently the icon param is dropped. Decide by ear whether it adds value or noise.
+
 - Reusable infra already in place: raw-IL2CPP helpers (`Il2CppRaw` incl. `ReadStringField`/`ReadInt32Field`),
   reflection-resolved Harmony patching pattern (`DialoguePatches`), `ISpeechOutput` channel, `ControlDescriber`.
   REMEMBER the IL2CPP image-name rule: `GetClass` takes the ORIGINAL assembly name + ".dll" and the RUNTIME
