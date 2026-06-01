@@ -75,8 +75,14 @@ Navigation index; position is derived from the transform tree.
 - KNOWN GAP: main menu reads labels but NOT position. Its items are `MainMenuSignLineElement` (sprite-only, only
   IPointer* handlers, NO ISelectHandler), laid out in a circle — they don't flow through EventSystem selection like
   real controls. Position there is a separate investigation (how keyboard focus moves on the circle menu). Deferred.
-- TODO (user-requested, next): `EDialogButtonStyle` readout for dialogue choices (Energy/Gun/ConsumablesGet/Give
-  etc. on HoverableButton._selectedStyle) — speak the choice's mechanical style where it carries meaning.
+- `EDialogButtonStyle` choice-style readout — PROTOTYPED THEN PARKED (2026-06-01). Speaking ", energy"/", gun"/
+  ", take item"/", give item" after a choice read as redundant: the choice TEXT usually already conveys it
+  ("Shoot him" = gun). Reverted the spoken suffix; kept `ControlDescriber.NoteDialogButtonStyle` which passively
+  logs each distinct style int once per session (`dialog button style=N on '...'`) so normal play collects evidence.
+  Revisit only if play reveals choices where the styling carries info the text omits (e.g. a neutral line that
+  secretly costs energy). `Il2CppRaw.ReadInt32Field` (generic int-field-by-offset reader) added and kept.
+  EDialogButtonStyle order: 0 Default, 1 Default_UI, 2 Energy, 3 ConsumablesGet, 4 ConsumablesGive, 5 Gun,
+  6 Pause_UI, 7 Skip.
 
 **Phase 0 — native output proof (CONFIRMED; menu narration also working).** The native announcement path runs
 clean and was confirmed in-game (NVDA via Unity AssistiveSupport). Menu roles/values working.

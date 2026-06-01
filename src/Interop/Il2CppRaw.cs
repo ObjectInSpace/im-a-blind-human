@@ -139,6 +139,18 @@ namespace NoImNotAHumanAccess.Interop
             return value;
         }
 
+        /// <summary>Read a 32-bit value-type instance field (int, or an int-backed enum) by name from an object
+        /// pointer, by offset. Returns <paramref name="fallback"/> if the object/class/field is missing.</summary>
+        public static unsafe int ReadInt32Field(IntPtr objPtr, IntPtr klass, string fieldName, int fallback = -1)
+        {
+            if (objPtr == IntPtr.Zero || klass == IntPtr.Zero) return fallback;
+            IntPtr field = IL2CPP.il2cpp_class_get_field_from_name(klass, fieldName);
+            if (field == IntPtr.Zero) return fallback;
+            int value = 0;
+            IL2CPP.il2cpp_field_get_value(objPtr, field, (void*)(&value));
+            return value;
+        }
+
         /// <summary>
         /// Find a component of the given class on <paramref name="go"/> or any ANCESTOR, by walking the
         /// transform parent chain and calling raw <see cref="GetComponent"/> at each level. Returns zero if

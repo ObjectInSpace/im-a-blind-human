@@ -57,7 +57,11 @@ namespace NoImNotAHumanAccess.Menus
                 if (toggle != null)
                     return $"{ReadLabel(go)}, {(toggle.isOn ? "on" : "off")}";
 
-                // Plain button / unknown selectable: just the label.
+                // Plain button / unknown selectable: just the label. (A dialogue-choice style word — energy/gun/
+                // give-item — was prototyped here but parked: the choice TEXT usually already conveys it, so it
+                // read as redundant. NoteDialogButtonStyle still logs styles passively to gather evidence for a
+                // later, data-driven decision; see project_status.md.)
+                NoteDialogButtonStyle(go);
                 return ReadLabel(go);
             }
             catch (Exception e)
@@ -156,6 +160,39 @@ namespace NoImNotAHumanAccess.Menus
             if (go.GetComponent<Toggle>() != null) return true;
             if (_dropdownClass != IntPtr.Zero && Il2CppRaw.GetComponent(go, _dropdownClass) != IntPtr.Zero) return true;
             return false;
+        }
+
+        // Distinct HoverableButton.style ints seen this session, for the one-time-per-value diagnostic.
+        private static readonly System.Collections.Generic.HashSet<int> _loggedStyles = new();
+
+        /// <summary>
+        /// PARKED FEATURE, data collection only: log each distinct dialogue-choice <c>EDialogButtonStyle</c> seen
+        /// (with the focused control's name), once per value per session. Reads the int-backed
+        /// <c>HoverableButton.style</c> field by offset. Speaking the style as a suffix was prototyped and dropped
+        /// (the choice text usually already conveys energy/gun/give-item, making it redundant); this passive log
+        /// builds up which styles real choices actually use, so the call can be revisited with evidence later.
+        /// EDialogButtonStyle order: 0 Default, 1 Default_UI, 2 Energy, 3 ConsumablesGet, 4 ConsumablesGive,
+        /// 5 Gun, 6 Pause_UI, 7 Skip. Never throws.
+        /// </summary>
+        private static void NoteDialogButtonStyle(GameObject go)
+        {
+            EnsureSelectableResolved();
+            if (_hoverableButtonClass == IntPtr.Zero) return;
+            try
+            {
+                IntPtr btn = Il2CppRaw.GetComponent(go, _hoverableButtonClass);
+                if (btn == IntPtr.Zero) return;
+
+                int style = Il2CppRaw.ReadInt32Field(btn, _hoverableButtonClass, "style", fallback: -1);
+                if (style < 0) return;
+
+                if (_loggedStyles.Add(style))
+                    MelonLogger.Msg($"[ControlDescriber] dialog button style={style} on '{go.name}'");
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[ControlDescriber] NoteDialogButtonStyle: {e.Message}");
+            }
         }
 
         /// <summary>
