@@ -40,6 +40,24 @@
 **IN PROGRESS — Phase: interaction prompts & world HUD.** Dialogue + menus done. Interaction prompt CONFIRMED
 in-game (see below). Status key BUILT + DEPLOYED 2026-06-01, awaiting in-game confirmation.
 
+### Orientation "where am I" (F10) — BUILT + DEPLOYED 2026-06-01, awaiting in-game confirmation
+Stage 1a of navigation. The game is dialog-driven with sparse rooms (1–2 things each, user-confirmed), so the main
+spatial need is "which room, who's here, where's the exit" — likely the whole navigation feature; build + use it
+before any steering. Files: `src/World/RoomTracker.cs` (holds current ARoom ptr), `src/World/OrientationNarrator.cs`
+(reads + speaks), room-capture hook added to `WorldPatches`, wired to F10 in `AccessMod`. Build green 0/0.
+- CURRENT ROOM: captured via Harmony postfix on `RoomsManager.OnRoomEntered(ARoom)` (private, arity-1; no CurrentRoom
+  property exists) → stashed in `RoomTracker.CurrentRoom`. Interop type `Il2Cpp_Code.Infrastructure.Rooms.RoomsManager`.
+- READS (raw IL2CPP off the live ARoom ptr): room name = `get_RoomType` → ERoom; occupants = protected
+  `AliveCharactersInside` List<ECharacterType> via get_Count/get_Item; exit = `View` field (ARoomView) → `_doorTrigger`
+  field (DoorTrigger) → `_linkedRoom` ERoom field. Hub-and-spoke: each ARoomView has ONE _doorTrigger.
+- Speaks e.g. "Kitchen. Esenin is here. The door leads to the entrance." ERoom map: 0 Kitchen,1 Office,2 Big room,
+  3 Bathroom,4 Pantry,5 Entrance,6 Bedroom. ECharacterType partially mapped (common occupants); unmapped → "someone".
+- ON NEXT TEST RUN: log `[WorldPatches] Patched ...RoomsManager.OnRoomEntered(ARoom)` = hook resolved;
+  `[OrientationNarrator] resolved: aRoom=True getRoomType=True` on first F10. Then enter a room, press F10, confirm by
+  ear. If room name wrong → ERoom order; if "someone" for a known NPC → extend the CharacterName map; if exit silent →
+  `View`/`_doorTrigger`/`_linkedRoom` field names to re-check. NEXT (Stage 1b): cycle the room's ObjectsViews/
+  CharacterViews (in ARoomView) one-per-press with coarse direction. Stage 2 (maybe never): guided travel.
+
 ### Status key (F9) — BUILT + DEPLOYED 2026-06-01, awaiting in-game confirmation
 On-demand readout of day / time-of-day / energy / held items. Files: `src/World/GameStateAccess.cs` (Zenject-resolve
 + raw reads), `src/World/StatusNarrator.cs` (compose + speak), wired to F9 in `AccessMod.OnUpdate`. Build green 0/0.

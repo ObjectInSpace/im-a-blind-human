@@ -24,12 +24,14 @@ namespace NoImNotAHumanAccess
         private DialogueNarrator? _dialogueNarrator;
         private HudNarrator? _hudNarrator;
         private StatusNarrator? _statusNarrator;
+        private OrientationNarrator? _orientationNarrator;
 
-        // F8 = manual repeat/test trigger; F9 = on-demand status readout (day/phase/energy/items). The game's
-        // UI/world maps bind neither F-key (verified key set: arrows/WASD/enter/space/escape/tab/page/home/end/
-        // q/e/f/shift/backspace).
+        // F8 = manual repeat/test trigger; F9 = status readout (day/phase/energy/items); F10 = "where am I"
+        // orientation (room + occupants + exit). The game's UI/world maps bind no F-key (verified key set:
+        // arrows/WASD/enter/space/escape/tab/page/home/end/q/e/f/shift/backspace).
         private const KeyCode RepeatKey = KeyCode.F8;
         private const KeyCode StatusKey = KeyCode.F9;
+        private const KeyCode OrientationKey = KeyCode.F10;
 
         public override void OnInitializeMelon()
         {
@@ -50,6 +52,9 @@ namespace NoImNotAHumanAccess
 
                 // Status key (F9): on-demand readout of day/phase/energy/items via the Zenject-resolved controllers.
                 _statusNarrator = new StatusNarrator(_speech);
+
+                // Orientation key (F10): "where am I" — current room + occupants + exit, from the OnRoomEntered hook.
+                _orientationNarrator = new OrientationNarrator(_speech);
             }
             catch (Exception e)
             {
@@ -75,6 +80,11 @@ namespace NoImNotAHumanAccess
             if (Input.GetKeyDown(StatusKey))
             {
                 _statusNarrator?.Announce();
+            }
+
+            if (Input.GetKeyDown(OrientationKey))
+            {
+                _orientationNarrator?.Announce();
             }
         }
 

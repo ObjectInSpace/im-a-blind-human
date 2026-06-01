@@ -2,12 +2,14 @@ using System;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
+using Il2CppInterop.Runtime.InteropTypes;
 using MelonLoader;
+using NoImNotAHumanAccess.Interop;
 
 namespace NoImNotAHumanAccess.World
 {
     /// <summary>
-    /// Harmony hooks for the first-person world HUD — currently the interaction prompt.
+    /// Harmony hooks for the first-person world HUD — the interaction prompt and current-room tracking.
     ///
     /// <b>Interaction prompt</b> — <c>_Code.Menues.HUD.HUDPresenter.ShowHint(string subject, string action,
     /// Transform target, ERaycastHintIcon icon)</c> (interop <c>Il2Cpp_Code.Menues.HUD.HUDPresenter</c>; note the
@@ -32,6 +34,11 @@ namespace NoImNotAHumanAccess.World
         private const string ShowHintMethod = "ShowHint";
         private const string HideHintMethod = "HideHint";
 
+        // Current-room tracking: RoomsManager has no CurrentRoom property, so we capture the ARoom passed to its
+        // private OnRoomEntered(ARoom) and stash it in RoomTracker for the orientation narrator to read.
+        private const string RoomsManagerFullName = "Il2Cpp_Code.Infrastructure.Rooms.RoomsManager";
+        private const string OnRoomEnteredMethod = "OnRoomEntered";
+
         private static HudNarrator? _narrator;
 
         /// <summary>
@@ -43,6 +50,7 @@ namespace NoImNotAHumanAccess.World
             _narrator = narrator;
             PatchShowHint(harmony);
             PatchHideHint(harmony);
+            PatchRoomEntered(harmony);
         }
 
         // ---------------- Interaction prompt: HUDPresenter.ShowHint(string, string, Transform, ERaycastHintIcon) ----
@@ -110,6 +118,45 @@ namespace NoImNotAHumanAccess.World
         private static void HideHintPostfix()
         {
             _narrator?.OnHintHidden();
+        }
+
+        // ---------------- Current room: RoomsManager.OnRoomEntered(ARoom) ----------------
+
+        private static void PatchRoomEntered(HarmonyLib.Harmony harmony)
+        {
+            try
+            {
+                // OnRoomEntered(ARoom) is private; resolve by name + arity 1 (ARoom is an interop type we don't bind).
+                MethodInfo? target = ResolveMethodByArity(GameAsmName, RoomsManagerFullName, OnRoomEnteredMethod, 1);
+                if (target == null)
+                {
+                    MelonLogger.Warning(
+                        $"[WorldPatches] Could not resolve {RoomsManagerFullName}.{OnRoomEnteredMethod}(ARoom); " +
+                        "current-room tracking (orientation key) disabled.");
+                    return;
+                }
+
+                harmony.Patch(target, postfix: PostfixOf(nameof(OnRoomEnteredPostfix)));
+                MelonLogger.Msg($"[WorldPatches] Patched {RoomsManagerFullName}.{OnRoomEnteredMethod}(ARoom).");
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Error($"[WorldPatches] PatchRoomEntered failed: {e}");
+            }
+        }
+
+        /// <summary>Postfix capturing the entered room. <paramref name="room"/> is the interop <c>ARoom</c> (named to
+        /// match the original parameter so Harmony injects it); we stash its pointer for the orientation narrator.</summary>
+        private static void OnRoomEnteredPostfix(Il2CppObjectBase room)
+        {
+            try
+            {
+                RoomTracker.CurrentRoom = room == null ? IntPtr.Zero : Il2CppRaw.Ptr(room);
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[WorldPatches] OnRoomEnteredPostfix threw: {e.Message}");
+            }
         }
 
         // ---------------- shared resolution helpers ----------------
