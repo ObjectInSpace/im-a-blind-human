@@ -25,6 +25,7 @@ namespace NoImNotAHumanAccess
         private HudNarrator? _hudNarrator;
         private StatusNarrator? _statusNarrator;
         private OrientationNarrator? _orientationNarrator;
+        private RoomViewNarrator? _roomViewNarrator;
 
         // F8 = manual repeat/test trigger; F9 = status readout (day/phase/energy/items); F10 = "where am I"
         // orientation (room + occupants + exit). The game's UI/world maps bind no F-key (verified key set:
@@ -53,8 +54,12 @@ namespace NoImNotAHumanAccess
                 // Status key (F9): on-demand readout of day/phase/energy/items via the Zenject-resolved controllers.
                 _statusNarrator = new StatusNarrator(_speech);
 
-                // Orientation key (F10): "where am I" — current room + occupants + exit, from the OnRoomEntered hook.
+                // Orientation key (F10): "what's around me" — currently-selectable interactables with bearings.
                 _orientationNarrator = new OrientationNarrator(_speech);
+
+                // Room-photo highlight (auto): speaks the highlighted object as the player moves the selection in
+                // the still-photo close-up a door opens. Polled in OnUpdate, like the menu narrator.
+                _roomViewNarrator = new RoomViewNarrator(_speech);
             }
             catch (Exception e)
             {
@@ -71,6 +76,7 @@ namespace NoImNotAHumanAccess
         public override void OnUpdate()
         {
             _menuNarrator?.Tick();
+            _roomViewNarrator?.Tick();
 
             if (Input.GetKeyDown(RepeatKey))
             {

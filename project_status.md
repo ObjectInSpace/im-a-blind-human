@@ -48,10 +48,19 @@ close-up with highlightable objects. Three systems needed, re-prioritized:
 - **P0 — unbreak service access.** `FindObjectOfType(Zenject.SceneContext)` failed. Either verify the SceneContext
   type identity (image/ns/name) or capture `IPlayerService` via a Harmony hook on a view `Init(...)` that receives it
   (many do). Unblocks F9 status AND nav-pose reads. The whole Zenject-resolve assumption is the suspect.
-- **SYS-B — read the highlighted object (do first after P0; highest value, no Zenject dep).** Close-up views fire
-  `OnPointerEntered(name, narrativeDescription, gameplayDescription, EConsumable)` (FridgeCloseUpView ~22790) and hold
-  on-screen description TMPs (`_narrativeDescription`/`_gameplayDescription` on Consumable/Mushroomlist close-ups).
-  Hook/read these → speak the highlighted object + description. Dialogue-sink + ControlDescriber patterns.
+- **SYS-B — read the highlighted object.** Splits into two photo layers (entry trace 2026-06-01):
+  - ROOM PHOTO (door→room, the common case) — **BUILT + DEPLOYED 2026-06-01** as `src/World/RoomViewNarrator.cs`
+    (polled in OnUpdate, auto-speaks on highlight change; NO key). Reads `RoomDisplayer._selectedButton`, walks the
+    button's GameObject parents to a known room-object view, speaks a humanized name. NarrativeRoomObject→ENarrativeObject
+    label map (curtain/nightstand/window/cross/toy/cupboards/pictures/magazine/box); others → humanized parent GO name;
+    fallback → button GO name. NAME-ONLY by design (user-confirmed): the description plays as Yarn dialogue on interact,
+    already narrated. Logs `[RoomViewNarrator] highlight: '<name>' (via <how>, buttonGo='<go>')` per change — diagnostic
+    to verify the button→view hierarchy assumption (the one unconfirmed link; full readout built on it with GO-name
+    fallback so something always speaks). New Il2CppRaw.GetParentGameObject. CONFIRM in-game: open a room photo, move
+    the highlight, do names track + read sensibly? If 'via gameobject'/junk names dominate → the parent-walk missed;
+    read the log's buttonGo to find the real hierarchy.
+  - OBJECT CLOSE-UPS (fridge/phone/radio/etc.) — NOT yet built. Have OnPointerEntered(name, narrativeDescription,
+    gameplayDescription) + on-screen desc TMPs → full name+description readout. Build after the room photo is confirmed.
 - **SYS-C — describe the view.** List the objects in the active close-up; descriptions already authored (narrative +
   gameplay), so likely NO image descriptions needed for v1.
 - **SYS-A — lead the player to world objects (nav steering).** The original F10 idea; needs P0 (player pose) + a
