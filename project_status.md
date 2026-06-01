@@ -36,6 +36,27 @@
 - Build: .NET SDK 10 (`dotnet build NoImNotAHumanAccess.csproj`). Output DLL → `<game>\Mods\`.
 
 ## Current Phase
+
+**NEXT UP — Phase: interaction prompts & world HUD (investigation first, nothing built yet).** Dialogue + menus
+are done and committed (HEAD `bb8dc53`). The remaining gap is the moment-to-moment first-person world: a blind
+player has no signal for what they're looking at, what's interactable, "press E to…" prompts, or state changes
+(day/phase, notifications). Start with a READ-ONLY decompile investigation (no code), then report surfaces +
+recommend the first hook before building — the same understand-the-choke-point-first approach that made dialogue
+go smoothly.
+- Candidate surfaces to map in `decompiled/Assembly-CSharp/`: `AInteractableObject` (+ subclasses) for the
+  interactable/targeting model; `_Code.Infrastructure.ControlsViewer` / `ControlView` for on-screen control
+  prompts; `EInfoMessageType` + `SubtitlesView.ShowSubtitlePopup(EInfoMessageType/string)` for popups/notifications
+  (note: the subtitle sink hook from Phase 2 covers `UpdateText` but `ShowSubtitlePopup` is a separate entry).
+- Questions to answer: how the game decides the currently-targeted/interactable object and where its prompt text
+  comes from; whether prompts flow through a hookable method (best) or need a watcher; highest-value first hook
+  (likely the interaction prompt — core gameplay loop).
+- Reusable infra already in place: raw-IL2CPP helpers (`Il2CppRaw` incl. `ReadStringField`/`ReadInt32Field`),
+  reflection-resolved Harmony patching pattern (`DialoguePatches`), `ISpeechOutput` channel, `ControlDescriber`.
+  REMEMBER the IL2CPP image-name rule: `GetClass` takes the ORIGINAL assembly name + ".dll" and the RUNTIME
+  namespace (no `Il2Cpp` prefix) — verify each type's namespace against the interop assembly before use.
+- Build/deploy loop: `dotnet build -c Release` → copy DLL to `<game>\Mods\`; rotate `MelonLoader\Latest.log`
+  aside before each test run; verify by ear AND log.
+
 **Phase 2 — dialogue narration (CONFIRMED in-game 2026-06-01).** All three dialogue/narration surfaces are
 hooked and confirmed working by ear (dialogue, speaker attribution, intro cutscene narration). Diagnostic
 per-line logging has been stripped; only one-time confirmations remain. New files: `src/Dialogue/DialogueNarrator.cs`
