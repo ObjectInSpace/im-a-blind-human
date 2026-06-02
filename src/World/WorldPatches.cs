@@ -2,12 +2,14 @@ using System;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
+using Il2CppInterop.Runtime.InteropTypes;
 using MelonLoader;
+using NoImNotAHumanAccess.Interop;
 
 namespace NoImNotAHumanAccess.World
 {
     /// <summary>
-    /// Harmony hooks for the first-person world HUD — currently the interaction prompt.
+    /// Harmony hooks for the first-person world HUD — the interaction prompt and the room-photo highlight.
     ///
     /// <b>Interaction prompt</b> — <c>_Code.Menues.HUD.HUDPresenter.ShowHint(string subject, string action,
     /// Transform target, ERaycastHintIcon icon)</c> (interop <c>Il2Cpp_Code.Menues.HUD.HUDPresenter</c>; note the
@@ -32,17 +34,25 @@ namespace NoImNotAHumanAccess.World
         private const string ShowHintMethod = "ShowHint";
         private const string HideHintMethod = "HideHint";
 
+        // Room-photo highlight: UIButton.OnHover() fires on the specific button being highlighted, giving us the
+        // button directly (no FindObjectOfType — the RoomDisplayer instance proved unfindable that way).
+        private const string UIButtonFullName = "Il2Cpp_Code.Rooms.UIButton";
+        private const string OnHoverMethod = "OnHover";
+
         private static HudNarrator? _narrator;
+        private static RoomViewNarrator? _roomView;
 
         /// <summary>
         /// Resolve and apply the world-HUD hooks. Safe to call once at init; each hook logs and is skipped on
         /// failure rather than throwing (a missing hook degrades to "less speech", not a crashed mod).
         /// </summary>
-        public static void Apply(HarmonyLib.Harmony harmony, HudNarrator narrator)
+        public static void Apply(HarmonyLib.Harmony harmony, HudNarrator narrator, RoomViewNarrator roomView)
         {
             _narrator = narrator;
+            _roomView = roomView;
             PatchShowHint(harmony);
             PatchHideHint(harmony);
+            PatchUIButtonHover(harmony);
         }
 
         // ---------------- Interaction prompt: HUDPresenter.ShowHint(string, string, Transform, ERaycastHintIcon) ----
@@ -110,6 +120,45 @@ namespace NoImNotAHumanAccess.World
         private static void HideHintPostfix()
         {
             _narrator?.OnHintHidden();
+        }
+
+        // ---------------- Room-photo highlight: UIButton.OnHover() ----------------
+
+        private static void PatchUIButtonHover(HarmonyLib.Harmony harmony)
+        {
+            try
+            {
+                MethodInfo? target = ResolveMethodByArity(GameAsmName, UIButtonFullName, OnHoverMethod, 0);
+                if (target == null)
+                {
+                    MelonLogger.Warning(
+                        $"[WorldPatches] Could not resolve {UIButtonFullName}.{OnHoverMethod}(); " +
+                        "room-photo highlight readout disabled.");
+                    return;
+                }
+
+                harmony.Patch(target, postfix: PostfixOf(nameof(UIButtonHoverPostfix)));
+                MelonLogger.Msg($"[WorldPatches] Patched {UIButtonFullName}.{OnHoverMethod}().");
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Error($"[WorldPatches] PatchUIButtonHover failed: {e}");
+            }
+        }
+
+        /// <summary>Postfix on the room-photo button hover. <paramref name="__instance"/> is the hovered
+        /// <c>UIButton</c>; forward its pointer to the room-view narrator to resolve + speak the object's name.</summary>
+        private static void UIButtonHoverPostfix(Il2CppObjectBase __instance)
+        {
+            try
+            {
+                if (__instance == null) return;
+                _roomView?.OnButtonHovered(Il2CppRaw.Ptr(__instance));
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[WorldPatches] UIButtonHoverPostfix threw: {e.Message}");
+            }
         }
 
         // ---------------- shared resolution helpers ----------------

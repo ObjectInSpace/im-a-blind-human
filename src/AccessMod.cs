@@ -47,19 +47,21 @@ namespace NoImNotAHumanAccess
                 _dialogueNarrator = new DialogueNarrator(_speech);
                 DialoguePatches.Apply(HarmonyInstance, _dialogueNarrator);
 
-                // World HUD: hook the interaction-prompt sink and speak "press [action] to [subject]" prompts.
+                // Room-photo highlight (auto): speaks the highlighted object as the player moves the selection in the
+                // still-photo close-up a door opens. Driven by a UIButton.OnHover hook in WorldPatches (created here
+                // first so it can be passed in).
+                _roomViewNarrator = new RoomViewNarrator(_speech);
+
+                // World HUD: hook the interaction-prompt sink ("press [action] to [subject]") + the room-photo
+                // highlight (UIButton.OnHover).
                 _hudNarrator = new HudNarrator(_speech);
-                WorldPatches.Apply(HarmonyInstance, _hudNarrator);
+                WorldPatches.Apply(HarmonyInstance, _hudNarrator, _roomViewNarrator);
 
                 // Status key (F9): on-demand readout of day/phase/energy/items via the Zenject-resolved controllers.
                 _statusNarrator = new StatusNarrator(_speech);
 
                 // Orientation key (F10): "what's around me" — currently-selectable interactables with bearings.
                 _orientationNarrator = new OrientationNarrator(_speech);
-
-                // Room-photo highlight (auto): speaks the highlighted object as the player moves the selection in
-                // the still-photo close-up a door opens. Polled in OnUpdate, like the menu narrator.
-                _roomViewNarrator = new RoomViewNarrator(_speech);
             }
             catch (Exception e)
             {
@@ -76,7 +78,6 @@ namespace NoImNotAHumanAccess
         public override void OnUpdate()
         {
             _menuNarrator?.Tick();
-            _roomViewNarrator?.Tick();
 
             if (Input.GetKeyDown(RepeatKey))
             {
