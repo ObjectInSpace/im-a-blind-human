@@ -33,6 +33,8 @@ namespace NoImNotAHumanAccess.World
         private const string HudPresenterFullName = "Il2Cpp_Code.Menues.HUD.HUDPresenter";
         private const string ShowHintMethod = "ShowHint";
         private const string HideHintMethod = "HideHint";
+        // Context control-prompt row: the game swaps the whole control set per context via this one method.
+        private const string SetupControlsMethod = "SetupAndShowControlsView";
 
         // Room-photo highlight: UIButton.OnHover() fires on the specific button being highlighted, giving us the
         // button directly (no FindObjectOfType — the RoomDisplayer instance proved unfindable that way).
@@ -50,22 +52,25 @@ namespace NoImNotAHumanAccess.World
         private static HudNarrator? _narrator;
         private static RoomViewNarrator? _roomView;
         private static CloseUpNarrator? _closeUp;
+        private static ControlsNarrator? _controls;
 
         /// <summary>
         /// Resolve and apply the world-HUD hooks. Safe to call once at init; each hook logs and is skipped on
         /// failure rather than throwing (a missing hook degrades to "less speech", not a crashed mod).
         /// </summary>
         public static void Apply(HarmonyLib.Harmony harmony, HudNarrator narrator, RoomViewNarrator roomView,
-            CloseUpNarrator closeUp)
+            CloseUpNarrator closeUp, ControlsNarrator controls)
         {
             _narrator = narrator;
             _roomView = roomView;
             _closeUp = closeUp;
+            _controls = controls;
             PatchShowHint(harmony);
             PatchHideHint(harmony);
             PatchUIButtonHover(harmony);
             PatchFridgePointerEntered(harmony);
             PatchConsumableSetup(harmony);
+            PatchSetupControlsView(harmony);
         }
 
         // ---------------- Interaction prompt: HUDPresenter.ShowHint(string, string, Transform, ERaycastHintIcon) ----
@@ -133,6 +138,41 @@ namespace NoImNotAHumanAccess.World
         private static void HideHintPostfix()
         {
             _narrator?.OnHintHidden();
+        }
+
+        // ---------------- Context control row: HUDPresenter.SetupAndShowControlsView(EControlsList) ----------------
+
+        private static void PatchSetupControlsView(HarmonyLib.Harmony harmony)
+        {
+            try
+            {
+                MethodInfo? target = ResolveMethodByArity(GameAsmName, HudPresenterFullName, SetupControlsMethod, 1);
+                if (target == null)
+                {
+                    MelonLogger.Warning(
+                        $"[WorldPatches] Could not resolve {HudPresenterFullName}.{SetupControlsMethod}(controlsList); " +
+                        "context control-row narration disabled (repeat key still works).");
+                    return;
+                }
+
+                harmony.Patch(target, postfix: PostfixOf(nameof(SetupControlsPostfix)));
+                MelonLogger.Msg($"[WorldPatches] Patched {HudPresenterFullName}.{SetupControlsMethod}(controlsList).");
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Error($"[WorldPatches] PatchSetupControlsView failed: {e}");
+            }
+        }
+
+        /// <summary>
+        /// Postfix on the context control-row swap. <paramref name="controlsList"/> is the <c>EControlsList</c> enum
+        /// taken as its underlying <see cref="int"/> (None=0, InRoom=1, InFridge=2, InPhone=3, InRadio=4,
+        /// InUsualCloseUp=5, RunZone=6, InDialog=7) so we don't bind the interop enum type. The ControlView children
+        /// populate asynchronously, so the narrator arms a deferred read rather than reading here.
+        /// </summary>
+        private static void SetupControlsPostfix(int controlsList)
+        {
+            _controls?.OnContextChanged(controlsList);
         }
 
         // ---------------- Room-photo highlight: UIButton.OnHover() ----------------

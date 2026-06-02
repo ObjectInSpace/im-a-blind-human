@@ -38,3 +38,9 @@ to make the *currently selected* control perceivable:
 Binding paths are read from metadata strings, so the *set* of keys is reliable but exact composite groupings per
 action are confirmed at runtime. Gameplay (first-person horror movement, interaction, any timed/spatial sequences) is
 a separate accessibility problem from menus and is handled in the later gameplay-completeness pass.
+
+## Popups / message windows (mod note, 2026-06-02)
+Selecting an object in a 2D room photo can raise a `PopupWindow` (a message with one or more buttons) that must be
+dismissed before continuing. On controller, **Square** dismisses it; on keyboard, **Space** dismisses it (Enter does
+*not*). The mod does **not** intercept popups — the user presses **Space** to dismiss. (An earlier mod-side popup
+stepper was built and then removed once Space was found to work natively, so the popup is left entirely to the game.)

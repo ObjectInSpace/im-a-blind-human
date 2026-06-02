@@ -168,6 +168,18 @@ namespace NoImNotAHumanAccess.Interop
             return value;
         }
 
+        /// <summary>Read a 1-byte bool instance field by name from an object pointer, by offset. Returns
+        /// <paramref name="fallback"/> if the object/class/field is missing.</summary>
+        public static unsafe bool ReadBoolField(IntPtr objPtr, IntPtr klass, string fieldName, bool fallback = false)
+        {
+            if (objPtr == IntPtr.Zero || klass == IntPtr.Zero) return fallback;
+            IntPtr field = IL2CPP.il2cpp_class_get_field_from_name(klass, fieldName);
+            if (field == IntPtr.Zero) return fallback;
+            bool value = false;
+            IL2CPP.il2cpp_field_get_value(objPtr, field, (void*)(&value));
+            return value;
+        }
+
         /// <summary>
         /// Find a component of the given class on <paramref name="go"/> or any ANCESTOR, by walking the
         /// transform parent chain and calling raw <see cref="GetComponent"/> at each level. Returns zero if
@@ -235,6 +247,18 @@ namespace NoImNotAHumanAccess.Interop
             return *(int*)IL2CPP.il2cpp_object_unbox(boxed);
         }
 
+        /// <summary>Invoke <c>EventSystem.SetSelectedGameObject(GameObject)</c> (or any void instance method taking a
+        /// single object-pointer arg) — passes the GameObject pointer through. Returns true if it ran without throwing.</summary>
+        public static unsafe bool SetSelectedGameObject(IntPtr eventSystemPtr, IntPtr method, IntPtr goPtr)
+        {
+            if (eventSystemPtr == IntPtr.Zero || method == IntPtr.Zero) return false;
+            void** args = stackalloc void*[1];
+            args[0] = (void*)goPtr;
+            IntPtr exc = IntPtr.Zero;
+            IL2CPP.il2cpp_runtime_invoke(method, eventSystemPtr, args, ref exc);
+            return exc == IntPtr.Zero;
+        }
+
         /// <summary>Invoke a method taking one object (reference) argument and returning an object pointer (e.g.
         /// Zenject <c>DiContainer.Resolve(System.Type)</c>). Returns zero on failure or thrown exception.</summary>
         public static unsafe IntPtr InvokeObjectMethodWithObject(IntPtr objPtr, IntPtr method, IntPtr arg)
@@ -245,6 +269,35 @@ namespace NoImNotAHumanAccess.Interop
             IntPtr exc = IntPtr.Zero;
             IntPtr result = IL2CPP.il2cpp_runtime_invoke(method, objPtr, args, ref exc);
             return exc != IntPtr.Zero ? IntPtr.Zero : result;
+        }
+
+        /// <summary>Invoke a parameterless instance method that returns nothing (void), e.g. a private
+        /// <c>Act()</c> / <c>Click()</c>. Returns true if it ran without throwing; false if the object/method was
+        /// missing or the IL2CPP call raised an exception (the managed exception pointer is non-zero).</summary>
+        public static unsafe bool InvokeVoid(IntPtr objPtr, IntPtr method)
+        {
+            if (objPtr == IntPtr.Zero || method == IntPtr.Zero) return false;
+            IntPtr exc = IntPtr.Zero;
+            IL2CPP.il2cpp_runtime_invoke(method, objPtr, (void**)0, ref exc);
+            return exc == IntPtr.Zero;
+        }
+
+        /// <summary>Invoke a STATIC parameterless getter returning an object pointer (e.g. a singleton
+        /// <c>get_Instance</c> or <c>Camera.get_main</c>). Returns zero on failure.</summary>
+        public static unsafe IntPtr InvokeStaticObjectGetter(IntPtr method)
+        {
+            if (method == IntPtr.Zero) return IntPtr.Zero;
+            IntPtr exc = IntPtr.Zero;
+            IntPtr result = IL2CPP.il2cpp_runtime_invoke(method, IntPtr.Zero, (void**)0, ref exc);
+            return exc != IntPtr.Zero ? IntPtr.Zero : result;
+        }
+
+        /// <summary>The main camera object pointer (<c>Camera.get_main</c>), or zero. For WorldToScreenPoint when a
+        /// more specific hover camera isn't available.</summary>
+        public static IntPtr MainCameraPtr()
+        {
+            IntPtr camClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "Camera");
+            return InvokeStaticObjectGetter(GetMethod(camClass, "get_main", 0));
         }
 
         /// <summary>Invoke a parameterless getter returning an object pointer (e.g. <c>SceneContext.get_Container</c>).
@@ -290,6 +343,24 @@ namespace NoImNotAHumanAccess.Interop
             return InvokeStringGetter(tmp, getText);
         }
 
+        /// <summary>Whether a Component's owning GameObject is active in the hierarchy
+        /// (<c>Component.get_gameObject</c> → <c>GameObject.get_activeInHierarchy</c>), raw. False on failure.</summary>
+        public static bool GetComponentGameObjectActive(IntPtr componentPtr)
+        {
+            IntPtr go = GetComponentGameObject(componentPtr);
+            return GetGameObjectActiveInHierarchy(go);
+        }
+
+        /// <summary>Whether a GameObject pointer is active in the hierarchy (<c>GameObject.get_activeInHierarchy</c>),
+        /// raw. False on failure. Use when you already hold a GameObject (not a Component).</summary>
+        public static bool GetGameObjectActiveInHierarchy(IntPtr goPtr)
+        {
+            if (goPtr == IntPtr.Zero) return false;
+            IntPtr goClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "GameObject");
+            IntPtr m = GetMethod(goClass, "get_activeInHierarchy", 0);
+            return InvokeBoolGetter(goPtr, m);
+        }
+
         /// <summary>Read a UnityEngine.Object's <c>name</c> (via <c>get_name</c>) from an object pointer, raw.
         /// Null on failure. Works for any Component/GameObject pointer.</summary>
         public static string? GetUnityObjectName(IntPtr objPtr)
@@ -314,6 +385,53 @@ namespace NoImNotAHumanAccess.Interop
             return InvokeVector3Getter(transform, getPosition);
         }
 
+        /// <summary>
+        /// Convert a world point to screen-space (pixels) using the given <c>Camera</c> pointer's
+        /// <c>WorldToScreenPoint(Vector3)</c>, raw. Returns <c>Vector3.zero</c> on failure. (x,y) are screen pixels,
+        /// z is distance in front of the camera. Use the room photo's hover camera (UIRayCaster.Instance._camera).
+        /// </summary>
+        public static unsafe Vector3 WorldToScreenPoint(IntPtr cameraPtr, Vector3 world)
+        {
+            if (cameraPtr == IntPtr.Zero) return Vector3.zero;
+            IntPtr camClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "Camera");
+            IntPtr m = GetMethod(camClass, "WorldToScreenPoint", 1);
+            if (m == IntPtr.Zero) return Vector3.zero;
+            Vector3 arg = world;
+            void** args = stackalloc void*[1];
+            args[0] = &arg;
+            IntPtr exc = IntPtr.Zero;
+            IntPtr boxed = IL2CPP.il2cpp_runtime_invoke(m, cameraPtr, args, ref exc);
+            if (exc != IntPtr.Zero || boxed == IntPtr.Zero) return Vector3.zero;
+            float* f = (float*)IL2CPP.il2cpp_object_unbox(boxed);
+            return new Vector3(f[0], f[1], f[2]);
+        }
+
+        /// <summary>
+        /// Warp the on-screen mouse pointer to a screen-space position (pixels, origin bottom-left) via the Input
+        /// System's <c>Mouse.current.WarpCursorPosition(Vector2)</c>. The game reads input through the Input System,
+        /// so this is the warp most likely to feed its own UI raycast. Returns true if the call ran. No-op (false) if
+        /// the Input System / current Mouse isn't present.
+        /// </summary>
+        public static unsafe bool WarpMouse(Vector2 screenPos)
+        {
+            IntPtr mouseClass = GetClass("Unity.InputSystem.dll", "UnityEngine.InputSystem", "Mouse");
+            if (mouseClass == IntPtr.Zero) return false;
+            // Mouse.current is a STATIC getter — invoke with a null instance.
+            IntPtr getCurrent = GetMethod(mouseClass, "get_current", 0);
+            if (getCurrent == IntPtr.Zero) return false;
+            IntPtr excCur = IntPtr.Zero;
+            IntPtr mouse = IL2CPP.il2cpp_runtime_invoke(getCurrent, IntPtr.Zero, (void**)0, ref excCur);
+            if (excCur != IntPtr.Zero || mouse == IntPtr.Zero) return false;
+            IntPtr warp = GetMethod(mouseClass, "WarpCursorPosition", 1);
+            if (warp == IntPtr.Zero) return false;
+            Vector2 arg = screenPos;
+            void** args = stackalloc void*[1];
+            args[0] = &arg;
+            IntPtr exc = IntPtr.Zero;
+            IL2CPP.il2cpp_runtime_invoke(warp, mouse, args, ref exc);
+            return exc == IntPtr.Zero;
+        }
+
         /// <summary>Invoke a parameterless bool getter on an object pointer. Returns <paramref name="fallback"/> on
         /// failure (treats a thrown getter as the fallback).</summary>
         public static unsafe bool InvokeBoolGetter(IntPtr objPtr, IntPtr method, bool fallback = false)
@@ -336,6 +454,58 @@ namespace NoImNotAHumanAccess.Interop
             if (exc != IntPtr.Zero || boxed == IntPtr.Zero) return Vector3.zero;
             float* f = (float*)IL2CPP.il2cpp_object_unbox(boxed);
             return new Vector3(f[0], f[1], f[2]);
+        }
+
+        /// <summary>
+        /// World position of the main camera (<c>Camera.main.transform.position</c>), via raw static
+        /// <c>Camera.get_main()</c> then <c>Component.get_transform</c> → <c>Transform.get_position</c>. In a
+        /// first-person game the camera tracks the player, so this is a Zenject-free proxy for the player position.
+        /// Returns <c>Vector3.zero</c> on failure (no main camera tagged, etc.).
+        /// </summary>
+        public static unsafe Vector3 GetMainCameraPosition()
+        {
+            IntPtr camClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "Camera");
+            IntPtr getMain = GetMethod(camClass, "get_main", 0);
+            if (getMain == IntPtr.Zero) return Vector3.zero;
+            IntPtr exc = IntPtr.Zero;
+            IntPtr cam = IL2CPP.il2cpp_runtime_invoke(getMain, IntPtr.Zero, (void**)0, ref exc); // static
+            if (exc != IntPtr.Zero || cam == IntPtr.Zero) return Vector3.zero;
+            return GetComponentWorldPosition(cam);
+        }
+
+        /// <summary>
+        /// Count live objects of an IL2CPP class via <c>UnityEngine.Object.FindObjectsByType(Type,
+        /// FindObjectsInactive, FindObjectsSortMode)</c> (the non-deprecated Unity 2023+ API), returning the result
+        /// array length. Diagnostic helper: confirms whether instances of a type exist in the scene at all,
+        /// independent of any provider/registry. Returns -1 on failure.
+        /// </summary>
+        public static int CountObjectsByType(IntPtr klass, bool includeInactive = true) =>
+            FindObjectsByType(klass, includeInactive).Length;
+
+        /// <summary>
+        /// Return all live objects of an IL2CPP class as object pointers, via
+        /// <c>UnityEngine.Object.FindObjectsByType(Type, FindObjectsInactive, FindObjectsSortMode)</c> (the
+        /// non-deprecated Unity 2023+ API). Empty array on failure. Use to enumerate a scene type directly when there
+        /// is no usable provider/registry (e.g. the room-photo <c>UIButton</c> set).
+        /// </summary>
+        public static unsafe IntPtr[] FindObjectsByType(IntPtr klass, bool includeInactive = true)
+        {
+            if (klass == IntPtr.Zero) return Array.Empty<IntPtr>();
+            IntPtr objClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "Object");
+            IntPtr method = GetMethod(objClass, "FindObjectsByType", 3);
+            if (method == IntPtr.Zero) return Array.Empty<IntPtr>();
+            IntPtr typeObj = TypeObject(klass);
+            if (typeObj == IntPtr.Zero) return Array.Empty<IntPtr>();
+            int findInactive = includeInactive ? 1 : 0; // FindObjectsInactive.Include / .Exclude
+            int sortMode = 0;                            // FindObjectsSortMode.None
+            void** args = stackalloc void*[3];
+            args[0] = (void*)typeObj;
+            args[1] = &findInactive;
+            args[2] = &sortMode;
+            IntPtr exc = IntPtr.Zero;
+            IntPtr result = IL2CPP.il2cpp_runtime_invoke(method, IntPtr.Zero, args, ref exc); // static
+            if (exc != IntPtr.Zero || result == IntPtr.Zero) return Array.Empty<IntPtr>();
+            return ReadObjectArray(result);
         }
 
         /// <summary>

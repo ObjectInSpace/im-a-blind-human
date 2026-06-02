@@ -40,6 +40,12 @@ namespace NoImNotAHumanAccess.Dialogue
         private const string GameAsmName = "Assembly-CSharp";
         private const string SubtitlesViewFullName = "Il2Cpp_Code.DialogSystem.SubtitlesView";
         private const string UpdateTextMethod = "UpdateText";
+        private const string ShowSubtitlePopupMethod = "ShowSubtitlePopup";
+        private const string ShowDialogForTimeMethod = "ShowDialogForTime";
+
+        // SubtitlesView raw handles for reading the resolved _text after an enum popup (resolved lazily).
+        private static IntPtr _subtitlesViewClass;
+        private static bool _svResolved;
 
         // --- Yarn line view ---
         private const string YarnAsmName = "Il2CppYarnSpinner.Unity";
@@ -74,6 +80,8 @@ namespace NoImNotAHumanAccess.Dialogue
         {
             _narrator = narrator;
             PatchSubtitleSink(harmony);
+            PatchSubtitlePopup(harmony);
+            PatchInfoMessage(harmony);
             PatchYarnLineView(harmony);
             PatchYarnReader(harmony);
         }
@@ -106,6 +114,106 @@ namespace NoImNotAHumanAccess.Dialogue
         private static void UpdateTextPostfix(string text)
         {
             _narrator?.OnLine(text);
+        }
+
+        // ---------------- Info popups: SubtitlesView.ShowSubtitlePopup(string) ----------------
+        // Transient "info" toasts that do NOT route through UpdateText — e.g. the "you can't open this door now"
+        // message when you try a door that's locked by time-of-day/day (AActionableObjectView resolves its
+        // _cantOpenCauseOfDay / _cantOpenCauseOfTimeOfDay LocalizedString and shows it here). We narrate the string
+        // overload (already-resolved text). The EInfoMessageType overload (fixed game events) resolves its text
+        // internally, so a postfix can't read it directly — left for a follow-up if those need narrating too.
+
+        private static void PatchSubtitlePopup(HarmonyLib.Harmony harmony)
+        {
+            try
+            {
+                MethodInfo? target = ResolveMethod(
+                    GameAsmName, SubtitlesViewFullName, ShowSubtitlePopupMethod, new[] { typeof(string) });
+                if (target == null)
+                {
+                    MelonLogger.Warning(
+                        $"[DialoguePatches] Could not resolve {SubtitlesViewFullName}.{ShowSubtitlePopupMethod}(string); " +
+                        "info-popup narration (e.g. can't-open-door) disabled.");
+                    return;
+                }
+
+                harmony.Patch(target, postfix: PostfixOf(nameof(ShowSubtitlePopupPostfix)));
+                MelonLogger.Msg($"[DialoguePatches] Patched {SubtitlesViewFullName}.{ShowSubtitlePopupMethod}(string).");
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Error($"[DialoguePatches] PatchSubtitlePopup failed: {e}");
+            }
+        }
+
+        private static void ShowSubtitlePopupPostfix(string message)
+        {
+            _narrator?.OnLine(message);
+        }
+
+        // ---------------- Info-message toasts: SubtitlesView.ShowDialogForTime(EInfoMessageType, TimeSpan) ----------------
+        // The EInfoMessageType popups (day-end, can't-sleep, no-more-radio, clocks, …) resolve the enum to a
+        // LocalizedString via the view's _messages table and show it — WITHOUT routing through UpdateText, so they
+        // weren't narrated. We can't read the resolved string from the enum arg in a postfix, so instead we read the
+        // view's _text (RTLTextMeshPro) right after the show call: by then it holds the resolved, localized message.
+        // Hooking ShowDialogForTime (the common sink both overloads funnel into) covers enum AND string toasts.
+
+        private static void PatchInfoMessage(HarmonyLib.Harmony harmony)
+        {
+            try
+            {
+                Type? type = ResolveType(GameAsmName, SubtitlesViewFullName);
+                if (type == null) return;
+
+                var targets = type
+                    .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
+                    .Where(m => m.Name == ShowDialogForTimeMethod && m.GetParameters().Length == 2)
+                    .ToArray();
+                if (targets.Length == 0)
+                {
+                    MelonLogger.Warning($"[DialoguePatches] No {SubtitlesViewFullName}.{ShowDialogForTimeMethod}/2; " +
+                                        "info-message-toast narration disabled.");
+                    return;
+                }
+
+                foreach (var t in targets)
+                    harmony.Patch(t, postfix: PostfixOf(nameof(ShowDialogForTimePostfix)));
+                MelonLogger.Msg($"[DialoguePatches] Patched {targets.Length} {SubtitlesViewFullName}.{ShowDialogForTimeMethod}/2 overload(s).");
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Error($"[DialoguePatches] PatchInfoMessage failed: {e}");
+            }
+        }
+
+        /// <summary>Postfix on ShowDialogForTime: read the now-resolved on-screen text from the view's _text field.</summary>
+        private static void ShowDialogForTimePostfix(Il2CppObjectBase __instance)
+        {
+            try
+            {
+                if (__instance == null) return;
+                IntPtr viewPtr = IL2CPP.Il2CppObjectBaseToPtr(__instance);
+                if (viewPtr == IntPtr.Zero) return;
+
+                EnsureSubtitlesViewResolved();
+                if (_subtitlesViewClass == IntPtr.Zero) return;
+
+                string? text = Il2CppRaw.ReadTmpFieldText(viewPtr, _subtitlesViewClass, "_text");
+                MelonLogger.Msg($"[DialoguePatches] ShowDialogForTime fired; _text='{text}'.");
+                if (!string.IsNullOrWhiteSpace(text)) _narrator?.OnLine(text);
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[DialoguePatches] ShowDialogForTimePostfix threw: {e.Message}");
+            }
+        }
+
+        private static void EnsureSubtitlesViewResolved()
+        {
+            if (_svResolved) return;
+            _svResolved = true;
+            _subtitlesViewClass = Il2CppRaw.GetClass("Assembly-CSharp.dll", "_Code.DialogSystem", "SubtitlesView");
+            MelonLogger.Msg($"[DialoguePatches] SubtitlesView resolved for _text read: {_subtitlesViewClass != IntPtr.Zero}");
         }
 
         // ---------------- Yarn dialogue: LineView.RunLine(LocalizedLine, Action) ----------------
