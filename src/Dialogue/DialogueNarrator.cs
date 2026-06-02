@@ -2,6 +2,7 @@ using System;
 using MelonLoader;
 using NoImNotAHumanAccess.Menus;
 using NoImNotAHumanAccess.Speech;
+using UnityEngine;
 
 namespace NoImNotAHumanAccess.Dialogue
 {
@@ -22,6 +23,13 @@ namespace NoImNotAHumanAccess.Dialogue
     {
         private readonly ISpeechOutput _speech;
         private string _lastSpoken = string.Empty;
+        private float _lastSpokenAt = float.NegativeInfinity;
+
+        // De-dupe window: the typewriter reveal re-calls the sink with the same final string many times within a
+        // fraction of a second, so suppress an identical line that repeats inside this window. But a line that recurs
+        // LATER (e.g. the same info popup — "no more radio today" — triggered again minutes on) is a real new event
+        // and must be spoken again, so the de-dupe is time-bounded, not permanent.
+        private const float DedupeWindowSeconds = 1.5f;
 
         public DialogueNarrator(ISpeechOutput speech) => _speech = speech;
 
@@ -51,10 +59,13 @@ namespace NoImNotAHumanAccess.Dialogue
                         text = $"{s}: {text}";
                 }
 
-                // Typewriter reveal re-calls the sink with the same final string repeatedly; a hide clears it to
-                // empty (already dropped above). Speak a given line only once while it stays current.
-                if (text == _lastSpoken) return;
+                // Typewriter reveal re-calls the sink with the same final string repeatedly within a moment; suppress
+                // an identical repeat only inside the short de-dupe window. The same text recurring later (e.g. an
+                // info popup re-triggered) falls outside the window and is spoken again.
+                float now = Time.realtimeSinceStartup;
+                if (text == _lastSpoken && now - _lastSpokenAt < DedupeWindowSeconds) { _lastSpokenAt = now; return; }
                 _lastSpoken = text;
+                _lastSpokenAt = now;
 
                 _speech.Speak(text, interrupt: true);
             }
