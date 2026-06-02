@@ -68,8 +68,16 @@ close-up with highlightable objects. Three systems needed, re-prioritized:
     enum entirely → speak the button GO name directly. Simpler and correct. (Il2CppRaw.GetParentGameObject now unused by
     this narrator but kept as a general helper.) Names are raw GO names (humanized) — should re-confirm they read
     sensibly across rooms (characters/TV/fridge too); upgrade to a curated label map only if some read poorly.
-  - OBJECT CLOSE-UPS (fridge/phone/radio/etc.) — NOT yet built. Have OnPointerEntered(name, narrativeDescription,
-    gameplayDescription) + on-screen desc TMPs → full name+description readout. Build after the room photo is confirmed.
+  - OBJECT CLOSE-UPS — **BUILT + DEPLOYED 2026-06-01** (`src/World/CloseUpNarrator.cs`). Traced: only TWO close-ups
+    have a highlight-with-description surface. (1) FridgeCloseUpView (multi-item grid) — Harmony postfix on
+    `OnPointerEntered(name, narrativeDescription, gameplayDescription, EConsumable)`, strings arrive resolved →
+    OnFridgeItem. (2) ConsumableCloseUpView (single-item confirm) — postfix on `SetupConsumable(EConsumable)`, then read
+    the view's `_name`/`_gameplayDescription`/`_narrativeDescription` RTLTextMeshPro fields off __instance (new
+    Il2CppRaw.ReadTmpFieldText). Speaks "name. gameplay-description." (prefers gameplay over narrative; narrative only
+    if no gameplay). Mushroomlist/Radio/Phone = own UIs, no highlight grid → out of scope. CONFIRM in-game: log
+    `[WorldPatches] Patched ...FridgeCloseUpView.OnPointerEntered` + `...ConsumableCloseUpView.SetupConsumable` at init;
+    open the fridge, hover items → hear "name. description."; open a consumable confirm → hear it. If patched but
+    silent → method name/arity off, or the TMP field names differ (consumable). UNVERIFIED until tested.
 - **SYS-C — describe the view.** List the objects in the active close-up; descriptions already authored (narrative +
   gameplay), so likely NO image descriptions needed for v1.
 - **SYS-A — lead the player to world objects (nav steering).** The original F10 idea; needs P0 (player pose) + a

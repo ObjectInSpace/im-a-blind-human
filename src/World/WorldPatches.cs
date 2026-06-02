@@ -39,20 +39,33 @@ namespace NoImNotAHumanAccess.World
         private const string UIButtonFullName = "Il2Cpp_Code.Rooms.UIButton";
         private const string OnHoverMethod = "OnHover";
 
+        // Object close-ups: the two views with a highlight-with-description surface. Fridge gives resolved strings
+        // directly; the consumable confirm populates its own TMP fields, so we read them off __instance after.
+        private const string FridgeViewFullName = "Il2Cpp_Code.Infrastructure.CloseUps.Views.FridgeCloseUpView";
+        private const string OnPointerEnteredMethod = "OnPointerEntered";
+        private const string ConsumableViewFullName =
+            "Il2Cpp_Code.Infrastructure._NINAH__CloseUps.Views.Consumables.ConsumableCloseUpView";
+        private const string SetupConsumableMethod = "SetupConsumable";
+
         private static HudNarrator? _narrator;
         private static RoomViewNarrator? _roomView;
+        private static CloseUpNarrator? _closeUp;
 
         /// <summary>
         /// Resolve and apply the world-HUD hooks. Safe to call once at init; each hook logs and is skipped on
         /// failure rather than throwing (a missing hook degrades to "less speech", not a crashed mod).
         /// </summary>
-        public static void Apply(HarmonyLib.Harmony harmony, HudNarrator narrator, RoomViewNarrator roomView)
+        public static void Apply(HarmonyLib.Harmony harmony, HudNarrator narrator, RoomViewNarrator roomView,
+            CloseUpNarrator closeUp)
         {
             _narrator = narrator;
             _roomView = roomView;
+            _closeUp = closeUp;
             PatchShowHint(harmony);
             PatchHideHint(harmony);
             PatchUIButtonHover(harmony);
+            PatchFridgePointerEntered(harmony);
+            PatchConsumableSetup(harmony);
         }
 
         // ---------------- Interaction prompt: HUDPresenter.ShowHint(string, string, Transform, ERaycastHintIcon) ----
@@ -158,6 +171,73 @@ namespace NoImNotAHumanAccess.World
             catch (Exception e)
             {
                 MelonLogger.Warning($"[WorldPatches] UIButtonHoverPostfix threw: {e.Message}");
+            }
+        }
+
+        // ---------------- Object close-ups: Fridge.OnPointerEntered + Consumable.SetupConsumable ----------------
+
+        private static void PatchFridgePointerEntered(HarmonyLib.Harmony harmony)
+        {
+            try
+            {
+                // OnPointerEntered(string name, string narrativeDescription, string gameplayDescription, EConsumable).
+                MethodInfo? target = ResolveMethodByArity(GameAsmName, FridgeViewFullName, OnPointerEnteredMethod, 4);
+                if (target == null)
+                {
+                    MelonLogger.Warning(
+                        $"[WorldPatches] Could not resolve {FridgeViewFullName}.{OnPointerEnteredMethod}; " +
+                        "fridge item readout disabled.");
+                    return;
+                }
+                harmony.Patch(target, postfix: PostfixOf(nameof(FridgePointerEnteredPostfix)));
+                MelonLogger.Msg($"[WorldPatches] Patched {FridgeViewFullName}.{OnPointerEnteredMethod}.");
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Error($"[WorldPatches] PatchFridgePointerEntered failed: {e}");
+            }
+        }
+
+        /// <summary>Postfix on the fridge item hover. The three strings match the original parameter names so Harmony
+        /// injects them; the trailing <c>EConsumable</c> is intentionally not declared.</summary>
+        private static void FridgePointerEnteredPostfix(string name, string narrativeDescription, string gameplayDescription)
+        {
+            _closeUp?.OnFridgeItem(name, narrativeDescription, gameplayDescription);
+        }
+
+        private static void PatchConsumableSetup(HarmonyLib.Harmony harmony)
+        {
+            try
+            {
+                MethodInfo? target = ResolveMethodByArity(GameAsmName, ConsumableViewFullName, SetupConsumableMethod, 1);
+                if (target == null)
+                {
+                    MelonLogger.Warning(
+                        $"[WorldPatches] Could not resolve {ConsumableViewFullName}.{SetupConsumableMethod}; " +
+                        "consumable readout disabled.");
+                    return;
+                }
+                harmony.Patch(target, postfix: PostfixOf(nameof(ConsumableSetupPostfix)));
+                MelonLogger.Msg($"[WorldPatches] Patched {ConsumableViewFullName}.{SetupConsumableMethod}.");
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Error($"[WorldPatches] PatchConsumableSetup failed: {e}");
+            }
+        }
+
+        /// <summary>Postfix on the consumable confirm setup. <paramref name="__instance"/> is the view whose TMP
+        /// description fields were just populated; hand its pointer to the narrator to read + speak them.</summary>
+        private static void ConsumableSetupPostfix(Il2CppObjectBase __instance)
+        {
+            try
+            {
+                if (__instance == null) return;
+                _closeUp?.OnConsumableSetup(Il2CppRaw.Ptr(__instance));
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[WorldPatches] ConsumableSetupPostfix threw: {e.Message}");
             }
         }
 

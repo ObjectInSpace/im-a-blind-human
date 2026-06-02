@@ -26,6 +26,7 @@ namespace NoImNotAHumanAccess
         private StatusNarrator? _statusNarrator;
         private OrientationNarrator? _orientationNarrator;
         private RoomViewNarrator? _roomViewNarrator;
+        private CloseUpNarrator? _closeUpNarrator;
 
         // F8 = manual repeat/test trigger; F9 = status readout (day/phase/energy/items); F10 = "where am I"
         // orientation (room + occupants + exit). The game's UI/world maps bind no F-key (verified key set:
@@ -52,10 +53,14 @@ namespace NoImNotAHumanAccess
                 // first so it can be passed in).
                 _roomViewNarrator = new RoomViewNarrator(_speech);
 
-                // World HUD: hook the interaction-prompt sink ("press [action] to [subject]") + the room-photo
-                // highlight (UIButton.OnHover).
+                // Object close-ups (fridge item grid / consumable confirm): speak "name. description." on highlight,
+                // driven by Fridge.OnPointerEntered + Consumable.SetupConsumable hooks in WorldPatches.
+                _closeUpNarrator = new CloseUpNarrator(_speech);
+
+                // World HUD: hook the interaction-prompt sink ("press [action] to [subject]"), the room-photo
+                // highlight (UIButton.OnHover), and the object close-ups.
                 _hudNarrator = new HudNarrator(_speech);
-                WorldPatches.Apply(HarmonyInstance, _hudNarrator, _roomViewNarrator);
+                WorldPatches.Apply(HarmonyInstance, _hudNarrator, _roomViewNarrator, _closeUpNarrator);
 
                 // Status key (F9): on-demand readout of day/phase/energy/items via the Zenject-resolved controllers.
                 _statusNarrator = new StatusNarrator(_speech);

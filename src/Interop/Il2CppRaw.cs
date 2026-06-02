@@ -278,6 +278,18 @@ namespace NoImNotAHumanAccess.Interop
             return result;
         }
 
+        /// <summary>Read the displayed text of a TMP_Text-typed instance FIELD (e.g. a view's <c>_name</c> /
+        /// <c>_narrativeDescription</c> RTLTextMeshPro field): read the field object, then invoke <c>TMP_Text.get_text</c>
+        /// on it (RTLTextMeshPro derives from TMP_Text, so the getter binds). Null if anything is missing.</summary>
+        public static string? ReadTmpFieldText(IntPtr objPtr, IntPtr objClass, string fieldName)
+        {
+            IntPtr tmp = ReadObjectField(objPtr, objClass, fieldName);
+            if (tmp == IntPtr.Zero) return null;
+            IntPtr tmpClass = GetClass("Unity.TextMeshPro.dll", "TMPro", "TMP_Text");
+            IntPtr getText = GetMethod(tmpClass, "get_text", 0);
+            return InvokeStringGetter(tmp, getText);
+        }
+
         /// <summary>Read a UnityEngine.Object's <c>name</c> (via <c>get_name</c>) from an object pointer, raw.
         /// Null on failure. Works for any Component/GameObject pointer.</summary>
         public static string? GetUnityObjectName(IntPtr objPtr)
