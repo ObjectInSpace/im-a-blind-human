@@ -6,7 +6,7 @@ using NoImNotAHumanAccess.Speech;
 using NoImNotAHumanAccess.World;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(NoImNotAHumanAccess.AccessMod), "No I'm Not a Human Access", "0.0.1", "objectinspace")]
+[assembly: MelonInfo(typeof(NoImNotAHumanAccess.AccessMod), "I'm a Blind Human", "0.7.0", "objectinspace")]
 [assembly: MelonGame("Trioskaz", "NoImNotAHuman")]
 
 namespace NoImNotAHumanAccess
@@ -95,8 +95,8 @@ namespace NoImNotAHumanAccess
                 // Orientation key (F10): "what's around me" — currently-selectable interactables with bearings.
                 _orientationNarrator = new OrientationNarrator(_speech);
 
-                // Action menu (F11 cycle / Shift+F11 back / F12 activate): pick an available interaction from a list
-                // and the game performs it without the player walking to the object.
+                // Action menu (3D scene): arrows cycle an available interaction from a list and Enter activates it, so
+                // the game performs it without the player walking to the object. Routed via the ThreeD input context.
                 _actionMenu = new ActionMenu(_speech);
 
                 // 2D diagnostic (F8): dump the live room-photo UIButton set, to design the 2D object-stepping menu.
@@ -118,7 +118,7 @@ namespace NoImNotAHumanAccess
 
         public override void OnLateInitializeMelon()
         {
-            Speak("No I'm Not a Human accessibility mod loaded.");
+            Speak("I'm a Blind Human accessibility mod loaded.");
         }
 
         public override void OnUpdate()

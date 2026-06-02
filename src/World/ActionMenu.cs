@@ -26,7 +26,7 @@ namespace NoImNotAHumanAccess.World
     /// proxy for bearings is <c>Camera.main</c> (the <see cref="ZenjectResolver"/> path hard-crashes the game).
     ///
     /// Activation: <c>AActionableObjectView.Act()</c> — the private method the game itself runs on interaction. Whether
-    /// it fires on a NON-adjacent object (the whole point of this feature) is verified the first time F12 activates a
+    /// it fires on a NON-adjacent object (the whole point of this feature) is verified the first time Enter activates a
     /// far entry; if it no-ops/crashes cold, the activation strategy changes (e.g. MoveXZ/TeleportTo to its
     /// <c>_standingPos</c> first, or drive the input/raycast path). Never throws (a native Act() crash can't be caught).
     /// </summary>
@@ -81,7 +81,7 @@ namespace NoImNotAHumanAccess.World
                 EnsureResolved();
                 if (_selected == IntPtr.Zero)
                 {
-                    _speech.Speak("Nothing selected. Press F11 to choose an interaction.", interrupt: true);
+                    _speech.Speak("Nothing selected. Use the arrow keys to choose an interaction.", interrupt: true);
                     return;
                 }
 

@@ -152,23 +152,6 @@ namespace NoImNotAHumanAccess.Interop
             return exc != IntPtr.Zero ? IntPtr.Zero : result;
         }
 
-        /// <summary>Get a GameObject pointer's parent GameObject pointer via <c>get_transform</c> → <c>get_parent</c>
-        /// → <c>get_gameObject</c>, raw. Zero if there is no parent (root) or on failure.</summary>
-        public static unsafe IntPtr GetParentGameObject(IntPtr goPtr)
-        {
-            if (goPtr == IntPtr.Zero) return IntPtr.Zero;
-            IntPtr goClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "GameObject");
-            IntPtr getTransform = GetMethod(goClass, "get_transform", 0);
-            IntPtr tr = InvokeObjectGetter(goPtr, getTransform);
-            if (tr == IntPtr.Zero) return IntPtr.Zero;
-            IntPtr trClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "Transform");
-            IntPtr getParent = GetMethod(trClass, "get_parent", 0);
-            IntPtr parent = InvokeObjectGetter(tr, getParent);
-            if (parent == IntPtr.Zero) return IntPtr.Zero;
-            IntPtr getGo = GetMethod(GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "Component"), "get_gameObject", 0);
-            return InvokeObjectGetter(parent, getGo);
-        }
-
         /// <summary>Get a Component pointer's owning GameObject pointer via Component.get_gameObject. Zero on failure.</summary>
         public static unsafe IntPtr GetComponentGameObject(IntPtr componentPtr)
         {
@@ -281,21 +264,6 @@ namespace NoImNotAHumanAccess.Interop
             IntPtr boxed = IL2CPP.il2cpp_runtime_invoke(method, objPtr, (void**)0, ref exc);
             if (exc != IntPtr.Zero || boxed == IntPtr.Zero) return fallback;
             // Value-type returns come back boxed; the unboxed payload sits one object header in.
-            return *(int*)IL2CPP.il2cpp_object_unbox(boxed);
-        }
-
-        /// <summary>Invoke a method taking a single value-type-by-int argument and returning a 32-bit value (e.g.
-        /// <c>IConsumablesController.Count(EConsumable)</c>, where the enum is passed as its underlying int).
-        /// Returns <paramref name="fallback"/> on failure.</summary>
-        public static unsafe int InvokeInt32MethodWithEnum(IntPtr objPtr, IntPtr method, int enumValue, int fallback = -1)
-        {
-            if (objPtr == IntPtr.Zero || method == IntPtr.Zero) return fallback;
-            int arg = enumValue;
-            void** args = stackalloc void*[1];
-            args[0] = &arg;
-            IntPtr exc = IntPtr.Zero;
-            IntPtr boxed = IL2CPP.il2cpp_runtime_invoke(method, objPtr, args, ref exc);
-            if (exc != IntPtr.Zero || boxed == IntPtr.Zero) return fallback;
             return *(int*)IL2CPP.il2cpp_object_unbox(boxed);
         }
 

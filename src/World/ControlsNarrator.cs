@@ -53,8 +53,6 @@ namespace NoImNotAHumanAccess.World
         // Cached IL2CPP handles (resolved lazily, once).
         private IntPtr _controlsListViewClass;
         private IntPtr _controlViewClass;
-        private IntPtr _tmpTextClass;
-        private IntPtr _tmpGetText;
         private bool _resolved;
 
         public ControlsNarrator(ISpeechOutput speech) => _speech = speech;
@@ -206,11 +204,9 @@ namespace NoImNotAHumanAccess.World
             _resolved = true;
             _controlsListViewClass = Il2CppRaw.GetClass(GameAsm, ControlsNs, "ControlsListView");
             _controlViewClass = Il2CppRaw.GetClass(GameAsm, ControlsNs, "ControlView");
-            _tmpTextClass = Il2CppRaw.GetClass("Unity.TextMeshPro.dll", "TMPro", "TMP_Text");
-            _tmpGetText = Il2CppRaw.GetMethod(_tmpTextClass, "get_text", 0);
             MelonLogger.Msg(
                 $"[ControlsNarrator] resolved: listView={_controlsListViewClass != IntPtr.Zero} " +
-                $"controlView={_controlViewClass != IntPtr.Zero} tmp={_tmpTextClass != IntPtr.Zero}");
+                $"controlView={_controlViewClass != IntPtr.Zero}");
             return _controlsListViewClass != IntPtr.Zero && _controlViewClass != IntPtr.Zero;
         }
     }

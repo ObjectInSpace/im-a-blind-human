@@ -4,10 +4,10 @@ using NoImNotAHumanAccess.Menus;
 namespace NoImNotAHumanAccess.World
 {
     /// <summary>
-    /// Shared, side-effect-free helpers for the menu steppers (3D <see cref="ActionMenu"/>, 2D <see cref="TwoDProbe"/>,
-    /// <see cref="MainMenuStepper"/>). Consolidates logic that was duplicated across all three. The bigger
-    /// template-method base for the two pointer-tracked self-announcing steppers (3D + 2D) is deferred until the
-    /// steppers are verified in-game; these pure utilities are the zero-risk shared parts.
+    /// Shared, side-effect-free helpers for the menu steppers (3D <see cref="ActionMenu"/>, 2D <see cref="TwoDProbe"/>).
+    /// Consolidates logic that was duplicated across both. The bigger template-method base for the two pointer-tracked
+    /// self-announcing steppers (3D + 2D) is deferred until the steppers are verified in-game; these pure utilities are
+    /// the zero-risk shared parts.
     /// </summary>
     public static class MenuStepUtil
     {

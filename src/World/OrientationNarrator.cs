@@ -37,7 +37,6 @@ namespace NoImNotAHumanAccess.World
         // Lazily-resolved handles.
         private bool _resolved;
         private IntPtr _viewProviderClass, _getViews;       // ActionableObjectsViewProvider + get_ActionableObjectViews
-        private IntPtr _viewClass, _getCanShowHint;          // AActionableObjectView + get_CanShowHint
         private IntPtr _playerService, _getPosition, _getLookDirection;
 
         public OrientationNarrator(ISpeechOutput speech) => _speech = speech;
@@ -134,10 +133,6 @@ namespace NoImNotAHumanAccess.World
                 if (_viewProviderClass != IntPtr.Zero)
                     _getViews = Il2CppRaw.GetMethod(_viewProviderClass, "get_ActionableObjectViews", 0);
 
-                _viewClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure.ActionableObjects", "AActionableObjectView");
-                if (_viewClass != IntPtr.Zero)
-                    _getCanShowHint = Il2CppRaw.GetMethod(_viewClass, "get_CanShowHint", 0);
-
                 _playerService = ZenjectResolver.Resolve("_Code.Infrastructure.Player", "IPlayerService");
                 if (_playerService != IntPtr.Zero)
                 {
@@ -147,7 +142,7 @@ namespace NoImNotAHumanAccess.World
                 }
 
                 MelonLogger.Msg($"[OrientationNarrator] resolved: provider={_viewProviderClass != IntPtr.Zero} " +
-                                $"getViews={_getViews != IntPtr.Zero} canShowHint={_getCanShowHint != IntPtr.Zero} " +
+                                $"getViews={_getViews != IntPtr.Zero} " +
                                 $"player={_playerService != IntPtr.Zero} getPos={_getPosition != IntPtr.Zero}");
             }
             catch (Exception e)
