@@ -32,6 +32,8 @@ namespace NoImNotAHumanAccess
         private RoomViewNarrator? _roomViewNarrator;
         private CloseUpNarrator? _closeUpNarrator;
         private ControlsNarrator? _controlsNarrator;
+        private SignNarrator? _signNarrator;
+        private ShotNarrator? _shotNarrator;
 
         // F7 = repeat the current context's control row ("what can I do here"); F8 = manual repeat/test trigger;
         // F9 = status readout (day/phase/energy/items); F10 = "where am I" orientation. The game's UI/world maps
@@ -72,10 +74,22 @@ namespace NoImNotAHumanAccess
                 // WorldPatches so the SetupAndShowControlsView hook can drive its first-encounter readout.
                 _controlsNarrator = new ControlsNarrator(_speech);
 
+                // Inspection signs (teeth/eyes/armpit/aura-photo): the visitor-detection loop. Speaks a DESCRIPTION of
+                // the sign image (round-robin from balanced pools) so the player judges human vs visitor themselves —
+                // never announces the answer. Driven by the DialogView.ShowSign hook in WorldPatches.
+                _signNarrator = new SignNarrator(_speech);
+
+                // Shooting outcome: after the player shoots someone, announce whether they were a human or a visitor
+                // (the cutscene reveals it visually). Driven by the Yarn Kill* command hooks in WorldPatches (postfix,
+                // so the announcement follows the shot).
+                _shotNarrator = new ShotNarrator(_speech);
+
                 // World HUD: hook the interaction-prompt sink ("press [action] to [subject]"), the room-photo
-                // highlight (UIButton.OnHover), the object close-ups, and the context control-row swap.
+                // highlight (UIButton.OnHover), the object close-ups, the context control-row swap, the inspection
+                // signs, and the shooting outcome.
                 _hudNarrator = new HudNarrator(_speech);
-                WorldPatches.Apply(HarmonyInstance, _hudNarrator, _roomViewNarrator, _closeUpNarrator, _controlsNarrator);
+                WorldPatches.Apply(HarmonyInstance, _hudNarrator, _roomViewNarrator, _closeUpNarrator, _controlsNarrator,
+                    _signNarrator, _shotNarrator);
 
                 // Status key (F9): on-demand readout of day/phase/energy/items via the Zenject-resolved controllers.
                 _statusNarrator = new StatusNarrator(_speech);

@@ -259,6 +259,20 @@ namespace NoImNotAHumanAccess.Interop
             return exc == IntPtr.Zero;
         }
 
+        /// <summary>Invoke a method taking a single value-type-by-int argument (an enum passed as its underlying int)
+        /// and returning an object pointer — e.g. <c>ICharactersManager.GetCharacter(ECharacterType)</c> returning a
+        /// <c>CharacterSOData</c>. Returns zero on failure or thrown exception.</summary>
+        public static unsafe IntPtr InvokeObjectMethodWithEnum(IntPtr objPtr, IntPtr method, int enumValue)
+        {
+            if (objPtr == IntPtr.Zero || method == IntPtr.Zero) return IntPtr.Zero;
+            int arg = enumValue;
+            void** args = stackalloc void*[1];
+            args[0] = &arg;
+            IntPtr exc = IntPtr.Zero;
+            IntPtr result = IL2CPP.il2cpp_runtime_invoke(method, objPtr, args, ref exc);
+            return exc != IntPtr.Zero ? IntPtr.Zero : result;
+        }
+
         /// <summary>Invoke a method taking one object (reference) argument and returning an object pointer (e.g.
         /// Zenject <c>DiContainer.Resolve(System.Type)</c>). Returns zero on failure or thrown exception.</summary>
         public static unsafe IntPtr InvokeObjectMethodWithObject(IntPtr objPtr, IntPtr method, IntPtr arg)
