@@ -13,11 +13,10 @@ namespace NoImNotAHumanAccess.World
     /// the selected one WITHOUT walking to or standing near it. This bypasses the navigation problem entirely — the
     /// player picks an interaction from a list and the game performs it.
     ///
-    /// Controls (always live, no modal state — uses F-keys the game binds nothing to, so it never fights the game's
-    /// own arrows/WASD/Enter):
-    ///   F11        — next interaction (announces name + coarse bearing/distance)
-    ///   Shift+F11  — previous interaction
-    ///   F12        — activate the selected interaction
+    /// Controls (driven from AccessMod's ThreeD input context — arrows are free in the 3D scene):
+    ///   Down / Right arrow — next interaction (announces name + coarse bearing/distance)
+    ///   Up / Left arrow    — previous interaction
+    ///   Enter              — activate the selected interaction
     ///
     /// Source: <c>ActionableObjectsViewProvider.ActionableObjectViews</c> (the flat 3D interactable set; the 3D
     /// interactables are NOT grouped per-room — only the 2D room-photo views are). We list the views whose

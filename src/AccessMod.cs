@@ -42,10 +42,8 @@ namespace NoImNotAHumanAccess
         private const KeyCode RepeatKey = KeyCode.F8;
         private const KeyCode StatusKey = KeyCode.F9;
         private const KeyCode OrientationKey = KeyCode.F10;
-        // Action menu (3D scene): arrows now cycle + Enter activates (unified with 2D — arrows are free in 3D). F11
-        // (Shift+F11 = previous) / F12 are kept as a transitional fallback in case Enter-in-3D ever conflicts.
-        private const KeyCode ActionNextKey = KeyCode.F11;
-        private const KeyCode ActionActivateKey = KeyCode.F12;
+        // Action menu (3D scene): arrows cycle the interactable list + Enter activates (see the ThreeD case in
+        // OnUpdate). No dedicated F-keys — arrows are free in the 3D scene.
 
         public override void OnInitializeMelon()
         {
@@ -185,17 +183,6 @@ namespace NoImNotAHumanAccess
             if (Input.GetKeyDown(OrientationKey))
             {
                 _orientationNarrator?.Announce();
-            }
-
-            if (Input.GetKeyDown(ActionNextKey))
-            {
-                bool back = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-                _actionMenu?.Cycle(backwards: back);
-            }
-
-            if (Input.GetKeyDown(ActionActivateKey))
-            {
-                _actionMenu?.Activate();
             }
         }
 
