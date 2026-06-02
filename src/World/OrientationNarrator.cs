@@ -64,8 +64,11 @@ namespace NoImNotAHumanAccess.World
             Vector3 pos = _playerService != IntPtr.Zero ? Il2CppRaw.InvokeVector3Getter(_playerService, _getPosition) : Vector3.zero;
             Vector3 look = _playerService != IntPtr.Zero ? Il2CppRaw.InvokeVector3Getter(_playerService, _getLookDirection) : Vector3.forward;
 
-            // Live interactable set.
+            // Live interactable set. FindObjectOfType is active-only and the provider's GameObject may be inactive, so
+            // fall back to the inactive-inclusive FindAnyObjectByType (same pattern ActionMenu + the Zenject lookup need).
             IntPtr provider = _viewProviderClass != IntPtr.Zero ? Il2CppRaw.FindObjectOfType(_viewProviderClass) : IntPtr.Zero;
+            if (provider == IntPtr.Zero && _viewProviderClass != IntPtr.Zero)
+                provider = Il2CppRaw.FindAnyObjectByType(_viewProviderClass, includeInactive: true);
             if (provider == IntPtr.Zero) return null;
             IntPtr arrayPtr = Il2CppRaw.InvokeObjectGetter(provider, _getViews);
             IntPtr[] views = Il2CppRaw.ReadObjectArray(arrayPtr);
@@ -75,10 +78,13 @@ namespace NoImNotAHumanAccess.World
             foreach (IntPtr v in views)
             {
                 if (v == IntPtr.Zero) continue;
-                // Only things the game currently offers as interactable.
-                if (!Il2CppRaw.InvokeBoolGetter(v, _getCanShowHint)) continue;
+                // NOTE: we do NOT gate on CanShowHint — ActionMenu found it returns false for EVERY view in a live
+                // scene (the decompiled `CanShowHint => false` is a stripped placeholder, not the real body), which is
+                // exactly why F10 wrongly said "nothing to interact with". List every live view instead.
 
-                string name = HumanizeName(Il2CppRaw.GetUnityObjectName(v));
+                // Shared humanizer: strips the "…ObjectTrigger" boilerplate and reorders "Door Kitchen" → "kitchen
+                // door", so F10 reads "kitchen door, to your left" like the action menu (not "door kitchen object trigger").
+                string name = MenuStepUtil.Humanize(Il2CppRaw.GetUnityObjectName(v));
                 Vector3 target = Il2CppRaw.GetComponentWorldPosition(v);
                 string bearing = Bearing(pos, look, target);
                 parts.Add(bearing.Length > 0 ? $"{name}, {bearing}" : name);
@@ -120,19 +126,6 @@ namespace NoImNotAHumanAccess.World
             return range.Length > 0 ? $"{facing}, {range}" : facing;
         }
 
-        /// <summary>Turn a GameObject name into something speakable: drop common suffixes, split underscores.</summary>
-        private static string HumanizeName(string? raw)
-        {
-            if (string.IsNullOrWhiteSpace(raw)) return "object";
-            string s = raw;
-            // Strip a trailing "(Clone)" and numeric/index suffixes like "_01".
-            int clone = s.IndexOf("(Clone)", StringComparison.OrdinalIgnoreCase);
-            if (clone >= 0) s = s.Substring(0, clone);
-            s = s.Replace('_', ' ').Trim();
-            // Reuse the shared cleaner (also collapses whitespace / strips stray markup).
-            string cleaned = ControlDescriber.Clean(s);
-            return string.IsNullOrWhiteSpace(cleaned) ? "object" : cleaned;
-        }
 
         private void EnsureResolved()
         {
