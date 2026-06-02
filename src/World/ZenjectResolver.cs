@@ -69,7 +69,9 @@ namespace NoImNotAHumanAccess.World
                     return IntPtr.Zero;
                 }
 
-                IntPtr resolve = Il2CppRaw.GetMethod(IL2CPP.il2cpp_object_get_class(container), "Resolve", 1);
+                // DiContainer has THREE 1-arg Resolve overloads (Type / BindingId / InjectContext). Bind by SIGNATURE,
+                // not arity — passing a System.Type to the BindingId/InjectContext overload segfaults natively.
+                IntPtr resolve = Il2CppRaw.GetMethodBySignature(IL2CPP.il2cpp_object_get_class(container), "Resolve", "Type");
                 if (resolve == IntPtr.Zero)
                 {
                     MelonLogger.Warning("[ZenjectResolver] DiContainer.Resolve(Type) not found.");

@@ -43,6 +43,58 @@ namespace NoImNotAHumanAccess.Interop
             return method;
         }
 
+        /// <summary>
+        /// Resolve a method on a class by name AND parameter signature, when several overloads share the same name +
+        /// arity and <see cref="GetMethod"/>'s name+argc lookup would bind the wrong one. <paramref name="paramTypeNames"/>
+        /// are the simple class names of each parameter, in order (e.g. <c>"Type"</c> for a <c>System.Type</c> arg). The
+        /// match requires the param count to equal the list length and each parameter's class name to match. Cached by
+        /// name + joined signature. Zero on failure.
+        ///
+        /// Motivating case: Zenject's <c>DiContainer</c> has THREE 1-arg <c>Resolve</c> overloads —
+        /// <c>Resolve(Type)</c>, <c>Resolve(BindingId)</c>, <c>Resolve(InjectContext)</c>. Binding by arity alone can
+        /// pick a non-Type overload; passing a <c>System.Type</c> to it dereferences the wrong native struct and the
+        /// process segfaults (uncatchable in managed code). This finder pins the exact <c>Resolve(Type)</c>.
+        /// </summary>
+        public static unsafe IntPtr GetMethodBySignature(IntPtr klass, string name, params string[] paramTypeNames)
+        {
+            if (klass == IntPtr.Zero) return IntPtr.Zero;
+            string key = $"{klass}|{name}|sig:{string.Join(",", paramTypeNames)}";
+            if (_methodCache.TryGetValue(key, out var cached)) return cached;
+
+            IntPtr found = IntPtr.Zero;
+            try
+            {
+                IntPtr iter = IntPtr.Zero;
+                IntPtr method;
+                while ((method = IL2CPP.il2cpp_class_get_methods(klass, ref iter)) != IntPtr.Zero)
+                {
+                    IntPtr namePtr = IL2CPP.il2cpp_method_get_name(method);
+                    string? mName = namePtr == IntPtr.Zero ? null : System.Runtime.InteropServices.Marshal.PtrToStringAnsi(namePtr);
+                    if (mName != name) continue;
+                    if ((int)IL2CPP.il2cpp_method_get_param_count(method) != paramTypeNames.Length) continue;
+
+                    bool allMatch = true;
+                    for (uint i = 0; i < (uint)paramTypeNames.Length; i++)
+                    {
+                        IntPtr pType = IL2CPP.il2cpp_method_get_param(method, i);
+                        IntPtr pClass = pType == IntPtr.Zero ? IntPtr.Zero : IL2CPP.il2cpp_type_get_class_or_element_class(pType);
+                        IntPtr pNamePtr = pClass == IntPtr.Zero ? IntPtr.Zero : IL2CPP.il2cpp_class_get_name(pClass);
+                        string? pName = pNamePtr == IntPtr.Zero ? null : System.Runtime.InteropServices.Marshal.PtrToStringAnsi(pNamePtr);
+                        if (pName != paramTypeNames[i]) { allMatch = false; break; }
+                    }
+                    if (allMatch) { found = method; break; }
+                }
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[Il2CppRaw] GetMethodBySignature {name}({string.Join(",", paramTypeNames)}): {e.Message}");
+                found = IntPtr.Zero;
+            }
+
+            _methodCache[key] = found;
+            return found;
+        }
+
         /// <summary>An IL2CPP <c>System.Type</c> object for a class, suitable as a reflection-style argument.</summary>
         public static IntPtr TypeObject(IntPtr klass) =>
             klass == IntPtr.Zero ? IntPtr.Zero : IL2CPP.il2cpp_type_get_object(IL2CPP.il2cpp_class_get_type(klass));
