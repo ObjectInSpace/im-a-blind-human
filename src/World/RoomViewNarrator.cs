@@ -18,22 +18,14 @@ namespace NoImNotAHumanAccess.World
     /// highlight is a custom <c>UIButton.OnHover</c> rather than EventSystem selection (so the menu narrator's
     /// <c>currentSelectedGameObject</c> path doesn't see it either). Hooking OnHover gets the hovered button directly.
     ///
-    /// From the button we resolve a humanized name by walking up the transform parents to a known room-object view
-    /// (<c>NarrativeRoomObject</c> carries an <c>ENarrativeObject _objectType</c> we map to a label; characters and
-    /// TV/bed/fridge use the parent GameObject name), falling back to the button's own GameObject name so something is
-    /// always spoken. A diagnostic log records what resolved, to verify the button→view hierarchy against real play.
-    /// De-dupes consecutive hovers of the same button. Never throws.
+    /// The spoken name is the hovered button's own humanized GameObject name. The live log proved this is accurate
+    /// across all room-object kinds ("Nightstand", "Bed", "Window"), whereas an earlier parent-walk + ENarrativeObject
+    /// enum mislabeled things (the bed's parent is "BG"; the window's _objectType resolved to "curtain"). So we read
+    /// the button GameObject name directly. De-dupes consecutive hovers of the same button. Never throws.
     /// </summary>
     public sealed class RoomViewNarrator
     {
-        private const string RoomsNs = "_Code.Rooms";
-        private const string GameAsm = "Assembly-CSharp.dll";
-
         private readonly ISpeechOutput _speech;
-
-        private bool _resolved;
-        private IntPtr _narrativeClass; // NarrativeRoomObject (for its _objectType enum identity)
-
         private IntPtr _lastButton = IntPtr.Zero; // de-dupe consecutive hovers of the same button
 
         public RoomViewNarrator(ISpeechOutput speech) => _speech = speech;
@@ -46,98 +38,22 @@ namespace NoImNotAHumanAccess.World
             {
                 if (button == IntPtr.Zero || button == _lastButton) return;
                 _lastButton = button;
-                EnsureResolved();
 
+                // The button's own GameObject name is the reliable label across all room-object kinds — the live log
+                // showed "Nightstand", "Bed", "Window" all correct on the button GO, while the earlier parent-walk +
+                // ENarrativeObject enum mislabeled them ("BG" for the bed's parent; "curtain" for the window's
+                // _objectType). So speak the humanized button GameObject name directly.
                 IntPtr buttonGo = Il2CppRaw.GetComponentGameObject(button);
-                string? resolved = ResolveName(buttonGo, out string how);
-                string spoken = !string.IsNullOrWhiteSpace(resolved)
-                    ? resolved!
-                    : Humanize(Il2CppRaw.GetUnityObjectName(button));
+                string spoken = Humanize(Il2CppRaw.GetUnityObjectName(buttonGo != IntPtr.Zero ? buttonGo : button));
 
-                MelonLogger.Msg($"[RoomViewNarrator] hover: '{spoken}' (via {how}, " +
-                                $"buttonGo='{(buttonGo != IntPtr.Zero ? Il2CppRaw.GetUnityObjectName(buttonGo) : "?")}')");
-
-                if (!string.IsNullOrWhiteSpace(spoken)) _speech.Speak(spoken, interrupt: true);
+                if (string.IsNullOrWhiteSpace(spoken)) return;
+                _speech.Speak(spoken, interrupt: true);
             }
             catch (Exception e)
             {
                 MelonLogger.Warning($"[RoomViewNarrator] OnButtonHovered threw: {e.Message}");
             }
         }
-
-        /// <summary>
-        /// Resolve the highlighted object's name by walking up from the button's GameObject to a known room-object
-        /// view. NarrativeRoomObject carries an <c>ENarrativeObject _objectType</c> we map to a label; the others
-        /// (characters, TV/bed/fridge) use the parent's humanized GameObject name. Null if nothing resolves.
-        /// </summary>
-        private string? ResolveName(IntPtr buttonGo, out string how)
-        {
-            how = "gameobject";
-            if (buttonGo == IntPtr.Zero) return null;
-
-            if (_narrativeClass != IntPtr.Zero)
-            {
-                IntPtr narrative = GetComponentInParentRaw(buttonGo, _narrativeClass);
-                if (narrative != IntPtr.Zero)
-                {
-                    int objType = Il2CppRaw.ReadInt32Field(narrative, _narrativeClass, "_objectType", fallback: -1);
-                    if (objType >= 0) { how = "NarrativeRoomObject._objectType"; return NarrativeName(objType); }
-                }
-            }
-
-            IntPtr parentGo = Il2CppRaw.GetParentGameObject(buttonGo);
-            if (parentGo != IntPtr.Zero)
-            {
-                string? n = Humanize(Il2CppRaw.GetUnityObjectName(parentGo));
-                if (!string.IsNullOrWhiteSpace(n)) { how = "parent gameobject"; return n; }
-            }
-            return null;
-        }
-
-        /// <summary>GetComponentInParent(Type) for a raw GameObject pointer (walks parents via raw Component reads).</summary>
-        private static IntPtr GetComponentInParentRaw(IntPtr goPtr, IntPtr componentClass)
-        {
-            IntPtr cur = goPtr;
-            int guard = 0;
-            while (cur != IntPtr.Zero && guard++ < 16)
-            {
-                IntPtr c = Il2CppRaw.GetComponentRaw(cur, componentClass);
-                if (c != IntPtr.Zero) return c;
-                cur = Il2CppRaw.GetParentGameObject(cur);
-            }
-            return IntPtr.Zero;
-        }
-
-        private void EnsureResolved()
-        {
-            if (_resolved) return;
-            _resolved = true;
-            try
-            {
-                _narrativeClass = Il2CppRaw.GetClass(GameAsm, RoomsNs, "NarrativeRoomObject");
-                MelonLogger.Msg($"[RoomViewNarrator] resolved: narrative={_narrativeClass != IntPtr.Zero}");
-            }
-            catch (Exception e)
-            {
-                MelonLogger.Warning($"[RoomViewNarrator] EnsureResolved threw: {e.Message}");
-            }
-        }
-
-        // ENarrativeObject: Bedroom_Curtain, Bedroom_Nightstand, Bathroom_Window, BigRoom_Cross, BigRoom_Toy,
-        // Kitchen_Cupboards, Office_Pictures, Office_Magazine, Pantry_Box.
-        private static string NarrativeName(int e) => e switch
-        {
-            0 => "curtain",
-            1 => "nightstand",
-            2 => "window",
-            3 => "cross",
-            4 => "toy",
-            5 => "cupboards",
-            6 => "pictures",
-            7 => "magazine",
-            8 => "box",
-            _ => "object",
-        };
 
         private static string Humanize(string? raw)
         {

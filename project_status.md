@@ -57,17 +57,17 @@ close-up with highlightable objects. Three systems needed, re-prioritized:
     already narrated. Logs `[RoomViewNarrator] highlight: '<name>' (via <how>, buttonGo='<go>')` per change — diagnostic
     to verify the button→view hierarchy assumption (the one unconfirmed link; full readout built on it with GO-name
     fallback so something always speaks). New Il2CppRaw.GetParentGameObject.
-    **POLL APPROACH FAILED, PIVOTED TO HOOK (2026-06-01).** Test 1 (bedroom): nothing read, log had `resolved` but no
-    highlight lines. Test 2 (edge diagnostics): logged ONLY `resolved` — NO "RoomDisplayer found" line → case (a):
-    `FindObjectOfType(RoomDisplayer)` never returns an instance even inside the room photo. Also ruled out EventSystem:
-    MenuNarrator polls `currentSelectedGameObject` and heard nothing, so the highlight is NOT uGUI selection — it's the
-    custom `UIButton.OnHover()`. **NOW (deployed): Harmony postfix on `UIButton.OnHover()`** (interop
-    `Il2Cpp_Code.Rooms.UIButton`, `public void`, arity 0) → `__instance` is the hovered button, forwarded to
-    RoomViewNarrator.OnButtonHovered (no FindObjectOfType, no field read). Same button→view→name resolution +
-    `[RoomViewNarrator] hover: '<name>' (via <how>, buttonGo=...)` diagnostic. NEXT RUN: log should show
-    `[WorldPatches] Patched ...UIButton.OnHover()` at init, then a `hover:` line each time you move the highlight in a
-    room photo. If patched but no hover lines → OnHover isn't the hover entry (try OnPointerEnter / RoomDisplayer.Hover);
-    if hover lines but junk names → button→view parent-walk missed (read buttonGo).
+    **WORKING (confirmed in-game 2026-06-01).** Took 3 approaches: poll RoomDisplayer (FindObjectOfType never returned
+    an instance even in the photo) → EventSystem (ruled out; MenuNarrator's currentSelectedGameObject heard nothing) →
+    **Harmony postfix on `UIButton.OnHover()`** (interop `Il2Cpp_Code.Rooms.UIButton`, public void arity 0) →
+    `__instance` = hovered button → RoomViewNarrator.OnButtonHovered. Hook patched + fires per highlight, confirmed by
+    ear ("nightstand", "curtain").
+    LABEL SOURCE: the hovered button's OWN humanized GameObject name. The diagnostic log proved this is accurate for
+    every kind (buttonGo='Nightstand'/'Bed'/'Window' all correct), whereas the first cut's parent-walk + ENarrativeObject
+    enum MISLABELED: bed's parent GO = "BG"; window's _objectType resolved to "curtain". So dropped the parent-walk +
+    enum entirely → speak the button GO name directly. Simpler and correct. (Il2CppRaw.GetParentGameObject now unused by
+    this narrator but kept as a general helper.) Names are raw GO names (humanized) — should re-confirm they read
+    sensibly across rooms (characters/TV/fridge too); upgrade to a curated label map only if some read poorly.
   - OBJECT CLOSE-UPS (fridge/phone/radio/etc.) — NOT yet built. Have OnPointerEntered(name, narrativeDescription,
     gameplayDescription) + on-screen desc TMPs → full name+description readout. Build after the room photo is confirmed.
 - **SYS-C — describe the view.** List the objects in the active close-up; descriptions already authored (narrative +
