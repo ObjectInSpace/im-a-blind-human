@@ -45,9 +45,15 @@ FindObjectOfType path itself works — OrientationNarrator logged provider=True)
 ### CORRECTED GAMEPLAY MODEL + reconsidered plan (2026-06-01)
 The game is a HYBRID: (1) first-person walk/aim between DOOR/world objects, then (2) interacting opens a STILL PHOTO
 close-up with highlightable objects. Three systems needed, re-prioritized:
-- **P0 — unbreak service access.** `FindObjectOfType(Zenject.SceneContext)` failed. Either verify the SceneContext
-  type identity (image/ns/name) or capture `IPlayerService` via a Harmony hook on a view `Init(...)` that receives it
-  (many do). Unblocks F9 status AND nav-pose reads. The whole Zenject-resolve assumption is the suspect.
+- **P0 — unbreak service access. FIX DEPLOYED 2026-06-01, awaiting in-game confirm.** Root cause was NOT type
+  identity: the image name `Zenject.dll` + ns `Zenject` + `SceneContext` are all correct (interop file is
+  `Il2CppZenject.dll` but `GetIl2CppClass` resolves by the ORIGINAL image name `Zenject.dll`, verified in the dll's
+  string table). The miss is `FindObjectOfType(Type)` being ACTIVE-ONLY — the SceneContext GameObject is typically
+  inactive once the container is built, so the legacy 1-arg find returns zero. FIX: `ZenjectResolver` now falls back
+  to `Il2CppRaw.FindAnyObjectByType(Type, FindObjectsInactive.Include)` (Unity 2023+ API; logs which path hit). One
+  chokepoint fixes BOTH F9 status and F10 player-pose. CONFIRM in-game: press F9 / F10; expect the `[GameStateAccess]
+  resolved: dayNight=True consumables=True ...` and an orientation readout. If still zero, the next suspect is the
+  Harmony-hook capture of `IPlayerService` on a view `Init(...)`.
 - **SYS-B — read the highlighted object.** Splits into two photo layers (entry trace 2026-06-01):
   - ROOM PHOTO (door→room, the common case) — **BUILT + DEPLOYED 2026-06-01** as `src/World/RoomViewNarrator.cs`
     (polled in OnUpdate, auto-speaks on highlight change; NO key). Reads `RoomDisplayer._selectedButton`, walks the

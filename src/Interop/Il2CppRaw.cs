@@ -358,5 +358,31 @@ namespace NoImNotAHumanAccess.Interop
             IntPtr result = IL2CPP.il2cpp_runtime_invoke(method, IntPtr.Zero, args, ref exc); // static
             return exc != IntPtr.Zero ? IntPtr.Zero : result;
         }
+
+        /// <summary>
+        /// Find the first live object of an IL2CPP class via <c>UnityEngine.Object.FindAnyObjectByType(Type,
+        /// FindObjectsInactive)</c>, the non-deprecated Unity 2023+ API. Unlike the legacy <see cref="FindObjectOfType"/>,
+        /// this can include INACTIVE objects (<paramref name="includeInactive"/>), which matters for Zenject's
+        /// <c>SceneContext</c> — its GameObject is frequently inactive after the container has been built, so the legacy
+        /// active-only find returns zero. Returns the object pointer or zero.
+        /// </summary>
+        public static unsafe IntPtr FindAnyObjectByType(IntPtr klass, bool includeInactive = true)
+        {
+            if (klass == IntPtr.Zero) return IntPtr.Zero;
+            IntPtr objClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "Object");
+            // FindAnyObjectByType(Type, FindObjectsInactive) is the 2-arg overload. FindObjectsInactive is an enum:
+            // Exclude=0, Include=1 (its underlying int is what we pass).
+            IntPtr method = GetMethod(objClass, "FindAnyObjectByType", 2);
+            if (method == IntPtr.Zero) return IntPtr.Zero;
+            IntPtr typeObj = TypeObject(klass);
+            if (typeObj == IntPtr.Zero) return IntPtr.Zero;
+            int findInactive = includeInactive ? 1 : 0; // FindObjectsInactive.Include / .Exclude
+            void** args = stackalloc void*[2];
+            args[0] = (void*)typeObj;
+            args[1] = &findInactive;
+            IntPtr exc = IntPtr.Zero;
+            IntPtr result = IL2CPP.il2cpp_runtime_invoke(method, IntPtr.Zero, args, ref exc); // static
+            return exc != IntPtr.Zero ? IntPtr.Zero : result;
+        }
     }
 }
