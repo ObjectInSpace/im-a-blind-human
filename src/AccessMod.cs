@@ -146,7 +146,10 @@ namespace NoImNotAHumanAccess
             // (when a panel changes, the old selection goes inactive → we re-focus the new panel's first control), so
             // the mod needs no per-panel knowledge. The settings sub-panel reads as MainMenu (its own field never
             // flips), which is fine — both want the same focus behavior.
-            if (ctx == InputContextKind.MainMenu)
+            // MainMenu and Pause both want pure focus-keeping (track the selected control so arrows + MenuNarrator work),
+            // with no per-keypress action of our own. The pause menu overlays the 3D scene, so without this it'd be
+            // classified ThreeD and arrows would wrongly drive the interactable list.
+            if (ctx == InputContextKind.MainMenu || ctx == InputContextKind.Pause)
                 _uguiFocus?.EnsureSelection();
 
             bool next = Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.DownArrow);
@@ -170,8 +173,8 @@ namespace NoImNotAHumanAccess
                         if (enter) _actionMenu?.Activate();
                         break;
 
-                    // MainMenu: arrows handled natively once EnsureSelection has focus set (above); nothing per-keypress.
-                    // None: do nothing — dialog/cutscene/pause/popup/phone/etc. handled by the game.
+                    // MainMenu / Pause: arrows handled natively once EnsureSelection has focus set (above); nothing
+                    // per-keypress. None: do nothing — dialog/cutscene/popup/phone/etc. handled by the game.
                 }
             }
 

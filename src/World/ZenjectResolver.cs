@@ -37,16 +37,10 @@ namespace NoImNotAHumanAccess.World
                     return IntPtr.Zero;
                 }
 
-                // Legacy FindObjectOfType(Type) is active-only, and the SceneContext GameObject is frequently INACTIVE
-                // once the container is built — so the legacy find returns zero even mid-gameplay. Fall back to the
-                // Unity 2023+ FindAnyObjectByType(Type, FindObjectsInactive.Include), which reaches inactive objects.
-                IntPtr sceneCtx = Il2CppRaw.FindObjectOfType(sceneCtxClass);
-                if (sceneCtx == IntPtr.Zero)
-                {
-                    sceneCtx = Il2CppRaw.FindAnyObjectByType(sceneCtxClass, includeInactive: true);
-                    if (sceneCtx != IntPtr.Zero)
-                        MelonLogger.Msg("[ZenjectResolver] SceneContext found via FindAnyObjectByType (inactive include).");
-                }
+                // The SceneContext GameObject is frequently INACTIVE once the container is built — so an active-only
+                // find returns zero even mid-gameplay. FindObjectIncludingInactive falls back to the inactive-inclusive
+                // Unity 2023+ FindAnyObjectByType, which reaches it.
+                IntPtr sceneCtx = Il2CppRaw.FindObjectIncludingInactive(sceneCtxClass);
                 if (sceneCtx == IntPtr.Zero)
                 {
                     MelonLogger.Warning("[ZenjectResolver] No live SceneContext (not in a gameplay scene?).");

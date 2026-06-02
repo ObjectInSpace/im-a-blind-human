@@ -620,5 +620,19 @@ namespace NoImNotAHumanAccess.Interop
             IntPtr result = IL2CPP.il2cpp_runtime_invoke(method, IntPtr.Zero, args, ref exc); // static
             return exc != IntPtr.Zero ? IntPtr.Zero : result;
         }
+
+        /// <summary>
+        /// Find the first live object of an IL2CPP class, active or not: tries active-only
+        /// <see cref="FindObjectOfType"/> first, then falls back to inactive-inclusive <see cref="FindAnyObjectByType"/>.
+        /// This is the pattern nearly every lookup in the mod needs — the game's views/providers/SceneContext are
+        /// frequently INACTIVE in the hierarchy (container built, panel hidden), so active-only find returns zero even
+        /// when the object is live. Returns the object pointer or zero. <paramref name="klass"/>-zero returns zero.
+        /// </summary>
+        public static IntPtr FindObjectIncludingInactive(IntPtr klass)
+        {
+            if (klass == IntPtr.Zero) return IntPtr.Zero;
+            IntPtr obj = FindObjectOfType(klass);
+            return obj != IntPtr.Zero ? obj : FindAnyObjectByType(klass, includeInactive: true);
+        }
     }
 }

@@ -28,6 +28,7 @@ namespace NoImNotAHumanAccess.World
         private bool _resolved;
         private IntPtr _eventSystemClass, _getCurrentES, _setSelected, _getCurrentSelected;
         private IntPtr _selectableClass, _getAllArray, _getInteractable, _getGameObject;
+        private IntPtr _mainMenuViewClass; // for honoring the game's designated initial selection on the main menu
 
         private readonly System.Collections.Generic.HashSet<IntPtr> _prevActive = new(); // active selectables last tick
         private bool _havePrev;
@@ -64,10 +65,20 @@ namespace NoImNotAHumanAccess.World
                 bool currentValid = current != IntPtr.Zero && Il2CppRaw.GetGameObjectActiveInHierarchy(current);
 
                 IntPtr target;
+                bool usedMenuDefault = false;
                 if (newFirst != IntPtr.Zero && current != newFirst)
                     target = newFirst;                 // a panel just opened → jump into it
                 else if (!currentValid)
-                    target = active.Count > 0 ? active[0] : IntPtr.Zero; // nothing selected → first control
+                {
+                    // Nothing selected (menu just appeared). The game designates an initial selection per menu (it
+                    // applies it for controller, not keyboard); on the main-menu root that's the New Game button.
+                    // Honor it so focus lands where the player expects rather than on whatever happens to be first in
+                    // the unordered allSelectablesArray (which is the CAR/Discord button). If that control isn't
+                    // currently active+interactable (e.g. a sub-panel replaced the root), fall back to first control.
+                    IntPtr menuDefault = MainMenuDefaultSelection(active);
+                    if (menuDefault != IntPtr.Zero) { target = menuDefault; usedMenuDefault = true; }
+                    else target = active.Count > 0 ? active[0] : IntPtr.Zero;
+                }
                 else
                 {
                     _lastSelected = current;           // valid selection, no new panel → leave it to native nav
@@ -77,8 +88,10 @@ namespace NoImNotAHumanAccess.World
                 if (target == IntPtr.Zero || target == _lastSelected) return;
                 Il2CppRaw.SetSelectedGameObject(es, _setSelected, target);
                 _lastSelected = target;
-                MelonLogger.Msg($"[UguiFocus] focus → {(newFirst != IntPtr.Zero ? "new panel's first control" : "first control")} " +
-                                $"(active={active.Count}).");
+                string what = newFirst != IntPtr.Zero ? "new panel's first control"
+                            : usedMenuDefault ? "menu's designated first control (New Game)"
+                            : "first control";
+                MelonLogger.Msg($"[UguiFocus] focus → {what} (active={active.Count}).");
             }
             catch (Exception e)
             {
@@ -102,6 +115,24 @@ namespace NoImNotAHumanAccess.World
                 list.Add(go);
             }
             return list;
+        }
+
+        /// <summary>
+        /// The GameObject the game designates as the main menu's initial selection (New Game button), but only if it
+        /// is currently in <paramref name="active"/> (active + interactable). Returns zero when not on the main-menu
+        /// root or the button is unavailable, so the caller falls back to the generic first-control behavior. We find
+        /// the single <c>MainMenuView</c> instance and read its <c>_newGameButtonGO</c> field.
+        /// </summary>
+        private IntPtr MainMenuDefaultSelection(System.Collections.Generic.List<IntPtr> active)
+        {
+            if (_mainMenuViewClass == IntPtr.Zero) return IntPtr.Zero;
+            IntPtr view = Il2CppRaw.FindObjectIncludingInactive(_mainMenuViewClass);
+            if (view == IntPtr.Zero) return IntPtr.Zero;
+            IntPtr go = Il2CppRaw.ReadObjectField(view, _mainMenuViewClass, "_newGameButtonGO");
+            if (go == IntPtr.Zero) return IntPtr.Zero;
+            // Only honor it if it's one of the currently selectable controls — guards against the sub-panel case and
+            // against selecting a hidden/disabled New Game button.
+            return active.Contains(go) ? go : IntPtr.Zero;
         }
 
         private void EnsureResolved()
@@ -128,9 +159,11 @@ namespace NoImNotAHumanAccess.World
                     _getGameObject = Il2CppRaw.GetMethod(_selectableClass, "get_gameObject", 0);
                 }
 
+                _mainMenuViewClass = Il2CppRaw.GetClass("Assembly-CSharp.dll", "_Code.Infrastructure.MainMenu", "MainMenuView");
+
                 MelonLogger.Msg($"[UguiFocus] resolved: eventSystem={_eventSystemClass != IntPtr.Zero} " +
                                 $"getCurrentES={_getCurrentES != IntPtr.Zero} selectable={_selectableClass != IntPtr.Zero} " +
-                                $"allArray={_getAllArray != IntPtr.Zero}");
+                                $"allArray={_getAllArray != IntPtr.Zero} mainMenuView={_mainMenuViewClass != IntPtr.Zero}");
             }
             catch (Exception e)
             {

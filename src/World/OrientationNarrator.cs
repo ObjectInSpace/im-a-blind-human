@@ -64,11 +64,8 @@ namespace NoImNotAHumanAccess.World
             Vector3 pos = _playerService != IntPtr.Zero ? Il2CppRaw.InvokeVector3Getter(_playerService, _getPosition) : Vector3.zero;
             Vector3 look = _playerService != IntPtr.Zero ? Il2CppRaw.InvokeVector3Getter(_playerService, _getLookDirection) : Vector3.forward;
 
-            // Live interactable set. FindObjectOfType is active-only and the provider's GameObject may be inactive, so
-            // fall back to the inactive-inclusive FindAnyObjectByType (same pattern ActionMenu + the Zenject lookup need).
-            IntPtr provider = _viewProviderClass != IntPtr.Zero ? Il2CppRaw.FindObjectOfType(_viewProviderClass) : IntPtr.Zero;
-            if (provider == IntPtr.Zero && _viewProviderClass != IntPtr.Zero)
-                provider = Il2CppRaw.FindAnyObjectByType(_viewProviderClass, includeInactive: true);
+            // Live interactable set. The provider's GameObject may be inactive, so this find includes inactive objects.
+            IntPtr provider = Il2CppRaw.FindObjectIncludingInactive(_viewProviderClass);
             if (provider == IntPtr.Zero) return null;
             IntPtr arrayPtr = Il2CppRaw.InvokeObjectGetter(provider, _getViews);
             IntPtr[] views = Il2CppRaw.ReadObjectArray(arrayPtr);

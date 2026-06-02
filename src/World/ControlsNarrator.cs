@@ -146,8 +146,7 @@ namespace NoImNotAHumanAccess.World
         {
             if (!EnsureResolved()) return string.Empty;
 
-            IntPtr view = Il2CppRaw.FindAnyObjectByType(_controlsListViewClass, includeInactive: true);
-            if (view == IntPtr.Zero) view = Il2CppRaw.FindObjectOfType(_controlsListViewClass);
+            IntPtr view = Il2CppRaw.FindObjectIncludingInactive(_controlsListViewClass);
             if (view == IntPtr.Zero) return string.Empty;
 
             IntPtr arrayPtr = Il2CppRaw.ReadObjectField(view, _controlsListViewClass, "_controls");

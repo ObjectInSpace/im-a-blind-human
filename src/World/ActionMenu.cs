@@ -121,15 +121,8 @@ namespace NoImNotAHumanAccess.World
             var entries = new List<Entry>();
             if (_viewProviderClass == IntPtr.Zero) { MelonLogger.Msg("[ActionMenu] provider class unresolved."); return entries; }
 
-            // FindObjectOfType is active-only; the provider's GameObject may be inactive. Fall back to the
-            // inactive-inclusive FindAnyObjectByType (same pattern the Zenject SceneContext lookup needs).
-            IntPtr provider = Il2CppRaw.FindObjectOfType(_viewProviderClass);
-            if (provider == IntPtr.Zero)
-            {
-                provider = Il2CppRaw.FindAnyObjectByType(_viewProviderClass, includeInactive: true);
-                if (provider != IntPtr.Zero)
-                    MelonLogger.Msg("[ActionMenu] provider found via FindAnyObjectByType (inactive include).");
-            }
+            // The provider's GameObject may be inactive, so this also tries the inactive-inclusive find.
+            IntPtr provider = Il2CppRaw.FindObjectIncludingInactive(_viewProviderClass);
             if (provider == IntPtr.Zero)
             {
                 // The provider isn't present. Probe whether the 3D interactables exist AT ALL by counting

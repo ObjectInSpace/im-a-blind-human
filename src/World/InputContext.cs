@@ -9,6 +9,9 @@ namespace NoImNotAHumanAccess.World
     {
         /// <summary>Title / main menu. Arrows are DEAD here (only D-pad/mouse work) → mod bridges arrows to the menu.</summary>
         MainMenu,
+        /// <summary>The in-game pause menu is up (over the 3D scene). Same handling as <see cref="MainMenu"/>: keep a
+        /// uGUI control focused so arrows work + MenuNarrator speaks, but no per-keypress action of our own.</summary>
+        Pause,
         /// <summary>A 2D room photo / close-up is up. Mod warps the cursor between highlightable objects.</summary>
         RoomPhoto,
         /// <summary>3D first-person free-roam. Mod drives the interactable action list (arrows cycle, Enter activates).</summary>
@@ -30,6 +33,9 @@ namespace NoImNotAHumanAccess.World
     ///
     /// Each "act" context must be POSITIVELY and EXCLUSIVELY detected:
     ///   - MainMenu : a <c>MainMenuMarker</c> is live.
+    ///   - Pause    : <c>PauseMenuView.IsPaused</c> is true. Checked BEFORE 3D, because the pause menu overlays the 3D
+    ///                scene (the interactable provider stays present), so without this gate pause leaks into ThreeD and
+    ///                arrows wrongly drive the action list instead of the menu. Handled like MainMenu (focus-keep only).
     ///   - RoomPhoto: a 2D photo is up (any goActive room UIButton), via <see cref="TwoDProbe.IsPhotoActive"/>.
     ///   - ThreeD   : the interactable provider is present AND no dialog is active. The provider alone is NOT enough —
     ///                dialog/cutscene OVERLAYS the 3D scene (provider stays present), so we gate 3D on
@@ -47,6 +53,7 @@ namespace NoImNotAHumanAccess.World
 
         private bool _resolved;
         private IntPtr _mainMenuViewClass;    // _Code.Infrastructure.MainMenu.MainMenuView (+ _areSettingsOpened field)
+        private IntPtr _pauseMenuViewClass;   // _Code.Infrastructure.Pause.PauseMenuView (+ its IsPaused property)
         private IntPtr _actionProviderClass;  // ActionableObjectsViewProvider (3D interactables)
         private IntPtr _dialogViewClass;      // _Code.DialogSystem.DialogView (+ its _isActive field)
         private InputContextKind _lastLogged = (InputContextKind)(-1);
@@ -56,17 +63,20 @@ namespace NoImNotAHumanAccess.World
         public InputContextKind Classify()
         {
             InputContextKind kind;
-            bool mainMenu = false, photo = false, provider = false, dialog = false;
+            bool mainMenu = false, paused = false, photo = false, provider = false, dialog = false;
             try
             {
                 EnsureResolved();
 
                 mainMenu = MainMenuActive();
+                paused = PauseActive();
                 photo = _twoD != null && _twoD.IsPhotoActive();
                 dialog = DialogActive();
                 provider = ProviderPresent();
 
                 if (mainMenu) kind = InputContextKind.MainMenu;
+                // Pause overlays the 3D scene (provider stays present), so it MUST be checked before ThreeD.
+                else if (paused) kind = InputContextKind.Pause;
                 else if (photo) kind = InputContextKind.RoomPhoto;
                 // 3D only when the interactable provider is present AND no dialog/cutscene overlay is showing.
                 else if (provider && !dialog) kind = InputContextKind.ThreeD;
@@ -81,7 +91,7 @@ namespace NoImNotAHumanAccess.World
             if (kind != _lastLogged)
             {
                 _lastLogged = kind;
-                MelonLogger.Msg($"[InputContext] -> {kind} (mainMenu={mainMenu} photo={photo} " +
+                MelonLogger.Msg($"[InputContext] -> {kind} (mainMenu={mainMenu} paused={paused} photo={photo} " +
                                 $"provider={provider} dialog={dialog})");
             }
             return kind;
@@ -96,17 +106,25 @@ namespace NoImNotAHumanAccess.World
         private bool MainMenuActive()
         {
             if (_mainMenuViewClass == IntPtr.Zero) return false;
-            IntPtr view = Il2CppRaw.FindObjectOfType(_mainMenuViewClass);
-            if (view == IntPtr.Zero) view = Il2CppRaw.FindAnyObjectByType(_mainMenuViewClass, includeInactive: true);
+            IntPtr view = Il2CppRaw.FindObjectIncludingInactive(_mainMenuViewClass);
             return view != IntPtr.Zero && Il2CppRaw.GetComponentGameObjectActive(view);
+        }
+
+        /// <summary>The pause menu is up: <c>PauseMenuView.IsPaused</c> is true. Read via the property's backing field
+        /// (<c>&lt;IsPaused&gt;k__BackingField</c>), the same way other concrete-view bool state is read.</summary>
+        private bool PauseActive()
+        {
+            if (_pauseMenuViewClass == IntPtr.Zero) return false;
+            IntPtr pv = Il2CppRaw.FindObjectIncludingInactive(_pauseMenuViewClass);
+            if (pv == IntPtr.Zero) return false;
+            return Il2CppRaw.ReadBoolField(pv, _pauseMenuViewClass, "<IsPaused>k__BackingField");
         }
 
         /// <summary>DialogView is present AND its <c>_isActive</c> flag is set (a dialog/cutscene is showing).</summary>
         private bool DialogActive()
         {
             if (_dialogViewClass == IntPtr.Zero) return false;
-            IntPtr dv = Il2CppRaw.FindObjectOfType(_dialogViewClass);
-            if (dv == IntPtr.Zero) dv = Il2CppRaw.FindAnyObjectByType(_dialogViewClass, includeInactive: true);
+            IntPtr dv = Il2CppRaw.FindObjectIncludingInactive(_dialogViewClass);
             if (dv == IntPtr.Zero) return false;
             return Il2CppRaw.ReadBoolField(dv, _dialogViewClass, "_isActive");
         }
@@ -114,9 +132,7 @@ namespace NoImNotAHumanAccess.World
         private bool ProviderPresent()
         {
             if (_actionProviderClass == IntPtr.Zero) return false;
-            IntPtr p = Il2CppRaw.FindObjectOfType(_actionProviderClass);
-            if (p == IntPtr.Zero) p = Il2CppRaw.FindAnyObjectByType(_actionProviderClass, includeInactive: true);
-            return p != IntPtr.Zero;
+            return Il2CppRaw.FindObjectIncludingInactive(_actionProviderClass) != IntPtr.Zero;
         }
 
         /// <summary>One-shot diagnostic (F8): raw find-state of each signal, to verify detection from ground truth.</summary>
@@ -130,8 +146,7 @@ namespace NoImNotAHumanAccess.World
             // Raw MainMenuView field reads so we can see exactly what the settings gate is reading in each state.
             if (_mainMenuViewClass != IntPtr.Zero)
             {
-                IntPtr v = Il2CppRaw.FindObjectOfType(_mainMenuViewClass);
-                if (v == IntPtr.Zero) v = Il2CppRaw.FindAnyObjectByType(_mainMenuViewClass, includeInactive: true);
+                IntPtr v = Il2CppRaw.FindObjectIncludingInactive(_mainMenuViewClass);
                 if (v != IntPtr.Zero)
                     MelonLogger.Msg($"[InputContext.probe] MainMenuView active={Il2CppRaw.GetComponentGameObjectActive(v)} " +
                                     $"_areSettingsOpened={Il2CppRaw.ReadBoolField(v, _mainMenuViewClass, "_areSettingsOpened")} " +
@@ -157,10 +172,12 @@ namespace NoImNotAHumanAccess.World
             try
             {
                 _mainMenuViewClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure.MainMenu", "MainMenuView");
+                _pauseMenuViewClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure.Pause", "PauseMenuView");
                 _actionProviderClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure.ActionableObjects", "ActionableObjectsViewProvider");
                 _dialogViewClass = Il2CppRaw.GetClass(GameAsm, "_Code.DialogSystem", "DialogView");
 
                 MelonLogger.Msg($"[InputContext] resolved: mainMenuView={_mainMenuViewClass != IntPtr.Zero} " +
+                                $"pauseMenuView={_pauseMenuViewClass != IntPtr.Zero} " +
                                 $"actionProvider={_actionProviderClass != IntPtr.Zero} dialogView={_dialogViewClass != IntPtr.Zero}");
             }
             catch (Exception e)
