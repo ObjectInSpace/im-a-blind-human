@@ -27,6 +27,9 @@ namespace NoImNotAHumanAccess
         private StatusNarrator? _statusNarrator;
         private OrientationNarrator? _orientationNarrator;
         private ActionMenu? _actionMenu;
+        private FridgeMenu? _fridgeMenu;
+        private RadioMenu? _radioMenu;
+        private CartoonButton? _cartoonButton;
         private TwoDProbe? _twoDProbe;
         private InputContext? _inputContext;
         private UguiFocus? _uguiFocus;
@@ -107,6 +110,20 @@ namespace NoImNotAHumanAccess
                 // the game performs it without the player walking to the object. Routed via the ThreeD input context.
                 _actionMenu = new ActionMenu(_speech);
 
+                // Fridge close-up: the drink grid is mouse-hover only in the base game, so arrows step the drinks
+                // (driving the game's own FridgeItemView.OnHover → the CloseUpNarrator fridge hook) and Enter uses the
+                // selected one (FridgeItemView.Use). Routed via the Fridge input context.
+                _fridgeMenu = new FridgeMenu(_speech);
+
+                // Radio close-up: tuning is a mouse-drag knob in the base game, so held Left/Right sweep the knob
+                // (driving the game's RotateKnob), Up/Down toggle AM/FM, and closeness to a station is narrated by ear.
+                // Routed via the Radio input context.
+                _radioMenu = new RadioMenu(_speech);
+
+                // Gacha "watch cartoon" play button (main-menu collections): pointer-only in the base game, so Enter
+                // activates it when it's on screen. Routed inside the MainMenu input context.
+                _cartoonButton = new CartoonButton(_speech);
+
                 // 2D diagnostic (F8): dump the live room-photo UIButton set, to design the 2D object-stepping menu.
                 _twoDProbe = new TwoDProbe(_speech);
 
@@ -166,14 +183,49 @@ namespace NoImNotAHumanAccess
             if (ctx == InputContextKind.MainMenu || ctx == InputContextKind.Pause)
                 _uguiFocus?.EnsureSelection();
 
+            // Clear the fridge selection once we leave the fridge, so re-opening it starts fresh (no stale highlight).
+            if (ctx != InputContextKind.Fridge)
+                _fridgeMenu?.Reset();
+
+            // Radio: tuning is HELD (per-frame sweep), unlike the edge-based steppers below. Handle it here so a held
+            // Left/Right drives RotateKnob every frame, and Tick narrates closeness while tuning. Up/Down (band) is an
+            // edge action and lives in the switch below. Reset state on leaving so reopening starts fresh.
+            if (ctx == InputContextKind.Radio)
+            {
+                bool tuneLeft = Input.GetKey(KeyCode.LeftArrow);
+                bool tuneRight = Input.GetKey(KeyCode.RightArrow);
+                if (tuneRight) _radioMenu?.Tune(backwards: false);
+                else if (tuneLeft) _radioMenu?.Tune(backwards: true);
+                _radioMenu?.Tick(tuningHeld: tuneLeft || tuneRight);
+            }
+            else
+            {
+                _radioMenu?.Reset();
+            }
+
             bool next = Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.DownArrow);
             bool prev = Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.UpArrow);
             bool enter = Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter);
+            // Radio band toggle is Up/Down specifically (Left/Right are the held tune, handled above).
+            bool bandToggle = Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow);
 
             if (next || prev || enter)
             {
                 switch (ctx)
                 {
+                    case InputContextKind.MainMenu:
+                        // The gacha "watch cartoon" play button is pointer-only; when it's on screen, Enter plays it.
+                        // Arrows stay with native uGUI nav (EnsureSelection above keeps focus). Only intercept Enter,
+                        // and only when the button is actually available, so normal menu Enter is unaffected.
+                        if (enter && _cartoonButton != null && _cartoonButton.IsAvailable())
+                            _cartoonButton.Activate();
+                        break;
+
+                    case InputContextKind.Radio:
+                        // Left/Right tune (held, handled above). Up/Down toggles AM/FM. Enter does nothing here.
+                        if (bandToggle) _radioMenu?.SwitchBand();
+                        break;
+
                     case InputContextKind.RoomPhoto:
                         // Arrows warp the game's cursor between objects; Enter is the game's own select (untouched).
                         if (next) _twoDProbe?.Step(backwards: false);
@@ -187,8 +239,16 @@ namespace NoImNotAHumanAccess
                         if (enter) _actionMenu?.Activate();
                         break;
 
-                    // MainMenu / Pause: arrows handled natively once EnsureSelection has focus set (above); nothing
-                    // per-keypress. None: do nothing — dialog/cutscene/popup/phone/etc. handled by the game.
+                    case InputContextKind.Fridge:
+                        // Arrows step the drinks (the game's own hover narrates via the fridge hook); Enter uses one.
+                        if (next) _fridgeMenu?.Cycle(backwards: false);
+                        if (prev) _fridgeMenu?.Cycle(backwards: true);
+                        if (enter) _fridgeMenu?.Activate();
+                        break;
+
+                    // Pause: arrows handled natively once EnsureSelection has focus set (above); nothing per-keypress.
+                    // MainMenu likewise navigates natively — its case above ONLY intercepts Enter for the pointer-only
+                    // gacha cartoon button when present. None: do nothing — dialog/cutscene/popup/phone handled by game.
                 }
             }
 

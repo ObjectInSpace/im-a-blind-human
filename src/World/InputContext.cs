@@ -14,6 +14,12 @@ namespace NoImNotAHumanAccess.World
         Pause,
         /// <summary>A 2D room photo / close-up is up. Mod warps the cursor between highlightable objects.</summary>
         RoomPhoto,
+        /// <summary>The fridge item grid is up. The grid is mouse-hover only in the base game, so the mod steps the
+        /// drinks with arrows (driving the game's own hover) and uses the selected one with Enter.</summary>
+        Fridge,
+        /// <summary>The radio close-up is up. Tuning is a mouse-drag knob in the base game, so the mod sweeps it with
+        /// held Left/Right (driving RotateKnob) and toggles AM/FM with Up/Down, narrating closeness to a station.</summary>
+        Radio,
         /// <summary>3D first-person free-roam. Mod drives the interactable action list (arrows cycle, Enter activates).</summary>
         ThreeD,
         /// <summary>Anything else — dialog, cutscene, pause, settings, popups, the phone, loading, the unknown. The mod
@@ -37,6 +43,11 @@ namespace NoImNotAHumanAccess.World
     ///                scene (the interactable provider stays present), so without this gate pause leaks into ThreeD and
     ///                arrows wrongly drive the action list instead of the menu. Handled like MainMenu (focus-keep only).
     ///   - RoomPhoto: a 2D photo is up (any goActive room UIButton), via <see cref="TwoDProbe.IsPhotoActive"/>.
+    ///   - Fridge   : the <c>FridgeCloseUpView</c> is present AND active. Checked BEFORE 3D, because the fridge
+    ///                close-up overlays the 3D scene (the interactable provider stays present), so without this gate
+    ///                the fridge leaks into ThreeD and arrows wrongly drive the action list instead of the drinks.
+    ///   - Radio    : the <c>RadioCloseUpView</c> is present AND active. Same overlay reasoning as Fridge — checked
+    ///                before 3D so the radio knob/band get the arrows instead of the 3D action list.
     ///   - ThreeD   : the interactable provider is present AND no dialog is active. The provider alone is NOT enough —
     ///                dialog/cutscene OVERLAYS the 3D scene (provider stays present), so we gate 3D on
     ///                <c>DialogView._isActive == false</c>. (DialogView is a concrete view with a real bool field,
@@ -55,6 +66,8 @@ namespace NoImNotAHumanAccess.World
         private IntPtr _mainMenuViewClass;    // _Code.Infrastructure.MainMenu.MainMenuView (+ _areSettingsOpened field)
         private IntPtr _pauseMenuViewClass;   // _Code.Infrastructure.Pause.PauseMenuView (+ its IsPaused property)
         private IntPtr _actionProviderClass;  // ActionableObjectsViewProvider (3D interactables)
+        private IntPtr _fridgeViewClass;      // _Code.Infrastructure.CloseUps.Views.FridgeCloseUpView
+        private IntPtr _radioViewClass;       // _Code.Infrastructure.CloseUps.Views.Radio.RadioCloseUpView
         private IntPtr _dialogViewClass;      // _Code.DialogSystem.DialogView (+ its _isActive field)
         private InputContextKind _lastLogged = (InputContextKind)(-1);
 
@@ -63,7 +76,7 @@ namespace NoImNotAHumanAccess.World
         public InputContextKind Classify()
         {
             InputContextKind kind;
-            bool mainMenu = false, paused = false, photo = false, provider = false, dialog = false;
+            bool mainMenu = false, paused = false, photo = false, provider = false, dialog = false, fridge = false, radio = false;
             try
             {
                 EnsureResolved();
@@ -73,11 +86,17 @@ namespace NoImNotAHumanAccess.World
                 photo = _twoD != null && _twoD.IsPhotoActive();
                 dialog = DialogActive();
                 provider = ProviderPresent();
+                fridge = FridgeActive();
+                radio = RadioActive();
 
                 if (mainMenu) kind = InputContextKind.MainMenu;
                 // Pause overlays the 3D scene (provider stays present), so it MUST be checked before ThreeD.
                 else if (paused) kind = InputContextKind.Pause;
                 else if (photo) kind = InputContextKind.RoomPhoto;
+                // Fridge close-up also overlays the 3D scene (provider stays present), so it too precedes ThreeD.
+                else if (fridge) kind = InputContextKind.Fridge;
+                // Radio close-up: same overlay reasoning as Fridge.
+                else if (radio) kind = InputContextKind.Radio;
                 // 3D only when the interactable provider is present AND no dialog/cutscene overlay is showing.
                 else if (provider && !dialog) kind = InputContextKind.ThreeD;
                 else kind = InputContextKind.None;
@@ -92,7 +111,7 @@ namespace NoImNotAHumanAccess.World
             {
                 _lastLogged = kind;
                 MelonLogger.Msg($"[InputContext] -> {kind} (mainMenu={mainMenu} paused={paused} photo={photo} " +
-                                $"provider={provider} dialog={dialog})");
+                                $"fridge={fridge} radio={radio} provider={provider} dialog={dialog})");
             }
             return kind;
         }
@@ -118,6 +137,22 @@ namespace NoImNotAHumanAccess.World
             IntPtr pv = Il2CppRaw.FindObjectIncludingInactive(_pauseMenuViewClass);
             if (pv == IntPtr.Zero) return false;
             return Il2CppRaw.ReadBoolField(pv, _pauseMenuViewClass, "<IsPaused>k__BackingField");
+        }
+
+        /// <summary>The fridge item grid is up: <c>FridgeCloseUpView</c> is present AND its GameObject is active.</summary>
+        private bool FridgeActive()
+        {
+            if (_fridgeViewClass == IntPtr.Zero) return false;
+            IntPtr fv = Il2CppRaw.FindObjectIncludingInactive(_fridgeViewClass);
+            return fv != IntPtr.Zero && Il2CppRaw.GetComponentGameObjectActive(fv);
+        }
+
+        /// <summary>The radio close-up is up: <c>RadioCloseUpView</c> is present AND its GameObject is active.</summary>
+        private bool RadioActive()
+        {
+            if (_radioViewClass == IntPtr.Zero) return false;
+            IntPtr rv = Il2CppRaw.FindObjectIncludingInactive(_radioViewClass);
+            return rv != IntPtr.Zero && Il2CppRaw.GetComponentGameObjectActive(rv);
         }
 
         /// <summary>DialogView is present AND its <c>_isActive</c> flag is set (a dialog/cutscene is showing).</summary>
@@ -174,11 +209,15 @@ namespace NoImNotAHumanAccess.World
                 _mainMenuViewClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure.MainMenu", "MainMenuView");
                 _pauseMenuViewClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure.Pause", "PauseMenuView");
                 _actionProviderClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure.ActionableObjects", "ActionableObjectsViewProvider");
+                _fridgeViewClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure.CloseUps.Views", "FridgeCloseUpView");
+                _radioViewClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure.CloseUps.Views.Radio", "RadioCloseUpView");
                 _dialogViewClass = Il2CppRaw.GetClass(GameAsm, "_Code.DialogSystem", "DialogView");
 
                 MelonLogger.Msg($"[InputContext] resolved: mainMenuView={_mainMenuViewClass != IntPtr.Zero} " +
                                 $"pauseMenuView={_pauseMenuViewClass != IntPtr.Zero} " +
-                                $"actionProvider={_actionProviderClass != IntPtr.Zero} dialogView={_dialogViewClass != IntPtr.Zero}");
+                                $"actionProvider={_actionProviderClass != IntPtr.Zero} " +
+                                $"fridgeView={_fridgeViewClass != IntPtr.Zero} radioView={_radioViewClass != IntPtr.Zero} " +
+                                $"dialogView={_dialogViewClass != IntPtr.Zero}");
             }
             catch (Exception e)
             {

@@ -316,6 +316,56 @@ namespace NoImNotAHumanAccess.Interop
             return exc == IntPtr.Zero;
         }
 
+        /// <summary>Invoke a void instance method taking a single <see cref="float"/> argument (e.g. the radio knob's
+        /// private <c>RotateKnob(float delta)</c>). Returns true if it ran without throwing.</summary>
+        public static unsafe bool InvokeVoidWithFloat(IntPtr objPtr, IntPtr method, float arg)
+        {
+            if (objPtr == IntPtr.Zero || method == IntPtr.Zero) return false;
+            float a = arg;
+            void** args = stackalloc void*[1];
+            args[0] = &a;
+            IntPtr exc = IntPtr.Zero;
+            IL2CPP.il2cpp_runtime_invoke(method, objPtr, args, ref exc);
+            return exc == IntPtr.Zero;
+        }
+
+        /// <summary>Invoke a void instance method taking a single value-type-by-int argument — an enum passed as its
+        /// underlying int (e.g. <c>RadioModel.SwitchState(ERadioState)</c>). Returns true if it ran without throwing.</summary>
+        public static unsafe bool InvokeVoidWithEnum(IntPtr objPtr, IntPtr method, int enumValue)
+        {
+            if (objPtr == IntPtr.Zero || method == IntPtr.Zero) return false;
+            int a = enumValue;
+            void** args = stackalloc void*[1];
+            args[0] = &a;
+            IntPtr exc = IntPtr.Zero;
+            IL2CPP.il2cpp_runtime_invoke(method, objPtr, args, ref exc);
+            return exc == IntPtr.Zero;
+        }
+
+        /// <summary>Invoke a void instance method taking a single object-reference argument (e.g. a uGUI pointer
+        /// handler's <c>OnPointerClick(PointerEventData)</c>). The arg may be zero (null). Returns true if it ran
+        /// without throwing.</summary>
+        public static unsafe bool InvokeVoidWithObject(IntPtr objPtr, IntPtr method, IntPtr arg)
+        {
+            if (objPtr == IntPtr.Zero || method == IntPtr.Zero) return false;
+            void** args = stackalloc void*[1];
+            args[0] = (void*)arg;
+            IntPtr exc = IntPtr.Zero;
+            IL2CPP.il2cpp_runtime_invoke(method, objPtr, args, ref exc);
+            return exc == IntPtr.Zero;
+        }
+
+        /// <summary>Invoke a parameterless getter returning a <see cref="float"/> by value (e.g. the radio knob's
+        /// <c>get_Value</c>, <c>RadioModel.get_NormalisedDistance</c>). Returns <paramref name="fallback"/> on failure.</summary>
+        public static unsafe float InvokeFloatGetter(IntPtr objPtr, IntPtr method, float fallback = 0f)
+        {
+            if (objPtr == IntPtr.Zero || method == IntPtr.Zero) return fallback;
+            IntPtr exc = IntPtr.Zero;
+            IntPtr boxed = IL2CPP.il2cpp_runtime_invoke(method, objPtr, (void**)0, ref exc);
+            if (exc != IntPtr.Zero || boxed == IntPtr.Zero) return fallback;
+            return *(float*)IL2CPP.il2cpp_object_unbox(boxed);
+        }
+
         /// <summary>Invoke a STATIC parameterless getter returning an object pointer (e.g. a singleton
         /// <c>get_Instance</c> or <c>Camera.get_main</c>). Returns zero on failure.</summary>
         public static unsafe IntPtr InvokeStaticObjectGetter(IntPtr method)
@@ -324,6 +374,36 @@ namespace NoImNotAHumanAccess.Interop
             IntPtr exc = IntPtr.Zero;
             IntPtr result = IL2CPP.il2cpp_runtime_invoke(method, IntPtr.Zero, (void**)0, ref exc);
             return exc != IntPtr.Zero ? IntPtr.Zero : result;
+        }
+
+        /// <summary>
+        /// Construct a <c>UnityEngine.EventSystems.PointerEventData</c> bound to the current EventSystem, for feeding
+        /// a uGUI pointer handler we invoke manually (e.g. <c>IPointerClickHandler.OnPointerClick(PointerEventData)</c>
+        /// on a mouse-only button). Allocates the object and runs its 1-arg <c>.ctor(EventSystem)</c>. Returns zero on
+        /// failure (no EventSystem, ctor unresolved, or the ctor threw).
+        /// </summary>
+        public static unsafe IntPtr NewPointerEventData()
+        {
+            // EventSystem.current (static getter).
+            IntPtr esClass = GetClass("UnityEngine.UI.dll", "UnityEngine.EventSystems", "EventSystem");
+            if (esClass == IntPtr.Zero) esClass = GetClass("UnityEngine.UIModule.dll", "UnityEngine.EventSystems", "EventSystem");
+            IntPtr es = esClass == IntPtr.Zero ? IntPtr.Zero : InvokeStaticObjectGetter(GetMethod(esClass, "get_current", 0));
+            if (es == IntPtr.Zero) return IntPtr.Zero;
+
+            IntPtr pedClass = GetClass("UnityEngine.UI.dll", "UnityEngine.EventSystems", "PointerEventData");
+            if (pedClass == IntPtr.Zero) pedClass = GetClass("UnityEngine.UIModule.dll", "UnityEngine.EventSystems", "PointerEventData");
+            if (pedClass == IntPtr.Zero) return IntPtr.Zero;
+
+            IntPtr ctor = GetMethod(pedClass, ".ctor", 1);
+            if (ctor == IntPtr.Zero) return IntPtr.Zero;
+
+            IntPtr obj = IL2CPP.il2cpp_object_new(pedClass);
+            if (obj == IntPtr.Zero) return IntPtr.Zero;
+            void** args = stackalloc void*[1];
+            args[0] = (void*)es;
+            IntPtr exc = IntPtr.Zero;
+            IL2CPP.il2cpp_runtime_invoke(ctor, obj, args, ref exc);
+            return exc != IntPtr.Zero ? IntPtr.Zero : obj;
         }
 
         /// <summary>The main camera object pointer (<c>Camera.get_main</c>), or zero. For WorldToScreenPoint when a

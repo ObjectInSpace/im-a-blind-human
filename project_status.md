@@ -37,6 +37,36 @@
 
 ## Current Phase
 
+### Mouse-only input affordances — fridge/radio/cartoon steppers (BUILT + DEPLOYED 2026-06-03, awaiting in-game confirm)
+Audited every `IPointer*` handler + `ACloseUpView` for mouse-only inputs with no keyboard equivalent (the class of bug
+behind "can't pick a beer with arrows"). Genuine gaps found and fixed; everything else (PhoneButtonView, HoverableButton,
+ScrollableDropdown, ConsumableCloseUpView confirm, MushroomlistCloseUpView) already has an `ISelect`/`ISubmit` keyboard
+path and is covered by menu narration. New input contexts route arrows ONLY in the close-up they own (overlay-before-3D
+like Pause/Fridge); the mod does not consume keys, so native input still flows.
+- **Fridge drink grid** — `src/World/FridgeMenu.cs` + `InputContext.Fridge`. Arrows step `FridgeItemView`s deduped by
+  `ItemType`; calls the game's own `OnHover()`/`OnUnhover()` (fires the existing `OnPointerEntered`→CloseUpNarrator
+  narration) + `Use()` on Enter. TEST: open fridge, arrows announce each drink + description, Enter drinks it. If it
+  highlights but is SILENT, `OnHover()` alone may not fire `OnPointerEntered` → fall back to reading `FridgeItemView.GotTexts`.
+- **Radio** — `src/World/RadioMenu.cs` + `InputContext.Radio`. HELD Left/Right sweep the tuning knob via private
+  `RotateKnob(float delta)` (per-frame `Input.GetKey`); Up/Down toggle AM/FM via `RadioModel.SwitchState`; closeness to a
+  station narrated from `RadioModel.NormalisedDistance` (bucketed, throttled). TEST: FIRST confirm whether the knob already
+  moves by keyboard at all (the game has a `UIRadioKnob` action — binding unconfirmed); then hold Left/Right → hear
+  "getting closer / on the station", Up/Down → "A M"/"F M". Tune `TuneStepPerFrame=0.35f` if sweep speed is off; adjust the
+  `Closeness()` thresholds if `NormalisedDistance` is on a different scale.
+- **Watch-cartoon button** — `src/World/CartoonButton.cs`, routed inside the MainMenu context. The gacha/collections play
+  button is pointer-only; Enter invokes `OnPointerClick(PointerEventData)` when an active one is present. TEST: open an
+  unlocked ending in collections, Enter → "Playing cartoon" + movie plays. RISK: mod doesn't consume the key, so the
+  focused gacha tile may ALSO process Enter (double-action — likely just re-shows the ending; flag if it misbehaves).
+- New `Il2CppRaw` helpers: `InvokeVoidWithFloat`/`WithEnum`/`WithObject`, `InvokeFloatGetter`, `NewPointerEventData()`.
+- OPEN ARCHITECTURE QUESTION (raised 2026-06-03): there are now 4 arrow-hooking contexts (RoomPhoto/ThreeD/Fridge/Radio)
+  all implementing "arrows traverse, Enter selects". User wants to minimize mod-driven input. Unifying behind one
+  `IArrowStepper` (BuildItems→announce→activate) is viable and would shrink AccessMod's switch, but the per-surface
+  mechanics genuinely differ (cursor-warp vs OnHover vs held-RotateKnob), so it's a refactor of the routing seam, not
+  elimination of input handling. Not yet done — decide after the steppers are ear-confirmed so we unify on real behavior.
+  PROPOSAL DRAFTED: `docs/arrow-surface-seam-proposal.md` — an `IArrowSurface { Context; Step; Activate→bool; Reset }`
+  that collapses the OnUpdate switch to one lookup+dispatch, with Radio DELIBERATELY kept special (continuous/analog,
+  not a discrete stepper). No-behavior-change refactor; apply after in-game confirmation.
+
 **IN PROGRESS — Phase: world orientation (re-planned 2026-06-01 on corrected gameplay model).** Dialogue + menus done;
 interaction prompt CONFIRMED. **F9 (status) and F10 (orientation) both FAILED in-game** — root cause: the Zenject
 `SceneContext` lookup returned zero, so IPlayerService + the status controllers never resolved (the game-assembly
