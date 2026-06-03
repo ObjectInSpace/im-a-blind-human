@@ -1,12 +1,13 @@
 using System;
 using MelonLoader;
 using NoImNotAHumanAccess.Dialogue;
+using NoImNotAHumanAccess.InputShim;
 using NoImNotAHumanAccess.Menus;
 using NoImNotAHumanAccess.Speech;
 using NoImNotAHumanAccess.World;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(NoImNotAHumanAccess.AccessMod), "I'm a Blind Human", "0.7.0", "objectinspace")]
+[assembly: MelonInfo(typeof(NoImNotAHumanAccess.AccessMod), "I'm a Blind Human", "0.7.1", "objectinspace")]
 [assembly: MelonGame("Trioskaz", "NoImNotAHuman")]
 
 namespace NoImNotAHumanAccess
@@ -34,6 +35,7 @@ namespace NoImNotAHumanAccess
         private ControlsNarrator? _controlsNarrator;
         private SignNarrator? _signNarrator;
         private ShotNarrator? _shotNarrator;
+        private JawsArrowShim? _jawsArrowShim;
 
         // F7 = repeat the current context's control row ("what can I do here"); F8 = manual repeat/test trigger;
         // F9 = status readout (day/phase/energy/items); F10 = "where am I" orientation. The game's UI/world maps
@@ -42,6 +44,12 @@ namespace NoImNotAHumanAccess
         private const KeyCode RepeatKey = KeyCode.F8;
         private const KeyCode StatusKey = KeyCode.F9;
         private const KeyCode OrientationKey = KeyCode.F10;
+        // F11 = toggle the JAWS arrow relay. OFF BY DEFAULT — NVDA users already have working arrows + speech
+        // interrupt, so the hook is never installed for them. A JAWS user presses F11 to turn the arrows ON: the relay
+        // makes them navigate menus/dialogue, at the cost that JAWS can't interrupt its own speech (Ctrl / fast
+        // next-arrow) while on, because the relay must re-inject the keys (Unity only reads raw input). F11 again fully
+        // removes the hook and restores JAWS's normal interrupt. See jaws/README.md.
+        private const KeyCode ArrowShimToggleKey = KeyCode.F11;
         // Action menu (3D scene): arrows cycle the interactable list + Enter activates (see the ThreeD case in
         // OnUpdate). No dedicated F-keys — arrows are free in the 3D scene.
 
@@ -108,6 +116,12 @@ namespace NoImNotAHumanAccess
                 // uGUI focus keeper: arrows are dead in the menus (main menu / settings) until something is selected.
                 // While in a menu context, this ensures a control is always focused so native nav + MenuNarrator work.
                 _uguiFocus = new UguiFocus();
+
+                // JAWS arrow relay: stops JAWS swallowing the arrow keys so the game's OWN navigation receives them
+                // in menus/dialogue (NVDA already passes them; JAWS does not). Pure relay — does not interpret arrows.
+                // OFF by default: NVDA users already have working arrows + speech interrupt and need nothing here, so
+                // the hook isn't even installed until a JAWS user opts in with F11 (accepting the interrupt tradeoff).
+                _jawsArrowShim = new JawsArrowShim();
             }
             catch (Exception e)
             {
@@ -187,6 +201,22 @@ namespace NoImNotAHumanAccess
             {
                 _orientationNarrator?.Announce();
             }
+
+            if (Input.GetKeyDown(ArrowShimToggleKey) && _jawsArrowShim != null)
+            {
+                bool on = !_jawsArrowShim.Enabled;
+                _jawsArrowShim.SetEnabled(on);
+                // Off by default (NVDA users need nothing). A JAWS user turns it ON to make the arrows navigate,
+                // accepting that JAWS can't interrupt its own speech while on. Spell the tradeoff out by ear.
+                Speak(on
+                    ? "Arrow keys on for JAWS. Screen reader interrupt is limited while this is on."
+                    : "Arrow keys off. Screen reader interrupt restored.");
+            }
+        }
+
+        public override void OnDeinitializeMelon()
+        {
+            _jawsArrowShim?.Dispose();
         }
 
         private void Speak(string text)
