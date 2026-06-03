@@ -83,7 +83,10 @@ namespace NoImNotAHumanAccess.World
 
                 mainMenu = MainMenuActive();
                 paused = PauseActive();
-                photo = _twoD != null && _twoD.IsPhotoActive();
+                // Count-FREE photo-open check (RoomDisplayer._isOpened): a photo with zero selectable objects is still
+                // an open photo overlaying the 3D scene, and MUST classify as RoomPhoto — not fall through to ThreeD
+                // (the old object-count check did, letting the 3D keys fire over the photo → softlock).
+                photo = _twoD != null && _twoD.IsPhotoOpen();
                 dialog = DialogActive();
                 provider = ProviderPresent();
                 fridge = FridgeActive();

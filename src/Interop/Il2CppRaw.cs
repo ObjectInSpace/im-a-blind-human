@@ -203,6 +203,18 @@ namespace NoImNotAHumanAccess.Interop
             return value;
         }
 
+        /// <summary>Read a 32-bit float instance field by name from an object pointer, by offset. Returns
+        /// <paramref name="fallback"/> if the object/class/field is missing.</summary>
+        public static unsafe float ReadFloatField(IntPtr objPtr, IntPtr klass, string fieldName, float fallback = 0f)
+        {
+            if (objPtr == IntPtr.Zero || klass == IntPtr.Zero) return fallback;
+            IntPtr field = IL2CPP.il2cpp_class_get_field_from_name(klass, fieldName);
+            if (field == IntPtr.Zero) return fallback;
+            float value = 0f;
+            IL2CPP.il2cpp_field_get_value(objPtr, field, (void*)(&value));
+            return value;
+        }
+
         /// <summary>Read a 1-byte bool instance field by name from an object pointer, by offset. Returns
         /// <paramref name="fallback"/> if the object/class/field is missing.</summary>
         public static unsafe bool ReadBoolField(IntPtr objPtr, IntPtr klass, string fieldName, bool fallback = false)
@@ -350,6 +362,48 @@ namespace NoImNotAHumanAccess.Interop
             if (objPtr == IntPtr.Zero || method == IntPtr.Zero) return false;
             void** args = stackalloc void*[1];
             args[0] = (void*)arg;
+            IntPtr exc = IntPtr.Zero;
+            IL2CPP.il2cpp_runtime_invoke(method, objPtr, args, ref exc);
+            return exc == IntPtr.Zero;
+        }
+
+        /// <summary>Invoke an instance method taking one object-reference arg plus two <see cref="float"/> args (e.g.
+        /// <c>IPlayerService.LookAtWithZoom(Transform lookAtPos, float fov, float duration)</c>). The return (a UniTask
+        /// struct) is ignored — fire-and-forget. Returns true if it ran without throwing.</summary>
+        public static unsafe bool InvokeWithObjectFloatFloat(IntPtr objPtr, IntPtr method, IntPtr arg0, float arg1, float arg2)
+        {
+            if (objPtr == IntPtr.Zero || method == IntPtr.Zero) return false;
+            float a1 = arg1, a2 = arg2;
+            void** args = stackalloc void*[3];
+            args[0] = (void*)arg0;
+            args[1] = &a1;
+            args[2] = &a2;
+            IntPtr exc = IntPtr.Zero;
+            IL2CPP.il2cpp_runtime_invoke(method, objPtr, args, ref exc);
+            return exc == IntPtr.Zero;
+        }
+
+        /// <summary>Set a 1-byte bool instance field by name on an object pointer, by offset. Returns true if the
+        /// field was found and written. Use for poking a view's state during probes (e.g. ARaycastTarget IsTargeted's
+        /// backing field). Prefer a property SETTER (<see cref="InvokeVoidWithBool"/>) when one exists.</summary>
+        public static unsafe bool WriteBoolField(IntPtr objPtr, IntPtr klass, string fieldName, bool value)
+        {
+            if (objPtr == IntPtr.Zero || klass == IntPtr.Zero) return false;
+            IntPtr field = IL2CPP.il2cpp_class_get_field_from_name(klass, fieldName);
+            if (field == IntPtr.Zero) return false;
+            bool v = value;
+            IL2CPP.il2cpp_field_set_value(objPtr, field, (void*)(&v));
+            return true;
+        }
+
+        /// <summary>Invoke a void instance method taking a single bool argument (e.g. a property setter
+        /// <c>set_IsTargeted(bool)</c>). Returns true if it ran without throwing.</summary>
+        public static unsafe bool InvokeVoidWithBool(IntPtr objPtr, IntPtr method, bool arg)
+        {
+            if (objPtr == IntPtr.Zero || method == IntPtr.Zero) return false;
+            bool a = arg;
+            void** args = stackalloc void*[1];
+            args[0] = &a;
             IntPtr exc = IntPtr.Zero;
             IL2CPP.il2cpp_runtime_invoke(method, objPtr, args, ref exc);
             return exc == IntPtr.Zero;

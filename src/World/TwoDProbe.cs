@@ -31,6 +31,7 @@ namespace NoImNotAHumanAccess.World
         private bool _resolved;
         private IntPtr _uiButtonClass, _getIsActive;
         private IntPtr _rayCasterClass, _getInstance;  // UIRayCaster + static get_Instance
+        private IntPtr _roomDisplayerClass;            // RoomDisplayer (+ its _isOpened bool) — photo open/closed state
 
         private IntPtr _selected; // last-warped button, to keep selection across rebuilds
 
@@ -73,11 +74,32 @@ namespace NoImNotAHumanAccess.World
         }
 
         /// <summary>
-        /// Whether a 2D room photo / close-up is currently up — i.e. there is at least one goActive
-        /// <c>UIButton</c> in the scene. Used to route the shared arrow/Enter keys to the 2D stepper vs. the 3D menu:
-        /// in a 3D walking scene no photo buttons are active, so this is false and arrows drive the 3D list instead.
+        /// Whether a 2D room photo is OPEN — the count-free signal, read from <c>RoomDisplayer._isOpened</c>. This is
+        /// what classification MUST use to route to RoomPhoto, because a photo with ZERO selectable objects is still an
+        /// open photo overlaying the 3D scene. The earlier object-count check (<see cref="HasSelectableObjects"/>)
+        /// wrongly reported a zero-object photo as "not a photo", so it fell through to ThreeD and the 3D action keys
+        /// fired over the photo → opened an interaction over it → SOFTLOCK. The photo's own open flag has no such gap.
         /// </summary>
-        public bool IsPhotoActive()
+        public bool IsPhotoOpen()
+        {
+            try
+            {
+                EnsureResolved();
+                if (_roomDisplayerClass == IntPtr.Zero) return false;
+                IntPtr rd = Il2CppRaw.FindObjectIncludingInactive(_roomDisplayerClass);
+                if (rd == IntPtr.Zero) return false;
+                return Il2CppRaw.ReadBoolField(rd, _roomDisplayerClass, "_isOpened");
+            }
+            catch { /* treat as not-open on any failure */ }
+            return false;
+        }
+
+        /// <summary>
+        /// Whether the open photo has at least one selectable object (a goActive <c>UIButton</c>). NOT a photo-open
+        /// signal — a zero-object photo returns false here yet is still open. Used to decide whether stepping has
+        /// anything to step through, and to tell the player "no objects" instead of silently doing nothing.
+        /// </summary>
+        public bool HasSelectableObjects()
         {
             try
             {
@@ -85,7 +107,7 @@ namespace NoImNotAHumanAccess.World
                 foreach (IntPtr b in Il2CppRaw.FindObjectsByType(_uiButtonClass, includeInactive: false))
                     if (b != IntPtr.Zero && Il2CppRaw.GetComponentGameObjectActive(b)) return true;
             }
-            catch { /* treat as not-photo on any failure */ }
+            catch { /* treat as no-objects on any failure */ }
             return false;
         }
 
@@ -131,6 +153,14 @@ namespace NoImNotAHumanAccess.World
             try
             {
                 EnsureResolved();
+                // RoomDisplayer findability + open-flag ground truth: the count-FREE photo gate depends on this being
+                // findable (an older active-only FindObjectOfType(RoomDisplayer) reportedly never returned one — we use
+                // the inactive-inclusive find, which may succeed where that failed; confirm here before trusting it).
+                IntPtr rd = _roomDisplayerClass != IntPtr.Zero ? Il2CppRaw.FindObjectIncludingInactive(_roomDisplayerClass) : IntPtr.Zero;
+                bool rdOpened = rd != IntPtr.Zero && Il2CppRaw.ReadBoolField(rd, _roomDisplayerClass, "_isOpened");
+                MelonLogger.Msg($"[TwoDProbe] RoomDisplayer found={rd != IntPtr.Zero} _isOpened={rdOpened} " +
+                                $"(IsPhotoOpen={IsPhotoOpen()} HasSelectableObjects={HasSelectableObjects()})");
+
                 IntPtr[] active = Il2CppRaw.FindObjectsByType(_uiButtonClass, includeInactive: false);
                 IntPtr[] all = Il2CppRaw.FindObjectsByType(_uiButtonClass, includeInactive: true);
                 MelonLogger.Msg($"[TwoDProbe] active-only={active.Length} total={all.Length}");
@@ -171,8 +201,11 @@ namespace NoImNotAHumanAccess.World
                 if (_rayCasterClass != IntPtr.Zero)
                     _getInstance = Il2CppRaw.GetMethod(_rayCasterClass, "get_Instance", 0);
 
+                _roomDisplayerClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure.Rooms", "RoomDisplayer");
+
                 MelonLogger.Msg($"[TwoDProbe] resolved: uiButton={_uiButtonClass != IntPtr.Zero} " +
-                                $"rayCaster={_rayCasterClass != IntPtr.Zero} getInstance={_getInstance != IntPtr.Zero}");
+                                $"rayCaster={_rayCasterClass != IntPtr.Zero} getInstance={_getInstance != IntPtr.Zero} " +
+                                $"roomDisplayer={_roomDisplayerClass != IntPtr.Zero}");
             }
             catch (Exception e)
             {
