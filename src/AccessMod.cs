@@ -7,7 +7,7 @@ using NoImNotAHumanAccess.Speech;
 using NoImNotAHumanAccess.World;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(NoImNotAHumanAccess.AccessMod), "I'm a Blind Human", "0.7.5", "objectinspace")]
+[assembly: MelonInfo(typeof(NoImNotAHumanAccess.AccessMod), "I'm a Blind Human", "0.7.6", "objectinspace")]
 [assembly: MelonGame("Trioskaz", "NoImNotAHuman")]
 
 namespace NoImNotAHumanAccess
@@ -127,9 +127,10 @@ namespace NoImNotAHumanAccess
                 // Orientation key (F10): "what's around me" — currently-selectable interactables with bearings.
                 _orientationNarrator = new OrientationNarrator(_speech);
 
-                // Action menu (3D scene): arrows cycle an available interaction from a list and Enter activates it, so
-                // the game performs it without the player walking to the object. Routed via the ThreeD input context.
-                _actionMenu = new ActionMenu(_speech);
+                // Action menu (3D scene): PageUp/PageDown select an interactable; Backspace walks the player to it
+                // (turn + MoveXZ), then the game's own Space interacts in range. Takes the HudNarrator so it can use
+                // the game's re-shown interaction prompt as the arrival cue. Routed via the ThreeD input context.
+                _actionMenu = new ActionMenu(_speech, _hudNarrator);
 
                 // Fridge close-up: the drink grid is mouse-hover only in the base game, so arrows step the drinks
                 // (driving the game's own FridgeItemView.OnHover → the CloseUpNarrator fridge hook) and Enter uses the
@@ -182,6 +183,18 @@ namespace NoImNotAHumanAccess
         {
             _menuNarrator?.Tick();
             _controlsNarrator?.Tick(); // drains the deferred first-encounter control-row read
+            _actionMenu?.Tick();       // polls arrival after a 3D "go" walk and fires the in-range cue
+
+            // While the 3D "go" holds the look frozen on a target, a keypress that is NOT one of the mod's OWN nav keys
+            // means the player is doing something else (Space to interact, WASD to move) → release the freeze so they're
+            // never stuck. The mod's own keys (PageUp/PageDown/Backspace) manage the hold through their OWN paths
+            // (Cycle releases; GoToSelected releases-then-re-holds), so they MUST be excluded here — otherwise this
+            // fires on the very Backspace that's starting a new go and cancels the walk it just launched (the "had to
+            // press Backspace three times" bug). Only foreign keys reach ReleaseHold.
+            if ((_actionMenu?.IsHolding ?? false) && Input.anyKeyDown && !ModOwnsAKeyDownThisFrame())
+            {
+                _actionMenu?.ReleaseHold();
+            }
 
             if (Input.GetKeyDown(ControlsKey))
             {
@@ -237,6 +250,14 @@ namespace NoImNotAHumanAccess
             bool selPrev = Input.GetKeyDown(CyclePrevKey);
             bool selNext = Input.GetKeyDown(CycleNextKey);
 
+            // 3D action keys must do NOTHING when the player is inside an overlay/engaged interaction the mod classified
+            // as ThreeD anyway — e.g. looking through the peephole (no one outside): the interactable provider is still
+            // present so ctx reads ThreeD, but you're "inside" the peephole and must 'q' out. Suppress when the game's
+            // world-roam signal says an overlay owns input (_inUiCounter>0) OR any interactable is engaged (IsLooking).
+            // EXCEPT while WE are holding our own aim (then cycle/go must still work — they release + re-go).
+            bool threeDBlocked = !(_actionMenu?.IsHolding ?? false)
+                && (!(_inputModeGate?.IsWorldRoam() ?? true) || (_actionMenu?.IsAnyEngaged() ?? false));
+
             if (selPrev || selNext)
             {
                 switch (ctx)
@@ -254,16 +275,12 @@ namespace NoImNotAHumanAccess
                         break;
 
                     case InputContextKind.ThreeD:
-                    {
-                        // Cycle + aim. Aiming pokes IsTargeted, which for some objects (blinds) OPENS their close-up,
-                        // so we only AIM when the game is genuinely in world-roam (_inUiCounter==0) — otherwise a fast
-                        // cycle while a close-up is mid-open stacks interactions = softlock. Selecting/announcing is
-                        // always safe; the aim is gated on the game's own signal.
-                        bool canAim = _inputModeGate?.IsWorldRoam() ?? false;
-                        if (selNext) _actionMenu?.Cycle(backwards: false, canAim: canAim);
-                        if (selPrev) _actionMenu?.Cycle(backwards: true, canAim: canAim);
+                        // SELECT + ANNOUNCE ONLY — no movement here (walking is Backspace, below). Suppressed when the
+                        // player is inside an overlay/engaged interaction (peephole etc.) — see threeDBlocked.
+                        if (threeDBlocked) break;
+                        if (selNext) _actionMenu?.Cycle(backwards: false);
+                        if (selPrev) _actionMenu?.Cycle(backwards: true);
                         break;
-                    }
 
                     // MainMenu / Pause: the game's native arrow nav drives (EnsureSelection keeps focus); selection
                     // keys do nothing here. Radio: PageUp/PageDown are the HELD tune (handled above), not selection.
@@ -271,12 +288,16 @@ namespace NoImNotAHumanAccess
                 }
             }
 
-            // ACTIVATE (Backspace) — FRIDGE ONLY. The 3D action menu no longer activates anything itself: PageUp/Down
-            // select+aim, and the player presses the GAME's own Space (Interact) to engage — so entry and leave run
-            // through the game's own state machine (this replaced the cold Act() that softlocked; see ActionMenu). The
-            // fridge "use" stays here because it's a 2D grid using FridgeItemView.Use, not the 3D interaction path.
-            if (Input.GetKeyDown(ActivateKey) && ctx == InputContextKind.Fridge)
-                _fridgeMenu?.Activate();
+            // BACKSPACE — context-specific "go/use":
+            //  • ThreeD: the deliberate "go" key — turn + walk to the SELECTED interactable so the game's own Space can
+            //    interact in range. Walking is here, NOT on cycling, so MoveXZ can't stack (the frozen-player race).
+            //  • Fridge: use the highlighted drink (FridgeItemView.Use — a 2D grid, not the 3D path).
+            if (Input.GetKeyDown(ActivateKey))
+            {
+                // ThreeD go is suppressed in the same engaged/overlay state as the select keys (peephole etc.).
+                if (ctx == InputContextKind.ThreeD && !threeDBlocked) _actionMenu?.GoToSelected();
+                else if (ctx == InputContextKind.Fridge) _fridgeMenu?.Activate();
+            }
 
             // Radio band toggle (Home/End): edge action, only in the radio close-up.
             if (ctx == InputContextKind.Radio && (Input.GetKeyDown(RadioBandDownKey) || Input.GetKeyDown(RadioBandUpKey)))
@@ -301,6 +322,7 @@ namespace NoImNotAHumanAccess
                 _orientationNarrator?.Announce();
             }
 
+
             if (Input.GetKeyDown(ArrowShimToggleKey) && _jawsArrowShim != null)
             {
                 bool on = !_jawsArrowShim.Enabled;
@@ -312,6 +334,15 @@ namespace NoImNotAHumanAccess
                     : "Arrow keys off. Screen reader interrupt restored.");
             }
         }
+
+        /// <summary>
+        /// Whether a key the MOD itself handles went down this frame — the 3D nav keys (PageUp/PageDown select, Backspace
+        /// go) plus the radio band keys. Used to EXCLUDE the mod's own keys from the look-freeze auto-release, so the
+        /// Backspace that starts a new go isn't mistaken for "player did something else" and cancelled.
+        /// </summary>
+        private static bool ModOwnsAKeyDownThisFrame() =>
+            Input.GetKeyDown(CyclePrevKey) || Input.GetKeyDown(CycleNextKey) || Input.GetKeyDown(ActivateKey)
+            || Input.GetKeyDown(RadioBandDownKey) || Input.GetKeyDown(RadioBandUpKey);
 
         public override void OnDeinitializeMelon()
         {

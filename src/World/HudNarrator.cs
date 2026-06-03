@@ -25,8 +25,26 @@ namespace NoImNotAHumanAccess.World
     {
         private readonly ISpeechOutput _speech;
         private string _lastSpoken = string.Empty;
+        private bool _spokeSinceArm;   // set when a prompt speaks after ArmArrival(); lets the action menu tell whether
+                                       // the game re-fired its prompt on arrival or a fallback cue is needed.
 
         public HudNarrator(ISpeechOutput speech) => _speech = speech;
+
+        /// <summary>
+        /// Called by the action menu when the player ARRIVES in range of a walk target: clear the dedupe so the game's
+        /// re-shown prompt for the (already-looked-at) object speaks again as the arrival cue, and arm an observation
+        /// flag (<see cref="SpokeSinceArm"/>) so the menu can detect whether the game actually re-fired a prompt — and
+        /// speak a short fallback if it didn't.
+        /// </summary>
+        public void ArmArrival()
+        {
+            _lastSpoken = string.Empty;
+            _spokeSinceArm = false;
+        }
+
+        /// <summary>Whether a prompt has been spoken since the last <see cref="ArmArrival"/> (i.e. the game re-fired its
+        /// hint on arrival). The action menu reads this to decide if a fallback "in range" cue is needed.</summary>
+        public bool SpokeSinceArm => _spokeSinceArm;
 
         /// <summary>
         /// Handle one interaction prompt. Cleans markup, composes "{action} {subject}" plus an energy-cost suffix
@@ -60,6 +78,7 @@ namespace NoImNotAHumanAccess.World
 
                 if (text == _lastSpoken) return;
                 _lastSpoken = text;
+                _spokeSinceArm = true; // a prompt spoke — the action menu's arrival arm sees this as "game re-fired"
 
                 _speech.Speak(text, interrupt: true);
             }

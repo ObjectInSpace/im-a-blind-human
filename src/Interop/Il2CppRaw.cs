@@ -367,33 +367,19 @@ namespace NoImNotAHumanAccess.Interop
             return exc == IntPtr.Zero;
         }
 
-        /// <summary>Invoke an instance method taking one object-reference arg plus two <see cref="float"/> args (e.g.
-        /// <c>IPlayerService.LookAtWithZoom(Transform lookAtPos, float fov, float duration)</c>). The return (a UniTask
+        /// <summary>Invoke an instance method taking a <see cref="Vector3"/> (by value) plus a <see cref="float"/>
+        /// argument (e.g. <c>IPlayerService.MoveXZ(Vector3 standingPos, float speed)</c>). The return (a UniTask
         /// struct) is ignored — fire-and-forget. Returns true if it ran without throwing.</summary>
-        public static unsafe bool InvokeWithObjectFloatFloat(IntPtr objPtr, IntPtr method, IntPtr arg0, float arg1, float arg2)
+        public static unsafe bool InvokeWithVector3Float(IntPtr objPtr, IntPtr method, Vector3 v, float f)
         {
             if (objPtr == IntPtr.Zero || method == IntPtr.Zero) return false;
-            float a1 = arg1, a2 = arg2;
-            void** args = stackalloc void*[3];
-            args[0] = (void*)arg0;
-            args[1] = &a1;
-            args[2] = &a2;
+            Vector3 vv = v; float ff = f;
+            void** args = stackalloc void*[2];
+            args[0] = &vv;
+            args[1] = &ff;
             IntPtr exc = IntPtr.Zero;
             IL2CPP.il2cpp_runtime_invoke(method, objPtr, args, ref exc);
             return exc == IntPtr.Zero;
-        }
-
-        /// <summary>Set a 1-byte bool instance field by name on an object pointer, by offset. Returns true if the
-        /// field was found and written. Use for poking a view's state during probes (e.g. ARaycastTarget IsTargeted's
-        /// backing field). Prefer a property SETTER (<see cref="InvokeVoidWithBool"/>) when one exists.</summary>
-        public static unsafe bool WriteBoolField(IntPtr objPtr, IntPtr klass, string fieldName, bool value)
-        {
-            if (objPtr == IntPtr.Zero || klass == IntPtr.Zero) return false;
-            IntPtr field = IL2CPP.il2cpp_class_get_field_from_name(klass, fieldName);
-            if (field == IntPtr.Zero) return false;
-            bool v = value;
-            IL2CPP.il2cpp_field_set_value(objPtr, field, (void*)(&v));
-            return true;
         }
 
         /// <summary>Invoke a void instance method taking a single bool argument (e.g. a property setter
@@ -537,6 +523,32 @@ namespace NoImNotAHumanAccess.Interop
             IntPtr objClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "Object");
             IntPtr getName = GetMethod(objClass, "get_name", 0);
             return InvokeStringGetter(objPtr, getName);
+        }
+
+        /// <summary>Get a GameObject pointer's Transform pointer (<c>GameObject.get_transform</c>), raw. Zero on
+        /// failure.</summary>
+        public static IntPtr GetGameObjectTransform(IntPtr goPtr)
+        {
+            if (goPtr == IntPtr.Zero) return IntPtr.Zero;
+            IntPtr goClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "GameObject");
+            return InvokeObjectGetter(goPtr, GetMethod(goClass, "get_transform", 0));
+        }
+
+        /// <summary>Rotate a Transform to face a world point via <c>Transform.LookAt(Vector3)</c>, raw. Returns true if
+        /// it ran without throwing. The 1-arg overload uses world-up. Use to aim the camera target at an object so the
+        /// game's own raycaster (which casts along the camera forward) hits it.</summary>
+        public static unsafe bool TransformLookAt(IntPtr transformPtr, Vector3 worldPoint)
+        {
+            if (transformPtr == IntPtr.Zero) return false;
+            IntPtr trClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "Transform");
+            IntPtr m = GetMethod(trClass, "LookAt", 1);
+            if (m == IntPtr.Zero) return false;
+            Vector3 p = worldPoint;
+            void** args = stackalloc void*[1];
+            args[0] = &p;
+            IntPtr exc = IntPtr.Zero;
+            IL2CPP.il2cpp_runtime_invoke(m, transformPtr, args, ref exc);
+            return exc == IntPtr.Zero;
         }
 
         /// <summary>Read a Component's world position: <c>Component.get_transform()</c> then
