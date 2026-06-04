@@ -45,9 +45,12 @@ namespace NoImNotAHumanAccess
         // F9 = status readout (day/phase/energy/items); F10 = "where am I" orientation. The game binds NO F-key.
         // The game's COMPLETE keyboard binding set (read from PlayerInputActions.asset via the 2026-06-03 asset rip):
         //   space escape w a s d q e f shift leftCtrl enter upArrow downArrow leftArrow rightArrow
-        // Everything else is free. In particular [ ] PageUp PageDown Home End Backspace are NOT bound by the game on
-        // any device — the mod can use them with zero collision. (An earlier comment wrongly listed page/home/end/
-        // backspace/tab as game keys; the rip disproved that.) Full action→key+gamepad map: docs/input-and-keyboard.md.
+        // The arrows + enter ARE in that set, but ONLY via the Input System UI-map `Navigate`/`Submit` actions, which
+        // are IDLE in the four contexts the mod drives (RoomPhoto/Fridge/Radio/ThreeD) — game code never polls raw arrow
+        // keys (grep-confirmed). So the mod claims arrows + Enter in EXACTLY those four contexts and NEVER in MainMenu/
+        // Pause/dialogue (where the game's own Navigate uses them); the ctx guards in OnUpdate enforce that. The F-keys
+        // (F7–F11) are bound by nothing. Full action→key+gamepad map + the arrow-safety reasoning:
+        // docs/input-and-keyboard.md + memory project-nimnah-arrows-for-stepping-feasibility.
         private const KeyCode ControlsKey = KeyCode.F7;
         private const KeyCode RepeatKey = KeyCode.F8;
         private const KeyCode StatusKey = KeyCode.F9;
@@ -59,31 +62,50 @@ namespace NoImNotAHumanAccess
         // removes the hook and restores JAWS's normal interrupt. See jaws/README.md.
         private const KeyCode ArrowShimToggleKey = KeyCode.F11;
 
-        // The mod NEVER touches the arrow keys. In menus the game's own arrow nav drives (the mod only keeps a control
-        // focused); everywhere the mod drives a list it uses DEDICATED keys below. This removed all arrow contention —
-        // the source of repeated 3D-selection bugs and a photo-over-photo softlock — and is the "rely on the game"
-        // posture the user asked for: the game owns the arrows in every context.
+        // ARROW-KEY STEPPING (user 2026-06-03, replacing the old PageUp/PageDown/Backspace scheme). The rip proved this
+        // safe: game code NEVER polls raw arrow keys — arrows reach the game ONLY via the Input System `Navigate` action
+        // in the UI map, which is IDLE in the four contexts the mod drives (RoomPhoto = mouse-raycast, no Selectables;
+        // Fridge = hover-only grid; Radio = gamepad-only knob; ThreeD = Move is WASD, UI map inactive). So the mod claims
+        // arrows in EXACTLY those four contexts and NEVER in MainMenu/Pause (where the game's own uGUI Navigate uses them
+        // — see the ctx guards below). See memory project-nimnah-arrows-for-stepping-feasibility + project-nimnah-input-
+        // bindings-rip. NOTE: JAWS swallows arrows; JAWS users need the separate jaws/ pass-through script (the old
+        // PageUp/PageDown fallback was removed per the user's "replace outright" decision — NVDA works natively).
         //
-        // PageUp/PageDown = UNIFIED selection across every mod-driven list (3D action menu, 2D room photo, fridge). One
-        // key pair everywhere, so a context MISCLASSIFICATION between 2D and 3D can only ever select the wrong list.
-        // In the 3D scene, selecting an interactable also AIMS the player at it (ActionMenu.Aim) so the player can then
-        // press the GAME's own Space (Interact) to engage — the mod never invokes the 3D interaction itself.
-        private const KeyCode CyclePrevKey = KeyCode.PageUp;
-        private const KeyCode CycleNextKey = KeyCode.PageDown;
-        // Backspace = "use the selected fridge drink" (FridgeItemView.Use). FRIDGE ONLY now — the 3D action menu no
-        // longer activates anything via the mod (no cold Act(); the player uses the game's own Space). See ActionMenu.
-        private const KeyCode ActivateKey = KeyCode.Backspace;
-        // Radio (close-up): held PageUp/PageDown sweep the tuning dial; Home/End toggle the AM/FM band.
-        private const KeyCode RadioBandDownKey = KeyCode.Home;
-        private const KeyCode RadioBandUpKey = KeyCode.End;
+        // Up/Down = step every vertical list (3D action menu, 2D room photo, fridge). Enter = activate the selection.
+        // One scheme everywhere, so a 2D⇄3D context MISCLASSIFICATION can only ever select the wrong list. In the 3D
+        // scene, selecting an interactable AIMS the player at it; Enter walks to it so the GAME's own Space interacts.
+        private const KeyCode CyclePrevKey = KeyCode.UpArrow;
+        private const KeyCode CycleNextKey = KeyCode.DownArrow;
+        // Enter = the UNIFORM activate key: open the photo hotspot (UIButton.Click), drink the selected fridge beer
+        // (FridgeItemView.Use), or walk to the selected 3D interactable so the game's Space engages it.
+        private const KeyCode ActivateKey = KeyCode.Return;
+        private const KeyCode ActivateKeyAlt = KeyCode.KeypadEnter; // numpad Enter, same role
+        // Radio (close-up) uses all four arrows for its dial: held Left/Right SWEEP the tuning knob (continuous, natural
+        // for a dial), Up/Down toggle the AM/FM band (edge). Left/Right are radio-ONLY — every other context uses Up/Down.
+        private const KeyCode RadioTuneLeftKey = KeyCode.LeftArrow;
+        private const KeyCode RadioTuneRightKey = KeyCode.RightArrow;
+        private const KeyCode RadioBandDownKey = KeyCode.UpArrow;
+        private const KeyCode RadioBandUpKey = KeyCode.DownArrow;
+        // LEAVE the current interaction. PRIMARY exit is now the game's OWN q (the mod opens views through the game's
+        // targeted-entry path — see ActionMenu.GoToSelected — so the game registers the open view as the current
+        // interaction and its native q/back-out closes it; this replaced the old cold-Act() entry that q couldn't
+        // unwind). Backspace is kept as a mod-driven FALLBACK (ForceLeave) in case a given view still won't unwind
+        // natively — it's free (Enter took over activate) and a no-op when nothing's engaged, so it's safe anytime.
+        private const KeyCode LeaveKey = KeyCode.Backspace;
 
         public override void OnInitializeMelon()
         {
             LoggerInstance.Msg("Initializing native speech channel...");
             try
             {
+                // Unity AssistiveSupport — the proven channel for NVDA/Narrator/JAWS. (A self-raised UIA-notification
+                // channel was tried to give JAWS interrupt via NotificationProcessing_MostRecent, but it reached NO
+                // screen reader: this app's window UIA provider belongs to Unity's native engine, and a standalone
+                // provider we raise from isn't the one the reader connects to. Unity exposes no priority-aware
+                // announcement and no borrowable provider, so there is no cheap interrupt path. Interrupt now belongs
+                // to the deferred AccessibilityHierarchy work — see memory project-nimnah-native-accessibility-hierarchy.)
                 _speech = new NativeAnnouncer();
-                LoggerInstance.Msg($"Speech channel: {_speech.Name}, available={_speech.IsAvailable}");
+                LoggerInstance.Msg($"Speech channel: {_speech.Name}, available={_speech.IsAvailable}.");
                 _menuNarrator = new MenuNarrator(_speech);
 
                 // Dialogue: hook the game's central subtitle sink and speak each rendered line.
@@ -187,10 +209,10 @@ namespace NoImNotAHumanAccess
 
             // While the 3D "go" holds the look frozen on a target, a keypress that is NOT one of the mod's OWN nav keys
             // means the player is doing something else (Space to interact, WASD to move) → release the freeze so they're
-            // never stuck. The mod's own keys (PageUp/PageDown/Backspace) manage the hold through their OWN paths
-            // (Cycle releases; GoToSelected releases-then-re-holds), so they MUST be excluded here — otherwise this
-            // fires on the very Backspace that's starting a new go and cancels the walk it just launched (the "had to
-            // press Backspace three times" bug). Only foreign keys reach ReleaseHold.
+            // never stuck. The mod's own keys (Up/Down select, Enter go, Left/Right radio-tune) manage the hold through
+            // their OWN paths (Cycle releases; GoToSelected releases-then-re-holds), so they MUST be excluded here —
+            // otherwise this fires on the very Enter that's starting a new go and cancels the walk it just launched (the
+            // "had to press it three times" bug). Only foreign keys reach ReleaseHold.
             if ((_actionMenu?.IsHolding ?? false) && Input.anyKeyDown && !ModOwnsAKeyDownThisFrame())
             {
                 _actionMenu?.ReleaseHold();
@@ -203,14 +225,15 @@ namespace NoImNotAHumanAccess
 
             if (Input.GetKeyDown(RepeatKey))
             {
-                _twoDProbe?.Dump();           // F8: dump the live room-photo UIButton set (2D-menu design diagnostic)
-                _inputContext?.DumpSignals(); // + dump raw context-signal find-state (markers/provider/popup)
-                _inputModeGate?.Dump();       // + dump the game's own world-vs-UI signal (InputHandling._inUiCounter)
+                _twoDProbe?.Dump();                 // F8: dump the live room-photo UIButton set (2D-menu design diagnostic)
+                _twoDProbe?.ProbeAllCloseUps("F8");  // + which close-up view is active NOW (press while the fridge is open)
+                _inputContext?.DumpSignals();       // + dump raw context-signal find-state (markers/provider/popup)
+                _inputModeGate?.Dump();             // + dump the game's own world-vs-UI signal (InputHandling._inUiCounter)
             }
 
-            // The active context routes the mod's DEDICATED keys (PageUp/PageDown/Backspace/Home/End) per list. The
-            // mod never touches arrows — menus use the game's native arrow nav (we only keep a control focused). In
-            // None it does nothing. The destructive 3D activate is additionally gated on the game's world-roam signal.
+            // The active context routes the mod's keys (Up/Down select, Enter activate, Left/Right radio-tune) per list,
+            // but ONLY in RoomPhoto/Fridge/Radio/ThreeD — in MainMenu/Pause the game's own arrow nav drives (we only keep
+            // a control focused), and in None the mod does nothing. The 3D go is additionally gated on world-roam.
             InputContextKind ctx = _inputContext?.Classify() ?? InputContextKind.None;
 
             // In a menu context, keep a uGUI control selected every frame so the dead arrow keys work and native nav
@@ -228,25 +251,27 @@ namespace NoImNotAHumanAccess
             if (ctx != InputContextKind.Fridge)
                 _fridgeMenu?.Reset();
 
-            // Radio: tuning is HELD (per-frame sweep), unlike the edge-based selection below. Held PageUp/PageDown drive
-            // RotateKnob every frame, and Tick narrates closeness while tuning. Band toggle (Home/End) is an edge
-            // action handled with the other selection keys below. Reset state on leaving so reopening starts fresh.
+            // Radio: tuning is HELD (per-frame sweep), unlike the edge-based selection below. Held Left/Right arrows drive
+            // RotateKnob every frame, and Tick narrates closeness while tuning. Band toggle (Up/Down) is an edge action
+            // handled below. Left/Right are radio-ONLY (no other context uses them). Reset on leaving so reopening is fresh.
             if (ctx == InputContextKind.Radio)
             {
-                bool tuneDown = Input.GetKey(CyclePrevKey);   // PageUp held
-                bool tuneUp = Input.GetKey(CycleNextKey);     // PageDown held
-                if (tuneUp) _radioMenu?.Tune(backwards: false);
-                else if (tuneDown) _radioMenu?.Tune(backwards: true);
-                _radioMenu?.Tick(tuningHeld: tuneDown || tuneUp);
+                bool tuneLeft = Input.GetKey(RadioTuneLeftKey);
+                bool tuneRight = Input.GetKey(RadioTuneRightKey);
+                if (tuneRight) _radioMenu?.Tune(backwards: false);
+                else if (tuneLeft) _radioMenu?.Tune(backwards: true);
+                _radioMenu?.Tick(tuningHeld: tuneLeft || tuneRight);
             }
             else
             {
                 _radioMenu?.Reset();
             }
 
-            // UNIFIED selection keys (edge-triggered): PageUp = previous, PageDown = next, in EVERY mod-driven list.
+            // UNIFIED selection keys (edge-triggered): Up = previous, Down = next, in EVERY mod-driven vertical list.
             // Because the same keys mean "select" in 2D and 3D, a 2D⇄3D context misclassification can only select the
             // wrong list — it can never fire a 3D action in a 2D context (the old [ ]/Backspace-in-a-photo softlock).
+            // (In Radio, Up/Down are the band toggle instead — there's no Radio case in the switch, so these fall
+            // through harmlessly and the band-toggle line below handles them.)
             bool selPrev = Input.GetKeyDown(CyclePrevKey);
             bool selNext = Input.GetKeyDown(CycleNextKey);
 
@@ -263,19 +288,19 @@ namespace NoImNotAHumanAccess
                 switch (ctx)
                 {
                     case InputContextKind.RoomPhoto:
-                        // Warp the game's cursor between objects (the game's own Enter then selects — untouched by us).
+                        // Warp the game's cursor between objects; Enter then clicks the selected one (below).
                         if (selNext) _twoDProbe?.Step(backwards: false);
                         if (selPrev) _twoDProbe?.Step(backwards: true);
                         break;
 
                     case InputContextKind.Fridge:
-                        // Step the drinks (the game's own hover narrates via the fridge hook); Backspace uses one below.
+                        // Step the drinks (the game's own hover narrates via the fridge hook); Enter uses one below.
                         if (selNext) _fridgeMenu?.Cycle(backwards: false);
                         if (selPrev) _fridgeMenu?.Cycle(backwards: true);
                         break;
 
                     case InputContextKind.ThreeD:
-                        // SELECT + ANNOUNCE ONLY — no movement here (walking is Backspace, below). Suppressed when the
+                        // SELECT + ANNOUNCE ONLY — no movement here (walking is Enter, below). Suppressed when the
                         // player is inside an overlay/engaged interaction (peephole etc.) — see threeDBlocked.
                         if (threeDBlocked) break;
                         if (selNext) _actionMenu?.Cycle(backwards: false);
@@ -283,34 +308,45 @@ namespace NoImNotAHumanAccess
                         break;
 
                     // MainMenu / Pause: the game's native arrow nav drives (EnsureSelection keeps focus); selection
-                    // keys do nothing here. Radio: PageUp/PageDown are the HELD tune (handled above), not selection.
+                    // keys do nothing here. Radio: Up/Down are the band toggle (below), Left/Right the HELD tune (above).
                     // None: nothing — dialog/cutscene/popup/phone are the game's.
                 }
             }
 
-            // BACKSPACE — context-specific "go/use":
-            //  • ThreeD: the deliberate "go" key — turn + walk to the SELECTED interactable so the game's own Space can
-            //    interact in range. Walking is here, NOT on cycling, so MoveXZ can't stack (the frozen-player race).
-            //  • Fridge: use the highlighted drink (FridgeItemView.Use — a 2D grid, not the 3D path).
-            if (Input.GetKeyDown(ActivateKey))
-            {
-                // ThreeD go is suppressed in the same engaged/overlay state as the select keys (peephole etc.).
-                if (ctx == InputContextKind.ThreeD && !threeDBlocked) _actionMenu?.GoToSelected();
-                else if (ctx == InputContextKind.Fridge) _fridgeMenu?.Activate();
-            }
-
-            // Radio band toggle (Home/End): edge action, only in the radio close-up.
+            // Radio band toggle (Up/Down): edge action, only in the radio close-up. Checked BEFORE the Enter/activate
+            // block so it can't be confused with anything else (Up/Down never reach the vertical-list switch in Radio).
             if (ctx == InputContextKind.Radio && (Input.GetKeyDown(RadioBandDownKey) || Input.GetKeyDown(RadioBandUpKey)))
                 _radioMenu?.SwitchBand();
 
-            // Gacha "watch cartoon" play button (main menu): pointer-only in the base game, so Enter plays it when it's
-            // on screen. The game's native Enter handles all other menu activation; we only intercept when available.
-            if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
-                && ctx == InputContextKind.MainMenu
-                && _cartoonButton != null && _cartoonButton.IsAvailable())
+            // ENTER — the UNIFORM "activate the selected thing" key, the same role in every mod-driven list so the model
+            // is consistent: Up/Down selects, Enter activates.
+            //  • RoomPhoto: open/select the warped-to photo object via UIButton.Click(). Warping only HOVERS; the game
+            //    opens a hotspot (fridge grid, radio dial, a person) on mouse CLICK, and no game key clicks a hovered
+            //    hotspot (rip-confirmed). So the mod must click it — the ONLY way to reach the fridge grid / radio dial.
+            //  • Fridge: drink the highlighted beer (FridgeItemView.Use) — so Enter both OPENS the fridge (from the
+            //    photo) AND drinks the selected beer (in the grid), the consistency the user asked for.
+            //  • ThreeD: the deliberate "go" — turn + walk to the SELECTED interactable so the game's own Space can
+            //    interact in range. Walking is here, NOT on cycling, so MoveXZ can't stack (the frozen-player race).
+            //    Suppressed in the same engaged/overlay state as the select keys (peephole etc.).
+            //  • MainMenu: the gacha "watch cartoon" play button (pointer-only) when it's on screen.
+            if (Input.GetKeyDown(ActivateKey) || Input.GetKeyDown(ActivateKeyAlt))
             {
-                _cartoonButton.Activate();
+                if (ctx == InputContextKind.RoomPhoto)
+                    _twoDProbe?.Activate();
+                else if (ctx == InputContextKind.Fridge)
+                    _fridgeMenu?.Activate();
+                else if (ctx == InputContextKind.ThreeD && !threeDBlocked)
+                    _actionMenu?.GoToSelected();
+                else if (ctx == InputContextKind.MainMenu
+                    && _cartoonButton != null && _cartoonButton.IsAvailable())
+                    _cartoonButton.Activate();
             }
+
+            // Backspace = LEAVE the current interaction via the game's ForceLeave — the reliable exit for views the mod
+            // opened via cold Act() that the game's own q can't unwind (window/blind softlock). Fires in any 3D-ish
+            // context; ForceLeave is a no-op if nothing's engaged, so it's safe to press anytime.
+            if (Input.GetKeyDown(LeaveKey))
+                _actionMenu?.Leave();
 
             if (Input.GetKeyDown(StatusKey))
             {
@@ -327,8 +363,10 @@ namespace NoImNotAHumanAccess
             {
                 bool on = !_jawsArrowShim.Enabled;
                 _jawsArrowShim.SetEnabled(on);
+                LoggerInstance.Msg($"[F11] arrow relay {(on ? "ON" : "OFF")}.");
                 // Off by default (NVDA users need nothing). A JAWS user turns it ON to make the arrows navigate,
-                // accepting that JAWS can't interrupt its own speech while on. Spell the tradeoff out by ear.
+                // accepting that JAWS can't interrupt its own speech while on (the relay re-injects keys, which
+                // desyncs JAWS's keyboard processing; Unity only reads raw input). Spell the tradeoff out by ear.
                 Speak(on
                     ? "Arrow keys on for JAWS. Screen reader interrupt is limited while this is on."
                     : "Arrow keys off. Screen reader interrupt restored.");
@@ -336,13 +374,15 @@ namespace NoImNotAHumanAccess
         }
 
         /// <summary>
-        /// Whether a key the MOD itself handles went down this frame — the 3D nav keys (PageUp/PageDown select, Backspace
-        /// go) plus the radio band keys. Used to EXCLUDE the mod's own keys from the look-freeze auto-release, so the
-        /// Backspace that starts a new go isn't mistaken for "player did something else" and cancelled.
+        /// Whether a key the MOD itself handles went down this frame — the nav keys (Up/Down select, Enter go) plus the
+        /// radio tune/band keys. Used to EXCLUDE the mod's own keys from the look-freeze auto-release, so the Enter that
+        /// starts a new go isn't mistaken for "player did something else" and cancelled. (CyclePrev/Next already cover
+        /// Up/Down, which RadioBand also uses, so those are implicitly included.)
         /// </summary>
         private static bool ModOwnsAKeyDownThisFrame() =>
-            Input.GetKeyDown(CyclePrevKey) || Input.GetKeyDown(CycleNextKey) || Input.GetKeyDown(ActivateKey)
-            || Input.GetKeyDown(RadioBandDownKey) || Input.GetKeyDown(RadioBandUpKey);
+            Input.GetKeyDown(CyclePrevKey) || Input.GetKeyDown(CycleNextKey)
+            || Input.GetKeyDown(ActivateKey) || Input.GetKeyDown(ActivateKeyAlt)
+            || Input.GetKeyDown(RadioTuneLeftKey) || Input.GetKeyDown(RadioTuneRightKey);
 
         public override void OnDeinitializeMelon()
         {
