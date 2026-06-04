@@ -47,7 +47,7 @@ namespace NoImNotAHumanAccess
         //   space escape w a s d q e f shift leftCtrl enter upArrow downArrow leftArrow rightArrow
         // Everything else is free. In particular [ ] PageUp PageDown Home End Backspace are NOT bound by the game on
         // any device — the mod can use them with zero collision. (An earlier comment wrongly listed page/home/end/
-        // backspace/tab as game keys; the rip disproved that.)
+        // backspace/tab as game keys; the rip disproved that.) Full action→key+gamepad map: docs/input-and-keyboard.md.
         private const KeyCode ControlsKey = KeyCode.F7;
         private const KeyCode RepeatKey = KeyCode.F8;
         private const KeyCode StatusKey = KeyCode.F9;

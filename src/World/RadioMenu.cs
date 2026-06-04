@@ -8,21 +8,28 @@ namespace NoImNotAHumanAccess.World
 {
     /// <summary>
     /// Keyboard control + narration for the RADIO close-up. The radio is the only ANALOG mouse-only affordance in the
-    /// base game: tuning is a knob dragged with the pointer (<c>RadioKnobController</c>, IPointerDown/Drag) and the
-    /// AM/FM band is picked with pointer-only buttons (<c>RadioButtonView</c>). The game's Navigate (arrows/WASD)
-    /// action does not touch either, so a blind player can't tune. (There IS a <c>UIRadioKnob</c> input action, but
-    /// whether it has a keyboard binding is unconfirmed — if it turns out tuning already works by keyboard, this
-    /// stepper is harmless duplication and the value of this class is the narration; see the radio-input memo.)
+    /// base game, and the rip (PlayerInputActions.asset, 2026-06-03) CONFIRMS its actions are GAMEPAD-ONLY with no
+    /// keyboard binding: RadioKnob → right stick, RadioLeftHandle/RadioRightHandle → L/R shoulder. So this stepper is
+    /// NOT duplication — it is the only keyboard path to tune, and the game's Navigate (arrows/WASD) does not touch it.
     ///
-    /// We DRIVE THE GAME'S OWN methods rather than re-implement tuning:
-    /// - <b>Tune</b>: while Left/Right is HELD, call the knob's private <c>RotateKnob(float delta)</c> each frame — the
-    ///   exact method the drag path calls — so the real value-update + station detection run. (<see cref="Tune"/>.)
-    /// - <b>Band</b>: Up/Down toggles AM/FM via the model's public <c>SwitchState(ERadioState)</c>. (<see cref="SwitchBand"/>.)
+    /// HOW THE RADIO WORKS (from RadioModel): you scroll the frequency and home in on a hidden signal BY EAR/EYE. The
+    /// station's message is noise-garbled when you're far (NormalisedDistance→1) and resolves to readable text as you
+    /// approach (→0). For a sighted player the de-garbling text IS the homing feedback; we translate that gradient
+    /// into audio (closeness buckets) and then read the CLEAR message once it resolves.
     ///
-    /// Narration: there is no per-item hover sink like the fridge, so this speaks proactively from <see cref="Tick"/>,
-    /// reading <c>RadioModel.NormalisedDistance</c> (0 = on a station, 1 = far) + <c>CurrentState</c> (AM/FM). It
-    /// announces band changes immediately and gives periodic "warmer/colder" closeness feedback while tuning so the
-    /// player can home in by ear. De-dupes so it doesn't chatter when the knob isn't moving.
+    /// We DRIVE THE GAME'S OWN methods rather than re-implement tuning. Mod key wiring lives in AccessMod.OnUpdate:
+    /// - <b>Tune</b>: while PageUp/PageDown is HELD, call the knob's private <c>RotateKnob(float delta)</c> each frame —
+    ///   the exact method the drag path calls — so the real value-update + station detection run. (<see cref="Tune"/>.)
+    /// - <b>Band</b>: Home/End toggles AM/FM via the model's public <c>SwitchState(ERadioState)</c>. The game models
+    ///   AM/FM as two separate handle buttons; collapsing them to one toggle loses nothing. (<see cref="SwitchBand"/>.)
+    ///
+    /// Narration (proactive, from <see cref="Tick"/> — there is no per-item hover sink like the fridge):
+    /// - <b>Closeness</b>: coarse "warmer/colder" buckets from <c>NormalisedDistance</c> while tuning, so the player
+    ///   homes in by ear — the audio analog of the visual garble gradient. De-duped so it doesn't chatter when still.
+    /// - <b>On-signal message</b>: once <c>NormalisedDistance</c> is low enough that the text is readable, speak the
+    ///   resolved <c>GetDisplayedMessage()</c> — the payload the player tuned in FOR. Never reads garbled intermediate
+    ///   text; re-armed when the player drifts off-signal so re-finding the station speaks it again.
+    /// - <b>Band</b>: announces AM/FM changes immediately, from <c>CurrentState</c>.
     ///
     /// Zenject-free: the <c>RadioCloseUpView</c> is found via FindObjectIncludingInactive, and its <c>_radioKnobController</c>
     /// / <c>_radioModel</c> fields are read off it. Never throws.
@@ -47,10 +54,17 @@ namespace NoImNotAHumanAccess.World
         private IntPtr _getNormDistance;  // RadioModel.get_NormalisedDistance
         private IntPtr _getCurrentState;  // RadioModel.get_CurrentState (ERadioState)
         private IntPtr _switchState;      // RadioModel.SwitchState(ERadioState)
+        private IntPtr _getDisplayedMessage; // RadioModel.GetDisplayedMessage() : string
+
+        // Below this NormalisedDistance the game has resolved the noise-garbled text to readable characters (0 = dead
+        // on the signal, 1 = pure static). We only speak the message when it's actually clear — reading the garbled
+        // intermediate aloud would be noise, not information. The homing itself is the closeness buckets above.
+        private const float ReadableDistance = 0.06f; // matches the "On the station." bucket in Closeness().
 
         private int _lastBand = -1;
         private string _lastCloseness = string.Empty;
         private float _nextClosenessSpeakTime;
+        private string _lastSpokenMessage = string.Empty; // de-dupe the on-signal message readout
 
         public RadioMenu(ISpeechOutput speech) => _speech = speech;
 
@@ -109,11 +123,30 @@ namespace NoImNotAHumanAccess.World
                     _speech.Speak(BandName(band), interrupt: true);
                 _lastBand = band;
 
+                float dist = Il2CppRaw.InvokeFloatGetter(model, _getNormDistance, 1f);
+
+                // On-signal message: once the noise has resolved to readable text, speak the clear message — this is
+                // the payload the player was homing in FOR. The garble gradient itself is conveyed by the closeness
+                // buckets below; we never read the garbled intermediate. De-duped so a held station doesn't repeat,
+                // and re-armed (cleared) whenever we drift back off the signal so re-finding it speaks again.
+                if (dist <= ReadableDistance)
+                {
+                    string msg = (Il2CppRaw.InvokeStringGetter(model, _getDisplayedMessage) ?? string.Empty).Trim();
+                    if (msg.Length > 0 && msg != _lastSpokenMessage)
+                    {
+                        _lastSpokenMessage = msg;
+                        _speech.Speak(msg, interrupt: false); // don't cut off — let the station message play out
+                    }
+                }
+                else if (_lastSpokenMessage.Length > 0)
+                {
+                    _lastSpokenMessage = string.Empty; // drifted off-signal; allow the message to be re-spoken on return
+                }
+
                 // Closeness feedback only while actively tuning, throttled, and only when the bucket changes.
                 if (!tuningHeld) return;
                 if (Time.unscaledTime < _nextClosenessSpeakTime) return;
 
-                float dist = Il2CppRaw.InvokeFloatGetter(model, _getNormDistance, 1f);
                 string bucket = Closeness(dist);
                 if (bucket.Length == 0 || bucket == _lastCloseness) return;
                 _lastCloseness = bucket;
@@ -132,6 +165,7 @@ namespace NoImNotAHumanAccess.World
             _lastBand = -1;
             _lastCloseness = string.Empty;
             _nextClosenessSpeakTime = 0f;
+            _lastSpokenMessage = string.Empty;
         }
 
         /// <summary>0 = exactly on a station, 1 = far. Coarse buckets so the player hears "getting closer / on the
@@ -177,12 +211,13 @@ namespace NoImNotAHumanAccess.World
                     _getNormDistance = Il2CppRaw.GetMethod(_modelClass, "get_NormalisedDistance", 0);
                     _getCurrentState = Il2CppRaw.GetMethod(_modelClass, "get_CurrentState", 0);
                     _switchState = Il2CppRaw.GetMethod(_modelClass, "SwitchState", 1);
+                    _getDisplayedMessage = Il2CppRaw.GetMethod(_modelClass, "GetDisplayedMessage", 0);
                 }
 
                 MelonLogger.Msg($"[RadioMenu] resolved: view={_viewClass != IntPtr.Zero} knob={_knobClass != IntPtr.Zero} " +
                                 $"model={_modelClass != IntPtr.Zero} rotateKnob={_rotateKnob != IntPtr.Zero} " +
                                 $"normDist={_getNormDistance != IntPtr.Zero} curState={_getCurrentState != IntPtr.Zero} " +
-                                $"switchState={_switchState != IntPtr.Zero}");
+                                $"switchState={_switchState != IntPtr.Zero} displayedMsg={_getDisplayedMessage != IntPtr.Zero}");
             }
             catch (Exception e)
             {

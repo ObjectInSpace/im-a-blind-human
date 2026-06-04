@@ -1,20 +1,53 @@
-# Keyboard / input model (verified from decompiled bindings)
+# Keyboard / input model (verified from the rip)
 
 Input stack: **Unity Input System** (`PlayerInputActions`) with an **`InputSystemUIInputModule`** bridging UI actions
 to the uGUI **EventSystem**. `moveRepeatDelay` present (held-direction repeat). Game manages focus explicitly:
 `SelectFirstObject()` and `_firstSelectedObject` (menus set an initial selection on open).
 
-## Action maps
-- `WorldActions`: Move, Look, Crouch, Interact, Pause, Run (gameplay).
-- `UIActions`: **Navigate, Submit, Select, Cancel, ChangeTab, Scroll**, Point (mouse), DialogSkip, Exit, PauseExit,
-  Tutor, RadioKnob/LeftHandle/RightHandle, LMB, SkipVideo, SpeedUp(+Trigger).
+Source of truth = the actual asset, NOT metadata strings:
+`D:\root\AssetRipper\NINAH\ExportedProject\ExportedProject\Assets\MonoBehaviour\PlayerInputActions.asset`
+(2026-06-03 rip). Every action + binding below is transcribed from it. Two control schemes: **Keyboard And Mouse**
+and a gamepad scheme the asset literally names **`Gaypad`** (a dev typo; the binding group is `;Gaypad`). The maps are
+named **`World`** and **`UI`** (earlier notes said "WorldActions"/"UIActions" — the runtime names are `World`/`UI`).
 
-## Keyboard bindings present (from binding paths in metadata)
-- Navigate: **arrow keys** (`up`/`down`/`left`/`right`) AND **WASD** (2D-vector composite).
-- Submit/Select: **`enter`**, **`space`**.
-- Cancel/Exit/back: **`escape`**.
-- Tabs: **`tab`** (ChangeTab). Lists/scroll: **`page`** (PageUp/Down), **`home`**, **`end`**, plus Scroll.
-- Other: `q`, `e`, `f`, `shift`, `backspace` for context actions.
+## `World` map — gameplay
+| Action | Keyboard / Mouse | Gamepad |
+|---|---|---|
+| Move | `W A S D` | left stick |
+| Look | mouse delta | right stick |
+| Interact | `Space`, `E`, left mouse button | A (south) |
+| Run | `Shift` | right trigger |
+| Crouch | `Left Ctrl` | right-stick press |
+| Pause | `Escape` | Start |
+
+## `UI` map — menus / dialogue / overlays
+| Action | Keyboard / Mouse | Gamepad |
+|---|---|---|
+| Navigate | arrow keys **and** `W A S D` | D-pad, left stick |
+| Submit | `Enter` | A (south) |
+| Select | left mouse button | A (south) |
+| Cancel | `Q` | B (east) |
+| Exit (back) | `Q`, `Escape` | B (east), Start |
+| PauseExit | `Escape` | Start |
+| DialogSkip | `Space`, left mouse button | X (west) |
+| SkipVideo | `Space` | A (south) |
+| Tutor | `F` | Y (north) |
+| ChangeTab | *(none)* | left & right shoulder |
+| Scroll | mouse wheel | right stick |
+| Point | mouse position | right stick |
+| SpeedUp | `Shift` | right trigger |
+| LMB | left mouse button | *(none)* |
+| RadioKnob | *(none)* | right stick |
+| RadioLeftHandle | *(none)* | left shoulder |
+| RadioRightHandle | *(none)* | right shoulder |
+
+## What is NOT bound (corrects earlier notes)
+The complete keyboard set the game binds is exactly: `space escape w a s d q e f shift leftCtrl enter` + the four
+arrow keys. **No F-keys, and no `tab` / `page`(Up/Down) / `home` / `end` / `backspace` / brackets** — earlier
+revisions of this doc listed those as game-bound (Tab=ChangeTab, Page/Home/End=scroll), read from metadata strings;
+the asset disproves it. ChangeTab, Scroll, RadioKnob and the Radio handles are **gamepad-only** — they have no
+keyboard binding at all. This is why the mod safely claims `F7`–`F11`, `PageUp/PageDown`, `Home/End` and `Backspace`
+with zero collision.
 
 ## What this means for a screen-reader user
 The game already has **full keyboard menu navigation using standard conventions**:
