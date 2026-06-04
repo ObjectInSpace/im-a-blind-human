@@ -71,11 +71,15 @@ namespace NoImNotAHumanAccess.World
                 }
 
                 _selectedType = sel.ItemType;
-                // OnHover fires the game's highlight + OnPointerEntered → CloseUpNarrator speaks name + description.
+                // OnHover fires the game's visual highlight (and its OnPointerEntered, harmless if it narrates).
                 bool ok = Il2CppRaw.InvokeVoid(sel.View, _onHover);
-                MelonLogger.Msg($"[FridgeMenu] selected {idx + 1}/{entries.Count}: type={sel.ItemType} (hover threw={!ok}).");
 
-                // If the hover sink didn't speak (e.g. OnPointerEntered no-op), the player still hears position.
+                // Speak the drink name OURSELVES — the game's hover→OnPointerEntered→CloseUpNarrator chain did NOT
+                // narrate on step (user heard nothing), so we don't depend on it. Map the EConsumable type to a name
+                // and announce it with position, so the player always knows what's focused.
+                string drink = DrinkName(sel.ItemType);
+                _speech.Speak($"{drink}, {idx + 1} of {entries.Count}.", interrupt: true);
+                MelonLogger.Msg($"[FridgeMenu] selected {idx + 1}/{entries.Count}: {drink} (type={sel.ItemType}, hover threw={!ok}).");
             }
             catch (Exception e)
             {
@@ -116,6 +120,24 @@ namespace NoImNotAHumanAccess.World
 
         /// <summary>Reset the selection when the fridge closes, so re-opening starts fresh.</summary>
         public void Reset() => _selectedType = -1;
+
+        /// <summary>Spoken name for an <c>EConsumable</c> value (the fridge's ItemType). Falls back to "item N" for an
+        /// unmapped value so stepping is never silent. Bobeer = the beer; names chosen to read naturally aloud.</summary>
+        private static string DrinkName(int itemType) => itemType switch
+        {
+            0 => "beer",            // Bobeer
+            1 => "cigarettes",      // Cigarette
+            2 => "coffee",          // Coffee
+            3 => "energy drink",    // Enerjeka
+            4 => "pills",           // Pills
+            5 => "mushroom",        // Mushroom
+            6 => "cat food",        // CatFood
+            7 => "draft notice",    // Povistka
+            8 => "kombucha",        // Kombucha
+            9 => "photo",           // Photo
+            100 => "cockroach",     // Cockroach
+            _ => $"item {itemType}",
+        };
 
         private readonly struct Entry
         {
