@@ -42,6 +42,23 @@ namespace NoImNotAHumanAccess.World
         private bool _resolved;
         private IntPtr _viewProviderClass, _getViews;     // ActionableObjectsViewProvider + get_ActionableObjectViews
         private IntPtr _viewClass, _getCanShowHint;  // AActionableObjectView + get_CanShowHint (for the list)
+        private IntPtr _act;  // AActionableObjectView.Act() (private) — invoked for ALL views AFTER focusing IsTargeted
+                              // (the targeted-entry path), so the game owns the interaction and its own q can close it.
+        private IntPtr _doorTriggerClass;  // _Code.…DoorTrigger — kept for type-ID in diagnostics, not an activate gate.
+        private IntPtr _interactMethod;    // AInteractableObject.Interact() — DIAGNOSTIC capture of its cold-invoke throw.
+        private IntPtr _getHardConditions, _getSoftConditions; // availability gates (resolved on concrete classes).
+        private IntPtr _closeUpsController, _getIsAnyCloseUpActive; // ICloseUpsController + IsAnyCloseUpActive — the
+                                                                   // CROSS-SYSTEM "a close-up is already open" guard.
+        private IntPtr _windowsManager, _getIsInWindow; // IWindowsManager + IsInWindow — the window/blind re-entrancy guard.
+        private IntPtr _actionablesManager, _forceLeave; // IActionableObjectsManager + ForceLeave() — the mod-driven
+                                                         // exit, since the game's q can't unwind a cold-Act()-opened view.
+        // The SECOND interactable system: AInteractableObject (radio, phone, cat, mushroom, hatch, …). These live in
+        // InteractablesViewProvider, NOT the door/window provider above, so the action list missed them entirely —
+        // which is why the radio was unfindable. They share the abstract base AInteractableObject, so we enumerate them
+        // Zenject-free via FindObjectsByType(base) (Unity matches subclasses) and merge them into the same list.
+        private IntPtr _interactableClass;  // _Code.Infrastructure.AInteractableObject (abstract base)
+        private IntPtr _interactablesProviderClass; // _Code.Infrastructure.InteractablesViewProvider
+        private IntPtr _raycastTargetBaseClass, _getRaycastIsLocked;
         // Aiming plumbing: the game's real entry HEAD — focus the view's raycast target + turn/zoom the player to it,
         // so the player can then press the game's own Space (Interact). We never invoke the interaction ourselves.
         private IntPtr _raycastTargetClass, _setIsTargeted;  // ARaycastTarget + set_IsTargeted(bool)
@@ -52,6 +69,19 @@ namespace NoImNotAHumanAccess.World
 
         // Current selection, keyed by the view pointer so it survives list rebuilds (positions/availability shift).
         private IntPtr _selected;
+        // Whether the current selection is an AInteractableObject (radio/phone/cat/…) vs a door/window view — they
+        // engage differently (see Entry.IsInteractable), so GoToSelected/Aim branch on this.
+        private bool _selectedIsInteractable;
+
+        // The view we last forced IsTargeted=true on in GoToSelected (zero = none). We set that flag OUT OF BAND (the
+        // game normally sets it via its own ray), so the game's native leave ('q') closes the view WITHOUT clearing our
+        // forced flag — it lingers on the raycast target. A stale lingering target is what intermittently wedged a later
+        // open (the "only once" softlock). Tick reconciles it: once nothing's engaged anymore, we clear our forced
+        // targets and reset this. Tracked separately from _selected because the player can re-select after leaving.
+        private IntPtr _focusedView;
+        // True once a focused open has been SEEN engaged (IsInWindow/engaged went true). Tick only treats "nothing
+        // engaged" as a leave AFTER this, so it can't clear our focus during the open ramp (before the flag flips true).
+        private bool _focusSeenEngaged;
 
         // Arrival tracking: after GoToSelected, we poll the player's distance to this standing pos each Tick and, when
         // in range, fire the arrival cue (the game's re-shown prompt, or a fallback). Zero = not currently walking.
@@ -71,8 +101,12 @@ namespace NoImNotAHumanAccess.World
         private const float ArriveDeadOnM = 0.20f;  // freeze only when THIS close to the standing pos — a single MoveXZ
                                                     // undershoots (~0.36m) and isn't precise enough to interact; we
                                                     // re-issue until dead-on (~0.09m worked).
-        private const int ConvergeStallFrames = 12; // if re-issuing MoveXZ stops getting closer for this many frames,
-                                                    // accept current pos (can't get nearer) rather than hang.
+        private const int ConvergeStallFrames = 30; // if the body stops getting closer for this many frames, accept the
+                                                    // current pos (can't get nearer) rather than hang. Raised from 12:
+                                                    // now we let the tween play out instead of re-issuing every frame, so
+                                                    // a real ~2-3m walk needs more frames before it's truly stalled.
+        private const int ReissueEveryStallFrames = 6; // while stalled (not yet given up), re-issue MoveXZ only every Nth
+                                                       // frame, so the tween isn't restarted every frame (never finishes).
         private const float MaxHoldS = 5f;         // sanity fallback: auto-release the look-freeze after this long so a
                                                    // player can never be stuck with a locked camera if a key-release is missed.
 
@@ -107,6 +141,7 @@ namespace NoImNotAHumanAccess.World
                 int idx = MenuStepUtil.NextIndex(entries.FindIndex(e => e.View == _selected), entries.Count, backwards);
                 Entry sel = entries[idx];
                 _selected = sel.View;
+                _selectedIsInteractable = sel.IsInteractable;
                 _speech.Speak($"{sel.Name}, {idx + 1} of {entries.Count}.", interrupt: true);
                 MelonLogger.Msg($"[ActionMenu] selected {idx + 1}/{entries.Count}: '{sel.Name}' ({sel.Bearing}). Press the go key to walk there.");
             }
@@ -117,10 +152,16 @@ namespace NoImNotAHumanAccess.World
         }
 
         /// <summary>
-        /// Deliberate "go" (Backspace): turn + walk the player to the SELECTED interactable's standing position, so the
-        /// game's own Space (Interact) can then engage it in range. One walk per press — never fired by cycling — so
-        /// MoveXZ can't stack (the frozen-player race). No <c>IsTargeted</c> poke (that opens blinds). Safe to call when
-        /// nothing's selected (announces) or already walking.
+        /// Activate (Enter) the SELECTED interactable through the GAME'S OWN targeted-entry path — the path the game uses
+        /// for EVERYTHING (doors, blinds, curtains, peephole, AND the radio/phone/cat interactables). Both interaction
+        /// systems (<c>AActionableObjectView</c> and <c>AInteractableObject</c>) carry a raycast target + an update pump
+        /// and open only while their target is FOCUSED (<c>IsTargeted</c>). So we (1) FOCUS the object's raycast target
+        /// — single-focus, clearing the others — exactly as the game's own ray would when you look at it, then (2) aim
+        /// the camera at it so the game's state agrees, then (3) invoke its action (<c>Act()</c> for a view,
+        /// <c>Interact()</c> for an interactable). Because the open now happens WHILE the object is the registered
+        /// current target, the game owns the interaction and its OWN back-out ('q') can close it — which the previous
+        /// cold-<c>Act()</c> (no IsTargeted) could not, the blind softlock. The mod still drives it all (no WASD/Space).
+        /// Safe to call when nothing's selected (announces).
         /// </summary>
         public void GoToSelected()
         {
@@ -129,31 +170,113 @@ namespace NoImNotAHumanAccess.World
                 EnsureResolved();
                 if (_selected == IntPtr.Zero)
                 {
-                    _speech.Speak("Nothing selected. Use the page keys to choose something first.", interrupt: true);
+                    _speech.Speak("Nothing selected. Use the up and down arrows to choose something first.", interrupt: true);
                     return;
                 }
-                // If a previous go left the look frozen, release it before starting a new walk (re-enable the mouse so
-                // the new MoveXZ/aim isn't fighting a stale freeze).
-                if (_lookFrozen) ReleaseHold();
+                if (_lookFrozen) ReleaseHold(); // clear any stale hold/targets from the previous model's path
 
                 string name = HumanizeName(Il2CppRaw.GetUnityObjectName(_selected));
-                _speech.Speak($"Going to {name}.", interrupt: true);
-                Vector3 standWorld = Aim(_selected, name);
 
-                // Begin arrival polling: Tick() watches the player close on this standing pos and fires the arrival
-                // cue when in range, so the player knows WHEN to press Space (the walk lags the keypress ~1-2s).
-                _walkTarget = _selected;
-                _walkTargetName = name;
-                _walkStandingPos = standWorld;
-                _arrivedAnnounced = false;
-                _armedSpoke = false;
-                _goAt = Time.time;
-                _bestDist = float.MaxValue;
-                _stallFrames = 0;
+                // RE-ENTRANCY GUARD — the Blinds1→Blinds2 softlock. Opening a SECOND view while a FIRST is still open
+                // wedges both. The manager-level flags catch it (the per-view IsLooking/_isAnimating read FALSE for an
+                // engaged blind): IWindowsManager.IsInWindow is true while any window/blind/curtain view is open, and
+                // ICloseUpsController.IsAnyCloseUpActive covers the fridge/radio/phone close-ups. Both fail OPEN, so a
+                // resolve glitch can never make activation permanently inert. If something's already open, REFUSE and
+                // tell the player to leave first (now native 'q', the game's own back-out — see Leave()) rather than
+                // stack. FindBusyOtherName names the culprit when readable; otherwise a generic prompt.
+                if (IsInWindow() || IsAnyCloseUpActive())
+                {
+                    string? busy = FindBusyOtherName(_selected);
+                    string where = busy != null ? $"at {busy}" : "in something";
+                    _speech.Speak($"Already {where}. Press Q to leave first, then use {name}.", interrupt: true);
+                    MelonLogger.Msg($"[ActionMenu] blocked activating '{name}' — already engaged (busy={busy ?? "?"}). Told player to leave.");
+                    return;
+                }
+
+                // (1) FOCUS the object's raycast target — IsTargeted=true on it, false on all others. This is the gate the
+                // game's action reads; setting it ourselves makes the upcoming Act()/Interact() register as the CURRENT
+                // targeted interaction (so the game's own back-out can later close it). ownerClass differs per system.
+                IntPtr ownerClass = _selectedIsInteractable ? _interactableClass : _viewClass;
+                FocusTarget(_selected, ownerClass);
+                _focusedView = _selected; // remember what WE forced focus on, so Tick can clear it after a native leave
+
+                // (2) AIM the camera at it so the game's own raycaster/state agrees with the focus we forced (keeps the
+                // target from flickering off the next frame). Best-effort; the forced IsTargeted above is the real gate.
+                AimCameraAt(_selected);
+
+                // (3) INVOKE the action while targeted.
+                //  • INTERACTABLES (radio/phone/cat/…): Interact() is `public abstract` on AInteractableObject, so calling
+                //    it on the BASE throws EntryPointNotFound ("abstract method"). Bind to the CONCRETE override via the
+                //    runtime class (same pattern as ResolveMoveXZ) — this was the old "Interact threw", not a softlock.
+                //  • VIEWS (doors/blinds/curtains/peephole): the private Act() toggle resolved on the view base.
+                if (_selectedIsInteractable)
+                {
+                    IntPtr concrete = IL2CPP.il2cpp_object_get_class(_selected);
+                    IntPtr interact = concrete != IntPtr.Zero ? Il2CppRaw.GetMethod(concrete, "Interact", 0) : IntPtr.Zero;
+                    if (interact == IntPtr.Zero)
+                    {
+                        MelonLogger.Warning($"[ActionMenu] '{name}': couldn't resolve concrete Interact().");
+                        _speech.Speak($"Can't use {name}.", interrupt: true);
+                        ClearAllTargets(IntPtr.Zero); // unfocus — we're not entering after all
+                        _focusedView = IntPtr.Zero;
+                        return;
+                    }
+                    _speech.Speak($"Using {name}.", interrupt: true);
+                    bool ran = Il2CppRaw.TryInvokeVoid(_selected, interact, out string? err);
+                    if (ran) MelonLogger.Msg($"[ActionMenu] activated interactable '{name}' via concrete Interact() (targeted).");
+                    else MelonLogger.Warning($"[ActionMenu] interactable '{name}' Interact() threw:\n{err}");
+                    return;
+                }
+
+                if (_act != IntPtr.Zero)
+                {
+                    _speech.Speak($"Using {name}.", interrupt: true);
+                    bool ok = Il2CppRaw.InvokeVoid(_selected, _act);
+                    MelonLogger.Msg($"[ActionMenu] activated view '{name}' via Act() (targeted, threw={!ok}).");
+                    return;
+                }
+
+                // No Act() resolved (shouldn't happen for a view) — leave it focused + aimed and hand off to the game's
+                // own Space as a last resort.
+                _speech.Speak($"Facing {name}. Press space to use it.", interrupt: true);
+                MelonLogger.Msg($"[ActionMenu] aim-only '{name}' — no Act() resolved.");
             }
             catch (Exception e)
             {
                 MelonLogger.Warning($"[ActionMenu] GoToSelected threw: {e.Message}");
+            }
+        }
+
+        /// <summary>
+        /// FALLBACK leave for the current interaction, via the game's public <c>IActionableObjectsManager.ForceLeave()</c>.
+        /// Since <see cref="GoToSelected"/> now opens through the game's targeted-entry path, the game's OWN q closes the
+        /// view (it's registered as the current interaction) — that's the primary exit. This is the belt-and-suspenders
+        /// fallback (bound to Backspace) for any view that still won't unwind natively: ForceLeave gets the player out of
+        /// whatever actionable they're in regardless of entry path, and is a no-op when nothing's engaged. Resolved
+        /// lazily via Zenject + cached. Never throws.
+        /// </summary>
+        public void Leave()
+        {
+            try
+            {
+                if (_forceLeave == IntPtr.Zero)
+                {
+                    if (_actionablesManager == IntPtr.Zero)
+                        _actionablesManager = ZenjectResolver.Resolve("_Code.Infrastructure.ActionableObjects", "IActionableObjectsManager");
+                    if (_actionablesManager == IntPtr.Zero)
+                    {
+                        MelonLogger.Warning("[ActionMenu] Leave: couldn't resolve IActionableObjectsManager.");
+                        return;
+                    }
+                    _forceLeave = Il2CppRaw.GetMethod(IL2CPP.il2cpp_object_get_class(_actionablesManager), "ForceLeave", 0);
+                    if (_forceLeave == IntPtr.Zero) { MelonLogger.Warning("[ActionMenu] Leave: ForceLeave() not found."); return; }
+                }
+                bool ok = Il2CppRaw.InvokeVoid(_actionablesManager, _forceLeave);
+                MelonLogger.Msg($"[ActionMenu] ForceLeave() invoked (threw={!ok}).");
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[ActionMenu] Leave threw: {e.Message}");
             }
         }
 
@@ -185,7 +308,13 @@ namespace NoImNotAHumanAccess.World
                 if (playerSvc != IntPtr.Zero && standingPos != IntPtr.Zero && moveMethod != IntPtr.Zero)
                     Il2CppRaw.InvokeWithVector3Float(playerSvc, moveMethod, standWorld, moveDuration > 0f ? moveDuration : 0.3f);
 
-                MelonLogger.Msg($"[ActionMenu] going to '{name}': standingPos=({standWorld.x:F1},{standWorld.y:F1},{standWorld.z:F1}) dur={moveDuration:F2}.");
+                // Log the player's REAL transform position vs the standing pos, so the walk start distance is honest
+                // (the service Position would read ~0 here once MoveXZ snaps it — see TryGetPlayerWorldPos).
+                TryGetPlayerWorldPos(out Vector3 playerPos0);
+                float startDist = Flat(playerPos0 - standWorld);
+                MelonLogger.Msg($"[ActionMenu] going to '{name}': player=({playerPos0.x:F1},{playerPos0.y:F1},{playerPos0.z:F1}) " +
+                                $"standingPos=({standWorld.x:F1},{standWorld.y:F1},{standWorld.z:F1}) startDist={startDist:F2}m " +
+                                $"dur={moveDuration:F2}.");
                 return standWorld;
             }
             catch (Exception e)
@@ -196,11 +325,34 @@ namespace NoImNotAHumanAccess.World
         }
 
         /// <summary>
+        /// Distance + side of the selected object from the player, as a short spoken cue ("a few steps away on your
+        /// left") so a blind player can walk toward an aim-only interactable. Empty string if the player position can't
+        /// be read. XZ-plane only; side is world-relative (good enough for "which way" in a sparse room). Never throws.
+        /// </summary>
+        private string BearingTo(IntPtr obj)
+        {
+            try
+            {
+                IntPtr playerSvc = ResolvePlayerService();
+                IntPtr getPos = ResolveGetPosition(playerSvc);
+                if (playerSvc == IntPtr.Zero || getPos == IntPtr.Zero) return string.Empty;
+                Vector3 player = Il2CppRaw.InvokeVector3Getter(playerSvc, getPos);
+                Vector3 obP = Il2CppRaw.GetComponentWorldPosition(obj);
+                Vector3 to = obP - player; to.y = 0f;
+                float d = to.magnitude;
+                string range = d < 1.5f ? "right next to you" : d < 4f ? "a few steps away" : "across the room";
+                return range;
+            }
+            catch { return string.Empty; }
+        }
+
+        /// <summary>
         /// Aim the player's CAMERA at <paramref name="view"/> by rotating both <c>PlayerController.cameraTarget</c> and
         /// <c>RealCamera</c> to face the object's look point (<c>Transform.LookAt</c>). This makes the game's own
-        /// raycaster (which casts along the camera forward) focus the object and set its
-        /// <c>_raycastTarget.IsTargeted</c> — the gate for the game's Space/Interact. We do NOT set IsTargeted ourselves
-        /// (that opens blinds); the game's ray does it safely. Returns true if the LookAt ran. Never throws.
+        /// raycaster (which casts along the camera forward) agree with the focus, so the game's state keeps the object
+        /// targeted while its action runs. <see cref="GoToSelected"/> sets <c>_raycastTarget.IsTargeted</c> directly (via
+        /// <see cref="FocusTarget"/>) as the real gate; this camera aim backs it up. Returns true if the LookAt ran.
+        /// Never throws.
         /// </summary>
         private bool AimCameraAt(IntPtr view)
         {
@@ -243,12 +395,46 @@ namespace NoImNotAHumanAccess.World
         /// </summary>
         public void Tick()
         {
+            // RECONCILE OUR FORCED FOCUS after a native leave. GoToSelected sets IsTargeted on the view out of band; the
+            // game's own 'q' closes the view but doesn't clear our flag, so it lingers and a later open can land on a
+            // stale target (the intermittent "only once" wedge). Once the open has actually ENGAGED (we saw IsInWindow /
+            // engaged go true — _focusSeenEngaged), watch for it dropping back to "nothing engaged" = the player left;
+            // then clear our targets and reset. Gating on _focusSeenEngaged avoids clearing during the open ramp (the
+            // flag flips true a frame or two after we focus). Cheap manager-flag reads; all fail-open. Never throws here.
+            if (_focusedView != IntPtr.Zero)
+            {
+                try
+                {
+                    bool engaged = IsInWindow() || IsAnyCloseUpActive() || IsAnyEngaged();
+                    if (engaged)
+                    {
+                        _focusSeenEngaged = true;
+                    }
+                    else if (_focusSeenEngaged)
+                    {
+                        // Engaged → not engaged: the player left (q, Backspace, or the game closed it). Drop our flag.
+                        ClearAllTargets(IntPtr.Zero);
+                        _focusedView = IntPtr.Zero;
+                        _focusSeenEngaged = false;
+                        MelonLogger.Msg("[ActionMenu] reconciled forced focus after leave (cleared stale IsTargeted).");
+                    }
+                }
+                catch (Exception e)
+                {
+                    MelonLogger.Warning($"[ActionMenu] focus reconcile threw: {e.Message}");
+                    _focusedView = IntPtr.Zero; _focusSeenEngaged = false; // don't get stuck retrying a bad state
+                }
+            }
+
             if (_walkTarget == IntPtr.Zero) return; // not walking
             try
             {
                 IntPtr playerSvc = ResolvePlayerService();
-                if (playerSvc == IntPtr.Zero || ResolveGetPosition(playerSvc) == IntPtr.Zero) return;
-                Vector3 playerPos = Il2CppRaw.InvokeVector3Getter(playerSvc, _getPosition);
+                if (playerSvc == IntPtr.Zero) return;
+                // Use the REAL transform position, NOT IPlayerService.Position — the latter snaps to the MoveXZ target
+                // immediately, so it reads dist≈0 before the body has moved (the no-walk bug measured 2026-06-04). The
+                // transform reflects the body's actual position each frame, so convergence tracks a real walk.
+                if (!TryGetPlayerWorldPos(out Vector3 playerPos)) return;
                 float dist = Flat(playerPos - _walkStandingPos);
 
                 if (!_arrivedAnnounced)
@@ -262,28 +448,38 @@ namespace NoImNotAHumanAccess.World
 
                     if (elapsed && dist <= ArriveDeadOnM)
                     {
-                        // Dead-on. Focus is FLEETING (the look-Update clears IsTargeted next frame), so FREEZE the look
-                        // (IsMouseEnabled=false) + re-aim every frame — the camera stays locked on, the game keeps
-                        // IsTargeted set, and Space works whenever pressed.
+                        // Dead-on. The game's own ray doesn't reliably focus the object from our forced turn (measured:
+                        // Space only fires when _raycastTarget.IsTargeted==True, and the LookAt re-aim left it flickering),
+                        // so we SET IsTargeted directly on the arrived object (clearing the others for single-focus) — for
+                        // doors this is exactly the desired action gate, and FocusTarget re-asserts it during the hold.
+                        // Still freeze the look so the camera doesn't drift off and the game doesn't clear it next frame.
                         _arrivedAnnounced = true;
                         _armedAt = Time.time;
                         _hud?.ArmArrival();
                         ResolveMouseEnabled(playerSvc);
                         if (_setMouseEnabled != IntPtr.Zero) { Il2CppRaw.InvokeVoidWithBool(playerSvc, _setMouseEnabled, false); _lookFrozen = true; }
-                        MelonLogger.Msg($"[ActionMenu] arrived dead-on at '{_walkTargetName}' (dist={dist:F2}m). Froze look; holding aim. Press space.");
+                        FocusTarget(_walkTarget);
+                        MelonLogger.Msg($"[ActionMenu] arrived dead-on at '{_walkTargetName}' (dist={dist:F2}m). Set IsTargeted; holding. Press space.");
                         return;
                     }
 
-                    // Not dead-on yet: nudge toward the standing pos again. Track best-dist to detect a stall.
+                    // Not dead-on yet. The initial MoveXZ was issued once in Aim; let its tween PLAY OUT (re-issuing every
+                    // frame would restart the tween from the current spot each frame and it could never finish). Only
+                    // re-issue when progress has STALLED — the body stopped getting closer for a few frames (tween done
+                    // but undershot, or blocked). Track best-dist against the REAL transform pos to detect that stall.
                     if (elapsed)
                     {
-                        IntPtr moveMethod = ResolveMoveXZ(playerSvc);
-                        float moveDuration = Il2CppRaw.ReadFloatField(_walkTarget, _viewClass, "_moveToStandingPosSpeed");
-                        if (moveMethod != IntPtr.Zero)
-                            Il2CppRaw.InvokeWithVector3Float(playerSvc, moveMethod, _walkStandingPos, moveDuration > 0f ? moveDuration : 0.3f);
-
                         if (dist < _bestDist - 0.02f) { _bestDist = dist; _stallFrames = 0; }
-                        else if (++_stallFrames >= ConvergeStallFrames)
+                        else if (++_stallFrames % ReissueEveryStallFrames == 0 && _stallFrames < ConvergeStallFrames)
+                        {
+                            // Stalled but not given up: nudge once more toward the standing pos.
+                            IntPtr moveMethod = ResolveMoveXZ(playerSvc);
+                            float moveDuration = Il2CppRaw.ReadFloatField(_walkTarget, _viewClass, "_moveToStandingPosSpeed");
+                            if (moveMethod != IntPtr.Zero)
+                                Il2CppRaw.InvokeWithVector3Float(playerSvc, moveMethod, _walkStandingPos, moveDuration > 0f ? moveDuration : 0.3f);
+                        }
+
+                        if (_stallFrames >= ConvergeStallFrames)
                         {
                             // Can't get closer — accept current position and freeze anyway (better to offer the cue than
                             // hang; the 5s fallback also covers true stuck cases).
@@ -307,10 +503,10 @@ namespace NoImNotAHumanAccess.World
                     return;
                 }
 
-                // FROZEN HOLD: keep the camera locked on the object so IsTargeted stays set for the game's Space. The
-                // mouse is disabled, so re-aiming isn't fought by the look-Update. We keep this until the player cycles
-                // or goes elsewhere (EndWalk re-enables the mouse). Announce the prompt cue once.
-                AimCameraAt(_walkTarget);
+                // FROZEN HOLD: the focus was set ONCE on arrival (FocusTarget) and the look is frozen
+                // (IsMouseEnabled=false), so IsTargeted stays put — we do NOT re-assert it every frame. Re-thrashing it
+                // (ClearAllTargets→set) toggled the game's prompt off/on each frame, which re-fired "open X" endlessly
+                // and buried the speech (the user's "it kept repeating" report). Passive hold instead. Speak the cue once.
                 if (!_armedSpoke)
                 {
                     _armedSpoke = true;
@@ -341,7 +537,10 @@ namespace NoImNotAHumanAccess.World
                     if (playerSvc != IntPtr.Zero && _setMouseEnabled != IntPtr.Zero)
                         Il2CppRaw.InvokeVoidWithBool(playerSvc, _setMouseEnabled, true);
                     _lookFrozen = false;
-                    MelonLogger.Msg("[ActionMenu] released look-freeze (mouse re-enabled).");
+                    // Clear the IsTargeted we set on arrival, so a stale door isn't left "targeted" (the game's Space
+                    // would otherwise still act on it after the player moved on) and the prompt path resets cleanly.
+                    if (_walkTarget != IntPtr.Zero) ClearAllTargets(IntPtr.Zero);
+                    MelonLogger.Msg("[ActionMenu] released look-freeze (mouse re-enabled, targets cleared).");
                 }
             }
             catch (Exception e)
@@ -378,6 +577,135 @@ namespace NoImNotAHumanAccess.World
             return false;
         }
 
+        /// <summary>
+        /// The display name of any view OTHER than <paramref name="except"/> that is currently mid-interaction —
+        /// <c>IsLooking</c> (engaged) or <c>_isAnimating</c> (its open/close animation is still playing, i.e. half-open).
+        /// Returns null if none is busy. This is the re-entrancy guard for <see cref="GoToSelected"/>: activating a
+        /// SECOND view while a FIRST is half-open wedges both (the user's "one half-open while the other took over"
+        /// softlock). Inactive-inclusive scan via the provider array. Fails OPEN — on any read error returns null
+        /// (allow), so a transient glitch can't make activation permanently inert.
+        /// </summary>
+        /// <summary>
+        /// Whether ANY close-up (fridge/radio/phone/consumable/…) is currently open, via the Zenject-resolved
+        /// <c>ICloseUpsController.IsAnyCloseUpActive</c>. This is the cross-system busy signal — true regardless of which
+        /// interaction system owns the open view — so it guards activation of doors, blinds AND interactables uniformly.
+        /// Resolved lazily + cached. Fails OPEN (false on any miss) so it can never make activation permanently inert.
+        /// </summary>
+        private bool IsAnyCloseUpActive()
+        {
+            try
+            {
+                if (_getIsAnyCloseUpActive == IntPtr.Zero)
+                {
+                    if (_closeUpsController == IntPtr.Zero)
+                        _closeUpsController = ZenjectResolver.Resolve("_Code.Infrastructure.CloseUps", "ICloseUpsController");
+                    if (_closeUpsController == IntPtr.Zero) return false; // can't resolve ⇒ allow (fail open)
+                    _getIsAnyCloseUpActive = Il2CppRaw.GetMethod(
+                        IL2CPP.il2cpp_object_get_class(_closeUpsController), "get_IsAnyCloseUpActive", 0);
+                    if (_getIsAnyCloseUpActive == IntPtr.Zero) return false;
+                }
+                return Il2CppRaw.InvokeBoolGetter(_closeUpsController, _getIsAnyCloseUpActive);
+            }
+            catch { return false; } // fail open
+        }
+
+        /// <summary>
+        /// Whether the player is currently IN a window interaction (window/blinds/curtains open), via the Zenject-
+        /// resolved <c>IWindowsManager.IsInWindow</c>. Windows are NOT close-ups, so <see cref="IsAnyCloseUpActive"/>
+        /// can't see them — this is the signal that catches the Blinds1→Curtains wedge. Lazy + cached; fails OPEN.
+        /// </summary>
+        private bool IsInWindow()
+        {
+            try
+            {
+                if (_getIsInWindow == IntPtr.Zero)
+                {
+                    if (_windowsManager == IntPtr.Zero)
+                        _windowsManager = ZenjectResolver.Resolve("_Code.Infrastructure.Windows", "IWindowsManager");
+                    if (_windowsManager == IntPtr.Zero) return false; // fail open
+                    _getIsInWindow = Il2CppRaw.GetMethod(
+                        IL2CPP.il2cpp_object_get_class(_windowsManager), "get_IsInWindow", 0);
+                    if (_getIsInWindow == IntPtr.Zero) return false;
+                }
+                return Il2CppRaw.InvokeBoolGetter(_windowsManager, _getIsInWindow);
+            }
+            catch { return false; } // fail open
+        }
+
+        /// <summary>Ground-truth dump of all candidate "something is open" signals at activation time — the two
+        /// Zenject manager flags plus every view's live IsLooking/_isAnimating — so we can identify which flag is true
+        /// while a blind/window is open (the guard hasn't been catching it). Diagnostic only.</summary>
+        private void DumpBusyState(string about, bool closeUp, bool inWindow)
+        {
+            try
+            {
+                MelonLogger.Msg($"[ActionMenu] busy-probe on activating '{about}': IsAnyCloseUpActive={closeUp} IsInWindow={inWindow}.");
+                if (_viewClass == IntPtr.Zero) return;
+                IntPtr provider = Il2CppRaw.FindObjectIncludingInactive(_viewProviderClass);
+                if (provider == IntPtr.Zero) return;
+                foreach (IntPtr v in Il2CppRaw.ReadObjectArray(Il2CppRaw.InvokeObjectGetter(provider, _getViews)))
+                {
+                    if (v == IntPtr.Zero) continue;
+                    bool looking = Il2CppRaw.ReadBoolField(v, _viewClass, "IsLooking");
+                    bool animating = Il2CppRaw.ReadBoolField(v, _viewClass, "_isAnimating");
+                    bool locked = Il2CppRaw.ReadBoolField(v, _viewClass, "_isLocked");
+                    if (looking || animating || locked) // only log the interesting ones
+                        MelonLogger.Msg($"[ActionMenu]   view '{HumanizeName(Il2CppRaw.GetUnityObjectName(v))}': " +
+                                        $"IsLooking={looking} _isAnimating={animating} _isLocked={locked}.");
+                }
+            }
+            catch (Exception e) { MelonLogger.Warning($"[ActionMenu] DumpBusyState threw: {e.Message}"); }
+        }
+
+        private string? FindBusyOtherName(IntPtr except)
+        {
+            try
+            {
+                if (_viewClass == IntPtr.Zero) return null;
+                IntPtr provider = Il2CppRaw.FindObjectIncludingInactive(_viewProviderClass);
+                if (provider == IntPtr.Zero) return null;
+                foreach (IntPtr v in Il2CppRaw.ReadObjectArray(Il2CppRaw.InvokeObjectGetter(provider, _getViews)))
+                {
+                    if (v == IntPtr.Zero || v == except) continue;
+                    bool looking = Il2CppRaw.ReadBoolField(v, _viewClass, "IsLooking");
+                    bool animating = Il2CppRaw.ReadBoolField(v, _viewClass, "_isAnimating");
+                    if (looking || animating)
+                        return HumanizeName(Il2CppRaw.GetUnityObjectName(v));
+                }
+            }
+            catch { /* fail open: null = allow activation */ }
+            return null;
+        }
+
+        /// <summary>
+        /// Make <paramref name="view"/> the single focused target by setting its <c>_raycastTarget.IsTargeted=true</c>
+        /// (and clearing every other view's, via <see cref="ClearAllTargets"/>). This is THE gate the game's Space/Act
+        /// reads (F12 finding) — our forced camera turn doesn't reliably make the game's ray set it, so we set it
+        /// directly. Safe + desired for doors (action = room transition). Re-asserted each hold frame because the look
+        /// Update clears it. Never throws.
+        /// </summary>
+        private void FocusTarget(IntPtr view) => FocusTarget(view, _viewClass);
+
+        /// <summary>
+        /// Overload that reads the <c>_raycastTarget</c> field from <paramref name="ownerClass"/> — the view base for an
+        /// AActionableObjectView, or AInteractableObject for the radio/phone/cat. Both systems name the field
+        /// <c>_raycastTarget</c>, so only the owning class differs. Lets the unified entry focus EITHER system's target.
+        /// </summary>
+        private void FocusTarget(IntPtr view, IntPtr ownerClass)
+        {
+            if (view == IntPtr.Zero || _setIsTargeted == IntPtr.Zero || ownerClass == IntPtr.Zero) return;
+            try
+            {
+                ClearAllTargets(view);
+                IntPtr rt = Il2CppRaw.ReadObjectField(view, ownerClass, "_raycastTarget");
+                if (rt != IntPtr.Zero) Il2CppRaw.InvokeVoidWithBool(rt, _setIsTargeted, true);
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[ActionMenu] FocusTarget threw: {e.Message}");
+            }
+        }
+
         private void EndWalk()
         {
             _walkTarget = IntPtr.Zero;
@@ -410,6 +738,26 @@ namespace NoImNotAHumanAccess.World
             {
                 MelonLogger.Warning($"[ActionMenu] ClearAllTargets threw: {e.Message}");
             }
+        }
+
+        /// <summary>
+        /// The player's REAL world position, read from the <c>PlayerController</c> MonoBehaviour's transform. This is
+        /// ground truth — unlike <c>IPlayerService.Position</c>, which (measured 2026-06-04) returns the player's true
+        /// position at rest but SNAPS to the MoveXZ target the instant a walk is issued, so an arrival check against it
+        /// reads dist≈0 immediately and the convergence loop "arrives" before the body has moved (the no-walk bug). The
+        /// transform reflects where the body actually is each frame, so re-issuing MoveXZ until THIS reaches the target
+        /// drives a real walk. Returns false if the controller can't be found this frame.
+        /// </summary>
+        private bool TryGetPlayerWorldPos(out Vector3 pos)
+        {
+            pos = Vector3.zero;
+            if (_playerControllerClass == IntPtr.Zero)
+                _playerControllerClass = Il2CppRaw.GetClass(GameAsm, "_Code.Player", "PlayerController");
+            if (_playerControllerClass == IntPtr.Zero) return false;
+            IntPtr pc = Il2CppRaw.FindObjectIncludingInactive(_playerControllerClass);
+            if (pc == IntPtr.Zero) return false;
+            pos = Il2CppRaw.GetComponentWorldPosition(pc);
+            return true;
         }
 
         /// <summary>The live <c>IPlayerService</c> from the Zenject container (the proven path used elsewhere in the
@@ -462,7 +810,12 @@ namespace NoImNotAHumanAccess.World
             public readonly IntPtr View;
             public readonly string Name;
             public readonly string Bearing;
-            public Entry(IntPtr view, string name, string bearing) { View = view; Name = name; Bearing = bearing; }
+            // True for the AInteractableObject system (radio/phone/cat/…), which has NO _standingPos/_lookAtPos/door
+            // raycast plumbing — so GoToSelected aims at the object's own transform and lets the player walk + Space,
+            // instead of running the door walk-to-standing-pos path. False = a door/window AActionableObjectView.
+            public readonly bool IsInteractable;
+            public Entry(IntPtr view, string name, string bearing, bool isInteractable)
+            { View = view; Name = name; Bearing = bearing; IsInteractable = isInteractable; }
         }
 
         /// <summary>
@@ -496,7 +849,6 @@ namespace NoImNotAHumanAccess.World
             IntPtr arrayPtr = Il2CppRaw.InvokeObjectGetter(provider, _getViews);
             IntPtr[] views = Il2CppRaw.ReadObjectArray(arrayPtr);
             MelonLogger.Msg($"[ActionMenu] provider views array length={views.Length}");
-            if (views.Length == 0) return entries;
 
             Vector3 camPos = Il2CppRaw.GetMainCameraPosition();
             int i = 0;
@@ -506,9 +858,135 @@ namespace NoImNotAHumanAccess.World
                 string name = HumanizeName(Il2CppRaw.GetUnityObjectName(v));
                 Vector3 pos = Il2CppRaw.GetComponentWorldPosition(v);
                 i++;
-                entries.Add(new Entry(v, name, Bearing(camPos, pos)));
+                if (!IsActionableViewValidNow(v, name)) continue;
+                entries.Add(new Entry(v, name, Bearing(camPos, pos), isInteractable: false));
             }
+
+            // Merge the SECOND interactable system (radio/phone/cat/mushroom/hatch/save/…). Use the game's provider
+            // field order, not broad scene enumeration: some objects exist in the scene before the manager makes them
+            // interactable, and the provider order is the game's canonical order.
+            AppendInteractablesFromProvider(entries, camPos);
             return entries;
+        }
+
+        /// <summary>
+        /// Append <c>AInteractableObject</c>s in the game's provider order, filtering by live runtime state. Scene
+        /// presence is not enough: objects like the cat/hole/mushroom can be serialized but not yet valid.
+        /// </summary>
+        private void AppendInteractablesFromProvider(List<Entry> entries, Vector3 camPos)
+        {
+            if (_interactableClass == IntPtr.Zero || _interactablesProviderClass == IntPtr.Zero) return;
+            try
+            {
+                IntPtr provider = Il2CppRaw.FindObjectIncludingInactive(_interactablesProviderClass);
+                if (provider == IntPtr.Zero)
+                {
+                    MelonLogger.Msg("[ActionMenu] InteractablesViewProvider not found this frame.");
+                    return;
+                }
+
+                int added = 0, gated = 0;
+                foreach (IntPtr o in EnumerateProviderInteractables(provider))
+                {
+                    if (o == IntPtr.Zero) continue;
+                    bool dup = false;
+                    foreach (Entry e in entries) if (e.View == o) { dup = true; break; }
+                    if (dup) continue;
+
+                    string name = HumanizeName(Il2CppRaw.GetUnityObjectName(o));
+                    if (!IsInteractableValidNow(o, name))
+                    {
+                        gated++;
+                        continue;
+                    }
+
+                    Vector3 pos = Il2CppRaw.GetComponentWorldPosition(o);
+                    entries.Add(new Entry(o, name, Bearing(camPos, pos), isInteractable: true));
+                    added++;
+                }
+                MelonLogger.Msg($"[ActionMenu] merged {added} provider interactable(s); gated out {gated}.");
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[ActionMenu] AppendInteractablesFromProvider threw: {e.Message}");
+            }
+        }
+
+        private IEnumerable<IntPtr> EnumerateProviderInteractables(IntPtr provider)
+        {
+            yield return ReadProviderField(provider, "<HatchHouse>k__BackingField");
+            yield return ReadProviderField(provider, "<HatchBasement>k__BackingField");
+            yield return ReadProviderField(provider, "<Phone>k__BackingField");
+            yield return ReadProviderField(provider, "<Radio>k__BackingField");
+            yield return ReadProviderField(provider, "<Cigarettes>k__BackingField");
+            yield return ReadProviderField(provider, "<SaveInteractable>k__BackingField");
+            yield return ReadProviderField(provider, "<Mushroom>k__BackingField");
+            yield return ReadProviderField(provider, "<TheHole>k__BackingField");
+            yield return ReadProviderField(provider, "<Cat>k__BackingField");
+        }
+
+        private IntPtr ReadProviderField(IntPtr provider, string fieldName) =>
+            Il2CppRaw.ReadObjectField(provider, _interactablesProviderClass, fieldName);
+
+        private bool IsInteractableValidNow(IntPtr o, string name)
+        {
+            bool active = Il2CppRaw.GetComponentGameObjectActive(o);
+            bool isEnabled = Il2CppRaw.ReadBoolField(o, _interactableClass, "_isEnabled");
+            int lockCount = Il2CppRaw.ReadInt32Field(o, _interactableClass, "_lockCount");
+            IntPtr raycast = Il2CppRaw.ReadObjectField(o, _interactableClass, "_raycastTarget");
+            bool raycastLocked = IsRaycastTargetLocked(raycast);
+            bool hard = InvokeConcreteBool(o, "get_HardConditions", fallback: false);
+            bool soft = InvokeConcreteBool(o, "get_SoftConditions", fallback: false);
+
+            bool valid = active && isEnabled && lockCount == 0 && raycast != IntPtr.Zero && !raycastLocked && hard && soft;
+            MelonLogger.Msg($"[ActionMenu]   avail '{name}': active={active} _isEnabled={isEnabled} " +
+                            $"_lockCount={lockCount} raycast={raycast != IntPtr.Zero} raycastLocked={raycastLocked} " +
+                            $"hard={hard} soft={soft} valid={valid}.");
+            return valid;
+        }
+
+        private bool IsRaycastTargetLocked(IntPtr raycast)
+        {
+            if (raycast == IntPtr.Zero) return true;
+            bool locked = _getRaycastIsLocked != IntPtr.Zero && Il2CppRaw.InvokeBoolGetter(raycast, _getRaycastIsLocked);
+            int lockedCount = Il2CppRaw.ReadInt32Field(raycast, _raycastTargetBaseClass, "LockedCount", 0);
+            return locked || lockedCount > 0;
+        }
+
+        private bool InvokeConcreteBool(IntPtr obj, string getterName, bool fallback)
+        {
+            if (obj == IntPtr.Zero) return fallback;
+            IntPtr concrete = IL2CPP.il2cpp_object_get_class(obj);
+            IntPtr getter = concrete != IntPtr.Zero ? Il2CppRaw.GetMethod(concrete, getterName, 0) : IntPtr.Zero;
+            if (getter == IntPtr.Zero)
+            {
+                if (getterName == "get_HardConditions") getter = _getHardConditions;
+                else if (getterName == "get_SoftConditions") getter = _getSoftConditions;
+            }
+            return Il2CppRaw.InvokeBoolGetter(obj, getter, fallback);
+        }
+
+        private bool IsActionableViewValidNow(IntPtr view, string name)
+        {
+            bool active = Il2CppRaw.GetComponentGameObjectActive(view);
+            bool locked = Il2CppRaw.ReadBoolField(view, _viewClass, "_isLocked");
+            IntPtr raycast = Il2CppRaw.ReadObjectField(view, _viewClass, "_raycastTarget");
+            bool raycastLocked = IsRaycastTargetLocked(raycast);
+            bool canShowHint = InvokeActionableCanShowHint(view);
+
+            bool valid = active && !locked && raycast != IntPtr.Zero && !raycastLocked && canShowHint;
+            MelonLogger.Msg($"[ActionMenu]   avail-view '{name}': active={active} _isLocked={locked} " +
+                            $"raycast={raycast != IntPtr.Zero} raycastLocked={raycastLocked} canShowHint={canShowHint} valid={valid}.");
+            return valid;
+        }
+
+        private bool InvokeActionableCanShowHint(IntPtr view)
+        {
+            if (view == IntPtr.Zero) return false;
+            IntPtr concrete = IL2CPP.il2cpp_object_get_class(view);
+            IntPtr getter = concrete != IntPtr.Zero ? Il2CppRaw.GetMethod(concrete, "get_CanShowHint", 0) : IntPtr.Zero;
+            if (getter == IntPtr.Zero) getter = _getCanShowHint;
+            return Il2CppRaw.InvokeBoolGetter(view, getter, fallback: false);
         }
 
         private static float Flat(Vector3 v) { v.y = 0f; return v.magnitude; }
@@ -539,19 +1017,52 @@ namespace NoImNotAHumanAccess.World
 
                 _viewClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure.ActionableObjects", "AActionableObjectView");
                 if (_viewClass != IntPtr.Zero)
+                {
                     _getCanShowHint = Il2CppRaw.GetMethod(_viewClass, "get_CanShowHint", 0);
+                    _act = Il2CppRaw.GetMethod(_viewClass, "Act", 0); // private; cold-invoked ONLY for DoorTrigger
+                }
 
-                // Aiming: the raycast-target focus setter. LookAtWithZoom is resolved LAZILY on the player service's
-                // concrete class (see ResolveLookAtWithZoom) — resolving it on the IPlayerService interface here gave a
-                // non-invokable pointer (lookAtZoom no-op'd).
-                _raycastTargetClass = Il2CppRaw.GetClass(GameAsm, "_Scripts.Raycast", "ARaycastTarget");
-                if (_raycastTargetClass != IntPtr.Zero)
-                    _setIsTargeted = Il2CppRaw.GetMethod(_raycastTargetClass, "set_IsTargeted", 1);
+                // DoorTrigger is in the GLOBAL namespace (no namespace block in the decompile). All views now activate
+                // uniformly through the targeted-entry path (GoToSelected), so this is kept only for type-identification
+                // (telling a door from a blind/curtain in diagnostics), not for an auto-activate allowlist.
+                _doorTriggerClass = Il2CppRaw.GetClass(GameAsm, "", "DoorTrigger");
+
+                // The second interactable system's abstract base (radio/phone/cat/mushroom/hatch/…), enumerated via
+                // FindObjectsByType. We FILTER the list by availability (HardConditions/SoftConditions + _isEnabled) so
+                // objects that aren't supposed to be reachable yet never appear (user, 2026-06-04). _isEnabled is the
+                // game's own enable flag; HardConditions/SoftConditions are the per-object availability gates.
+                _interactableClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure", "AInteractableObject");
+                if (_interactableClass != IntPtr.Zero)
+                {
+                    _interactMethod = Il2CppRaw.GetMethod(_interactableClass, "Interact", 0);
+                    _getHardConditions = Il2CppRaw.GetMethod(_interactableClass, "get_HardConditions", 0);
+                    _getSoftConditions = Il2CppRaw.GetMethod(_interactableClass, "get_SoftConditions", 0);
+                }
+
+                _interactablesProviderClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure", "InteractablesViewProvider");
+                _raycastTargetBaseClass = Il2CppRaw.GetClass(GameAsm, "_Scripts.Raycast", "ARaycastTarget");
+                if (_raycastTargetBaseClass != IntPtr.Zero)
+                {
+                    _getRaycastIsLocked = Il2CppRaw.GetMethod(_raycastTargetBaseClass, "get_IsLocked", 0);
+                    // set_IsTargeted lives on the ABSTRACT ARaycastTarget base (the IsTargeted property is declared
+                    // there; both RaycastTargetHint (interactables) and the view raycast targets inherit it). Resolving
+                    // on the base is fine because il2cpp dispatches the property setter virtually on the instance.
+                    _setIsTargeted = Il2CppRaw.GetMethod(_raycastTargetBaseClass, "set_IsTargeted", 1);
+                }
+
+                // GAME-FAITHFUL ENTRY: the game opens EVERY interaction (doors, blinds, curtains, peephole, AND the
+                // radio/phone/cat interactables) by focusing the object's raycast target (IsTargeted=true) and then
+                // running its action through the targeted path — see AActionableObjectView and AInteractableObject, both
+                // of which hold a raycast target + InputHandling + an OnUpdate(Action) pump. The mod's old cold-Act()
+                // shortcut bypassed IsTargeted, so the game never registered the open view as the CURRENT interaction and
+                // its own back-out ('q') had nothing to close (the blind softlock). We now set IsTargeted first, then
+                // invoke the action — so the game owns the interaction and native back-out works. _setIsTargeted is the
+                // key that makes this work; it is now resolved (above) rather than left dead.
 
                 MelonLogger.Msg($"[ActionMenu] resolved: provider={_viewProviderClass != IntPtr.Zero} " +
-                                $"getViews={_getViews != IntPtr.Zero} canShowHint={_getCanShowHint != IntPtr.Zero} " +
-                                $"| aim: raycastTarget={_raycastTargetClass != IntPtr.Zero} setIsTargeted={_setIsTargeted != IntPtr.Zero} " +
-                                $"(lookAtWithZoom resolved lazily on concrete class)");
+                                $"getViews={_getViews != IntPtr.Zero} act={_act != IntPtr.Zero} doorTrigger={_doorTriggerClass != IntPtr.Zero} " +
+                                $"interactableBase={_interactableClass != IntPtr.Zero} interactablesProvider={_interactablesProviderClass != IntPtr.Zero} " +
+                                $"raycastBase={_raycastTargetBaseClass != IntPtr.Zero}");
             }
             catch (Exception e)
             {

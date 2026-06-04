@@ -30,6 +30,19 @@ namespace NoImNotAHumanAccess.Interop
             return klass;
         }
 
+        /// <summary>
+        /// Whether <paramref name="objPtr"/>'s runtime class is EXACTLY <paramref name="klass"/> (not a subclass). Reads
+        /// the object's class via <c>il2cpp_object_get_class</c> and compares pointers. Use to tell concrete sibling
+        /// types apart at runtime when you only hold a base-class pointer (e.g. DoorTrigger vs WindowBlindsTrigger, both
+        /// AActionableObjectView). False on any zero/failure.
+        /// </summary>
+        public static bool IsExactClass(IntPtr objPtr, IntPtr klass)
+        {
+            if (objPtr == IntPtr.Zero || klass == IntPtr.Zero) return false;
+            try { return IL2CPP.il2cpp_object_get_class(objPtr) == klass; }
+            catch { return false; }
+        }
+
         /// <summary>Resolve a method on a class by name + arg count. Cached. Zero on failure.</summary>
         public static IntPtr GetMethod(IntPtr klass, string name, int argc)
         {
@@ -326,6 +339,24 @@ namespace NoImNotAHumanAccess.Interop
             IntPtr exc = IntPtr.Zero;
             IL2CPP.il2cpp_runtime_invoke(method, objPtr, (void**)0, ref exc);
             return exc == IntPtr.Zero;
+        }
+
+        /// <summary>
+        /// Like <see cref="InvokeVoid"/> but, when the IL2CPP call raises a managed exception, decodes it to a string
+        /// (type + message + stack) via <see cref="Il2CppException"/> and returns it in <paramref name="error"/>. Use to
+        /// see WHY a cold-invoked method (e.g. RadioInteractable.Interact()) throws, instead of only knowing that it did.
+        /// Returns true on clean run (error null); false on throw (error populated) or a zero arg.
+        /// </summary>
+        public static unsafe bool TryInvokeVoid(IntPtr objPtr, IntPtr method, out string? error)
+        {
+            error = null;
+            if (objPtr == IntPtr.Zero || method == IntPtr.Zero) { error = "null object or method"; return false; }
+            IntPtr exc = IntPtr.Zero;
+            IL2CPP.il2cpp_runtime_invoke(method, objPtr, (void**)0, ref exc);
+            if (exc == IntPtr.Zero) return true;
+            try { error = new Il2CppException(exc).ToString(); }
+            catch (Exception e) { error = $"<exception, undecodable: {e.Message}>"; }
+            return false;
         }
 
         /// <summary>Invoke a void instance method taking a single <see cref="float"/> argument (e.g. the radio knob's
