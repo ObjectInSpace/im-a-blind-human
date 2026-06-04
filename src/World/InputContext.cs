@@ -95,11 +95,13 @@ namespace NoImNotAHumanAccess.World
                 if (mainMenu) kind = InputContextKind.MainMenu;
                 // Pause overlays the 3D scene (provider stays present), so it MUST be checked before ThreeD.
                 else if (paused) kind = InputContextKind.Pause;
-                else if (photo) kind = InputContextKind.RoomPhoto;
-                // Fridge close-up also overlays the 3D scene (provider stays present), so it too precedes ThreeD.
+                // Fridge/Radio close-ups open ON TOP OF the room photo — the underlying RoomDisplayer._isOpened stays
+                // true behind them, so `photo` would win and misroute to RoomPhoto (the fridge grid then read "no
+                // objects"). They are the more-specific overlay, so they MUST be checked BEFORE photo. (Confirmed
+                // 2026-06-04: FridgeCloseUpView active=True while the room photo was still open underneath.)
                 else if (fridge) kind = InputContextKind.Fridge;
-                // Radio close-up: same overlay reasoning as Fridge.
                 else if (radio) kind = InputContextKind.Radio;
+                else if (photo) kind = InputContextKind.RoomPhoto;
                 // 3D only when the interactable provider is present AND no dialog/cutscene overlay is showing.
                 else if (provider && !dialog) kind = InputContextKind.ThreeD;
                 else kind = InputContextKind.None;

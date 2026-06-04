@@ -37,6 +37,24 @@
 
 ## Current Phase
 
+### Walking action list runtime validity filter — BUILT + DEPLOYED 2026-06-04, awaiting in-game confirm
+`src/World/ActionMenu.cs` now builds the walking action list from the game's live providers instead of treating scene
+presence as validity. Door/blind/window-style objects still come from `ActionableObjectsViewProvider` and are now gated
+by live active state, `_isLocked`, raycast-target lock state, and concrete `CanShowHint`. Hatch/phone/radio/cigarettes/
+save/mushroom/hole/cat come from `InteractablesViewProvider` in canonical provider field order, not
+`FindObjectsByType(AInteractableObject)`, and are gated by live active state, `_isEnabled`, `_lockCount`, `_raycastTarget`,
+raycast-target lock state, and concrete `HardConditions` + `SoftConditions`.
+- Build: `dotnet build NoImNotAHumanAccess.csproj -c Release` green on 2026-06-04 (existing unused-field warnings only).
+- Deploy: copied `bin\Release\NoImNotAHumanAccess.dll` to the game `Mods` folder on 2026-06-04. The repo has no
+  `scripts\Deploy-Mod.ps1`, so deployment was manual.
+- TEST: start a fresh game and open/cycle the walking action list. Confirm objects that exist but are not currently
+  interactable do not appear. Check both systems: doors/blinds/windows should still appear only when the game would show
+  their prompt; hatch/phone/radio/cigarettes/save/mushroom/hole/cat should follow current day/location/unlock state.
+- LOGS TO CHECK: `[ActionMenu] avail-view ... valid=...` for actionable views and `[ActionMenu] avail ... valid=...`
+  for provider interactables. If the list is empty when prompts are visible, the likely over-strict gates are
+  `canShowHint` for actionable views or `soft` for `AInteractableObject`; the log line will show which predicate rejected
+  the object.
+
 ### Mouse-only input affordances — fridge/radio/cartoon steppers (BUILT + DEPLOYED 2026-06-03, awaiting in-game confirm)
 Audited every `IPointer*` handler + `ACloseUpView` for mouse-only inputs with no keyboard equivalent (the class of bug
 behind "can't pick a beer with arrows"). Genuine gaps found and fixed; everything else (PhoneButtonView, HoverableButton,

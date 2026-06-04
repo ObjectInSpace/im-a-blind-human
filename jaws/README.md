@@ -45,6 +45,12 @@ game while still delivering the arrows.
 So: turn it **on** when you want to navigate menus/dialogue with the arrows; turn it **off** if you
 want JAWS's normal interrupt back for a stretch of heavy reading.
 
+> A fix that raised the announcements as "most-recent" UI Automation notifications (so JAWS would
+> cancel-and-replace) was tried and reverted: the notifications reached no screen reader, because
+> this game's window UIA provider belongs to Unity's engine and a standalone provider isn't the one
+> the reader connects to. Restoring interrupt properly belongs to the planned native accessibility
+> hierarchy work, where navigation is focus-based and interrupt follows naturally.
+
 ## NVDA users
 
 You don't need this. NVDA already passes the arrows through to the game, so menus and dialogue work
