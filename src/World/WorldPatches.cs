@@ -54,40 +54,24 @@ namespace NoImNotAHumanAccess.World
         private const string DialogViewFullName = "Il2Cpp_Code.DialogSystem.DialogView";
         private const string ShowSignMethod = "ShowSign";
 
-        // Shooting outcome: we announce ONLY the player's deliberate gun-shot. Among the Yarn kill commands on
-        // DialogCommandsInstance, KillCharacter(name) is that one — it's the gun path, paired with the explicit
-        // KillCharacterWithNoGun(name) for non-gun deaths. The other kills are NOT a player gunshot and are
-        // deliberately not hooked:
-        //   - KillCharacterWithNoGun(name): a kill without the gun (no shot fired).
-        //   - KillRoom(name): a whole room dies (e.g. a visitor slaughtering NPCs) — not the player's single shot.
-        //   - KillTomorrow(name): a death scheduled off-screen for the next day (e.g. a visitor kills overnight).
-        //   - FakeShot(): a trigger-pull with no kill — nothing to reveal.
-        // (Inferred from the command names + the SetUpGun/DontSetUpGun gun-state pair + the "<Char>_<Sign>Shoot" /
-        // "...DontShoot" dialogue nodes that branch into the shoot decision; bodies are Cpp2IL stubs. CONFIRM in-game
-        // that KillCharacter fires for the player shot and that the excluded kinds don't mis-announce.)
-        private const string DialogCommandsFullName = "Il2Cpp_Code.DialogSystem.Commands.DialogCommandsInstance";
-        private const string KillCharacterMethod = "KillCharacter";
-
         private static HudNarrator? _narrator;
         private static RoomViewNarrator? _roomView;
         private static CloseUpNarrator? _closeUp;
         private static ControlsNarrator? _controls;
         private static SignNarrator? _sign;
-        private static ShotNarrator? _shot;
 
         /// <summary>
         /// Resolve and apply the world-HUD hooks. Safe to call once at init; each hook logs and is skipped on
         /// failure rather than throwing (a missing hook degrades to "less speech", not a crashed mod).
         /// </summary>
         public static void Apply(HarmonyLib.Harmony harmony, HudNarrator narrator, RoomViewNarrator roomView,
-            CloseUpNarrator closeUp, ControlsNarrator controls, SignNarrator sign, ShotNarrator shot)
+            CloseUpNarrator closeUp, ControlsNarrator controls, SignNarrator sign)
         {
             _narrator = narrator;
             _roomView = roomView;
             _closeUp = closeUp;
             _controls = controls;
             _sign = sign;
-            _shot = shot;
             PatchShowHint(harmony);
             PatchHideHint(harmony);
             PatchUIButtonHover(harmony);
@@ -95,7 +79,6 @@ namespace NoImNotAHumanAccess.World
             PatchConsumableSetup(harmony);
             PatchSetupControlsView(harmony);
             PatchShowSign(harmony);
-            PatchKillCharacter(harmony);
         }
 
         // ---------------- Interaction prompt: HUDPresenter.ShowHint(string, string, Transform, ERaycastHintIcon) ----
@@ -346,48 +329,6 @@ namespace NoImNotAHumanAccess.World
             catch (Exception e)
             {
                 MelonLogger.Warning($"[WorldPatches] ShowSignPostfix threw: {e.Message}");
-            }
-        }
-
-        // ---------------- Player gun-shot outcome: DialogCommandsInstance.KillCharacter(string characterName) -------
-
-        private static void PatchKillCharacter(HarmonyLib.Harmony harmony)
-        {
-            try
-            {
-                MethodInfo? target = ResolveMethodByArity(GameAsmName, DialogCommandsFullName, KillCharacterMethod, 1);
-                if (target == null)
-                {
-                    MelonLogger.Warning(
-                        $"[WorldPatches] Could not resolve {DialogCommandsFullName}.{KillCharacterMethod}(characterName); " +
-                        "shoot-outcome narration disabled.");
-                    return;
-                }
-
-                harmony.Patch(target, postfix: PostfixOf(nameof(KillCharacterPostfix)));
-                MelonLogger.Msg($"[WorldPatches] Patched {DialogCommandsFullName}.{KillCharacterMethod}(characterName).");
-            }
-            catch (Exception e)
-            {
-                MelonLogger.Error($"[WorldPatches] PatchKillCharacter failed: {e}");
-            }
-        }
-
-        /// <summary>
-        /// Postfix on the player's gun-shot kill. <paramref name="characterName"/> matches the original's raw-name
-        /// parameter so Harmony injects it. A POSTFIX runs after the game's command body, so the announcement comes
-        /// after the shot is triggered, not before. The narrator resolves whether that character was a visitor and
-        /// speaks the outcome.
-        /// </summary>
-        private static void KillCharacterPostfix(string characterName)
-        {
-            try
-            {
-                _shot?.OnShot(characterName);
-            }
-            catch (Exception e)
-            {
-                MelonLogger.Warning($"[WorldPatches] KillCharacterPostfix threw: {e.Message}");
             }
         }
 

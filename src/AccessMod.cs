@@ -39,7 +39,6 @@ namespace NoImNotAHumanAccess
         private CloseUpNarrator? _closeUpNarrator;
         private ControlsNarrator? _controlsNarrator;
         private SignNarrator? _signNarrator;
-        private ShotNarrator? _shotNarrator;
         private JawsArrowShim? _jawsArrowShim;
 
         // F7 = repeat the current context's control row ("what can I do here"); F8 = manual repeat/test trigger;
@@ -127,22 +126,18 @@ namespace NoImNotAHumanAccess
                 // WorldPatches so the SetupAndShowControlsView hook can drive its first-encounter readout.
                 _controlsNarrator = new ControlsNarrator(_speech);
 
-                // Inspection signs (teeth/eyes/armpit/aura-photo): the visitor-detection loop. Speaks a DESCRIPTION of
-                // the sign image (round-robin from balanced pools) so the player judges human vs visitor themselves —
-                // never announces the answer. Driven by the DialogView.ShowSign hook in WorldPatches.
-                _signNarrator = new SignNarrator(_speech);
-
-                // Shooting outcome: after the player shoots someone, announce whether they were a human or a visitor
-                // (the cutscene reveals it visually). Driven by the Yarn Kill* command hooks in WorldPatches (postfix,
-                // so the announcement follows the shot).
-                _shotNarrator = new ShotNarrator(_speech);
+                // Inspection signs (teeth/eyes/hands/aura-photo/armpit/ear): the detection loop. Describes the TRAITS of
+                // the sign image so the player judges for themselves — never announces a verdict. Folds the description
+                // into the guest's next line (via the dialogue narrator) so it isn't swallowed. Driven by the
+                // DialogView.ShowSign hook in WorldPatches; F9 repeats the latest test in the conversation.
+                _signNarrator = new SignNarrator(_speech, _dialogueNarrator);
 
                 // World HUD: hook the interaction-prompt sink ("press [action] to [subject]"), the room-photo
-                // highlight (UIButton.OnHover), the object close-ups, the context control-row swap, the inspection
-                // signs, and the shooting outcome.
+                // highlight (UIButton.OnHover), the object close-ups, the context control-row swap, and the inspection
+                // signs. (The post-shot human/visitor announcement was removed — the game's sound effect conveys it.)
                 _hudNarrator = new HudNarrator(_speech);
                 WorldPatches.Apply(HarmonyInstance, _hudNarrator, _roomViewNarrator, _closeUpNarrator, _controlsNarrator,
-                    _signNarrator, _shotNarrator);
+                    _signNarrator);
 
                 // Status key (F9): on-demand readout of day/phase/energy/items via the Zenject-resolved controllers.
                 _statusNarrator = new StatusNarrator(_speech);
@@ -212,6 +207,7 @@ namespace NoImNotAHumanAccess
             _menuNarrator?.Tick();
             _controlsNarrator?.Tick(); // drains the deferred first-encounter control-row read
             _actionMenu?.Tick();       // reconciles forced focus after a leave (clears stale IsTargeted)
+            _signNarrator?.Tick();     // flushes an un-consumed test description; resets F9 last-test on conversation end
 
             if (Input.GetKeyDown(ControlsKey))
             {
@@ -355,12 +351,15 @@ namespace NoImNotAHumanAccess
             if (Input.GetKeyDown(LeaveKey))
                 _actionMenu?.Leave();
 
-            // F9 = the contextual readout. In the phone close-up it reads the player's known phone numbers (the pinned
-            // contact cards — how a sighted player "remembers" a number); everywhere else it's the day/phase/energy/items
-            // status. Same key, same "tell me what matters here" intent, nothing new to learn.
+            // F9 = the contextual readout. In a conversation it repeats the latest inspection-test result (or "untested"
+            // if none yet) — the trait you examined, so you can re-hear it before deciding. In the phone close-up it
+            // reads the player's known phone numbers. Otherwise it's the day/phase/energy/consumables status. Same key,
+            // same "tell me what matters here" intent.
             if (Input.GetKeyDown(StatusKey))
             {
-                if (ctx == InputContextKind.Phone)
+                if (_signNarrator != null && _signNarrator.InConversation)
+                    _signNarrator.RepeatLastTest();
+                else if (ctx == InputContextKind.Phone)
                     _phoneMenu?.ReadContacts();
                 else
                     _statusNarrator?.Announce();

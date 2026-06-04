@@ -25,6 +25,11 @@ namespace NoImNotAHumanAccess.Dialogue
         private string _lastSpoken = string.Empty;
         private float _lastSpokenAt = float.NegativeInfinity;
 
+        // A pending inspection-test description (set by SignNarrator) to fold into the NEXT dialogue line, so the test
+        // readout isn't stomped by the line that follows it. Empty = none. SignNarrator flushes it standalone if no
+        // line consumes it in time.
+        private string _pendingTestDescription = string.Empty;
+
         // De-dupe window: the typewriter reveal re-calls the sink with the same final string many times within a
         // fraction of a second, so suppress an identical line that repeats inside this window. But a line that recurs
         // LATER (e.g. the same info popup — "no more radio today" — triggered again minutes on) is a real new event
@@ -37,6 +42,20 @@ namespace NoImNotAHumanAccess.Dialogue
             new(@"\{\d+\}", System.Text.RegularExpressions.RegexOptions.Compiled);
 
         public DialogueNarrator(ISpeechOutput speech) => _speech = speech;
+
+        /// <summary>Queue an inspection-test description to be prepended to the next dialogue line (set by SignNarrator).
+        /// Overwrites any previous un-consumed one — only the latest test matters.</summary>
+        public void SetPendingTestDescription(string text) => _pendingTestDescription = text ?? string.Empty;
+
+        /// <summary>Take (and clear) the pending test description, or null if none. Used here to fold it into the next
+        /// line, and by SignNarrator to detect whether a line consumed it (else it flushes it standalone).</summary>
+        public string? TakePendingTestDescription()
+        {
+            if (_pendingTestDescription.Length == 0) return null;
+            string p = _pendingTestDescription;
+            _pendingTestDescription = string.Empty;
+            return p;
+        }
 
         /// <summary>True if the text still contains a numbered substitution slot (e.g. <c>{0}</c>) — i.e. it was read
         /// before its runtime values were spliced in.</summary>
@@ -78,13 +97,22 @@ namespace NoImNotAHumanAccess.Dialogue
 
                 // Typewriter reveal re-calls the sink with the same final string repeatedly within a moment; suppress
                 // an identical repeat only inside the short de-dupe window. The same text recurring later (e.g. an
-                // info popup re-triggered) falls outside the window and is spoken again.
+                // info popup re-triggered) falls outside the window and is spoken again. De-dupe on the LINE itself
+                // (before any test-description prefix) so the prefix being consumed on the first call doesn't make the
+                // typewriter repeats look like new lines.
                 float now = Time.realtimeSinceStartup;
                 if (text == _lastSpoken && now - _lastSpokenAt < DedupeWindowSeconds) { _lastSpokenAt = now; return; }
                 _lastSpoken = text;
                 _lastSpokenAt = now;
 
-                _speech.Speak(text, interrupt: true);
+                // Fold in a pending inspection-test description (set by SignNarrator) so the test isn't swallowed by
+                // this line — they go out as ONE utterance: "Examine their teeth. <line>". Consumed once.
+                string spoken = text;
+                string? prefix = TakePendingTestDescription();
+                if (!string.IsNullOrEmpty(prefix))
+                    spoken = $"{prefix} {text}";
+
+                _speech.Speak(spoken, interrupt: true);
             }
             catch (Exception e)
             {

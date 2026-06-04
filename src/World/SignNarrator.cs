@@ -2,34 +2,36 @@ using System;
 using System.Collections.Generic;
 using Il2CppInterop.Runtime;
 using MelonLoader;
+using NoImNotAHumanAccess.Dialogue;
 using NoImNotAHumanAccess.Interop;
 using NoImNotAHumanAccess.Speech;
+using UnityEngine;
 
 namespace NoImNotAHumanAccess.World
 {
     /// <summary>
-    /// Speaks a description of the inspection sign the game is showing — the teeth / eyes / armpit / aura-photo /
-    /// hands / ear close-up the player examines on a guest to judge human vs visitor. This is the core
-    /// visitor-detection loop, and it is purely visual: the game shows a sprite and the player must decide.
+    /// Speaks a description of the inspection sign the game shows during a test — the teeth / eyes / hands / aura-photo /
+    /// armpit / ear close-up the player examines on a guest. This is the core detection loop and is purely visual: the
+    /// game draws a sprite and the player judges it from the TRAITS shown (tooth colour/condition, eye redness, photo
+    /// features, armpit smoothness, bugs in the ear, bleeding gums, …). We DESCRIBE those traits so a blind player has
+    /// the same evidence a sighted one does.
     ///
-    /// Fed by <see cref="WorldPatches"/>, which postfixes <c>DialogView.ShowSign(CharacterSOData, ECharacterSign)</c>
-    /// — the real (non-mock) view method that fires at the dialogue beat where the sign is revealed. The postfix
-    /// passes us the guest's <c>CharacterSOData</c> pointer (from which we read the ground-truth
-    /// <c>_isImposter</c> flag and <c>_characterType</c>) and the sign kind as its underlying int.
+    /// IMPORTANT (user 2026-06-04): the player must NOT be told whether the guest is a visitor — that judgement is the
+    /// game. We never say "human"/"imposter"/"visitor". We describe only the observable indicators. (The sprite shown
+    /// differs by the guest's true nature, so the truth flag selects WHICH trait set is accurate to describe, but the
+    /// words are traits, never a verdict.)
     ///
-    /// <b>Design — do NOT leak the answer (user-directed 2026-06-02):</b> the not-knowing IS the gameplay. The game
-    /// holds the truth only as which sprite it draws (human vs imposter art); there is no text. We must DESCRIBE the
-    /// image so the player judges it themselves — exactly as a sighted player does — never announce "this is a
-    /// visitor." Critically, one description string per image would itself become the tell (the player learns
-    /// "string X = imposter" after one encounter and stops judging). So each image is backed by a POOL of several
-    /// short descriptions that we ROUND-ROBIN through, and the human-variant pool and imposter-variant pool must be
-    /// authored INDISTINGUISHABLE in style, length, register and vocabulary — otherwise the player pattern-matches the
-    /// pool rather than the picture. That balancing is an AUTHORING task that needs the real ripped art.
+    /// Two behaviours layered on top:
+    ///  • NO SWALLOW: a test fires at a dialogue beat and the guest's next line lands almost immediately. Both go out as
+    ///    UIA announcements with no queue, so the line was stomping the description. We hand the description to the
+    ///    <see cref="DialogueNarrator"/> to PREPEND to that next line (one combined utterance). If no line arrives within
+    ///    a short window, <see cref="Tick"/> speaks the description on its own — so it's heard exactly once, never lost.
+    ///  • F9 REPEAT: the most recent test's description is kept so the player can re-hear it (AccessMod's F9 in a
+    ///    conversation). It resets to "untested" when the conversation ends (the DialogView goes inactive).
     ///
-    /// <b>Status — foundation only.</b> The hook, the truth resolution, and the round-robin pool machinery are live
-    /// now so the loop is testable in-game; the description pools currently hold a single placeholder entry per
-    /// (sign, variant) that names the sign and variant plainly. Once the sign sprites are ripped, the placeholder
-    /// pools get replaced with authored, balanced description sets and nothing else changes. Never throws.
+    /// <b>Status — placeholder descriptions.</b> Real trait text needs the ripped sign art (a later session). For now the
+    /// pools name the body part being examined without describing healthy-vs-abnormal, so nothing leaks or misleads.
+    /// Never throws.
     /// </summary>
     public sealed class SignNarrator
     {
@@ -45,26 +47,45 @@ namespace NoImNotAHumanAccess.World
         private const int SignArmpit = 4;
         private const int SignEar = 5;
 
+        // If a dialogue line doesn't consume the pending description within this long, speak it standalone so it's
+        // never lost (some tests may not be immediately followed by a line).
+        private const float PendingFlushSeconds = 0.5f;
+
         private readonly ISpeechOutput _speech;
+        private readonly DialogueNarrator _dialogue;
 
         private IntPtr _characterSoDataClass; // resolved lazily for reading _isImposter / _characterType
+        private IntPtr _dialogViewClass;      // for the conversation-end reset (DialogView._isActive)
+        private bool _dialogResolved;
+        private bool _dialogWasActive;
 
-        // Round-robin cursor per (sign, isImposter) pool, so repeated reveals of the same image cycle through the
-        // pool's entries instead of repeating one string. Keyed by the same composite key the pools use.
+        // Round-robin cursor per (sign, variant) pool, so repeated reveals of the same image cycle the pool's entries.
         private readonly Dictionary<string, int> _poolCursor = new();
 
-        /// <summary>The truth of the most recently revealed sign, for any feature that wants the just-inspected
-        /// guest's status without re-resolving it (e.g. a shot that follows an inspection). Null until the first
-        /// sign is shown this session. NOT used to narrate the sign itself — that stays description-only.</summary>
+        // Pending description waiting to be prepended to the next dialogue line (empty = none); the time after which we
+        // flush it standalone if no line consumed it.
+        private string _pending = string.Empty;
+        private float _pendingFlushAt;
+
+        /// <summary>The most recent test's spoken description in the CURRENT conversation, or null if there hasn't been
+        /// a test yet (F9 says "untested"). Cleared when the conversation ends.</summary>
+        public string? LastTestDescription { get; private set; }
+
+        /// <summary>The truth of the most recently revealed sign, for features that need the just-inspected guest's
+        /// status (e.g. a shot that follows). NOT used to narrate the sign — that stays trait-only.</summary>
         public bool? LastSignWasImposter { get; private set; }
 
-        public SignNarrator(ISpeechOutput speech) => _speech = speech;
+        public SignNarrator(ISpeechOutput speech, DialogueNarrator dialogue)
+        {
+            _speech = speech;
+            _dialogue = dialogue;
+        }
 
         /// <summary>
         /// A sign was revealed. <paramref name="characterPtr"/> is the guest's <c>CharacterSOData</c>;
-        /// <paramref name="sign"/> is the <c>ECharacterSign</c> as its underlying int. Reads the human/imposter truth,
-        /// picks the next description from the matching round-robin pool, and speaks it. The truth selects WHICH pool
-        /// (human art vs imposter art get described differently and accurately) but is never spoken outright.
+        /// <paramref name="sign"/> is the <c>ECharacterSign</c> as its underlying int. Picks the matching trait
+        /// description and hands it to the dialogue narrator to fold into the guest's next line (so it isn't swallowed),
+        /// and records it for the F9 repeat.
         /// </summary>
         public void OnSignShown(IntPtr characterPtr, int sign)
         {
@@ -76,7 +97,13 @@ namespace NoImNotAHumanAccess.World
                 string text = NextDescription(sign, isImposter);
                 if (text.Length == 0) return;
 
-                _speech.Speak(text, interrupt: true);
+                LastTestDescription = text;            // for F9 repeat in this conversation
+
+                // Hand to the dialogue narrator to PREPEND to the next line (one utterance, no swallow). Keep a copy
+                // pending so Tick can flush it standalone if no line arrives shortly.
+                _dialogue.SetPendingTestDescription(text);
+                _pending = text;
+                _pendingFlushAt = Time.realtimeSinceStartup + PendingFlushSeconds;
             }
             catch (Exception e)
             {
@@ -84,8 +111,60 @@ namespace NoImNotAHumanAccess.World
             }
         }
 
-        /// <summary>Read <c>CharacterSOData._isImposter</c> off the instance. Defaults to false (treat as human) on any
-        /// resolution miss — a miss should never invent an imposter tell.</summary>
+        /// <summary>True while a conversation (DialogView) is on screen — when F9 should repeat the test result rather
+        /// than read general status.</summary>
+        public bool InConversation => DialogActive();
+
+        /// <summary>Speak the most recent test description again (F9), or "Untested." if none this conversation.</summary>
+        public void RepeatLastTest()
+        {
+            string text = string.IsNullOrEmpty(LastTestDescription) ? "Untested." : LastTestDescription!;
+            _speech.Speak(text, interrupt: true);
+        }
+
+        /// <summary>
+        /// Per-frame upkeep (driven by AccessMod): flush a pending description standalone if the dialogue line never
+        /// consumed it, and reset the F9 "last test" when the conversation ends.
+        /// </summary>
+        public void Tick()
+        {
+            try
+            {
+                // Flush an un-consumed description so a test is never silent.
+                if (_pending.Length > 0 && Time.realtimeSinceStartup >= _pendingFlushAt)
+                {
+                    // Only speak it ourselves if the dialogue narrator still holds it (i.e. no line consumed it).
+                    if (_dialogue.TakePendingTestDescription() is { Length: > 0 } stillPending)
+                        _speech.Speak(stillPending, interrupt: true);
+                    _pending = string.Empty;
+                }
+
+                // Reset the F9 last-test when the conversation (DialogView) goes from active → inactive.
+                bool dialogActive = DialogActive();
+                if (_dialogWasActive && !dialogActive)
+                    LastTestDescription = null;
+                _dialogWasActive = dialogActive;
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[SignNarrator] Tick threw: {e.Message}");
+            }
+        }
+
+        private bool DialogActive()
+        {
+            if (!_dialogResolved)
+            {
+                _dialogResolved = true;
+                _dialogViewClass = Il2CppRaw.GetClass(GameAsm, "_Code.DialogSystem", "DialogView");
+            }
+            if (_dialogViewClass == IntPtr.Zero) return false;
+            IntPtr dv = Il2CppRaw.FindObjectIncludingInactive(_dialogViewClass);
+            return dv != IntPtr.Zero && Il2CppRaw.ReadBoolField(dv, _dialogViewClass, "_isActive");
+        }
+
+        /// <summary>Read <c>CharacterSOData._isImposter</c> off the instance. Defaults to false on any resolution miss —
+        /// a miss must never invent a tell.</summary>
         private bool ReadIsImposter(IntPtr characterPtr)
         {
             if (characterPtr == IntPtr.Zero) return false;
@@ -97,8 +176,7 @@ namespace NoImNotAHumanAccess.World
             return Il2CppRaw.ReadBoolField(characterPtr, cls, "_isImposter");
         }
 
-        /// <summary>Pick the next description from the round-robin pool for this (sign, variant), advancing the cursor.
-        /// Empty string if the sign is unknown (shouldn't happen — the enum is fixed).</summary>
+        /// <summary>Pick the next description from the round-robin pool for this (sign, variant), advancing the cursor.</summary>
         private string NextDescription(int sign, bool isImposter)
         {
             string[] pool = DescriptionPool(sign, isImposter);
@@ -112,36 +190,30 @@ namespace NoImNotAHumanAccess.World
         }
 
         /// <summary>
-        /// The description pool for one (sign kind, human/imposter) image. PLACEHOLDER pools today (one plain entry
-        /// each) so the loop is testable before the art exists; replace with authored, BALANCED sets once the sprites
-        /// are ripped. The two variants of a sign MUST end up indistinguishable in style/length/vocabulary — see the
-        /// class remarks. Authoring contract: keep human and imposter pools the same size and cadence.
+        /// The description pool for one (sign kind, variant). PLACEHOLDER today: it names the body part being examined
+        /// only — no healthy/abnormal wording — so nothing leaks the verdict or misleads before the real trait text is
+        /// authored from the ripped art. Both variants currently share the same neutral prompt on purpose. When the art
+        /// is available, replace these with accurate, varied trait descriptions per variant (and keep the human/visitor
+        /// pools balanced in style so the wording itself isn't a tell).
         /// </summary>
         private static string[] DescriptionPool(int sign, bool isImposter) => sign switch
         {
-            SignTeeth     => isImposter ? TeethImposter     : TeethHuman,
-            SignEye       => isImposter ? EyeImposter       : EyeHuman,
-            SignHands     => isImposter ? HandsImposter     : HandsHuman,
-            SignAuraPhoto => isImposter ? AuraPhotoImposter : AuraPhotoHuman,
-            SignArmpit    => isImposter ? ArmpitImposter    : ArmpitHuman,
-            SignEar       => isImposter ? EarImposter       : EarHuman,
+            SignTeeth     => TeethPrompts,
+            SignEye       => EyePrompts,
+            SignHands     => HandsPrompts,
+            SignAuraPhoto => AuraPhotoPrompts,
+            SignArmpit    => ArmpitPrompts,
+            SignEar       => EarPrompts,
             _             => Array.Empty<string>(),
         };
 
-        // ---- Placeholder description pools (one entry each; authored balanced sets land after the asset rip). ----
-        // Phrasing names the sign + variant plainly for now. These are deliberately the ONLY place the variant leaks,
-        // because they are stubs; the authored replacements must NOT reveal the variant (see class remarks).
-        private static readonly string[] TeethHuman        = { "Their teeth. Human variant." };
-        private static readonly string[] TeethImposter     = { "Their teeth. Imposter variant." };
-        private static readonly string[] EyeHuman          = { "Their eyes. Human variant." };
-        private static readonly string[] EyeImposter       = { "Their eyes. Imposter variant." };
-        private static readonly string[] HandsHuman        = { "Their hands. Human variant." };
-        private static readonly string[] HandsImposter     = { "Their hands. Imposter variant." };
-        private static readonly string[] AuraPhotoHuman    = { "The aura photo. Human variant." };
-        private static readonly string[] AuraPhotoImposter = { "The aura photo. Imposter variant." };
-        private static readonly string[] ArmpitHuman       = { "Their armpit. Human variant." };
-        private static readonly string[] ArmpitImposter    = { "Their armpit. Imposter variant." };
-        private static readonly string[] EarHuman          = { "Their ear. Human variant." };
-        private static readonly string[] EarImposter       = { "Their ear. Imposter variant." };
+        // Neutral, non-leaking prompts (placeholder). They tell the player WHAT they're looking at — the trait to judge —
+        // without stating whether it's normal or abnormal. Replace with art-accurate trait descriptions later.
+        private static readonly string[] TeethPrompts     = { "Examine their teeth and gums." };
+        private static readonly string[] EyePrompts       = { "Examine their eyes." };
+        private static readonly string[] HandsPrompts     = { "Examine their hands." };
+        private static readonly string[] AuraPhotoPrompts = { "Examine the aura photo." };
+        private static readonly string[] ArmpitPrompts    = { "Examine their armpit." };
+        private static readonly string[] EarPrompts       = { "Examine their ear." };
     }
 }
