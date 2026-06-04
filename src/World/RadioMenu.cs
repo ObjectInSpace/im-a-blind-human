@@ -57,22 +57,21 @@ namespace NoImNotAHumanAccess.World
         private IntPtr _onRadioButtonPressed; // RadioCloseUpView.OnRadioButtonPressed(ERadioState) — the FULL band switch
         private IntPtr _getDisplayedMessage; // RadioModel.GetDisplayedMessage() : string
 
-        // RadioModel._isWaveFound (private bool): TRUE only when the station is locked and the text is FULLY resolved.
-        // This is the correct gate for speaking the message — the old distance threshold (0.06) still had partial
-        // garble, and GetDisplayedMessage() changes char-by-char as it resolves, so each frame produced a DIFFERENT
-        // near-garbled string that passed the dedupe and queued (interrupt:false) → dozens of strings flooded the speech
-        // buffer and overloaded the mod (the user's "garbage spam" report). We now speak ONLY when _isWaveFound is true.
+        // RadioModel._isWaveFound (private bool): TRUE while the station is locked. The TEXT still garbles in line-by-line
+        // AFTER this flips, so it gates WHEN to start watching the display, not when the text is clean.
         private const string IsWaveFoundField = "_isWaveFound";
-        // RadioModel._message (private string): the current resolved LINE of station text — only one line, which is why
-        // reading it alone missed the rest of a multi-line broadcast. Used as the fallback when the line array is absent.
-        private const string MessageField = "_message";
-        // RadioModel._currentText (private string[]): ALL lines of the current station's message. Joined for the full read.
-        private const string CurrentTextField = "_currentText";
+
+        // A displayed line is treated as fully resolved once GetDisplayedMessage() has been UNCHANGED for this long
+        // (the de-garble reveal stops changing the string when the line settles). Long enough to clear mid-reveal
+        // flicker, short enough to feel responsive.
+        private const float ResolveStableSeconds = 0.5f;
 
         private int _lastBand = -1;
         private string _lastCloseness = string.Empty;
         private float _nextClosenessSpeakTime;
-        private string _lastSpokenMessage = string.Empty; // de-dupe the on-signal message readout
+        private string _lastSpokenMessage = string.Empty; // de-dupe the spoken line
+        private string _lastDisplayed = string.Empty;      // last GetDisplayedMessage() seen, for the stability debounce
+        private float _displayedStableAt;                  // unscaled time at which the current display becomes "stable"
         private bool _announcedEntry;                       // spoke the one-time "how to leave" hint this session
 
         public RadioMenu(ISpeechOutput speech) => _speech = speech;
@@ -156,21 +155,31 @@ namespace NoImNotAHumanAccess.World
 
                 float dist = Il2CppRaw.InvokeFloatGetter(model, _getNormDistance, 1f);
 
-                // Station-text readout. We never read garble (the game's own audio cue already tells the player they're
-                // homing in — no mod status message needed). When the wave is fully FOUND, read the WHOLE resolved
-                // message: the station's text is a set of lines (_currentText[]), and reading only the first line missed
-                // the rest (the "emergency services… / they're burning people" report). We join all non-empty lines.
-                // De-duped on _lastSpokenMessage, which we do NOT reset on wave-loss: drifting off a station you've heard
-                // must not re-read it, and drifting back on must not repeat it. A different station has different text, so
-                // it still speaks; only the SAME message is suppressed once spoken.
+                // Station-text readout. A station's message plays out as a CONVERSATION — lines appear one after another
+                // over time, and each line GARBLES IN char-by-char before settling. So we must (a) never read garble,
+                // and (b) read each line as it finishes, not the whole thing at once.
+                //
+                // We poll the on-screen text (GetDisplayedMessage) only while the wave is FOUND. The reveal constantly
+                // changes the string as it de-garbles; a line is DONE when that string STOPS changing. So we debounce:
+                // remember the last displayed string and when it last changed, and only speak once it has been stable
+                // for ResolveStableSeconds. De-duped on _lastSpokenMessage so a held, unchanged line isn't repeated; we
+                // do NOT reset the dedupe on wave-loss, so drifting off and back doesn't re-read the same line.
                 bool waveFound = Il2CppRaw.ReadBoolField(model, _modelClass, IsWaveFoundField);
                 if (waveFound)
                 {
-                    string msg = ReadFullMessage(model);
-                    if (msg.Length > 0 && msg != _lastSpokenMessage)
+                    string shown = (Il2CppRaw.InvokeStringGetter(model, _getDisplayedMessage) ?? string.Empty).Trim();
+                    if (shown != _lastDisplayed)
                     {
-                        _lastSpokenMessage = msg;
-                        _speech.Speak(msg, interrupt: false); // don't cut off — let the whole station message play out
+                        // Still resolving (or a new line started): note it and (re)start the stability timer.
+                        _lastDisplayed = shown;
+                        _displayedStableAt = Time.unscaledTime + ResolveStableSeconds;
+                    }
+                    else if (shown.Length > 0 && shown != _lastSpokenMessage && Time.unscaledTime >= _displayedStableAt)
+                    {
+                        // Stable long enough → this line has finished resolving. Speak it once.
+                        _lastSpokenMessage = shown;
+                        _speech.Speak(shown, interrupt: false);
+                        MelonLogger.Msg($"[RadioMenu] spoke resolved line: \"{shown}\"");
                     }
                 }
 
@@ -190,39 +199,6 @@ namespace NoImNotAHumanAccess.World
             }
         }
 
-        /// <summary>
-        /// The complete resolved station message: join all non-empty lines of the model's <c>_currentText</c> string
-        /// array. Falls back to the single <c>_message</c> field if the array is empty/absent. This is what fixes the
-        /// "only the first line was read" bug — the station's text is multiple lines and only the current one lived in
-        /// <c>_message</c>.
-        /// </summary>
-        private string ReadFullMessage(IntPtr model)
-        {
-            try
-            {
-                IntPtr arr = Il2CppRaw.ReadObjectField(model, _modelClass, CurrentTextField);
-                if (arr != IntPtr.Zero)
-                {
-                    var sb = new System.Text.StringBuilder();
-                    foreach (IntPtr s in Il2CppRaw.ReadObjectArray(arr))
-                    {
-                        if (s == IntPtr.Zero) continue;
-                        string line = (Il2CppInterop.Runtime.IL2CPP.Il2CppStringToManaged(s) ?? string.Empty).Trim();
-                        if (line.Length == 0) continue;
-                        if (sb.Length > 0) sb.Append(' ');
-                        sb.Append(line);
-                    }
-                    if (sb.Length > 0) return sb.ToString();
-                }
-            }
-            catch (Exception e)
-            {
-                MelonLogger.Warning($"[RadioMenu] ReadFullMessage threw: {e.Message}");
-            }
-            // Fallback: the single current-line field.
-            return (Il2CppRaw.ReadStringField(model, _modelClass, MessageField) ?? string.Empty).Trim();
-        }
-
         /// <summary>Reset state when the radio closes, so reopening starts fresh.</summary>
         public void Reset()
         {
@@ -230,6 +206,8 @@ namespace NoImNotAHumanAccess.World
             _lastCloseness = string.Empty;
             _nextClosenessSpeakTime = 0f;
             _lastSpokenMessage = string.Empty;
+            _lastDisplayed = string.Empty;
+            _displayedStableAt = 0f;
             _announcedEntry = false;
         }
 

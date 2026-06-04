@@ -239,7 +239,12 @@ namespace NoImNotAHumanAccess
             // phone dial pad, any panel), so we call it in every context. It's panel-agnostic and self-healing, and a
             // no-op in the mod-driven contexts (RoomPhoto/Fridge/Radio/ThreeD) where the game's UI map has no active
             // Selectables — so it can't compete with the mod's own arrow stepping there.
-            _uguiFocus?.EnsureSelection();
+            // EXCEPTION: in the Phone context, PhoneMenu.Tick owns focus (it knows the dial buttons specifically and
+            // recovers focus after a call disables/re-enables them), so we don't also run the generic keeper there.
+            if (ctx == InputContextKind.Phone)
+                _phoneMenu?.Tick();
+            else
+                _uguiFocus?.EnsureSelection();
 
             // Clear the fridge selection once we leave the fridge, so re-opening it starts fresh (no stale highlight).
             if (ctx != InputContextKind.Fridge)

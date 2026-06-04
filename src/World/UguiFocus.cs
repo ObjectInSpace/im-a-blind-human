@@ -62,7 +62,13 @@ namespace NoImNotAHumanAccess.World
                 _havePrev = true;
 
                 IntPtr current = Il2CppRaw.InvokeObjectGetter(es, _getCurrentSelected);
-                bool currentValid = current != IntPtr.Zero && Il2CppRaw.GetGameObjectActiveInHierarchy(current);
+                // A selection is only VALID if it's still active AND still in the active+interactable set. The second
+                // check matters: a control can stay active-in-hierarchy while becoming NON-interactable (e.g. the phone
+                // disables every dial button the moment you press Call). uGUI won't navigate off a disabled-but-selected
+                // control, so arrows wedge. Treating it as invalid here moves focus to a usable control and unsticks them.
+                bool currentValid = current != IntPtr.Zero
+                    && Il2CppRaw.GetGameObjectActiveInHierarchy(current)
+                    && active.Contains(current);
 
                 IntPtr target;
                 bool usedMenuDefault = false;

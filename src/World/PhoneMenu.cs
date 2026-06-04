@@ -31,11 +31,15 @@ namespace NoImNotAHumanAccess.World
         private const string PinControllerNs = "_Code.Infrastructure._NINAH__CloseUps.Views.Phone.Pins";
         private const string PinViewNs = "_Code.Infrastructure.CloseUps.Views.Phone.Pins";
 
+        // EPhoneKey.Call = 12 (enum order: D0..D9, Star=10, Hash=11, Call=12, Clear=13).
+        private const int KeyCall = 12;
+
         private readonly ISpeechOutput _speech;
 
         private bool _resolved;
         private IntPtr _viewClass;        // PhoneCloseUpView
         private IntPtr _buttonClass;      // PhoneButtonView
+        private IntPtr _getPhoneKey;      // PhoneButtonView.get_PhoneKey (to skip the Call button)
         private IntPtr _onPointerDown;    // PhoneButtonView.OnPointerDown(PointerEventData)
         private IntPtr _onPointerUp;      // PhoneButtonView.OnPointerUp(PointerEventData)
         private IntPtr _pinControllerClass; // PhonePinController (holds the _pins array)
@@ -43,8 +47,64 @@ namespace NoImNotAHumanAccess.World
         private IntPtr _getPinSubscriber;   // PhonePinView.get_PhoneSubscriber
         private IntPtr _getCurrentEventSystem; // EventSystem.get_current (static)
         private IntPtr _getCurrentSelected;    // EventSystem.get_currentSelectedGameObject
+        private IntPtr _setSelected;           // EventSystem.SetSelectedGameObject(GameObject)
+        private IntPtr _selectableClass;       // UnityEngine.UI.Selectable (for the interactable check)
+        private IntPtr _getInteractable;       // Selectable.get_interactable
 
         public PhoneMenu(ISpeechOutput speech) => _speech = speech;
+
+        /// <summary>
+        /// Per-frame upkeep while the phone is the active context: make sure a USABLE dial button holds EventSystem
+        /// focus. After a call, the phone disables its buttons; when you leave and return, focus can be left on a
+        /// button that's no longer interactable (or on nothing), which wedges the arrow keys. If the current selection
+        /// isn't an active, interactable phone button, we re-seed focus onto the first one that is. No-op when a good
+        /// button is already focused, or when ALL buttons are disabled (a call is genuinely in progress).
+        /// </summary>
+        public void Tick()
+        {
+            try
+            {
+                EnsureResolved();
+                if (_buttonClass == IntPtr.Zero || _setSelected == IntPtr.Zero) return;
+
+                IntPtr es = Il2CppRaw.InvokeStaticObjectGetter(_getCurrentEventSystem);
+                if (es == IntPtr.Zero) return;
+
+                IntPtr selectedGo = Il2CppRaw.InvokeObjectGetter(es, _getCurrentSelected);
+                if (selectedGo != IntPtr.Zero && IsUsableButtonGo(selectedGo)) return; // already on a good button
+
+                // Find the first active + interactable phone button and focus it.
+                IntPtr view = ResolveView();
+                if (view == IntPtr.Zero) return;
+                IntPtr arr = Il2CppRaw.ReadObjectField(view, _viewClass, "_phoneButtonViews");
+                foreach (IntPtr btn in Il2CppRaw.ReadObjectArray(arr))
+                {
+                    if (btn == IntPtr.Zero) continue;
+                    IntPtr go = Il2CppRaw.GetComponentGameObject(btn);
+                    if (go == IntPtr.Zero || !IsUsableButtonGo(go)) continue;
+                    Il2CppRaw.SetSelectedGameObject(es, _setSelected, go);
+                    MelonLogger.Msg("[PhoneMenu] re-seeded dial-pad focus (was lost/disabled).");
+                    return;
+                }
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[PhoneMenu] Tick threw: {e.Message}");
+            }
+        }
+
+        /// <summary>A GameObject that is active in hierarchy AND carries an interactable PhoneButtonView Selectable.</summary>
+        private bool IsUsableButtonGo(IntPtr go)
+        {
+            if (go == IntPtr.Zero || !Il2CppRaw.GetGameObjectActiveInHierarchy(go)) return false;
+            if (Il2CppRaw.GetComponentRaw(go, _buttonClass) == IntPtr.Zero) return false;
+            if (_selectableClass != IntPtr.Zero && _getInteractable != IntPtr.Zero)
+            {
+                IntPtr sel = Il2CppRaw.GetComponentRaw(go, _selectableClass);
+                if (sel != IntPtr.Zero && !Il2CppRaw.InvokeBoolGetter(sel, _getInteractable)) return false;
+            }
+            return true;
+        }
 
         /// <summary>True while the phone close-up is up (its view is found AND active). Used by the input context to
         /// route Enter (press focused button) and F9 (read contacts) here only when the dial pad is on screen.</summary>
@@ -86,10 +146,14 @@ namespace NoImNotAHumanAccess.World
                 IntPtr button = Il2CppRaw.GetComponentRaw(selectedGo, _buttonClass);
                 if (button == IntPtr.Zero) return;
 
+                int key = _getPhoneKey != IntPtr.Zero
+                    ? Il2CppRaw.InvokeInt32Getter(button, _getPhoneKey, -1)
+                    : Il2CppRaw.ReadInt32Field(button, _buttonClass, "_phoneKey", -1);
+
                 IntPtr ped = Il2CppRaw.NewPointerEventData();
                 bool down = Il2CppRaw.InvokeVoidWithObject(button, _onPointerDown, ped);
                 bool up = Il2CppRaw.InvokeVoidWithObject(button, _onPointerUp, ped);
-                MelonLogger.Msg($"[PhoneMenu] pressed focused button (down threw={!down} up threw={!up}).");
+                MelonLogger.Msg($"[PhoneMenu] pressed focused button key={key} (down threw={!down} up threw={!up}).");
             }
             catch (Exception e)
             {
@@ -195,6 +259,7 @@ namespace NoImNotAHumanAccess.World
                 _buttonClass = Il2CppRaw.GetClass(GameAsm, PhoneNs, "PhoneButtonView");
                 if (_buttonClass != IntPtr.Zero)
                 {
+                    _getPhoneKey = Il2CppRaw.GetMethod(_buttonClass, "get_PhoneKey", 0); // may be absent (field-only)
                     _onPointerDown = Il2CppRaw.GetMethod(_buttonClass, "OnPointerDown", 1);
                     _onPointerUp = Il2CppRaw.GetMethod(_buttonClass, "OnPointerUp", 1);
                 }
@@ -204,7 +269,8 @@ namespace NoImNotAHumanAccess.World
                 if (_pinViewClass != IntPtr.Zero)
                     _getPinSubscriber = Il2CppRaw.GetMethod(_pinViewClass, "get_PhoneSubscriber", 0);
 
-                // EventSystem (for PressFocused): the focused phone button is read off EventSystem.current.
+                // EventSystem (for PressFocused + Tick focus re-seed): read/set the focused phone button off
+                // EventSystem.current.
                 IntPtr esClass = Il2CppRaw.GetClass("UnityEngine.UI.dll", "UnityEngine.EventSystems", "EventSystem");
                 if (esClass == IntPtr.Zero)
                     esClass = Il2CppRaw.GetClass("UnityEngine.UIModule.dll", "UnityEngine.EventSystems", "EventSystem");
@@ -212,7 +278,13 @@ namespace NoImNotAHumanAccess.World
                 {
                     _getCurrentEventSystem = Il2CppRaw.GetMethod(esClass, "get_current", 0);
                     _getCurrentSelected = Il2CppRaw.GetMethod(esClass, "get_currentSelectedGameObject", 0);
+                    _setSelected = Il2CppRaw.GetMethod(esClass, "SetSelectedGameObject", 1);
                 }
+
+                // Selectable.interactable — to skip disabled buttons when re-seeding focus.
+                _selectableClass = Il2CppRaw.GetClass("UnityEngine.UI.dll", "UnityEngine.UI", "Selectable");
+                if (_selectableClass != IntPtr.Zero)
+                    _getInteractable = Il2CppRaw.GetMethod(_selectableClass, "get_interactable", 0);
 
                 MelonLogger.Msg($"[PhoneMenu] resolved: view={_viewClass != IntPtr.Zero} button={_buttonClass != IntPtr.Zero} " +
                                 $"onDown={_onPointerDown != IntPtr.Zero} onUp={_onPointerUp != IntPtr.Zero} " +
