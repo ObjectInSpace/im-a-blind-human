@@ -149,10 +149,10 @@ namespace NoImNotAHumanAccess
                 // Orientation key (F10): "what's around me" — currently-selectable interactables with bearings.
                 _orientationNarrator = new OrientationNarrator(_speech);
 
-                // Action menu (3D scene): PageUp/PageDown select an interactable; Backspace walks the player to it
-                // (turn + MoveXZ), then the game's own Space interacts in range. Takes the HudNarrator so it can use
-                // the game's re-shown interaction prompt as the arrival cue. Routed via the ThreeD input context.
-                _actionMenu = new ActionMenu(_speech, _hudNarrator);
+                // Action menu (3D scene): Up/Down select an interactable; Enter activates it through the game's own
+                // targeted-entry path (focus IsTargeted, then Act()/Interact()), so the game owns the interaction and
+                // native 'q' leaves it. Routed via the ThreeD input context.
+                _actionMenu = new ActionMenu(_speech);
 
                 // Fridge close-up: the drink grid is mouse-hover only in the base game, so arrows step the drinks
                 // (driving the game's own FridgeItemView.OnHover → the CloseUpNarrator fridge hook) and Enter uses the
@@ -205,18 +205,7 @@ namespace NoImNotAHumanAccess
         {
             _menuNarrator?.Tick();
             _controlsNarrator?.Tick(); // drains the deferred first-encounter control-row read
-            _actionMenu?.Tick();       // polls arrival after a 3D "go" walk and fires the in-range cue
-
-            // While the 3D "go" holds the look frozen on a target, a keypress that is NOT one of the mod's OWN nav keys
-            // means the player is doing something else (Space to interact, WASD to move) → release the freeze so they're
-            // never stuck. The mod's own keys (Up/Down select, Enter go, Left/Right radio-tune) manage the hold through
-            // their OWN paths (Cycle releases; GoToSelected releases-then-re-holds), so they MUST be excluded here —
-            // otherwise this fires on the very Enter that's starting a new go and cancels the walk it just launched (the
-            // "had to press it three times" bug). Only foreign keys reach ReleaseHold.
-            if ((_actionMenu?.IsHolding ?? false) && Input.anyKeyDown && !ModOwnsAKeyDownThisFrame())
-            {
-                _actionMenu?.ReleaseHold();
-            }
+            _actionMenu?.Tick();       // reconciles forced focus after a leave (clears stale IsTargeted)
 
             if (Input.GetKeyDown(ControlsKey))
             {
@@ -279,9 +268,7 @@ namespace NoImNotAHumanAccess
             // as ThreeD anyway — e.g. looking through the peephole (no one outside): the interactable provider is still
             // present so ctx reads ThreeD, but you're "inside" the peephole and must 'q' out. Suppress when the game's
             // world-roam signal says an overlay owns input (_inUiCounter>0) OR any interactable is engaged (IsLooking).
-            // EXCEPT while WE are holding our own aim (then cycle/go must still work — they release + re-go).
-            bool threeDBlocked = !(_actionMenu?.IsHolding ?? false)
-                && (!(_inputModeGate?.IsWorldRoam() ?? true) || (_actionMenu?.IsAnyEngaged() ?? false));
+            bool threeDBlocked = !(_inputModeGate?.IsWorldRoam() ?? true) || (_actionMenu?.IsAnyEngaged() ?? false);
 
             if (selPrev || selNext)
             {
@@ -372,17 +359,6 @@ namespace NoImNotAHumanAccess
                     : "Arrow keys off. Screen reader interrupt restored.");
             }
         }
-
-        /// <summary>
-        /// Whether a key the MOD itself handles went down this frame — the nav keys (Up/Down select, Enter go) plus the
-        /// radio tune/band keys. Used to EXCLUDE the mod's own keys from the look-freeze auto-release, so the Enter that
-        /// starts a new go isn't mistaken for "player did something else" and cancelled. (CyclePrev/Next already cover
-        /// Up/Down, which RadioBand also uses, so those are implicitly included.)
-        /// </summary>
-        private static bool ModOwnsAKeyDownThisFrame() =>
-            Input.GetKeyDown(CyclePrevKey) || Input.GetKeyDown(CycleNextKey)
-            || Input.GetKeyDown(ActivateKey) || Input.GetKeyDown(ActivateKeyAlt)
-            || Input.GetKeyDown(RadioTuneLeftKey) || Input.GetKeyDown(RadioTuneRightKey);
 
         public override void OnDeinitializeMelon()
         {
