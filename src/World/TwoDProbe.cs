@@ -22,6 +22,13 @@ namespace NoImNotAHumanAccess.World
     ///
     /// Zenject-free: buttons via <c>FindObjectsByType</c>; the hover camera via the static <c>UIRayCaster.Instance</c>;
     /// the warp via Input System <c>Mouse.current.WarpCursorPosition</c>. F8 still dumps the raw set for diagnostics.
+    ///
+    /// ACTIVATION (<see cref="Activate"/>): warping only HOVERS the object — the game opens a hotspot's close-up
+    /// (fridge grid, radio dial, a person) by calling <c>UIButton.Click()</c> on mouse-down, and the rip confirms NO
+    /// game keyboard binding clicks a hovered hotspot. So a blind player who warps onto "Fridge" was stuck: the close-up
+    /// never opened (confirmed from the live log — the player warped onto Fridge repeatedly and the context never became
+    /// Fridge). We therefore drive <c>UIButton.Click()</c> on the selected button ourselves when the player presses the
+    /// activate key, completing the "PgUp/PgDn select, Enter activates" model the user expects across every 2D photo.
     /// </summary>
     public sealed class TwoDProbe
     {
@@ -29,7 +36,7 @@ namespace NoImNotAHumanAccess.World
 
         private readonly ISpeechOutput _speech;
         private bool _resolved;
-        private IntPtr _uiButtonClass, _getIsActive;
+        private IntPtr _uiButtonClass, _getIsActive, _click;
         private IntPtr _rayCasterClass, _getInstance;  // UIRayCaster + static get_Instance
         private IntPtr _roomDisplayerClass;            // RoomDisplayer (+ its _isOpened bool) — photo open/closed state
 
@@ -71,6 +78,84 @@ namespace NoImNotAHumanAccess.World
             {
                 MelonLogger.Warning($"[TwoDProbe] Step threw: {e.Message}");
             }
+        }
+
+        /// <summary>
+        /// Activate (open / select) the currently-selected photo object by driving the game's own
+        /// <c>UIButton.Click()</c> — the exact call the mouse path runs on click. This is what opens the fridge grid,
+        /// the radio dial, or selects a person; warping alone only hovers. No-op with a spoken hint if nothing is
+        /// selected. Re-validates that the selected button is still live (its view may have rebuilt) before clicking.
+        /// </summary>
+        public void Activate()
+        {
+            try
+            {
+                EnsureResolved();
+                if (_selected == IntPtr.Zero)
+                {
+                    _speech.Speak("Nothing selected. Use the up and down arrows to choose an object first.", interrupt: true);
+                    return;
+                }
+                if (_click == IntPtr.Zero)
+                {
+                    MelonLogger.Warning("[TwoDProbe] Activate: UIButton.Click unresolved; cannot open the object.");
+                    return;
+                }
+                // Confirm the selected button is still among the live choosable set (the photo may have rebuilt since the
+                // last step); if it's gone, tell the player rather than clicking a stale pointer.
+                List<IntPtr> buttons = ActiveButtonsLeftToRight(out _);
+                if (!buttons.Contains(_selected))
+                {
+                    _speech.Speak("That object is no longer available.", interrupt: true);
+                    _selected = IntPtr.Zero;
+                    return;
+                }
+
+                string name = Humanize(Il2CppRaw.GetUnityObjectName(_selected));
+                bool ok = Il2CppRaw.InvokeVoid(_selected, _click);
+                MelonLogger.Msg($"[TwoDProbe] activate '{name}' via UIButton.Click (threw={!ok}).");
+                // Don't speak success here — whatever the click opens (fridge/radio close-up, a dialog) narrates itself.
+                // (Close-up identification is done via F8 → ProbeAllCloseUps WHILE the fridge is open; the immediate-
+                // after-click probe missed it because the close-up opens a frame or two later.)
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[TwoDProbe] Activate threw: {e.Message}");
+            }
+        }
+
+        // All close-up view classes with their REAL namespaces (verified from the decompile). FridgeCloseUpView was
+        // confirmed NOT the open-fridge view (active=False while the fridge was open), so the actual fridge grid is one
+        // of the others — likely ConsumableCloseUpView (drinks are consumables) under the _NINAH__ namespace. This probe
+        // dumps all of them so we can read the real one from a live open-fridge state (fire via F8 WHILE the fridge is up
+        // — the immediate-after-click probe missed it because the close-up opens a frame or two later, async).
+        private static readonly (string cls, string ns)[] CloseUpClasses =
+        {
+            ("ACloseUpView",            "_Code.Infrastructure.CloseUps"),
+            ("FridgeCloseUpView",       "_Code.Infrastructure.CloseUps.Views"),
+            ("RadioCloseUpView",        "_Code.Infrastructure.CloseUps.Views.Radio"),
+            ("PhoneCloseUpView",        "_Code.Infrastructure.CloseUps.Views.Phone"),
+            ("ConsumableCloseUpView",   "_Code.Infrastructure._NINAH__CloseUps.Views.Consumables"),
+            ("MushroomlistCloseUpView", "_Code.Infrastructure._NINAH__CloseUps.Views.Mushroomlist"),
+        };
+
+        /// <summary>Dump active state of EVERY close-up view class (correct namespaces). Call WHILE a close-up is open
+        /// to identify which view it really is. Public so F8 can fire it independent of click timing.</summary>
+        public void ProbeAllCloseUps(string ctx)
+        {
+            try
+            {
+                foreach (var (cls, ns) in CloseUpClasses)
+                {
+                    IntPtr k = Il2CppRaw.GetClass(GameAsm, ns, cls);
+                    if (k == IntPtr.Zero) { MelonLogger.Msg($"[TwoDProbe]   closeup probe ({ctx}): {cls} CLASS UNRESOLVED."); continue; }
+                    int n = Il2CppRaw.CountObjectsByType(k, includeInactive: true);
+                    IntPtr inst = Il2CppRaw.FindObjectIncludingInactive(k);
+                    bool active = inst != IntPtr.Zero && Il2CppRaw.GetComponentGameObjectActive(inst);
+                    MelonLogger.Msg($"[TwoDProbe]   closeup probe ({ctx}): {cls} count={n} found={inst != IntPtr.Zero} active={active}.");
+                }
+            }
+            catch (Exception e) { MelonLogger.Warning($"[TwoDProbe] ProbeAllCloseUps threw: {e.Message}"); }
         }
 
         /// <summary>
@@ -195,7 +280,10 @@ namespace NoImNotAHumanAccess.World
             {
                 _uiButtonClass = Il2CppRaw.GetClass(GameAsm, "_Code.Rooms", "UIButton");
                 if (_uiButtonClass != IntPtr.Zero)
+                {
                     _getIsActive = Il2CppRaw.GetMethod(_uiButtonClass, "get_IsActive", 0);
+                    _click = Il2CppRaw.GetMethod(_uiButtonClass, "Click", 0); // open/select the hovered hotspot (the click path)
+                }
 
                 _rayCasterClass = Il2CppRaw.GetClass(GameAsm, "_Code.Rooms", "UIRayCaster");
                 if (_rayCasterClass != IntPtr.Zero)
@@ -204,6 +292,7 @@ namespace NoImNotAHumanAccess.World
                 _roomDisplayerClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure.Rooms", "RoomDisplayer");
 
                 MelonLogger.Msg($"[TwoDProbe] resolved: uiButton={_uiButtonClass != IntPtr.Zero} " +
+                                $"getIsActive={_getIsActive != IntPtr.Zero} click={_click != IntPtr.Zero} " +
                                 $"rayCaster={_rayCasterClass != IntPtr.Zero} getInstance={_getInstance != IntPtr.Zero} " +
                                 $"roomDisplayer={_roomDisplayerClass != IntPtr.Zero}");
             }
