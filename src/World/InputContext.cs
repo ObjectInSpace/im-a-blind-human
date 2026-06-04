@@ -20,6 +20,10 @@ namespace NoImNotAHumanAccess.World
         /// <summary>The radio close-up is up. Tuning is a mouse-drag knob in the base game, so the mod sweeps it with
         /// held Left/Right (driving RotateKnob) and toggles AM/FM with Up/Down, narrating closeness to a station.</summary>
         Radio,
+        /// <summary>The phone close-up is up. The dial pad is pointer/controller-only in the base game, so the mod maps
+        /// the number keys (and # / *) onto the matching dial-pad buttons. The pad's own Selectables get native arrow
+        /// nav via <see cref="UguiFocus"/> (kept focused in every context), so Call/Clear are reachable too.</summary>
+        Phone,
         /// <summary>3D first-person free-roam. Mod drives the interactable action list (arrows cycle, Enter activates).</summary>
         ThreeD,
         /// <summary>Anything else — dialog, cutscene, pause, settings, popups, the phone, loading, the unknown. The mod
@@ -68,6 +72,7 @@ namespace NoImNotAHumanAccess.World
         private IntPtr _actionProviderClass;  // ActionableObjectsViewProvider (3D interactables)
         private IntPtr _fridgeViewClass;      // _Code.Infrastructure.CloseUps.Views.FridgeCloseUpView
         private IntPtr _radioViewClass;       // _Code.Infrastructure.CloseUps.Views.Radio.RadioCloseUpView
+        private IntPtr _phoneViewClass;       // _Code.Infrastructure.CloseUps.Views.Phone.PhoneCloseUpView
         private IntPtr _dialogViewClass;      // _Code.DialogSystem.DialogView (+ its _isActive field)
         private InputContextKind _lastLogged = (InputContextKind)(-1);
 
@@ -76,7 +81,7 @@ namespace NoImNotAHumanAccess.World
         public InputContextKind Classify()
         {
             InputContextKind kind;
-            bool mainMenu = false, paused = false, photo = false, provider = false, dialog = false, fridge = false, radio = false;
+            bool mainMenu = false, paused = false, photo = false, provider = false, dialog = false, fridge = false, radio = false, phone = false;
             try
             {
                 EnsureResolved();
@@ -91,6 +96,7 @@ namespace NoImNotAHumanAccess.World
                 provider = ProviderPresent();
                 fridge = FridgeActive();
                 radio = RadioActive();
+                phone = PhoneActive();
 
                 if (mainMenu) kind = InputContextKind.MainMenu;
                 // Pause overlays the 3D scene (provider stays present), so it MUST be checked before ThreeD.
@@ -101,6 +107,9 @@ namespace NoImNotAHumanAccess.World
                 // 2026-06-04: FridgeCloseUpView active=True while the room photo was still open underneath.)
                 else if (fridge) kind = InputContextKind.Fridge;
                 else if (radio) kind = InputContextKind.Radio;
+                // Phone is a close-up overlaying the room photo (same reasoning as fridge/radio), so it MUST be checked
+                // before photo, else `photo` wins and the dial keys never route here.
+                else if (phone) kind = InputContextKind.Phone;
                 else if (photo) kind = InputContextKind.RoomPhoto;
                 // 3D only when the interactable provider is present AND no dialog/cutscene overlay is showing.
                 else if (provider && !dialog) kind = InputContextKind.ThreeD;
@@ -116,7 +125,7 @@ namespace NoImNotAHumanAccess.World
             {
                 _lastLogged = kind;
                 MelonLogger.Msg($"[InputContext] -> {kind} (mainMenu={mainMenu} paused={paused} photo={photo} " +
-                                $"fridge={fridge} radio={radio} provider={provider} dialog={dialog})");
+                                $"fridge={fridge} radio={radio} phone={phone} provider={provider} dialog={dialog})");
             }
             return kind;
         }
@@ -158,6 +167,14 @@ namespace NoImNotAHumanAccess.World
             if (_radioViewClass == IntPtr.Zero) return false;
             IntPtr rv = Il2CppRaw.FindObjectIncludingInactive(_radioViewClass);
             return rv != IntPtr.Zero && Il2CppRaw.GetComponentGameObjectActive(rv);
+        }
+
+        /// <summary>The phone close-up is up: <c>PhoneCloseUpView</c> is present AND its GameObject is active.</summary>
+        private bool PhoneActive()
+        {
+            if (_phoneViewClass == IntPtr.Zero) return false;
+            IntPtr pv = Il2CppRaw.FindObjectIncludingInactive(_phoneViewClass);
+            return pv != IntPtr.Zero && Il2CppRaw.GetComponentGameObjectActive(pv);
         }
 
         /// <summary>DialogView is present AND its <c>_isActive</c> flag is set (a dialog/cutscene is showing).</summary>
@@ -216,13 +233,14 @@ namespace NoImNotAHumanAccess.World
                 _actionProviderClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure.ActionableObjects", "ActionableObjectsViewProvider");
                 _fridgeViewClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure.CloseUps.Views", "FridgeCloseUpView");
                 _radioViewClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure.CloseUps.Views.Radio", "RadioCloseUpView");
+                _phoneViewClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure.CloseUps.Views.Phone", "PhoneCloseUpView");
                 _dialogViewClass = Il2CppRaw.GetClass(GameAsm, "_Code.DialogSystem", "DialogView");
 
                 MelonLogger.Msg($"[InputContext] resolved: mainMenuView={_mainMenuViewClass != IntPtr.Zero} " +
                                 $"pauseMenuView={_pauseMenuViewClass != IntPtr.Zero} " +
                                 $"actionProvider={_actionProviderClass != IntPtr.Zero} " +
                                 $"fridgeView={_fridgeViewClass != IntPtr.Zero} radioView={_radioViewClass != IntPtr.Zero} " +
-                                $"dialogView={_dialogViewClass != IntPtr.Zero}");
+                                $"phoneView={_phoneViewClass != IntPtr.Zero} dialogView={_dialogViewClass != IntPtr.Zero}");
             }
             catch (Exception e)
             {

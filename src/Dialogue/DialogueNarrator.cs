@@ -31,7 +31,16 @@ namespace NoImNotAHumanAccess.Dialogue
         // and must be spoken again, so the de-dupe is time-bounded, not permanent.
         private const float DedupeWindowSeconds = 1.5f;
 
+        // Matches a numbered substitution slot like {0} or {12} (Yarn / string.Format style). Anchored to a digit run
+        // inside the braces so ordinary prose braces (rare, but e.g. "{}" or "{note}") don't trip the leak warning.
+        private static readonly System.Text.RegularExpressions.Regex PlaceholderRegex =
+            new(@"\{\d+\}", System.Text.RegularExpressions.RegexOptions.Compiled);
+
         public DialogueNarrator(ISpeechOutput speech) => _speech = speech;
+
+        /// <summary>True if the text still contains a numbered substitution slot (e.g. <c>{0}</c>) — i.e. it was read
+        /// before its runtime values were spliced in.</summary>
+        private static bool HasUnsubstitutedPlaceholder(string text) => PlaceholderRegex.IsMatch(text);
 
         /// <summary>
         /// Handle one dialogue/subtitle line from the game. Cleans rich-text markup, optionally prefixes the
@@ -49,6 +58,14 @@ namespace NoImNotAHumanAccess.Dialogue
 
                 string text = ControlDescriber.Clean(raw!);
                 if (string.IsNullOrWhiteSpace(text)) return;
+
+                // Leak detector: an unsubstituted "{0}"/"{1}"/… means a line reached us BEFORE its runtime values
+                // (phone number, day count, name) were spliced in — the Yarn RawText bug we fixed for RunLine. Other
+                // sinks (intro/ending narration, the TV "other game" text, string popups) read text we don't substitute,
+                // so if any still carries a placeholder it shows up here. We still SPEAK the line (better than silence),
+                // but log it loudly so the offending sink is identifiable in testing. Not an error into the game.
+                if (HasUnsubstitutedPlaceholder(text))
+                    MelonLogger.Warning($"[DialogueNarrator] line still has a substitution placeholder (speaking anyway): \"{text}\"");
 
                 // Speaker attribution. Yarn RawText often already leads with "Name: ..."; only prefix when the
                 // text doesn't already start with the speaker, so we don't say the name twice.

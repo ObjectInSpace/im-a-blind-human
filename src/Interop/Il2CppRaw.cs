@@ -292,6 +292,21 @@ namespace NoImNotAHumanAccess.Interop
             return *(int*)IL2CPP.il2cpp_object_unbox(boxed);
         }
 
+        /// <summary>Invoke a method taking a single value-type-by-int argument and returning a 32-bit value (e.g.
+        /// <c>IConsumablesController.Count(EConsumable)</c>, where the enum is passed as its underlying int).
+        /// Returns <paramref name="fallback"/> on failure.</summary>
+        public static unsafe int InvokeInt32MethodWithEnum(IntPtr objPtr, IntPtr method, int enumValue, int fallback = -1)
+        {
+            if (objPtr == IntPtr.Zero || method == IntPtr.Zero) return fallback;
+            int arg = enumValue;
+            void** args = stackalloc void*[1];
+            args[0] = &arg;
+            IntPtr exc = IntPtr.Zero;
+            IntPtr boxed = IL2CPP.il2cpp_runtime_invoke(method, objPtr, args, ref exc);
+            if (exc != IntPtr.Zero || boxed == IntPtr.Zero) return fallback;
+            return *(int*)IL2CPP.il2cpp_object_unbox(boxed);
+        }
+
         /// <summary>Invoke <c>EventSystem.SetSelectedGameObject(GameObject)</c> (or any void instance method taking a
         /// single object-pointer arg) — passes the GameObject pointer through. Returns true if it ran without throwing.</summary>
         public static unsafe bool SetSelectedGameObject(IntPtr eventSystemPtr, IntPtr method, IntPtr goPtr)
@@ -435,6 +450,24 @@ namespace NoImNotAHumanAccess.Interop
             IntPtr boxed = IL2CPP.il2cpp_runtime_invoke(method, objPtr, (void**)0, ref exc);
             if (exc != IntPtr.Zero || boxed == IntPtr.Zero) return fallback;
             return *(float*)IL2CPP.il2cpp_object_unbox(boxed);
+        }
+
+        /// <summary>
+        /// The characters typed THIS frame (<c>UnityEngine.Input.inputString</c>), read raw because the IL2CPP interop
+        /// binding for <c>Input</c> omits the <c>inputString</c> property. Layout- and shift-correct, so it's the right
+        /// source for symbol keys like '#' / '*' that have no fixed KeyCode on most layouts. Empty string on failure.
+        /// </summary>
+        public static unsafe string InputString()
+        {
+            IntPtr inputClass = GetClass("UnityEngine.InputLegacyModule.dll", "UnityEngine", "Input");
+            if (inputClass == IntPtr.Zero) inputClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "Input");
+            if (inputClass == IntPtr.Zero) return string.Empty;
+            IntPtr getter = GetMethod(inputClass, "get_inputString", 0);
+            if (getter == IntPtr.Zero) return string.Empty;
+            IntPtr exc = IntPtr.Zero;
+            IntPtr str = IL2CPP.il2cpp_runtime_invoke(getter, IntPtr.Zero, (void**)0, ref exc); // static getter
+            if (exc != IntPtr.Zero || str == IntPtr.Zero) return string.Empty;
+            return IL2CPP.Il2CppStringToManaged(str) ?? string.Empty;
         }
 
         /// <summary>Invoke a STATIC parameterless getter returning an object pointer (e.g. a singleton

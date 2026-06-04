@@ -62,11 +62,24 @@ namespace NoImNotAHumanAccess.World
         // near-garbled string that passed the dedupe and queued (interrupt:false) → dozens of strings flooded the speech
         // buffer and overloaded the mod (the user's "garbage spam" report). We now speak ONLY when _isWaveFound is true.
         private const string IsWaveFoundField = "_isWaveFound";
+        // RadioModel._message (private string): the CLEAN, full station text. GetDisplayedMessage() applies the noise
+        // garble on top of this as it resolves char-by-char; reading _message directly means we NEVER speak garble, even
+        // if the wave-found flag briefly overlaps a still-garbling display when drifting on/off the station.
+        private const string MessageField = "_message";
+        // RadioModel._onFoundProgresss (private float, note the game's triple-s typo): the de-garble progress, 0 → 1,
+        // that advances only while the player holds close to a station. >0-but-not-found = "actively resolving".
+        private const string OnFoundProgressField = "_onFoundProgresss";
+
+        // Distance at/above which the signal is FULL garble (pure static) — at this range we never read the text, only
+        // the "Static." closeness cue. Below it the text is PARTIALLY resolved and worth reading on settle. Matches the
+        // Closeness() "Static" cutoff so the buckets and the read threshold agree.
+        private const float FullGarbleDistance = 0.45f;
 
         private int _lastBand = -1;
         private string _lastCloseness = string.Empty;
         private float _nextClosenessSpeakTime;
         private string _lastSpokenMessage = string.Empty; // de-dupe the on-signal message readout
+        private bool _announcedResolving;                  // spoke the "resolving signal" cue once for this approach
 
         public RadioMenu(ISpeechOutput speech) => _speech = speech;
 
@@ -127,23 +140,49 @@ namespace NoImNotAHumanAccess.World
 
                 float dist = Il2CppRaw.InvokeFloatGetter(model, _getNormDistance, 1f);
 
-                // On-signal message: speak the clear station text ONLY when the game says the wave is FOUND
-                // (_isWaveFound) — i.e. the text is fully resolved, not garble. Gating on this (not a distance
-                // threshold) is what stops the per-frame near-garble flood. De-duped so a held station doesn't repeat;
-                // re-armed (cleared) the moment the wave is lost so re-finding it speaks again.
+                // Station-text readout. The sighted player WATCHES the message fill in character-by-character as they
+                // hold close to a station; it only completes if they stay put. We don't read the partial garble (it
+                // changes every frame — annoying and meaningless), and we never read full static. Instead:
+                //
+                //  • RESOLVING (close, signal is actively filling in, not yet fully found): speak a ONE-SHOT cue
+                //    ("Resolving signal. Hold steady.") so the player knows a full message is coming if they wait — the
+                //    audio analog of seeing the text fill in. Spoken once per approach; re-armed when they leave the
+                //    resolving zone, so a fresh approach cues again. If they tune away before it finishes, nothing more
+                //    is said — the message is simply dropped (you only ever hear the clean version, never a partial).
+                //  • WAVE FOUND: speak the CLEAN station text (the model's _message field) once. Reading _message — not
+                //    GetDisplayedMessage() — guarantees no leftover noise.
+                //
+                // The clean read is de-duped on _lastSpokenMessage, which we do NOT reset on wave-loss: drifting off a
+                // station you've heard must not re-read it, and drifting back on must not repeat it. A different station
+                // has different text, so it still speaks; only the SAME text is suppressed once spoken.
                 bool waveFound = Il2CppRaw.ReadBoolField(model, _modelClass, IsWaveFoundField);
+                // "Actively resolving": the game's on-found progress has started (>0) but hasn't completed, and we're in
+                // signal range. _onFoundProgresss only advances while close, so it's the truest "filling in" signal;
+                // distance is the fallback bound so the cue never fires out in the static.
+                float foundProgress = Il2CppRaw.ReadFloatField(model, _modelClass, OnFoundProgressField, 0f);
+                bool resolving = !waveFound && dist < FullGarbleDistance && foundProgress > 0f;
+
                 if (waveFound)
                 {
-                    string msg = (Il2CppRaw.InvokeStringGetter(model, _getDisplayedMessage) ?? string.Empty).Trim();
+                    string msg = (Il2CppRaw.ReadStringField(model, _modelClass, MessageField) ?? string.Empty).Trim();
                     if (msg.Length > 0 && msg != _lastSpokenMessage)
                     {
                         _lastSpokenMessage = msg;
                         _speech.Speak(msg, interrupt: false); // don't cut off — let the resolved station message play out
                     }
+                    _announcedResolving = false; // re-arm the cue for the next station
                 }
-                else if (_lastSpokenMessage.Length > 0)
+                else if (resolving)
                 {
-                    _lastSpokenMessage = string.Empty; // wave lost; allow the message to be re-spoken on return
+                    if (!_announcedResolving)
+                    {
+                        _announcedResolving = true;
+                        _speech.Speak("Resolving signal. Hold steady.", interrupt: true);
+                    }
+                }
+                else
+                {
+                    _announcedResolving = false; // left the resolving zone (tuned away / full static) → re-arm
                 }
 
                 // Closeness feedback only while actively tuning, throttled, and only when the bucket changes.
@@ -169,6 +208,7 @@ namespace NoImNotAHumanAccess.World
             _lastCloseness = string.Empty;
             _nextClosenessSpeakTime = 0f;
             _lastSpokenMessage = string.Empty;
+            _announcedResolving = false;
         }
 
         /// <summary>0 = exactly on a station, 1 = far. Coarse buckets so the player hears "getting closer / on the

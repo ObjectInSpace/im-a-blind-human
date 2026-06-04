@@ -29,6 +29,7 @@ namespace NoImNotAHumanAccess
         private ActionMenu? _actionMenu;
         private FridgeMenu? _fridgeMenu;
         private RadioMenu? _radioMenu;
+        private PhoneMenu? _phoneMenu;
         private CartoonButton? _cartoonButton;
         private TwoDProbe? _twoDProbe;
         private InputModeGate? _inputModeGate;
@@ -92,6 +93,20 @@ namespace NoImNotAHumanAccess
         // unwind). Backspace is kept as a mod-driven FALLBACK (ForceLeave) in case a given view still won't unwind
         // natively — it's free (Enter took over activate) and a no-op when nothing's engaged, so it's safe anytime.
         private const KeyCode LeaveKey = KeyCode.Backspace;
+
+        // PHONE dial-pad DIGIT keys: the number row + numpad digits. Polled (GetKeyDown) only in the Phone context, where
+        // each maps to a dial-pad button via PhoneMenu.KeyToPhoneKey. The # and * symbols are NOT here — they're read
+        // from Input.inputString instead (layout/shift-correct), so the numpad '*' isn't double-counted. Number keys are
+        // bound to NOTHING in the game's input asset (only the arrows/WASD/etc.), so claiming them collides with nothing.
+        private static readonly KeyCode[] PhoneDigitKeys =
+        {
+            KeyCode.Alpha0, KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4,
+            KeyCode.Alpha5, KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9,
+            KeyCode.Keypad0, KeyCode.Keypad1, KeyCode.Keypad2, KeyCode.Keypad3, KeyCode.Keypad4,
+            KeyCode.Keypad5, KeyCode.Keypad6, KeyCode.Keypad7, KeyCode.Keypad8, KeyCode.Keypad9,
+        };
+        // EPhoneKey int values for the symbol keys (enum order: Star=10, Hash=11), used with the inputString scan.
+        private const int PhoneKeyStar = 10, PhoneKeyHash = 11;
 
         public override void OnInitializeMelon()
         {
@@ -164,6 +179,11 @@ namespace NoImNotAHumanAccess
                 // Routed via the Radio input context.
                 _radioMenu = new RadioMenu(_speech);
 
+                // Phone close-up: the dial pad is pointer/controller-only in the base game, so the number keys (and
+                // # / *) are mapped onto the matching dial-pad buttons, dialing each digit (tone + screen + visual) via
+                // the game's own button press path. Routed via the Phone input context.
+                _phoneMenu = new PhoneMenu(_speech);
+
                 // Gacha "watch cartoon" play button (main-menu collections): pointer-only in the base game, so Enter
                 // activates it when it's on screen. Routed inside the MainMenu input context.
                 _cartoonButton = new CartoonButton(_speech);
@@ -225,16 +245,15 @@ namespace NoImNotAHumanAccess
             // a control focused), and in None the mod does nothing. The 3D go is additionally gated on world-roam.
             InputContextKind ctx = _inputContext?.Classify() ?? InputContextKind.None;
 
-            // In a menu context, keep a uGUI control selected every frame so the dead arrow keys work and native nav
-            // (+ MenuNarrator) drive them. This is panel-agnostic: it self-heals across main-menu ⇄ settings switches
-            // (when a panel changes, the old selection goes inactive → we re-focus the new panel's first control), so
-            // the mod needs no per-panel knowledge. The settings sub-panel reads as MainMenu (its own field never
-            // flips), which is fine — both want the same focus behavior.
-            // MainMenu and Pause both want pure focus-keeping (track the selected control so arrows + MenuNarrator work),
-            // with no per-keypress action of our own. The pause menu overlays the 3D scene, so without this it'd be
-            // classified ThreeD and arrows would wrongly drive the interactable list.
-            if (ctx == InputContextKind.MainMenu || ctx == InputContextKind.Pause)
-                _uguiFocus?.EnsureSelection();
+            // Keep a uGUI control selected every frame so the dead arrow keys work and native nav (+ MenuNarrator)
+            // drive them. uGUI keyboard navigation only flows once a Selectable is current — without this, arrows do
+            // nothing until the player clicks/D-pads onto a control (the D-pad routes through the Input System's
+            // Navigate action which the game seeds with a selection, but plain arrows don't get a seeded selection).
+            // This is the SAME fix that made the main menu work; the user asked for it EVERYWHERE (save/quit popup,
+            // phone dial pad, any panel), so we call it in every context. It's panel-agnostic and self-healing, and a
+            // no-op in the mod-driven contexts (RoomPhoto/Fridge/Radio/ThreeD) where the game's UI map has no active
+            // Selectables — so it can't compete with the mod's own arrow stepping there.
+            _uguiFocus?.EnsureSelection();
 
             // Clear the fridge selection once we leave the fridge, so re-opening it starts fresh (no stale highlight).
             if (ctx != InputContextKind.Fridge)
@@ -305,6 +324,31 @@ namespace NoImNotAHumanAccess
             if (ctx == InputContextKind.Radio && (Input.GetKeyDown(RadioBandDownKey) || Input.GetKeyDown(RadioBandUpKey)))
                 _radioMenu?.SwitchBand();
 
+            // PHONE dialing: in the phone close-up, map the number keys (and # / *) onto the matching dial-pad button so
+            // typing the number dials it (tone + screen digit + press visual), the keyboard equivalent of the
+            // pointer/controller-only pad. Arrows still reach Call/Clear natively (UguiFocus keeps the pad focused), and
+            // Enter/Submit presses the focused button — so this only ADDS the direct-type path, it doesn't replace nav.
+            if (ctx == InputContextKind.Phone && _phoneMenu != null)
+            {
+                // Digits: edge-detected keycodes (number row + numpad). Number keys are unbound in the game, so this
+                // collides with nothing. (# and * come from the inputString scan below, including the numpad '*'.)
+                foreach (KeyCode dk in PhoneDigitKeys)
+                {
+                    if (!Input.GetKeyDown(dk)) continue;
+                    int pk = PhoneMenu.KeyToPhoneKey(dk);
+                    if (pk >= 0) _phoneMenu.Press(pk);
+                }
+                // '#' and '*' have no dedicated key on most layouts (they're Shift+3 / Shift+8), so read the typed
+                // CHARACTERS from inputString — layout- and shift-correct, unlike a fixed KeyCode. inputString holds
+                // the characters produced THIS frame, so it's naturally edge-like (no repeat handling needed here).
+                // Read raw via Il2CppRaw because the IL2CPP Input binding omits the inputString property.
+                foreach (char c in Interop.Il2CppRaw.InputString())
+                {
+                    if (c == '#') _phoneMenu.Press(PhoneKeyHash);
+                    else if (c == '*') _phoneMenu.Press(PhoneKeyStar);
+                }
+            }
+
             // ENTER — the UNIFORM "activate the selected thing" key, the same role in every mod-driven list so the model
             // is consistent: Up/Down selects, Enter activates.
             //  • RoomPhoto: open/select the warped-to photo object via UIButton.Click(). Warping only HOVERS; the game
@@ -335,9 +379,15 @@ namespace NoImNotAHumanAccess
             if (Input.GetKeyDown(LeaveKey))
                 _actionMenu?.Leave();
 
+            // F9 = the contextual readout. In the phone close-up it reads the player's known phone numbers (the pinned
+            // contact cards — how a sighted player "remembers" a number); everywhere else it's the day/phase/energy/items
+            // status. Same key, same "tell me what matters here" intent, nothing new to learn.
             if (Input.GetKeyDown(StatusKey))
             {
-                _statusNarrator?.Announce();
+                if (ctx == InputContextKind.Phone)
+                    _phoneMenu?.ReadContacts();
+                else
+                    _statusNarrator?.Announce();
             }
 
             if (Input.GetKeyDown(OrientationKey))
