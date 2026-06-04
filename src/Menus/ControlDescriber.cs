@@ -22,6 +22,12 @@ namespace NoImNotAHumanAccess.Menus
         {
             try
             {
+                // Phone dial-pad button: the GameObject name is an internal id ("phone_butt_12") that's also
+                // OFF BY ONE vs the printed key, so it must never be spoken. Read the button's own EPhoneKey and
+                // say the real label ("1", "star", "call", …). Checked first so it wins over the generic label path.
+                string? phoneKey = TryReadPhoneButtonLabel(go);
+                if (phoneKey != null) return phoneKey;
+
                 // Order matters. The game's selector controls (fullscreen/resolution/language via
                 // ScrollableDropdown) wrap a TMP_Dropdown AND carry a stray Toggle in their subtree, so we must
                 // check dropdown BEFORE toggle or they get mislabeled "checkbox". (Verified live + in source:
@@ -329,6 +335,52 @@ namespace NoImNotAHumanAccess.Menus
             for (int i = 0; i < kids; i++)
                 CountSelectablesRec(t.GetChild(i), target, ref count, ref targetIndex, ref found, depth + 1);
         }
+
+        // ---- Phone dial-pad button label ----
+
+        private static IntPtr _phoneButtonClass;
+        private static IntPtr _phoneGetKey; // PhoneButtonView.get_PhoneKey (may be absent → fall back to _phoneKey field)
+        private static bool _phoneResolved;
+
+        /// <summary>
+        /// If <paramref name="go"/> is a phone dial-pad button (<c>PhoneButtonView</c>), return its spoken key label
+        /// ("1".."9", "0", "star", "hash", "call", "clear") read from the button's own <c>EPhoneKey</c>. Returns null
+        /// when it isn't a phone button. The GameObject name is an internal id and is off-by-one vs the printed digit,
+        /// so we deliberately read the enum, not the name.
+        /// </summary>
+        private static string? TryReadPhoneButtonLabel(GameObject go)
+        {
+            if (go == null) return null;
+            if (!_phoneResolved)
+            {
+                _phoneResolved = true;
+                _phoneButtonClass = Il2CppRaw.GetClass("Assembly-CSharp.dll", "_Code.Infrastructure.CloseUps.Views.Phone", "PhoneButtonView");
+                if (_phoneButtonClass != IntPtr.Zero)
+                    _phoneGetKey = Il2CppRaw.GetMethod(_phoneButtonClass, "get_PhoneKey", 0);
+            }
+            if (_phoneButtonClass == IntPtr.Zero) return null;
+            try
+            {
+                IntPtr btn = Il2CppRaw.GetComponent(go, _phoneButtonClass);
+                if (btn == IntPtr.Zero) return null;
+                int key = _phoneGetKey != IntPtr.Zero
+                    ? Il2CppRaw.InvokeInt32Getter(btn, _phoneGetKey, -1)
+                    : Il2CppRaw.ReadInt32Field(btn, _phoneButtonClass, "_phoneKey", -1);
+                return PhoneKeyLabel(key);
+            }
+            catch { return null; }
+        }
+
+        /// <summary>EPhoneKey int → spoken label. Enum order: D0..D9 = 0..9, Star=10, Hash=11, Call=12, Clear=13.</summary>
+        private static string? PhoneKeyLabel(int key) => key switch
+        {
+            >= 0 and <= 9 => key.ToString(),
+            10 => "star",
+            11 => "hash",
+            12 => "call",
+            13 => "clear",
+            _ => null,
+        };
 
         // ---- TMP reads via raw IL2CPP (dual-naming wall) ----
 

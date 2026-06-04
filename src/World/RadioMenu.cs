@@ -53,7 +53,8 @@ namespace NoImNotAHumanAccess.World
         private IntPtr _rotateKnob;       // RadioKnobController.RotateKnob(float)
         private IntPtr _getNormDistance;  // RadioModel.get_NormalisedDistance
         private IntPtr _getCurrentState;  // RadioModel.get_CurrentState (ERadioState)
-        private IntPtr _switchState;      // RadioModel.SwitchState(ERadioState)
+        private IntPtr _switchState;      // RadioModel.SwitchState(ERadioState) — model-only fallback
+        private IntPtr _onRadioButtonPressed; // RadioCloseUpView.OnRadioButtonPressed(ERadioState) — the FULL band switch
         private IntPtr _getDisplayedMessage; // RadioModel.GetDisplayedMessage() : string
 
         // RadioModel._isWaveFound (private bool): TRUE only when the station is locked and the text is FULLY resolved.
@@ -62,24 +63,17 @@ namespace NoImNotAHumanAccess.World
         // near-garbled string that passed the dedupe and queued (interrupt:false) → dozens of strings flooded the speech
         // buffer and overloaded the mod (the user's "garbage spam" report). We now speak ONLY when _isWaveFound is true.
         private const string IsWaveFoundField = "_isWaveFound";
-        // RadioModel._message (private string): the CLEAN, full station text. GetDisplayedMessage() applies the noise
-        // garble on top of this as it resolves char-by-char; reading _message directly means we NEVER speak garble, even
-        // if the wave-found flag briefly overlaps a still-garbling display when drifting on/off the station.
+        // RadioModel._message (private string): the current resolved LINE of station text — only one line, which is why
+        // reading it alone missed the rest of a multi-line broadcast. Used as the fallback when the line array is absent.
         private const string MessageField = "_message";
-        // RadioModel._onFoundProgresss (private float, note the game's triple-s typo): the de-garble progress, 0 → 1,
-        // that advances only while the player holds close to a station. >0-but-not-found = "actively resolving".
-        private const string OnFoundProgressField = "_onFoundProgresss";
-
-        // Distance at/above which the signal is FULL garble (pure static) — at this range we never read the text, only
-        // the "Static." closeness cue. Below it the text is PARTIALLY resolved and worth reading on settle. Matches the
-        // Closeness() "Static" cutoff so the buckets and the read threshold agree.
-        private const float FullGarbleDistance = 0.45f;
+        // RadioModel._currentText (private string[]): ALL lines of the current station's message. Joined for the full read.
+        private const string CurrentTextField = "_currentText";
 
         private int _lastBand = -1;
         private string _lastCloseness = string.Empty;
         private float _nextClosenessSpeakTime;
         private string _lastSpokenMessage = string.Empty; // de-dupe the on-signal message readout
-        private bool _announcedResolving;                  // spoke the "resolving signal" cue once for this approach
+        private bool _announcedEntry;                       // spoke the one-time "how to leave" hint this session
 
         public RadioMenu(ISpeechOutput speech) => _speech = speech;
 
@@ -111,10 +105,20 @@ namespace NoImNotAHumanAccess.World
                 if (model == IntPtr.Zero) { _speech.Speak("Radio.", interrupt: true); return; }
                 int cur = Il2CppRaw.InvokeInt32Getter(model, _getCurrentState, StateAM);
                 int next = cur == StateFM ? StateAM : StateFM;
-                Il2CppRaw.InvokeVoidWithEnum(model, _switchState, next);
+
+                // Drive the VIEW's band-button handler (the path the game's own AM/FM buttons use) so the full switch
+                // runs — knob remap, station set, display — not just the model flag. SwitchState alone set the field
+                // without the view-side effects, which is why the band change "did nothing". Fall back to the model
+                // method if the view handler didn't resolve.
+                IntPtr view = ResolveView();
+                bool switched = view != IntPtr.Zero && _onRadioButtonPressed != IntPtr.Zero
+                    && Il2CppRaw.InvokeVoidWithEnum(view, _onRadioButtonPressed, next);
+                if (!switched)
+                    Il2CppRaw.InvokeVoidWithEnum(model, _switchState, next);
+
                 _lastBand = next;
                 _speech.Speak(BandName(next), interrupt: true);
-                MelonLogger.Msg($"[RadioMenu] band {BandName(cur)} -> {BandName(next)}.");
+                MelonLogger.Msg($"[RadioMenu] band {BandName(cur)} -> {BandName(next)} (viewHandler={switched}).");
             }
             catch (Exception e)
             {
@@ -132,6 +136,18 @@ namespace NoImNotAHumanAccess.World
                 IntPtr model = ResolveModel();
                 if (model == IntPtr.Zero) return;
 
+                // One-time-per-open hint on HOW TO LEAVE. The radio close-up is HOLD-to-close (unlike the fridge/phone,
+                // which close on a tap), so a quick Q press doesn't exit and a blind player can't see the hold-progress
+                // fill — they think they're stuck. Read the view's own IsHoldToClose so the phrasing matches the game,
+                // and tell them to HOLD Q. (Backspace remains a tap fallback.) Announced once per radio session.
+                if (!_announcedEntry)
+                {
+                    _announcedEntry = true;
+                    IntPtr view = ResolveView();
+                    bool holdToClose = view != IntPtr.Zero && Il2CppRaw.ReadBoolField(view, _viewClass, "IsHoldToClose", true);
+                    _speech.Speak(holdToClose ? "Radio. Hold Q to leave." : "Radio. Press Q to leave.", interrupt: false);
+                }
+
                 // Band changed out from under us (or first read) — announce it once.
                 int band = Il2CppRaw.InvokeInt32Getter(model, _getCurrentState, _lastBand);
                 if (band != _lastBand && _lastBand >= 0)
@@ -140,49 +156,22 @@ namespace NoImNotAHumanAccess.World
 
                 float dist = Il2CppRaw.InvokeFloatGetter(model, _getNormDistance, 1f);
 
-                // Station-text readout. The sighted player WATCHES the message fill in character-by-character as they
-                // hold close to a station; it only completes if they stay put. We don't read the partial garble (it
-                // changes every frame — annoying and meaningless), and we never read full static. Instead:
-                //
-                //  • RESOLVING (close, signal is actively filling in, not yet fully found): speak a ONE-SHOT cue
-                //    ("Resolving signal. Hold steady.") so the player knows a full message is coming if they wait — the
-                //    audio analog of seeing the text fill in. Spoken once per approach; re-armed when they leave the
-                //    resolving zone, so a fresh approach cues again. If they tune away before it finishes, nothing more
-                //    is said — the message is simply dropped (you only ever hear the clean version, never a partial).
-                //  • WAVE FOUND: speak the CLEAN station text (the model's _message field) once. Reading _message — not
-                //    GetDisplayedMessage() — guarantees no leftover noise.
-                //
-                // The clean read is de-duped on _lastSpokenMessage, which we do NOT reset on wave-loss: drifting off a
-                // station you've heard must not re-read it, and drifting back on must not repeat it. A different station
-                // has different text, so it still speaks; only the SAME text is suppressed once spoken.
+                // Station-text readout. We never read garble (the game's own audio cue already tells the player they're
+                // homing in — no mod status message needed). When the wave is fully FOUND, read the WHOLE resolved
+                // message: the station's text is a set of lines (_currentText[]), and reading only the first line missed
+                // the rest (the "emergency services… / they're burning people" report). We join all non-empty lines.
+                // De-duped on _lastSpokenMessage, which we do NOT reset on wave-loss: drifting off a station you've heard
+                // must not re-read it, and drifting back on must not repeat it. A different station has different text, so
+                // it still speaks; only the SAME message is suppressed once spoken.
                 bool waveFound = Il2CppRaw.ReadBoolField(model, _modelClass, IsWaveFoundField);
-                // "Actively resolving": the game's on-found progress has started (>0) but hasn't completed, and we're in
-                // signal range. _onFoundProgresss only advances while close, so it's the truest "filling in" signal;
-                // distance is the fallback bound so the cue never fires out in the static.
-                float foundProgress = Il2CppRaw.ReadFloatField(model, _modelClass, OnFoundProgressField, 0f);
-                bool resolving = !waveFound && dist < FullGarbleDistance && foundProgress > 0f;
-
                 if (waveFound)
                 {
-                    string msg = (Il2CppRaw.ReadStringField(model, _modelClass, MessageField) ?? string.Empty).Trim();
+                    string msg = ReadFullMessage(model);
                     if (msg.Length > 0 && msg != _lastSpokenMessage)
                     {
                         _lastSpokenMessage = msg;
-                        _speech.Speak(msg, interrupt: false); // don't cut off — let the resolved station message play out
+                        _speech.Speak(msg, interrupt: false); // don't cut off — let the whole station message play out
                     }
-                    _announcedResolving = false; // re-arm the cue for the next station
-                }
-                else if (resolving)
-                {
-                    if (!_announcedResolving)
-                    {
-                        _announcedResolving = true;
-                        _speech.Speak("Resolving signal. Hold steady.", interrupt: true);
-                    }
-                }
-                else
-                {
-                    _announcedResolving = false; // left the resolving zone (tuned away / full static) → re-arm
                 }
 
                 // Closeness feedback only while actively tuning, throttled, and only when the bucket changes.
@@ -201,6 +190,39 @@ namespace NoImNotAHumanAccess.World
             }
         }
 
+        /// <summary>
+        /// The complete resolved station message: join all non-empty lines of the model's <c>_currentText</c> string
+        /// array. Falls back to the single <c>_message</c> field if the array is empty/absent. This is what fixes the
+        /// "only the first line was read" bug — the station's text is multiple lines and only the current one lived in
+        /// <c>_message</c>.
+        /// </summary>
+        private string ReadFullMessage(IntPtr model)
+        {
+            try
+            {
+                IntPtr arr = Il2CppRaw.ReadObjectField(model, _modelClass, CurrentTextField);
+                if (arr != IntPtr.Zero)
+                {
+                    var sb = new System.Text.StringBuilder();
+                    foreach (IntPtr s in Il2CppRaw.ReadObjectArray(arr))
+                    {
+                        if (s == IntPtr.Zero) continue;
+                        string line = (Il2CppInterop.Runtime.IL2CPP.Il2CppStringToManaged(s) ?? string.Empty).Trim();
+                        if (line.Length == 0) continue;
+                        if (sb.Length > 0) sb.Append(' ');
+                        sb.Append(line);
+                    }
+                    if (sb.Length > 0) return sb.ToString();
+                }
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[RadioMenu] ReadFullMessage threw: {e.Message}");
+            }
+            // Fallback: the single current-line field.
+            return (Il2CppRaw.ReadStringField(model, _modelClass, MessageField) ?? string.Empty).Trim();
+        }
+
         /// <summary>Reset state when the radio closes, so reopening starts fresh.</summary>
         public void Reset()
         {
@@ -208,7 +230,7 @@ namespace NoImNotAHumanAccess.World
             _lastCloseness = string.Empty;
             _nextClosenessSpeakTime = 0f;
             _lastSpokenMessage = string.Empty;
-            _announcedResolving = false;
+            _announcedEntry = false;
         }
 
         /// <summary>0 = exactly on a station, 1 = far. Coarse buckets so the player hears "getting closer / on the
@@ -247,6 +269,8 @@ namespace NoImNotAHumanAccess.World
                 _knobClass = Il2CppRaw.GetClass(GameAsm, RadioNs, "RadioKnobController");
                 _modelClass = Il2CppRaw.GetClass(GameAsm, RadioNs, "RadioModel");
 
+                if (_viewClass != IntPtr.Zero)
+                    _onRadioButtonPressed = Il2CppRaw.GetMethod(_viewClass, "OnRadioButtonPressed", 1);
                 if (_knobClass != IntPtr.Zero)
                     _rotateKnob = Il2CppRaw.GetMethod(_knobClass, "RotateKnob", 1);
                 if (_modelClass != IntPtr.Zero)
@@ -260,7 +284,8 @@ namespace NoImNotAHumanAccess.World
                 MelonLogger.Msg($"[RadioMenu] resolved: view={_viewClass != IntPtr.Zero} knob={_knobClass != IntPtr.Zero} " +
                                 $"model={_modelClass != IntPtr.Zero} rotateKnob={_rotateKnob != IntPtr.Zero} " +
                                 $"normDist={_getNormDistance != IntPtr.Zero} curState={_getCurrentState != IntPtr.Zero} " +
-                                $"switchState={_switchState != IntPtr.Zero} displayedMsg={_getDisplayedMessage != IntPtr.Zero}");
+                                $"switchState={_switchState != IntPtr.Zero} onRadioBtn={_onRadioButtonPressed != IntPtr.Zero} " +
+                                $"displayedMsg={_getDisplayedMessage != IntPtr.Zero}");
             }
             catch (Exception e)
             {

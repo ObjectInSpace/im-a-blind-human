@@ -101,6 +101,12 @@ namespace NoImNotAHumanAccess.World
                 if (mainMenu) kind = InputContextKind.MainMenu;
                 // Pause overlays the 3D scene (provider stays present), so it MUST be checked before ThreeD.
                 else if (paused) kind = InputContextKind.Pause;
+                // A DIALOG (with choice buttons) can open ON TOP OF a close-up — the phone/radio start conversations via
+                // IDialogManager, and the close-up view stays active underneath. If we routed to Fridge/Radio/Phone here
+                // the mod would eat the arrows and the player couldn't navigate the dialog CHOICES. So when a dialog is
+                // active, fall through to None and let the game's own native arrow nav drive the choice buttons. (Checked
+                // before the close-up contexts for exactly this reason; normal close-up use has no dialog active.)
+                else if (dialog) kind = InputContextKind.None;
                 // Fridge/Radio close-ups open ON TOP OF the room photo — the underlying RoomDisplayer._isOpened stays
                 // true behind them, so `photo` would win and misroute to RoomPhoto (the fridge grid then read "no
                 // objects"). They are the more-specific overlay, so they MUST be checked BEFORE photo. (Confirmed

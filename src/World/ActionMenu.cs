@@ -234,12 +234,58 @@ namespace NoImNotAHumanAccess.World
                 }
                 bool ok = Il2CppRaw.InvokeVoid(_actionablesManager, _forceLeave);
                 MelonLogger.Msg($"[ActionMenu] ForceLeave() invoked (threw={!ok}).");
+
+                // ForceLeave only unwinds the ACTIONABLE-OBJECT system (doors/windows/blinds). Close-ups
+                // (radio/fridge/phone/…) are a SEPARATE system that ForceLeave doesn't touch — and the radio's native
+                // 'q' wasn't closing it either — so also hide any active close-up view directly. Hide() is the public
+                // exit each close-up runs on its own back-out; calling it is the reliable programmatic leave.
+                HideActiveCloseUp();
             }
             catch (Exception e)
             {
                 MelonLogger.Warning($"[ActionMenu] Leave threw: {e.Message}");
             }
         }
+
+        /// <summary>
+        /// Close whichever close-up (radio/fridge/phone/consumable/mushroomlist) is currently open by invoking its
+        /// public <c>Hide()</c> — the same exit the view runs on its own back-out. Backspace's universal "get me out"
+        /// covers the close-up system, which <see cref="Leave"/>'s ForceLeave (actionables only) can't reach. No-op when
+        /// no close-up is active. Never throws.
+        /// </summary>
+        private void HideActiveCloseUp()
+        {
+            try
+            {
+                foreach (var (ns, name) in CloseUpViewTypes)
+                {
+                    IntPtr klass = Il2CppRaw.GetClass(GameAsm, ns, name);
+                    if (klass == IntPtr.Zero) continue;
+                    IntPtr view = Il2CppRaw.FindObjectIncludingInactive(klass);
+                    if (view == IntPtr.Zero || !Il2CppRaw.GetComponentGameObjectActive(view)) continue;
+
+                    IntPtr hide = Il2CppRaw.GetMethod(klass, "Hide", 0);
+                    if (hide == IntPtr.Zero) continue;
+                    bool ok = Il2CppRaw.InvokeVoid(view, hide); // returns a UniTask; fire-and-forget
+                    MelonLogger.Msg($"[ActionMenu] Hide() on active close-up {name} (threw={!ok}).");
+                }
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[ActionMenu] HideActiveCloseUp threw: {e.Message}");
+            }
+        }
+
+        // The concrete close-up view types and their namespaces (from the decompile). Radio/Phone are under their own
+        // sub-namespaces; Fridge/Consumable/Mushroomlist under the _NINAH__ variant.
+        private static readonly (string ns, string name)[] CloseUpViewTypes =
+        {
+            ("_Code.Infrastructure.CloseUps.Views.Radio", "RadioCloseUpView"),
+            ("_Code.Infrastructure.CloseUps.Views.Phone", "PhoneCloseUpView"),
+            ("_Code.Infrastructure.CloseUps.Views", "FridgeCloseUpView"),
+            ("_Code.Infrastructure._NINAH__CloseUps.Views.Consumables", "ConsumableCloseUpView"),
+            ("_Code.Infrastructure._NINAH__CloseUps.Views.Mushroomlist", "MushroomlistCloseUpView"),
+        };
 
         /// <summary>
         /// Aim the player's CAMERA at <paramref name="view"/> by rotating both <c>PlayerController.cameraTarget</c> and

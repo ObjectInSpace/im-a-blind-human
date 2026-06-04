@@ -6,32 +6,25 @@ using NoImNotAHumanAccess.Speech;
 namespace NoImNotAHumanAccess.World
 {
     /// <summary>
-    /// Keyboard DIALING for the PHONE close-up. The dial pad is a MOUSE/CONTROLLER-only affordance in the base game:
-    /// each key is a <c>PhoneButtonView</c> (a uGUI Selectable) that the player clicks (pointer down/up) or, on a
-    /// controller, navigates with the D-pad and presses with Submit. There is NO number-key binding, so a sighted
-    /// touch-typist (and a blind player who knows the number layout) cannot just type the number — exactly the
-    /// keyboard-input gap the mod fills for the fridge/radio.
+    /// Keyboard support for the PHONE close-up. The dial pad is a MOUSE/CONTROLLER-only affordance in the base game:
+    /// each key is a <c>PhoneButtonView</c> (a uGUI Selectable) clicked by pointer, or D-pad-navigated on a controller.
+    /// The player navigates the pad with the ARROW KEYS like any uGUI menu — <see cref="UguiFocus"/> keeps a button
+    /// focused and the game's own Selectable navigation moves between them, while <see cref="Menus.ControlDescriber"/>
+    /// speaks the focused key. The buttons have NO uGUI submit handler, so Enter is translated to a press of the
+    /// focused button via <see cref="PressFocused"/> (it drives the game's own OnPointerDown/Up click path). The game
+    /// AUTO-PLACES the call once a complete number is entered (its own TryCall), and Call/Clear are reachable by
+    /// arrowing. (Direct number-key TYPING was tried and removed: it fought the arrow focus and couldn't reach Call.)
     ///
-    /// We supply the keyboard equivalent by DRIVING THE GAME'S OWN button-press path rather than re-implementing the
-    /// phone: pressing the <c>1</c> key finds the <c>PhoneButtonView</c> whose <c>_phoneKey</c> is <c>D1</c> and fires
-    /// its <c>OnPointerDown</c> then <c>OnPointerUp</c> — the same two calls a mouse click makes — so the real key
-    /// press runs: the tone plays, the digit is appended to the number on the screen, and the visual "pressed" sprite
-    /// flashes. # maps to <c>Hash</c>, * to <c>Star</c>. The game AUTO-PLACES the call once a complete number has been
-    /// entered (the phone's own <c>TryCall</c> fires when the digits match a subscriber), so dialing the digits is all
-    /// that's needed — there's no separate "Call" step to synthesize. Clear/Call still have on-screen buttons the
-    /// player can reach by arrowing (now that <see cref="UguiFocus"/> keeps the pad focused).
+    /// Also provides the on-demand CONTACTS readout (<see cref="ReadContacts"/>, F9): the pinned cards (name + number)
+    /// are how a sighted player remembers a number.
     ///
-    /// Routed via the <see cref="InputContextKind.Phone"/> context so the digit keys are claimed ONLY while the phone
-    /// close-up is up. Zenject-free: the <c>PhoneCloseUpView</c> is found via FindObjectIncludingInactive and its
-    /// <c>_phoneButtonViews</c> array is read off it. Never throws.
+    /// Routed via the <see cref="InputContextKind.Phone"/> context. Zenject-free: the <c>PhoneCloseUpView</c> is found
+    /// via FindObjectIncludingInactive. Never throws.
     /// </summary>
     public sealed class PhoneMenu
     {
         private const string GameAsm = "Assembly-CSharp.dll";
         private const string PhoneNs = "_Code.Infrastructure.CloseUps.Views.Phone";
-
-        // EPhoneKey enum order (decompile): D0..D9 = 0..9, Star=10, Hash=11, Call=12, Clear=13. The caller passes these
-        // ints into Press(); the digit map is in KeyToPhoneKey, the symbols (#, *) come from the caller's inputString scan.
 
         // The pin board lives in TWO namespaces: the controller is under the _NINAH__ variant, the view under the
         // plain one (the game's own inconsistent split — verified from the decompile).
@@ -43,17 +36,18 @@ namespace NoImNotAHumanAccess.World
         private bool _resolved;
         private IntPtr _viewClass;        // PhoneCloseUpView
         private IntPtr _buttonClass;      // PhoneButtonView
-        private IntPtr _getPhoneKey;      // PhoneButtonView.get_PhoneKey — falls back to the _phoneKey field if absent
         private IntPtr _onPointerDown;    // PhoneButtonView.OnPointerDown(PointerEventData)
         private IntPtr _onPointerUp;      // PhoneButtonView.OnPointerUp(PointerEventData)
         private IntPtr _pinControllerClass; // PhonePinController (holds the _pins array)
         private IntPtr _pinViewClass;       // PhonePinView (_numberText + PhoneSubscriber)
         private IntPtr _getPinSubscriber;   // PhonePinView.get_PhoneSubscriber
+        private IntPtr _getCurrentEventSystem; // EventSystem.get_current (static)
+        private IntPtr _getCurrentSelected;    // EventSystem.get_currentSelectedGameObject
 
         public PhoneMenu(ISpeechOutput speech) => _speech = speech;
 
         /// <summary>True while the phone close-up is up (its view is found AND active). Used by the input context to
-        /// route the digit keys here only when the dial pad is on screen.</summary>
+        /// route Enter (press focused button) and F9 (read contacts) here only when the dial pad is on screen.</summary>
         public bool IsActive()
         {
             try
@@ -69,53 +63,39 @@ namespace NoImNotAHumanAccess.World
             }
         }
 
-        /// <summary>Press the dial-pad key for an <c>EPhoneKey</c> value, dialing that digit (tone + screen + visual)
-        /// exactly as a mouse click on that button would.</summary>
-        public void Press(int phoneKey)
+        /// <summary>
+        /// Press the dial-pad button that currently holds EventSystem focus (the one the player arrowed onto). The
+        /// phone buttons have no uGUI submit handler, so native Enter won't fire them — we drive the game's own click
+        /// path (OnPointerDown then OnPointerUp) on the focused <c>PhoneButtonView</c>, which plays the tone, appends
+        /// the digit (or runs Call/Clear), and flashes the pressed sprite exactly as a mouse click would. No-op if
+        /// the focused control isn't a phone button.
+        /// </summary>
+        public void PressFocused()
         {
             try
             {
                 EnsureResolved();
-                IntPtr view = ResolveView();
-                if (view == IntPtr.Zero) return;
+                if (_buttonClass == IntPtr.Zero) return;
 
-                IntPtr button = FindButton(view, phoneKey);
-                if (button == IntPtr.Zero)
-                {
-                    MelonLogger.Msg($"[PhoneMenu] no button for key {phoneKey}.");
-                    return;
-                }
+                IntPtr es = Il2CppRaw.InvokeStaticObjectGetter(_getCurrentEventSystem);
+                if (es == IntPtr.Zero) return;
+                IntPtr selectedGo = Il2CppRaw.InvokeObjectGetter(es, _getCurrentSelected);
+                if (selectedGo == IntPtr.Zero) return;
 
-                // A real click is OnPointerDown then OnPointerUp; feed both a PointerEventData so the game's down/up
-                // handlers (tone + press visual + digit append) run identically to a mouse press.
+                // The focused object is the button's GameObject; get the PhoneButtonView component on it.
+                IntPtr button = Il2CppRaw.GetComponentRaw(selectedGo, _buttonClass);
+                if (button == IntPtr.Zero) return;
+
                 IntPtr ped = Il2CppRaw.NewPointerEventData();
                 bool down = Il2CppRaw.InvokeVoidWithObject(button, _onPointerDown, ped);
                 bool up = Il2CppRaw.InvokeVoidWithObject(button, _onPointerUp, ped);
-                MelonLogger.Msg($"[PhoneMenu] pressed key {phoneKey} (down threw={!down} up threw={!up}).");
+                MelonLogger.Msg($"[PhoneMenu] pressed focused button (down threw={!down} up threw={!up}).");
             }
             catch (Exception e)
             {
-                MelonLogger.Warning($"[PhoneMenu] Press threw: {e.Message}");
+                MelonLogger.Warning($"[PhoneMenu] PressFocused threw: {e.Message}");
             }
         }
-
-        /// <summary>Map a pressed keyboard DIGIT <see cref="UnityEngine.KeyCode"/> (number row or numpad) to its
-        /// <c>EPhoneKey</c> int (D0..D9 = 0..9), or -1 if it isn't a digit key. The # / * symbols are handled by the
-        /// caller via <c>Input.inputString</c> (layout/shift-correct), not here.</summary>
-        public static int KeyToPhoneKey(UnityEngine.KeyCode key) => key switch
-        {
-            UnityEngine.KeyCode.Alpha0 or UnityEngine.KeyCode.Keypad0 => 0,
-            UnityEngine.KeyCode.Alpha1 or UnityEngine.KeyCode.Keypad1 => 1,
-            UnityEngine.KeyCode.Alpha2 or UnityEngine.KeyCode.Keypad2 => 2,
-            UnityEngine.KeyCode.Alpha3 or UnityEngine.KeyCode.Keypad3 => 3,
-            UnityEngine.KeyCode.Alpha4 or UnityEngine.KeyCode.Keypad4 => 4,
-            UnityEngine.KeyCode.Alpha5 or UnityEngine.KeyCode.Keypad5 => 5,
-            UnityEngine.KeyCode.Alpha6 or UnityEngine.KeyCode.Keypad6 => 6,
-            UnityEngine.KeyCode.Alpha7 or UnityEngine.KeyCode.Keypad7 => 7,
-            UnityEngine.KeyCode.Alpha8 or UnityEngine.KeyCode.Keypad8 => 8,
-            UnityEngine.KeyCode.Alpha9 or UnityEngine.KeyCode.Keypad9 => 9,
-            _ => -1,
-        };
 
         /// <summary>
         /// Read out the player's known phone numbers — the pinned contact cards on the phone close-up (name + number).
@@ -202,26 +182,6 @@ namespace NoImNotAHumanAccess.World
             _ => "Contact",
         };
 
-        /// <summary>The <c>PhoneButtonView</c> in the view's <c>_phoneButtonViews</c> array whose key matches, or zero.</summary>
-        private IntPtr FindButton(IntPtr view, int phoneKey)
-        {
-            IntPtr arr = Il2CppRaw.ReadObjectField(view, _viewClass, "_phoneButtonViews");
-            foreach (IntPtr btn in Il2CppRaw.ReadObjectArray(arr))
-            {
-                if (btn == IntPtr.Zero) continue;
-                int key = ButtonKey(btn);
-                if (key == phoneKey) return btn;
-            }
-            return IntPtr.Zero;
-        }
-
-        /// <summary>Read a button's <c>EPhoneKey</c>: via the <c>PhoneKey</c> getter if present, else the
-        /// <c>_phoneKey</c> field by offset.</summary>
-        private int ButtonKey(IntPtr btn) =>
-            _getPhoneKey != IntPtr.Zero
-                ? Il2CppRaw.InvokeInt32Getter(btn, _getPhoneKey, -1)
-                : Il2CppRaw.ReadInt32Field(btn, _buttonClass, "_phoneKey", -1);
-
         private IntPtr ResolveView() =>
             _viewClass == IntPtr.Zero ? IntPtr.Zero : Il2CppRaw.FindObjectIncludingInactive(_viewClass);
 
@@ -235,7 +195,6 @@ namespace NoImNotAHumanAccess.World
                 _buttonClass = Il2CppRaw.GetClass(GameAsm, PhoneNs, "PhoneButtonView");
                 if (_buttonClass != IntPtr.Zero)
                 {
-                    _getPhoneKey = Il2CppRaw.GetMethod(_buttonClass, "get_PhoneKey", 0); // may be absent (field-only)
                     _onPointerDown = Il2CppRaw.GetMethod(_buttonClass, "OnPointerDown", 1);
                     _onPointerUp = Il2CppRaw.GetMethod(_buttonClass, "OnPointerUp", 1);
                 }
@@ -245,10 +204,20 @@ namespace NoImNotAHumanAccess.World
                 if (_pinViewClass != IntPtr.Zero)
                     _getPinSubscriber = Il2CppRaw.GetMethod(_pinViewClass, "get_PhoneSubscriber", 0);
 
+                // EventSystem (for PressFocused): the focused phone button is read off EventSystem.current.
+                IntPtr esClass = Il2CppRaw.GetClass("UnityEngine.UI.dll", "UnityEngine.EventSystems", "EventSystem");
+                if (esClass == IntPtr.Zero)
+                    esClass = Il2CppRaw.GetClass("UnityEngine.UIModule.dll", "UnityEngine.EventSystems", "EventSystem");
+                if (esClass != IntPtr.Zero)
+                {
+                    _getCurrentEventSystem = Il2CppRaw.GetMethod(esClass, "get_current", 0);
+                    _getCurrentSelected = Il2CppRaw.GetMethod(esClass, "get_currentSelectedGameObject", 0);
+                }
+
                 MelonLogger.Msg($"[PhoneMenu] resolved: view={_viewClass != IntPtr.Zero} button={_buttonClass != IntPtr.Zero} " +
-                                $"getPhoneKey={_getPhoneKey != IntPtr.Zero} onDown={_onPointerDown != IntPtr.Zero} " +
-                                $"onUp={_onPointerUp != IntPtr.Zero} pinController={_pinControllerClass != IntPtr.Zero} " +
-                                $"pinView={_pinViewClass != IntPtr.Zero} getPinSub={_getPinSubscriber != IntPtr.Zero}");
+                                $"onDown={_onPointerDown != IntPtr.Zero} onUp={_onPointerUp != IntPtr.Zero} " +
+                                $"pinController={_pinControllerClass != IntPtr.Zero} pinView={_pinViewClass != IntPtr.Zero} " +
+                                $"getPinSub={_getPinSubscriber != IntPtr.Zero} eventSystem={_getCurrentEventSystem != IntPtr.Zero}");
             }
             catch (Exception e)
             {

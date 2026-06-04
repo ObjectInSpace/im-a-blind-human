@@ -94,20 +94,6 @@ namespace NoImNotAHumanAccess
         // natively — it's free (Enter took over activate) and a no-op when nothing's engaged, so it's safe anytime.
         private const KeyCode LeaveKey = KeyCode.Backspace;
 
-        // PHONE dial-pad DIGIT keys: the number row + numpad digits. Polled (GetKeyDown) only in the Phone context, where
-        // each maps to a dial-pad button via PhoneMenu.KeyToPhoneKey. The # and * symbols are NOT here — they're read
-        // from Input.inputString instead (layout/shift-correct), so the numpad '*' isn't double-counted. Number keys are
-        // bound to NOTHING in the game's input asset (only the arrows/WASD/etc.), so claiming them collides with nothing.
-        private static readonly KeyCode[] PhoneDigitKeys =
-        {
-            KeyCode.Alpha0, KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4,
-            KeyCode.Alpha5, KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9,
-            KeyCode.Keypad0, KeyCode.Keypad1, KeyCode.Keypad2, KeyCode.Keypad3, KeyCode.Keypad4,
-            KeyCode.Keypad5, KeyCode.Keypad6, KeyCode.Keypad7, KeyCode.Keypad8, KeyCode.Keypad9,
-        };
-        // EPhoneKey int values for the symbol keys (enum order: Star=10, Hash=11), used with the inputString scan.
-        private const int PhoneKeyStar = 10, PhoneKeyHash = 11;
-
         public override void OnInitializeMelon()
         {
             LoggerInstance.Msg("Initializing native speech channel...");
@@ -324,30 +310,11 @@ namespace NoImNotAHumanAccess
             if (ctx == InputContextKind.Radio && (Input.GetKeyDown(RadioBandDownKey) || Input.GetKeyDown(RadioBandUpKey)))
                 _radioMenu?.SwitchBand();
 
-            // PHONE dialing: in the phone close-up, map the number keys (and # / *) onto the matching dial-pad button so
-            // typing the number dials it (tone + screen digit + press visual), the keyboard equivalent of the
-            // pointer/controller-only pad. Arrows still reach Call/Clear natively (UguiFocus keeps the pad focused), and
-            // Enter/Submit presses the focused button — so this only ADDS the direct-type path, it doesn't replace nav.
-            if (ctx == InputContextKind.Phone && _phoneMenu != null)
-            {
-                // Digits: edge-detected keycodes (number row + numpad). Number keys are unbound in the game, so this
-                // collides with nothing. (# and * come from the inputString scan below, including the numpad '*'.)
-                foreach (KeyCode dk in PhoneDigitKeys)
-                {
-                    if (!Input.GetKeyDown(dk)) continue;
-                    int pk = PhoneMenu.KeyToPhoneKey(dk);
-                    if (pk >= 0) _phoneMenu.Press(pk);
-                }
-                // '#' and '*' have no dedicated key on most layouts (they're Shift+3 / Shift+8), so read the typed
-                // CHARACTERS from inputString — layout- and shift-correct, unlike a fixed KeyCode. inputString holds
-                // the characters produced THIS frame, so it's naturally edge-like (no repeat handling needed here).
-                // Read raw via Il2CppRaw because the IL2CPP Input binding omits the inputString property.
-                foreach (char c in Interop.Il2CppRaw.InputString())
-                {
-                    if (c == '#') _phoneMenu.Press(PhoneKeyHash);
-                    else if (c == '*') _phoneMenu.Press(PhoneKeyStar);
-                }
-            }
+            // PHONE: the dial pad is navigated with the arrow keys like any uGUI menu — UguiFocus keeps a button focused
+            // (every frame, for all contexts) and the game's own Selectable navigation moves between them, with
+            // ControlDescriber speaking the correct key as focus lands. The buttons have NO uGUI submit handler, so
+            // Enter is translated to a press of the focused button below (in the activate block). Typing digits directly
+            // was removed (it fought the arrow focus and couldn't reach Call) per the user's call.
 
             // ENTER — the UNIFORM "activate the selected thing" key, the same role in every mod-driven list so the model
             // is consistent: Up/Down selects, Enter activates.
@@ -371,6 +338,10 @@ namespace NoImNotAHumanAccess
                 else if (ctx == InputContextKind.MainMenu
                     && _cartoonButton != null && _cartoonButton.IsAvailable())
                     _cartoonButton.Activate();
+                else if (ctx == InputContextKind.Phone)
+                    // The phone buttons have no uGUI submit handler, so native Enter won't press the focused one;
+                    // the mod presses whatever button currently holds EventSystem focus (dials it / Call / Clear).
+                    _phoneMenu?.PressFocused();
             }
 
             // Backspace = LEAVE the current interaction via the game's ForceLeave — the reliable exit for views the mod

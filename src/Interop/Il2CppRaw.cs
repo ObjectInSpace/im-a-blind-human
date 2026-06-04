@@ -452,24 +452,6 @@ namespace NoImNotAHumanAccess.Interop
             return *(float*)IL2CPP.il2cpp_object_unbox(boxed);
         }
 
-        /// <summary>
-        /// The characters typed THIS frame (<c>UnityEngine.Input.inputString</c>), read raw because the IL2CPP interop
-        /// binding for <c>Input</c> omits the <c>inputString</c> property. Layout- and shift-correct, so it's the right
-        /// source for symbol keys like '#' / '*' that have no fixed KeyCode on most layouts. Empty string on failure.
-        /// </summary>
-        public static unsafe string InputString()
-        {
-            IntPtr inputClass = GetClass("UnityEngine.InputLegacyModule.dll", "UnityEngine", "Input");
-            if (inputClass == IntPtr.Zero) inputClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "Input");
-            if (inputClass == IntPtr.Zero) return string.Empty;
-            IntPtr getter = GetMethod(inputClass, "get_inputString", 0);
-            if (getter == IntPtr.Zero) return string.Empty;
-            IntPtr exc = IntPtr.Zero;
-            IntPtr str = IL2CPP.il2cpp_runtime_invoke(getter, IntPtr.Zero, (void**)0, ref exc); // static getter
-            if (exc != IntPtr.Zero || str == IntPtr.Zero) return string.Empty;
-            return IL2CPP.Il2CppStringToManaged(str) ?? string.Empty;
-        }
-
         /// <summary>Invoke a STATIC parameterless getter returning an object pointer (e.g. a singleton
         /// <c>get_Instance</c> or <c>Camera.get_main</c>). Returns zero on failure.</summary>
         public static unsafe IntPtr InvokeStaticObjectGetter(IntPtr method)
