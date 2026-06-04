@@ -56,10 +56,12 @@ namespace NoImNotAHumanAccess.World
         private IntPtr _switchState;      // RadioModel.SwitchState(ERadioState)
         private IntPtr _getDisplayedMessage; // RadioModel.GetDisplayedMessage() : string
 
-        // Below this NormalisedDistance the game has resolved the noise-garbled text to readable characters (0 = dead
-        // on the signal, 1 = pure static). We only speak the message when it's actually clear — reading the garbled
-        // intermediate aloud would be noise, not information. The homing itself is the closeness buckets above.
-        private const float ReadableDistance = 0.06f; // matches the "On the station." bucket in Closeness().
+        // RadioModel._isWaveFound (private bool): TRUE only when the station is locked and the text is FULLY resolved.
+        // This is the correct gate for speaking the message — the old distance threshold (0.06) still had partial
+        // garble, and GetDisplayedMessage() changes char-by-char as it resolves, so each frame produced a DIFFERENT
+        // near-garbled string that passed the dedupe and queued (interrupt:false) → dozens of strings flooded the speech
+        // buffer and overloaded the mod (the user's "garbage spam" report). We now speak ONLY when _isWaveFound is true.
+        private const string IsWaveFoundField = "_isWaveFound";
 
         private int _lastBand = -1;
         private string _lastCloseness = string.Empty;
@@ -125,22 +127,23 @@ namespace NoImNotAHumanAccess.World
 
                 float dist = Il2CppRaw.InvokeFloatGetter(model, _getNormDistance, 1f);
 
-                // On-signal message: once the noise has resolved to readable text, speak the clear message — this is
-                // the payload the player was homing in FOR. The garble gradient itself is conveyed by the closeness
-                // buckets below; we never read the garbled intermediate. De-duped so a held station doesn't repeat,
-                // and re-armed (cleared) whenever we drift back off the signal so re-finding it speaks again.
-                if (dist <= ReadableDistance)
+                // On-signal message: speak the clear station text ONLY when the game says the wave is FOUND
+                // (_isWaveFound) — i.e. the text is fully resolved, not garble. Gating on this (not a distance
+                // threshold) is what stops the per-frame near-garble flood. De-duped so a held station doesn't repeat;
+                // re-armed (cleared) the moment the wave is lost so re-finding it speaks again.
+                bool waveFound = Il2CppRaw.ReadBoolField(model, _modelClass, IsWaveFoundField);
+                if (waveFound)
                 {
                     string msg = (Il2CppRaw.InvokeStringGetter(model, _getDisplayedMessage) ?? string.Empty).Trim();
                     if (msg.Length > 0 && msg != _lastSpokenMessage)
                     {
                         _lastSpokenMessage = msg;
-                        _speech.Speak(msg, interrupt: false); // don't cut off — let the station message play out
+                        _speech.Speak(msg, interrupt: false); // don't cut off — let the resolved station message play out
                     }
                 }
                 else if (_lastSpokenMessage.Length > 0)
                 {
-                    _lastSpokenMessage = string.Empty; // drifted off-signal; allow the message to be re-spoken on return
+                    _lastSpokenMessage = string.Empty; // wave lost; allow the message to be re-spoken on return
                 }
 
                 // Closeness feedback only while actively tuning, throttled, and only when the bucket changes.
