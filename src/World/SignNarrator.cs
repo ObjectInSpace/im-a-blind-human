@@ -29,9 +29,13 @@ namespace NoImNotAHumanAccess.World
     ///  • F9 REPEAT: the most recent test's description is kept so the player can re-hear it (AccessMod's F9 in a
     ///    conversation). It resets to "untested" when the conversation ends (the DialogView goes inactive).
     ///
-    /// <b>Status — placeholder descriptions.</b> Real trait text needs the ripped sign art (a later session). For now the
-    /// pools name the body part being examined without describing healthy-vs-abnormal, so nothing leaks or misleads.
-    /// Never throws.
+    /// <b>Status — partial trait text.</b> Armpit and ear traits are read from the SHOWN sprite's asset name at runtime
+    /// (the game's sprite names encode them: armpit <c>clean</c>/<c>hairy</c>/<c>redness</c>/<c>fungal</c>/<c>iodine</c>;
+    /// ear <c>cockroach</c>/<c>injury</c>/<c>burnt</c>). Teeth / eyes / hands / aura-photo carry no trait in their names
+    /// (just numeric IDs), so those stay NEUTRAL prompts — describing them faithfully would need looking at the pixels,
+    /// which we don't do here. When a sprite/field is missing we fall back to the neutral prompt — a miss must never
+    /// invent a tell. The human/imposter bool only selects WHICH sprite field to read; the words are traits, never a
+    /// verdict. Never throws.
     /// </summary>
     public sealed class SignNarrator
     {
@@ -94,7 +98,7 @@ namespace NoImNotAHumanAccess.World
                 bool isImposter = ReadIsImposter(characterPtr);
                 LastSignWasImposter = isImposter;
 
-                string text = NextDescription(sign, isImposter);
+                string text = NextDescription(characterPtr, sign, isImposter);
                 if (text.Length == 0) return;
 
                 LastTestDescription = text;            // for F9 repeat in this conversation
@@ -176,8 +180,24 @@ namespace NoImNotAHumanAccess.World
             return Il2CppRaw.ReadBoolField(characterPtr, cls, "_isImposter");
         }
 
-        /// <summary>Pick the next description from the round-robin pool for this (sign, variant), advancing the cursor.</summary>
-        private string NextDescription(int sign, bool isImposter)
+        /// <summary>
+        /// Build the description for this (sign, variant). Armpit and ear first try a TRAIT read from the shown sprite's
+        /// asset name (<see cref="TraitFromSpriteName"/>); on a miss, and for all other signs, fall back to the neutral
+        /// round-robin prompt pool. <paramref name="characterPtr"/> is needed only for the sprite-name read.
+        /// </summary>
+        private string NextDescription(IntPtr characterPtr, int sign, bool isImposter)
+        {
+            if (sign == SignArmpit || sign == SignEar)
+            {
+                string? spriteName = ShownSignSpriteName(characterPtr, sign, isImposter);
+                string trait = TraitFromSpriteName(sign, spriteName);
+                if (trait.Length > 0) return trait;
+            }
+            return NextPrompt(sign, isImposter);
+        }
+
+        /// <summary>Pick the next neutral prompt from the round-robin pool for this (sign, variant), advancing the cursor.</summary>
+        private string NextPrompt(int sign, bool isImposter)
         {
             string[] pool = DescriptionPool(sign, isImposter);
             if (pool.Length == 0) return string.Empty;
@@ -190,11 +210,84 @@ namespace NoImNotAHumanAccess.World
         }
 
         /// <summary>
-        /// The description pool for one (sign kind, variant). PLACEHOLDER today: it names the body part being examined
-        /// only — no healthy/abnormal wording — so nothing leaks the verdict or misleads before the real trait text is
-        /// authored from the ripped art. Both variants currently share the same neutral prompt on purpose. When the art
-        /// is available, replace these with accurate, varied trait descriptions per variant (and keep the human/visitor
-        /// pools balanced in style so the wording itself isn't a tell).
+        /// The asset name of the sprite the game shows for this sign+variant, or null if it can't be read. Armpit and ear
+        /// are <c>AnimationData</c> fields (<c>_armpitHuman/Imposter</c>, <c>_earHuman/Imposter</c>); we read the field,
+        /// then its <c>Frames</c> array, and take the LAST frame — the fully-revealed body part — and its name. Any miss
+        /// (field absent, e.g. the human side that reuses the default portrait, or empty frames) returns null so the
+        /// caller falls back to a neutral prompt.
+        /// </summary>
+        private string? ShownSignSpriteName(IntPtr characterPtr, int sign, bool isImposter)
+        {
+            if (characterPtr == IntPtr.Zero) return null;
+            if (_characterSoDataClass == IntPtr.Zero)
+                _characterSoDataClass = Il2CppRaw.GetClass(GameAsm, CharactersNs, "CharacterSOData");
+            IntPtr cls = _characterSoDataClass;
+            if (cls == IntPtr.Zero) return null;
+
+            string field = sign switch
+            {
+                SignArmpit => isImposter ? "_armpitImposter" : "_armpitHuman",
+                SignEar    => isImposter ? "_earImposter" : "_earHuman",
+                _          => string.Empty,
+            };
+            if (field.Length == 0) return null;
+
+            IntPtr animData = Il2CppRaw.ReadObjectField(characterPtr, cls, field);
+            if (animData == IntPtr.Zero) return null;
+
+            IntPtr animClass = Il2CppRaw.GetClass(GameAsm, CharactersNs, "AnimationData");
+            if (animClass == IntPtr.Zero) animClass = IL2CPP.il2cpp_object_get_class(animData);
+            IntPtr framesArray = Il2CppRaw.ReadObjectField(animData, animClass, "<Frames>k__BackingField");
+            IntPtr[] frames = Il2CppRaw.ReadObjectArray(framesArray);
+            if (frames.Length == 0) return null;
+
+            IntPtr lastFrame = frames[frames.Length - 1];
+            return Il2CppRaw.GetUnityObjectName(lastFrame);
+        }
+
+        /// <summary>
+        /// Map a sprite asset name to a trait sentence, or empty if the name carries no trait (so the caller uses the
+        /// neutral prompt). The game's armpit/ear sprite names embed the trait; we translate the keyword(s) to plain
+        /// description. NEVER mentions human/visitor — only what's observable. Order matters where modifiers stack
+        /// (e.g. <c>hairy_fungal</c>).
+        /// </summary>
+        private static string TraitFromSpriteName(int sign, string? spriteName)
+        {
+            if (string.IsNullOrEmpty(spriteName)) return string.Empty;
+            string n = spriteName!.ToLowerInvariant();
+
+            if (sign == SignArmpit)
+            {
+                bool hairy = n.Contains("hairy");
+                bool clean = n.Contains("clean") || n.Contains("clear");
+                string baseDesc = hairy ? "Their armpit is hairy and unkempt."
+                                : clean ? "Their armpit is smooth and clean."
+                                : string.Empty;
+                string extra = n.Contains("fungal") ? " The skin is mottled with a fungal rash."
+                             : n.Contains("redness") ? " The skin looks red and irritated."
+                             : n.Contains("iodine")  ? " It's stained dark with iodine."
+                             : string.Empty;
+                if (baseDesc.Length == 0 && extra.Length == 0) return string.Empty;
+                return (baseDesc + extra).Trim();
+            }
+
+            if (sign == SignEar)
+            {
+                if (n.Contains("cockroach")) return "A cockroach is crawling inside their ear.";
+                if (n.Contains("injury"))    return "Their ear is injured and raw.";
+                if (n.Contains("burnt"))     return "Their ear is charred and burnt.";
+                // Other ear sprites (plain numbered / catlady / default) carry no clear trait in the name.
+                return string.Empty;
+            }
+
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// The NEUTRAL fallback prompt pool for one (sign kind, variant): it names the body part being examined without
+        /// healthy/abnormal wording, so nothing leaks or misleads. Used for teeth/eyes/hands/aura-photo (whose sprite
+        /// names carry no trait) always, and for armpit/ear when the sprite-name trait read misses. Both variants share
+        /// the prompt on purpose — the prompt itself must not be a tell.
         /// </summary>
         private static string[] DescriptionPool(int sign, bool isImposter) => sign switch
         {
@@ -207,8 +300,9 @@ namespace NoImNotAHumanAccess.World
             _             => Array.Empty<string>(),
         };
 
-        // Neutral, non-leaking prompts (placeholder). They tell the player WHAT they're looking at — the trait to judge —
-        // without stating whether it's normal or abnormal. Replace with art-accurate trait descriptions later.
+        // Neutral, non-leaking prompts. They tell the player WHAT they're looking at — the trait to judge — without
+        // stating whether it's normal or abnormal. Teeth/eyes/hands/aura-photo have no name-derived trait, so these
+        // stand; armpit/ear use them only when the sprite-name read misses.
         private static readonly string[] TeethPrompts     = { "Examine their teeth and gums." };
         private static readonly string[] EyePrompts       = { "Examine their eyes." };
         private static readonly string[] HandsPrompts     = { "Examine their hands." };
