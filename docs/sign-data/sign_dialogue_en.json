@@ -1,0 +1,6566 @@
+[
+ {
+  "character": "Alkonost",
+  "sign": "EYE",
+  "node": "Alkonost_Eyes",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Alkonost_Eyes_0f5c738",
+    "text": "Alkonost: Yeah, my sister cries a lot, but our eyes are still really similar. Her's are a bit calmer, maybe."
+   },
+   {
+    "id": "line:Alkonost_Eyes_019d944",
+    "text": "Alkonost: ..."
+   },
+   {
+    "id": "line:Alkonost_Eyes_02cc81b",
+    "text": "Alkonost: ...That worries me."
+   },
+   {
+    "id": "line:Alkonost_Eyes_0a454eb",
+    "text": "Alkonost: Yeah, my sister cries a lot, but our eyes are still really similar. They're not red, is what I mean."
+   },
+   {
+    "id": "line:Alkonost_Eyes_0086006",
+    "text": "Alkonost: ..."
+   }
+  ]
+ },
+ {
+  "character": "Alkonost",
+  "sign": "HANDS",
+  "node": "Alkonost_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Alkonost_Hands_0a11ac7",
+    "text": "Alkonost: My sister isn't in any shape to take care of herself right now. So my hands are always full."
+   },
+   {
+    "id": "line:Alkonost_Hands_04effe9",
+    "text": "Alkonost: ..."
+   }
+  ]
+ },
+ {
+  "character": "Alkonost",
+  "sign": "TEETH",
+  "node": "Alkonost_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Alkonost_Teeth_0aedb97",
+    "text": "Alkonost: We've always had strong teeth in our family."
+   },
+   {
+    "id": "line:Alkonost_Teeth_0091081",
+    "text": "Alkonost: Back when I was a teenager, I even tried to open a beer with them."
+   },
+   {
+    "id": "line:Alkonost_Teeth_0d32053",
+    "text": "Alkonost: ..."
+   }
+  ]
+ },
+ {
+  "character": "Alkonost",
+  "sign": "AURAPHOTO",
+  "node": "Alkonost_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Alkonost_Photo_0718558",
+    "text": "Alkonost: Now, I don't buy into all this flapdoodle aura business."
+   },
+   {
+    "id": "line:Alkonost_Photo_08cff6b",
+    "text": "Alkonost: Everything we do, everywhere we end up—that's by our own choice. Not any of that hocus-pocus applesauce."
+   },
+   {
+    "id": "line:Alkonost_Photo_00531bf",
+    "text": "Alkonost: ..."
+   }
+  ]
+ },
+ {
+  "character": "Alkonost",
+  "sign": "ARMPIT",
+  "node": "Alkonost_Armpit",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Alkonost_Armpit_0d4f1cb",
+    "text": "Alkonost: I'll show you. But please don't bother my sister, okay? She's too tired for this."
+   },
+   {
+    "id": "line:Alkonost_Armpit_0dcde84",
+    "text": "Alkonost: ..."
+   }
+  ]
+ },
+ {
+  "character": "Alkonost",
+  "sign": "EAR",
+  "node": "Alkonost_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Alkonost_Ears_0152215",
+    "text": "Alkonost: Wait... What's the Visitor sign again?"
+   },
+   {
+    "id": "line:Alkonost_Ears_0d269ae",
+    "text": "Alkonost: What are you looking for?"
+   },
+   {
+    "id": "line:Alkonost_Ears_08a71fa",
+    "text": "Alkonost: ..."
+   }
+  ]
+ },
+ {
+  "character": "Alt",
+  "sign": "EYE",
+  "node": "Alt_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Alt_Eyes_04f2012",
+    "text": "Alt: Oh, my eyes? I like them almost as much as my tattoos."
+   },
+   {
+    "id": "line:Alt_Eyes_0a3dadb",
+    "text": "Alt: …"
+   }
+  ]
+ },
+ {
+  "character": "Alt",
+  "sign": "HANDS",
+  "node": "Alt_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Alt_Hands_039e262",
+    "text": "Alt: Got dealt a bad hand with the nails."
+   },
+   {
+    "id": "line:Alt_Hands_03a6871",
+    "text": "Alt: I called a cab to get to the outskirts in peace."
+   },
+   {
+    "id": "line:Alt_Hands_05e1834",
+    "text": "Alt: But…"
+   },
+   {
+    "id": "line:Alt_Hands_0c047e4",
+    "text": "Alt: …"
+   }
+  ]
+ },
+ {
+  "character": "Alt",
+  "sign": "TEETH",
+  "node": "Alt_Teeth",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Alt_Teeth_03ad714",
+    "text": "Alt: I'm warning you, I'm a real business shark."
+   },
+   {
+    "id": "line:Alt_Teeth_0bc33cf",
+    "text": "Alt: Hahaha."
+   },
+   {
+    "id": "line:Alt_Teeth_06f6feb",
+    "text": "Alt: …"
+   }
+  ]
+ },
+ {
+  "character": "Alt",
+  "sign": "AURAPHOTO",
+  "node": "Alt_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Alt_Photo_0ea467e",
+    "text": "Alt: Oh wow, you've got a camera too."
+   },
+   {
+    "id": "line:Alt_Photo_088b0ef",
+    "text": "Alt: …"
+   }
+  ]
+ },
+ {
+  "character": "Alt",
+  "sign": "ARMPIT",
+  "node": "Alt_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Alt_Armpit_0b34e96",
+    "text": "Alt: I don't mind showing my armpits."
+   },
+   {
+    "id": "line:Alt_Armpit_0690e2c",
+    "text": "Alt: It's just…not a nice sight."
+   },
+   {
+    "id": "line:Alt_Armpit_05ebd27",
+    "text": "Alt: …"
+   }
+  ]
+ },
+ {
+  "character": "Alt",
+  "sign": "EAR",
+  "node": "Alt_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Alt_Ears_03aa796",
+    "text": "Alt: Hm. Alright."
+   },
+   {
+    "id": "line:Alt_Ears_0a0bdbb",
+    "text": "Alt: …"
+   }
+  ]
+ },
+ {
+  "character": "Anger",
+  "sign": "EYE",
+  "node": "Anger_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Anger_Eyes_070bb2c",
+    "text": "Anger: Whatever. Gaze into ‘em, if that's what you want."
+   },
+   {
+    "id": "line:Anger_Eyes_057ecdf",
+    "text": "Anger:..."
+   }
+  ]
+ },
+ {
+  "character": "Anger",
+  "sign": "HANDS",
+  "node": "Anger_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Anger_Hands_091cb31",
+    "text": "Anger: Sure, whatever."
+   },
+   {
+    "id": "line:Anger_Hands_094fef5",
+    "text": "Anger:..."
+   }
+  ]
+ },
+ {
+  "character": "Anger",
+  "sign": "TEETH",
+  "node": "Anger_Teeth",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Anger_Teeth_0d341e3",
+    "text": "Anger: I don't give a fuck. Here."
+   },
+   {
+    "id": "line:Anger_Teeth_0322e01",
+    "text": "Anger:..."
+   }
+  ]
+ },
+ {
+  "character": "Anger",
+  "sign": "AURAPHOTO",
+  "node": "Anger_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Anger_Photo_0566de4",
+    "text": "Anger: Oh yeah, shitlord?"
+   },
+   {
+    "id": "line:Anger_Photo_08e48a2",
+    "text": "Anger: ..."
+   }
+  ]
+ },
+ {
+  "character": "Anger",
+  "sign": "ARMPIT",
+  "node": "Anger_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Anger_Armpit_0f83332",
+    "text": "Anger: I don't give a flying fuck."
+   },
+   {
+    "id": "line:Anger_Armpit_0477d77",
+    "text": "Anger:..."
+   }
+  ]
+ },
+ {
+  "character": "Anger",
+  "sign": "EAR",
+  "node": "Anger_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Anger_Ears_06e1895",
+    "text": "Anger: Fuck..."
+   },
+   {
+    "id": "line:Anger_Ears_0583a97",
+    "text": "Anger: ..."
+   }
+  ]
+ },
+ {
+  "character": "Anxiety",
+  "sign": "EYE",
+  "node": "Anxiety_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Anxiety_Eyes_007b2a7",
+    "text": "Anxiety: You want to check my eyes?"
+   },
+   {
+    "id": "line:Anxiety_Eyes_0977f42",
+    "text": "Anxiety: I can already guess what you'll see..."
+   },
+   {
+    "id": "line:Anxiety_Eyes_046023f",
+    "text": "Anxiety: What happens if I have one of the signs?"
+   },
+   {
+    "id": "line:Anxiety_Eyes_0fd0e73",
+    "text": "Anxiety: ..."
+   }
+  ]
+ },
+ {
+  "character": "Anxiety",
+  "sign": "HANDS",
+  "node": "Anxiety_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Anxiety_Hands_0c705b4",
+    "text": "Anxiety: Y-You wanna look at my fingernails? That's a weird thing to check..."
+   },
+   {
+    "id": "line:Anxiety_Hands_05e6450",
+    "text": "Anxiety: But okay... Take a look..."
+   },
+   {
+    "id": "line:Anxiety_Hands_06b2d98",
+    "text": "Anxiety: ..."
+   }
+  ]
+ },
+ {
+  "character": "Anxiety",
+  "sign": "TEETH",
+  "node": "Anxiety_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Anxiety_Teeth_0cc57a5",
+    "text": "Anxiety: W-Wait what—you're gonna make a decision based on my teeth? O-Okay..."
+   },
+   {
+    "id": "line:Anxiety_Teeth_0b2e7c5",
+    "text": "Anxiety: I just had my teeth fixed."
+   },
+   {
+    "id": "line:Anxiety_Teeth_06e74da",
+    "text": "Anxiety: Though, if I'm honest..."
+   },
+   {
+    "id": "line:Anxiety_Teeth_01800b2",
+    "text": "Anxiety: I can't really remember being at the dentist. Was I ever even there?"
+   },
+   {
+    "id": "line:Anxiety_Teeth_03fb6e0",
+    "text": "Anxiety: God, I'm so nervous, I can't even remember if I ate yesterday."
+   },
+   {
+    "id": "line:Anxiety_Teeth_0d7c9e9",
+    "text": "Anxiety: ..."
+   }
+  ]
+ },
+ {
+  "character": "Anxiety",
+  "sign": "AURAPHOTO",
+  "node": "Anxiety_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Anxiety_Photo_033880d",
+    "text": "Anxiety: I-If it turns out I'm a Visitor...does that mean I'll start killing people?"
+   },
+   {
+    "id": "line:Anxiety_Photo_036a35a",
+    "text": "Anxiety: Will I be dangerous? Or...was I always dangerous?"
+   },
+   {
+    "id": "line:Anxiety_Photo_0f11148",
+    "text": "Anxiety: Maybe... Maybe I already kill people?"
+   },
+   {
+    "id": "line:Anxiety_Photo_0406a0e",
+    "text": "Anxiety: ..."
+   }
+  ]
+ },
+ {
+  "character": "Anxiety",
+  "sign": "ARMPIT",
+  "node": "Anxiety_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Anxiety_Armpit_0af5fc4",
+    "text": "Anxiety: Just like those Visitors back home..."
+   },
+   {
+    "id": "line:Anxiety_Armpit_0a0ea04",
+    "text": "Anxiety: ...Sorry, it was a horrible experience. I'll show you."
+   },
+   {
+    "id": "line:Anxiety_Armpit_02cd238",
+    "text": "Anxiety: ..."
+   }
+  ]
+ },
+ {
+  "character": "Anxiety",
+  "sign": "EAR",
+  "node": "Anxiety_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Anxiety_Ears_0df1bae",
+    "text": "Anxiety: Wh-Why are there so many signs?"
+   },
+   {
+    "id": "line:Anxiety_Ears_0f7b04e",
+    "text": "Anxiety: WHY DO I FIT EVERY SINGLE ONE OF THEM?! HAHAHA!"
+   },
+   {
+    "id": "line:Anxiety_Ears_0577d53",
+    "text": "Anxiety: ..."
+   }
+  ]
+ },
+ {
+  "character": "Bald",
+  "sign": "EYE",
+  "node": "Bald_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Bald_Eyes_0f27462",
+    "text": "Bald: You probably noticed, I’ve got this crappy thing on my eye."
+   },
+   {
+    "id": "line:Bald_Eyes_097c95a",
+    "text": "Bald: …"
+   }
+  ]
+ },
+ {
+  "character": "Bald",
+  "sign": "HANDS",
+  "node": "Bald_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Bald_Hands_047bfdf",
+    "text": "Bald: I've, uh…got eczema. That’s why there’s a bandage on my arm."
+   },
+   {
+    "id": "line:Bald_Hands_0468805",
+    "text": "Bald: …"
+   }
+  ]
+ },
+ {
+  "character": "Bald",
+  "sign": "TEETH",
+  "node": "Bald_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Bald_Teeth_0682b1d",
+    "text": "Bald: Uh…sure. I smoke sometimes. Hope I don’t stink too much."
+   },
+   {
+    "id": "line:Bald_Teeth_01127b1",
+    "text": "Bald: …"
+   }
+  ]
+ },
+ {
+  "character": "Bald",
+  "sign": "AURAPHOTO",
+  "node": "Bald_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Bald_Photo_0b444c9",
+    "text": "Bald: Oh, I love that. Roll camera!"
+   },
+   {
+    "id": "line:Bald_Photo_0b21761",
+    "text": "Bald: …"
+   }
+  ]
+ },
+ {
+  "character": "Bald",
+  "sign": "ARMPIT",
+  "node": "Bald_Armpit",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Bald_Armpit_0bff792",
+    "text": "Bald: Don’t freak out, alright?"
+   },
+   {
+    "id": "line:Bald_Armpit_0c176bd",
+    "text": "Bald: …"
+   },
+   {
+    "id": "line:Bald_Armpit_041c7d2",
+    "text": "Bald: It’s just another skin thing. See? I’m bald, and I’ve got patches like that all over."
+   },
+   {
+    "id": "line:Bald_Armpit_0830f11",
+    "text": "Bald: Shit, I haven’t showered in forever. My bad."
+   },
+   {
+    "id": "line:Bald_Armpit_021a31e",
+    "text": "Bald: …"
+   }
+  ]
+ },
+ {
+  "character": "Bald",
+  "sign": "EAR",
+  "node": "Bald_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Bald_Ears_01d466a",
+    "text": "Bald: Yeah, sure thing."
+   },
+   {
+    "id": "line:Bald_Ears_0c42e60",
+    "text": "Bald: …"
+   }
+  ]
+ },
+ {
+  "character": "Ballerina",
+  "sign": "EYE",
+  "node": "Ballerina_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Ballerina_Eyes_0ba8378",
+    "text": "Ballerina: Aaaaah, now to most interesting part."
+   },
+   {
+    "id": "line:Ballerina_Eyes_0d49e38",
+    "text": "Ballerina: I have things written in pupils. See...?"
+   },
+   {
+    "id": "line:Ballerina_Eyes_0ecf009",
+    "text": "Ballerina: ..."
+   }
+  ]
+ },
+ {
+  "character": "Ballerina",
+  "sign": "HANDS",
+  "node": "Ballerina_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Ballerina_Hands_060e4e4",
+    "text": "Ballerina: So what?"
+   },
+   {
+    "id": "line:Ballerina_Hands_00c042e",
+    "text": "Ballerina: I dance. Why interrupt to look at dancey hands?"
+   },
+   {
+    "id": "line:Ballerina_Hands_03cd050",
+    "text": "Ballerina: ..."
+   }
+  ]
+ },
+ {
+  "character": "Ballerina",
+  "sign": "TEETH",
+  "node": "Ballerina_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Ballerina_Teeth_018d631",
+    "text": "Ballerina: Teeth?"
+   },
+   {
+    "id": "line:Ballerina_Teeth_034e1cf",
+    "text": "Ballerina: You chew up what conscience leaves behind?"
+   },
+   {
+    "id": "line:Ballerina_Teeth_07cf1fb",
+    "text": "Ballerina: ..."
+   }
+  ]
+ },
+ {
+  "character": "Ballerina",
+  "sign": "AURAPHOTO",
+  "node": "Ballerina_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Ballerina_Photo_066c216",
+    "text": "Ballerina: What is? I do not know."
+   },
+   {
+    "id": "line:Ballerina_Photo_0d12a9a",
+    "text": "Ballerina: Time to try."
+   },
+   {
+    "id": "line:Ballerina_Photo_05bc0bb",
+    "text": "Ballerina: ..."
+   }
+  ]
+ },
+ {
+  "character": "Ballerina",
+  "sign": "ARMPIT",
+  "node": "Ballerina_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Ballerina_Armpit_043425f",
+    "text": "Ballerina: HAHAHAHA! Stare. Sniff. What else?"
+   },
+   {
+    "id": "line:Ballerina_Armpit_08d9312",
+    "text": "Ballerina: ..."
+   }
+  ]
+ },
+ {
+  "character": "Ballerina",
+  "sign": "EAR",
+  "node": "Ballerina_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Ballerina_Ears_03604e9",
+    "text": "Ballerina: Ahhh, good sign."
+   },
+   {
+    "id": "line:Ballerina_Ears_05ef528",
+    "text": "Ballerina: ..."
+   }
+  ]
+ },
+ {
+  "character": "Bestson",
+  "sign": "EYE",
+  "node": "Bestson_Eyes",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Bestson_Eyes_04ab7f5",
+    "text": "Bestson: Huh? What about them?"
+   },
+   {
+    "id": "line:Bestson_Eyes_01d3f00",
+    "text": "Bestson: …"
+   }
+  ]
+ },
+ {
+  "character": "Bestson",
+  "sign": "HANDS",
+  "node": "Bestson_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Bestson_Hands_0e219a7",
+    "text": "Bestson: Oh... Well, okay..."
+   },
+   {
+    "id": "line:Bestson_Hands_074a187",
+    "text": "Bestson: …"
+   }
+  ]
+ },
+ {
+  "character": "Bestson",
+  "sign": "TEETH",
+  "node": "Bestson_Teeth",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Bestson_Teeth_07feb4a",
+    "text": "Bestson: Oh... Is it really that bad? Well...okay..."
+   },
+   {
+    "id": "line:Bestson_Teeth_0466b50",
+    "text": "Bestson: …"
+   }
+  ]
+ },
+ {
+  "character": "Bestson",
+  "sign": "AURAPHOTO",
+  "node": "Bestson_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Bestson_Photo_0273242",
+    "text": "Bestson: You wanna take a picture? Well...okay. Just...tell me that everything's fine afterwards, okay?"
+   },
+   {
+    "id": "line:Bestson_Photo_03ed4b8",
+    "text": "Bestson: …"
+   }
+  ]
+ },
+ {
+  "character": "Bestson",
+  "sign": "ARMPIT",
+  "node": "Bestson_Armpit",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Bestson_Armpit_000dfa0",
+    "text": "Bestson: Uh... Well, okay..."
+   },
+   {
+    "id": "line:Bestson_Armpit_063a4c6",
+    "text": "Bestson: …"
+   }
+  ]
+ },
+ {
+  "character": "Bestson",
+  "sign": "EAR",
+  "node": "Bestson_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Bestson_Ears_0be7814",
+    "text": "Bestson: Huh? Well...okay..."
+   },
+   {
+    "id": "line:Bestson_Ears_07013da",
+    "text": "Bestson: …"
+   }
+  ]
+ },
+ {
+  "character": "BigLebowski",
+  "sign": "EYE",
+  "node": "BigLebowski_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:BigLebowski_Eyes_01970dc",
+    "text": "BigLebowski: Watch those hands. One wrong move and you're losing an eye."
+   },
+   {
+    "id": "line:BigLebowski_Eyes_0effe55",
+    "text": "BigLebowski: ..."
+   }
+  ]
+ },
+ {
+  "character": "BigLebowski",
+  "sign": "HANDS",
+  "node": "BigLebowski_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:BigLebowski_Hands_026864f",
+    "text": "BigLebowski: Hm..."
+   },
+   {
+    "id": "line:BigLebowski_Hands_088a3e3",
+    "text": "BigLebowski: Whatever. Just don't freak out, alright?"
+   },
+   {
+    "id": "line:BigLebowski_Hands_07d7ea8",
+    "text": "BigLebowski: ..."
+   },
+   {
+    "id": "line:BigLebowski_Hands_01adcbb",
+    "text": "BigLebowski: It's an allergic reaction. I break out in itchy rashes. Nasty stuff. Had it since I was a lil kid."
+   },
+   {
+    "id": "line:BigLebowski_Hands_0d1c23a",
+    "text": "BigLebowski: Here."
+   },
+   {
+    "id": "line:BigLebowski_Hands_059f39a",
+    "text": "BigLebowski: ..."
+   }
+  ]
+ },
+ {
+  "character": "BigLebowski",
+  "sign": "TEETH",
+  "node": "BigLebowski_Teeth",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:BigLebowski_Teeth_0c889b9",
+    "text": "BigLebowski: Weird thing to ask. And hey, you try anything and I'll bust your face in. For real."
+   },
+   {
+    "id": "line:BigLebowski_Teeth_0b71b83",
+    "text": "BigLebowski: ..."
+   }
+  ]
+ },
+ {
+  "character": "BigLebowski",
+  "sign": "AURAPHOTO",
+  "node": "BigLebowski_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:BigLebowski_Photo_07ea442",
+    "text": "BigLebowski: ..."
+   },
+   {
+    "id": "line:BigLebowski_Photo_007f361",
+    "text": "BigLebowski: If you're planning on sending this photo somewhere to help my parents track me down, you can fuck right off."
+   },
+   {
+    "id": "line:BigLebowski_Photo_00818ec",
+    "text": "BigLebowski: ..."
+   }
+  ]
+ },
+ {
+  "character": "BigLebowski",
+  "sign": "EAR",
+  "node": "BigLebowski_Ears",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:BigLebowski_Ears_080e67b",
+    "text": "BigLebowski: Urgh. Whatever. I don't care."
+   },
+   {
+    "id": "line:BigLebowski_Ears_0140d7b",
+    "text": "BigLebowski: ..."
+   }
+  ]
+ },
+ {
+  "character": "Blind",
+  "sign": "EYE",
+  "node": "Blind_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Blind_Eyes_0607280",
+    "text": "Blind: Hahahaha... Nothing unusual here!"
+   },
+   {
+    "id": "line:Blind_Eyes_03fbc06",
+    "text": "Blind: ..."
+   }
+  ]
+ },
+ {
+  "character": "Blind",
+  "sign": "HANDS",
+  "node": "Blind_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Blind_Hands_07b48bd",
+    "text": "Blind: Are they moving?"
+   },
+   {
+    "id": "line:Blind_Hands_0a1165a",
+    "text": "Blind: ..."
+   }
+  ]
+ },
+ {
+  "character": "Blind",
+  "sign": "TEETH",
+  "node": "Blind_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Blind_Teeth_04c571e",
+    "text": "Blind: By the way...they are the last witnesses."
+   },
+   {
+    "id": "line:Blind_Teeth_0b8c49c",
+    "text": "Blind: ..."
+   }
+  ]
+ },
+ {
+  "character": "Blind",
+  "sign": "AURAPHOTO",
+  "node": "Blind_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Blind_Photo_0bb91a7",
+    "text": "Blind: Go ahead, use the flash. I don't care."
+   },
+   {
+    "id": "line:Blind_Photo_0bd8603",
+    "text": "Blind: ..."
+   }
+  ]
+ },
+ {
+  "character": "Blind",
+  "sign": "ARMPIT",
+  "node": "Blind_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Blind_Armpit_009d9d4",
+    "text": "Blind: Funny."
+   },
+   {
+    "id": "line:Blind_Armpit_02e7552",
+    "text": "Blind: ..."
+   }
+  ]
+ },
+ {
+  "character": "Blind",
+  "sign": "EAR",
+  "node": "Blind_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Blind_Ears_00b8a51",
+    "text": "Blind: Did you hear that?"
+   },
+   {
+    "id": "line:Blind_Ears_0f3dc74",
+    "text": "Blind: ..."
+   }
+  ]
+ },
+ {
+  "character": "Buddy",
+  "sign": "EYE",
+  "node": "Buddy_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Buddy_Eyes_018de8d",
+    "text": "Buddy: Sure, take a look."
+   },
+   {
+    "id": "line:Buddy_Eyes_050d3ee",
+    "text": "Buddy: …"
+   }
+  ]
+ },
+ {
+  "character": "Buddy",
+  "sign": "EYE",
+  "node": "Fatman_Eyes",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Fatman_Eyes_06d38ce",
+    "text": "Fatman: Yeah, yeah, hold on..."
+   },
+   {
+    "id": "line:Fatman_Eyes_0efd0d8",
+    "text": "Fatman: ..."
+   }
+  ]
+ },
+ {
+  "character": "Buddy",
+  "sign": "HANDS",
+  "node": "Buddy_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Buddy_Hands_0086de5",
+    "text": "Buddy: Here, take a look..."
+   },
+   {
+    "id": "line:Buddy_Hands_0713bea",
+    "text": "Buddy: …"
+   }
+  ]
+ },
+ {
+  "character": "Buddy",
+  "sign": "HANDS",
+  "node": "Fatman_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Fatman_Hands_0ff0cec",
+    "text": "Fatman: Take a good look..."
+   },
+   {
+    "id": "line:Fatman_Hands_022152d",
+    "text": "Fatman: …"
+   }
+  ]
+ },
+ {
+  "character": "Buddy",
+  "sign": "TEETH",
+  "node": "Buddy_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Buddy_Teeth_0fa8546",
+    "text": "Buddy: Yep, take a look..."
+   },
+   {
+    "id": "line:Buddy_Teeth_0c490c8",
+    "text": "Buddy: ..."
+   }
+  ]
+ },
+ {
+  "character": "Buddy",
+  "sign": "AURAPHOTO",
+  "node": "Buddy_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Buddy_Photo_066ef22",
+    "text": "Buddy: Ah. Alright, snap a pic if you gotta."
+   },
+   {
+    "id": "line:Buddy_Photo_040fae3",
+    "text": "Buddy: …"
+   }
+  ]
+ },
+ {
+  "character": "Buddy",
+  "sign": "ARMPIT",
+  "node": "Buddy_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Buddy_Armpit_0e6e420",
+    "text": "Buddy: Uh, buddy... You sure about this? I mean, go ahead."
+   },
+   {
+    "id": "line:Buddy_Armpit_0f1af7a",
+    "text": "Buddy: …"
+   }
+  ]
+ },
+ {
+  "character": "Buddy",
+  "sign": "EAR",
+  "node": "Buddy_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Buddy_Ears_0ac6626",
+    "text": "Buddy: Here they are... Just plain ol' ears, nothin' fancy."
+   },
+   {
+    "id": "line:Buddy_Ears_0304fae",
+    "text": "Buddy: …"
+   }
+  ]
+ },
+ {
+  "character": "Buddy",
+  "sign": "EAR",
+  "node": "Fatman_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Fatman_Ears_0bea36b",
+    "text": "Fatman: Nothing to see there..."
+   },
+   {
+    "id": "line:Fatman_Ears_00c6c80",
+    "text": "Fatman: …"
+   }
+  ]
+ },
+ {
+  "character": "Cold",
+  "sign": "EYE",
+  "node": "Cold_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cold_Eyes_083cc02",
+    "text": "Cold: Now... Eyes are a window to hell, not to the s-soul."
+   },
+   {
+    "id": "line:Cold_Eyes_00ae88d",
+    "text": "Cold: My soul b-burned out long ago. Maybe that's why I'm so c-c-cold."
+   },
+   {
+    "id": "line:Cold_Eyes_0a48646",
+    "text": "Cold: ..."
+   }
+  ]
+ },
+ {
+  "character": "Cold",
+  "sign": "HANDS",
+  "node": "Cold_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cold_Hands_0967f38",
+    "text": "Cold: N-Nails? Sure, I'll show you."
+   },
+   {
+    "id": "line:Cold_Hands_0eea474",
+    "text": "Cold: Hm. I t-tore them all off."
+   },
+   {
+    "id": "line:Cold_Hands_016281d",
+    "text": "Cold: Still, you can t-take a look."
+   },
+   {
+    "id": "line:Cold_Hands_0f55709",
+    "text": "Cold: ..."
+   }
+  ]
+ },
+ {
+  "character": "Cold",
+  "sign": "TEETH",
+  "node": "Cold_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cold_Teeth_03cbefb",
+    "text": "Cold: Mm, t-t-teeth?"
+   },
+   {
+    "id": "line:Cold_Teeth_0a6538e",
+    "text": "Cold: Sure... T-Take a look."
+   },
+   {
+    "id": "line:Cold_Teeth_0d30991",
+    "text": "Cold: ..."
+   }
+  ]
+ },
+ {
+  "character": "Cold",
+  "sign": "AURAPHOTO",
+  "node": "Cold_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cold_Photo_0838d7b",
+    "text": "Cold: What does a photograph p-prove?"
+   },
+   {
+    "id": "line:Cold_Photo_0e76fbc",
+    "text": "Cold: Does it not s-seem strange to you?"
+   },
+   {
+    "id": "line:Cold_Photo_0c3172f",
+    "text": "Cold: B-B-But...it's not up to me. Is it?"
+   },
+   {
+    "id": "line:Cold_Photo_00a8b4f",
+    "text": "Cold: ..."
+   }
+  ]
+ },
+ {
+  "character": "Cold",
+  "sign": "ARMPIT",
+  "node": "Cold_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cold_Armpit_0e44be9",
+    "text": "Cold: Mm..."
+   },
+   {
+    "id": "line:Cold_Armpit_0b4af68",
+    "text": "Cold: I... I need a m-moment."
+   },
+   {
+    "id": "line:Cold_Armpit_06ec859",
+    "text": "Cold: J-Just..."
+   },
+   {
+    "id": "line:Cold_Armpit_068ca44",
+    "text": "Cold: ...Now. Look. Q-Quickly."
+   },
+   {
+    "id": "line:Cold_Armpit_018f45c",
+    "text": "Cold: ..."
+   }
+  ]
+ },
+ {
+  "character": "Cold",
+  "sign": "EAR",
+  "node": "Cold_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cold_Ears_06b59e8",
+    "text": "Cold: Our b-bodies are nothing but holes."
+   },
+   {
+    "id": "line:Cold_Ears_080557d",
+    "text": "Cold: Maybe that's why p-p-people vanish so easily? S-Swallowed up the moment you turn away."
+   },
+   {
+    "id": "line:Cold_Ears_0d082da",
+    "text": "Cold: ..."
+   }
+  ]
+ },
+ {
+  "character": "Couple",
+  "sign": "EYE",
+  "node": "Couple_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Couple_Eyes_0d65c54",
+    "text": "Couple: Sure, show me yours and I'll show you mine!"
+   },
+   {
+    "id": "line:Couple_Eyes_0b97b2b",
+    "text": "Couple: Sorry... I'm a little nervous... But who wouldn't be? Being tested is terrifying, even when you've got nothing to hide."
+   },
+   {
+    "id": "line:Couple_Eyes_0bcc40a",
+    "text": "Couple: ..."
+   }
+  ]
+ },
+ {
+  "character": "Couple",
+  "sign": "HANDS",
+  "node": "Couple_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Couple_Hands_0b31ec5",
+    "text": "Couple: Yepadoodle! My wife and I keep clean, don't we, honey?"
+   },
+   {
+    "id": "line:Couple_Hands_061efcf",
+    "text": "Couple: ..."
+   }
+  ]
+ },
+ {
+  "character": "Couple",
+  "sign": "TEETH",
+  "node": "Couple_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Couple_Teeth_0cd96bc",
+    "text": "Couple: To protect the ones you love, sometimes you gotta sink your teeth into life, haha."
+   },
+   {
+    "id": "line:Couple_Teeth_0a1a0ce",
+    "text": "Couple: ..."
+   }
+  ]
+ },
+ {
+  "character": "Couple",
+  "sign": "AURAPHOTO",
+  "node": "Couple_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Couple_Photo_026b1b7",
+    "text": "Couple: But... I guess that might give you reason to suspect us."
+   },
+   {
+    "id": "line:Couple_Photo_036f144",
+    "text": "Couple: Hold on, let me think..."
+   },
+   {
+    "id": "line:Couple_Photo_016db2b",
+    "text": "Couple: ..."
+   },
+   {
+    "id": "line:Couple_Photo_034d891",
+    "text": "Couple: Fine. Take the damn picture. But I get to keep it after."
+   },
+   {
+    "id": "line:Couple_Photo_0eeb804",
+    "text": "Couple: ..."
+   }
+  ]
+ },
+ {
+  "character": "Couple",
+  "sign": "ARMPIT",
+  "node": "Couple_Armpit",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Couple_Armpit_03f4403",
+    "text": "Couple: Oh, no, no, no. I'll be the only one showing you those, buster!"
+   },
+   {
+    "id": "line:Couple_Armpit_0410460",
+    "text": "Couple: ..."
+   }
+  ]
+ },
+ {
+  "character": "Couple",
+  "sign": "EAR",
+  "node": "Couple_Ears",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Couple_Ears_002d8ed",
+    "text": "Couple: I don't see how that has anything to do with the Visitors."
+   },
+   {
+    "id": "line:Couple_Ears_0c36835",
+    "text": "Couple: But sure, I've got nothing to hide. Here."
+   },
+   {
+    "id": "line:Couple_Ears_0c00c3f",
+    "text": "Couple: ..."
+   },
+   {
+    "id": "line:Couple_Ears_0d90b24",
+    "text": "Couple: And? What do you see?"
+   },
+   {
+    "id": "line:Couple_Ears_039e960",
+    "text": "Couple: Honey, you ever hear anything about ears being a sign of a Visitor? Quiet as a mouse, you are!"
+   },
+   {
+    "id": "line:Couple_Ears_0cb0d6b",
+    "text": "Couple: Oh, really? Hm. I see... Okay."
+   },
+   {
+    "id": "line:Couple_Ears_017f5fe",
+    "text": "Couple: ..."
+   }
+  ]
+ },
+ {
+  "character": "CultistOne",
+  "sign": "EYE",
+  "node": "Cultist1_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cultist1_Eyes_07aa212",
+    "text": "Cultist1: ..."
+   },
+   {
+    "id": "line:Cultist1_Eyes_0330f69",
+    "text": "Cultist1: ..."
+   }
+  ]
+ },
+ {
+  "character": "CultistOne",
+  "sign": "HANDS",
+  "node": "Cultist1_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cultist1_Hands_0e78f96",
+    "text": "Cultist1: ..."
+   },
+   {
+    "id": "line:Cultist1_Hands_01f2281",
+    "text": "Cultist1: ..."
+   }
+  ]
+ },
+ {
+  "character": "CultistOne",
+  "sign": "TEETH",
+  "node": "Cultist1_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cultist1_Teeth_0a23e8d",
+    "text": "Cultist1: ..."
+   },
+   {
+    "id": "line:Cultist1_Teeth_0096727",
+    "text": "Cultist1: ..."
+   }
+  ]
+ },
+ {
+  "character": "CultistOne",
+  "sign": "AURAPHOTO",
+  "node": "Cultist1_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cultist1_Photo_0e1a928",
+    "text": "Cultist1: ..."
+   },
+   {
+    "id": "line:Cultist1_Photo_0147428",
+    "text": "Cultist1: If that is what you decree."
+   },
+   {
+    "id": "line:Cultist1_Photo_0cb7dbb",
+    "text": "Cultist1: ..."
+   }
+  ]
+ },
+ {
+  "character": "CultistOne",
+  "sign": "ARMPIT",
+  "node": "Cultist1_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cultist1_Armpit_030ef2f",
+    "text": "Cultist1: ..."
+   },
+   {
+    "id": "line:Cultist1_Armpit_0567335",
+    "text": "Cultist1: ..."
+   }
+  ]
+ },
+ {
+  "character": "CultistOne",
+  "sign": "EAR",
+  "node": "Cultist1_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cultist1_Ears_0d73801",
+    "text": "Cultist1: ..."
+   },
+   {
+    "id": "line:Cultist1_Ears_0308e5e",
+    "text": "Cultist1: ..."
+   }
+  ]
+ },
+ {
+  "character": "CultistThree",
+  "sign": "EYE",
+  "node": "Cultist3_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cultist3_Eyes_08e1515",
+    "text": "Cultist3: These eyes of mine now hardly see."
+   },
+   {
+    "id": "line:Cultist3_Eyes_0e857be",
+    "text": "Cultist3: ..."
+   }
+  ]
+ },
+ {
+  "character": "CultistThree",
+  "sign": "HANDS",
+  "node": "Cultist3_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cultist3_Hands_07dd8e7",
+    "text": "Cultist3: These make us look like the Outsiders."
+   },
+   {
+    "id": "line:Cultist3_Hands_0f762c5",
+    "text": "Cultist3: ..."
+   }
+  ]
+ },
+ {
+  "character": "CultistThree",
+  "sign": "TEETH",
+  "node": "Cultist3_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cultist3_Teeth_0db061a",
+    "text": "Cultist3: Amusing how the lower and upper jaws can be so different."
+   },
+   {
+    "id": "line:Cultist3_Teeth_06b4d22",
+    "text": "Cultist3: ..."
+   }
+  ]
+ },
+ {
+  "character": "CultistThree",
+  "sign": "AURAPHOTO",
+  "node": "Cultist3_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cultist3_Photo_0c4accf",
+    "text": "Cultist3: ..."
+   },
+   {
+    "id": "line:Cultist3_Photo_0a93a28",
+    "text": "Cultist3: ..."
+   }
+  ]
+ },
+ {
+  "character": "CultistThree",
+  "sign": "ARMPIT",
+  "node": "Cultist3_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cultist3_Armpit_0ebefd9",
+    "text": "Cultist3: I shall attempt to shift my robe. Please be patient."
+   },
+   {
+    "id": "line:Cultist3_Armpit_0327d80",
+    "text": "Cultist3: ..."
+   }
+  ]
+ },
+ {
+  "character": "CultistThree",
+  "sign": "EAR",
+  "node": "Cultist3_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cultist3_Ears_0f3086c",
+    "text": "Cultist3: ..."
+   },
+   {
+    "id": "line:Cultist3_Ears_07b012c",
+    "text": "Cultist3: ..."
+   }
+  ]
+ },
+ {
+  "character": "CultistTwo",
+  "sign": "EYE",
+  "node": "Cultist2_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cultist2_Eyes_0144eb6",
+    "text": "Cultist2: Sleep lays beyond our reach."
+   },
+   {
+    "id": "line:Cultist2_Eyes_0181923",
+    "text": "Cultist2: ..."
+   }
+  ]
+ },
+ {
+  "character": "CultistTwo",
+  "sign": "HANDS",
+  "node": "Cultist2_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cultist2_Hands_0565b87",
+    "text": "Cultist2: ..."
+   },
+   {
+    "id": "line:Cultist2_Hands_022eb07",
+    "text": "Cultist2: ..."
+   }
+  ]
+ },
+ {
+  "character": "CultistTwo",
+  "sign": "TEETH",
+  "node": "Cultist2_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cultist2_Teeth_01b951e",
+    "text": "Cultist2: But of course."
+   },
+   {
+    "id": "line:Cultist2_Teeth_041707e",
+    "text": "Cultist2: Crooked as a soul...and perhaps larger than advisable."
+   },
+   {
+    "id": "line:Cultist2_Teeth_05fddfc",
+    "text": "Cultist2: ..."
+   }
+  ]
+ },
+ {
+  "character": "CultistTwo",
+  "sign": "AURAPHOTO",
+  "node": "Cultist2_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cultist2_Photo_0344f61",
+    "text": "Cultist2: A picture...? This is new."
+   },
+   {
+    "id": "line:Cultist2_Photo_073396f",
+    "text": "Cultist2: I find myself feeling...uneasy."
+   },
+   {
+    "id": "line:Cultist2_Photo_0b17cac",
+    "text": "Cultist2: ..."
+   }
+  ]
+ },
+ {
+  "character": "CultistTwo",
+  "sign": "ARMPIT",
+  "node": "Cultist2_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cultist2_Armpit_00d9cd8",
+    "text": "Cultist2: ..."
+   },
+   {
+    "id": "line:Cultist2_Armpit_01cf4ea",
+    "text": "Cultist2: ..."
+   }
+  ]
+ },
+ {
+  "character": "CultistTwo",
+  "sign": "EAR",
+  "node": "Cultist2_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Cultist2_Ears_0df809b",
+    "text": "Cultist2: ..."
+   },
+   {
+    "id": "line:Cultist2_Ears_08c4dee",
+    "text": "Cultist2: ..."
+   }
+  ]
+ },
+ {
+  "character": "Daughter",
+  "sign": "EYE",
+  "node": "Daughter_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Daughter_Eyes_081c02f",
+    "text": "Daughter: You're gonna look inside my eyes?"
+   },
+   {
+    "id": "line:Daughter_Eyes_0707f88",
+    "text": "Daughter: Will you see what I'm thinking about?"
+   },
+   {
+    "id": "line:Daughter_Eyes_09241b2",
+    "text": "Daughter: In that case, I'll make sure to think really carefully, don't worry."
+   },
+   {
+    "id": "line:Daughter_Eyes_0b93d66",
+    "text": "Daughter: ..."
+   }
+  ]
+ },
+ {
+  "character": "Daughter",
+  "sign": "HANDS",
+  "node": "Daughter_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Daughter_Hands_069c6f0",
+    "text": "Daughter: I can cut my own nails already."
+   },
+   {
+    "id": "line:Daughter_Hands_0501f2e",
+    "text": "Daughter: I'm not very good at it yet..."
+   },
+   {
+    "id": "line:Daughter_Hands_0eb8e48",
+    "text": "Daughter: Look. See!"
+   },
+   {
+    "id": "line:Daughter_Hands_0f57559",
+    "text": "Daughter: ..."
+   }
+  ]
+ },
+ {
+  "character": "Daughter",
+  "sign": "TEETH",
+  "node": "Daughter_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Daughter_Teeth_0edf43e",
+    "text": "Daughter: My teeth? You want me to show you my teeth?"
+   },
+   {
+    "id": "line:Daughter_Teeth_04b3012",
+    "text": "Daughter: Why? I still have some baby teeth. Dad said..."
+   },
+   {
+    "id": "line:Daughter_Teeth_0cdf7d4",
+    "text": "Daughter: I'm not gonna cry anymore."
+   },
+   {
+    "id": "line:Daughter_Teeth_030b97f",
+    "text": "Daughter: ..."
+   }
+  ]
+ },
+ {
+  "character": "Daughter",
+  "sign": "AURAPHOTO",
+  "node": "Daughter_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Daughter_Photo_052fe5e",
+    "text": "Daughter: A photograph?"
+   },
+   {
+    "id": "line:Daughter_Photo_03b6527",
+    "text": "Daughter: I don't have many pictures of me."
+   },
+   {
+    "id": "line:Daughter_Photo_0ac1ec6",
+    "text": "Daughter: Will you show me it after?"
+   },
+   {
+    "id": "line:Daughter_Photo_08d386d",
+    "text": "Daughter: ..."
+   }
+  ]
+ },
+ {
+  "character": "Daughter",
+  "sign": "EAR",
+  "node": "Daughter_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Daughter_Ears_0797223",
+    "text": "Daughter: Daddy said you have to be careful of ticks and bugs. Is that what you're looking for?"
+   },
+   {
+    "id": "line:Daughter_Ears_0a2550f",
+    "text": "Daughter: ..."
+   }
+  ]
+ },
+ {
+  "character": "Doc",
+  "sign": "EYE",
+  "node": "Doctor_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Doctor_Eyes_057f2d9",
+    "text": "Doctor: Of course, I'll show you my eyes."
+   },
+   {
+    "id": "line:Doctor_Eyes_00306a5",
+    "text": "Doctor: Not sure if you noticed, I've got polycoria."
+   },
+   {
+    "id": "line:Doctor_Eyes_024d460",
+    "text": "Doctor: It's an official diagnosis, yes."
+   },
+   {
+    "id": "line:Doctor_Eyes_03acf9f",
+    "text": "Doctor: ..."
+   }
+  ]
+ },
+ {
+  "character": "Doc",
+  "sign": "HANDS",
+  "node": "Doctor_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Doctor_Hands_0073ddc",
+    "text": "Doctor: Yes, these hands have performed countless surgeries."
+   },
+   {
+    "id": "line:Doctor_Hands_0f6f956",
+    "text": "Doctor: I could tell you operating table stories for days...but maybe another time."
+   },
+   {
+    "id": "line:Doctor_Hands_087ef7f",
+    "text": "Doctor: For now, please, take a look at them."
+   },
+   {
+    "id": "line:Doctor_Hands_03db016",
+    "text": "Doctor: ..."
+   }
+  ]
+ },
+ {
+  "character": "Doc",
+  "sign": "TEETH",
+  "node": "Doctor_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Doctor_Teeth_0cb0833",
+    "text": "Doctor: Thank you for your concern, but my teeth are in perfect health."
+   },
+   {
+    "id": "line:Doctor_Teeth_040aaec",
+    "text": "Doctor: Ah, you mean to check for signs of being a Visitor."
+   },
+   {
+    "id": "line:Doctor_Teeth_0b8926a",
+    "text": "Doctor: Of course, take a look."
+   },
+   {
+    "id": "line:Doctor_Teeth_03520dd",
+    "text": "Doctor: ..."
+   }
+  ]
+ },
+ {
+  "character": "Doc",
+  "sign": "AURAPHOTO",
+  "node": "Doctor_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Doctor_Photo_00a0977",
+    "text": "Doctor: No problem at all."
+   },
+   {
+    "id": "line:Doctor_Photo_0353b00",
+    "text": "Doctor: You have to thoroughly check every little thing. I can only assume this must be part of it."
+   },
+   {
+    "id": "line:Doctor_Photo_0eefed1",
+    "text": "Doctor: ..."
+   }
+  ]
+ },
+ {
+  "character": "Doc",
+  "sign": "ARMPIT",
+  "node": "Doctor_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Doctor_Armpit_0dd8566",
+    "text": "Doctor: Yes, just a moment. I'm not as quick as I used to be."
+   },
+   {
+    "id": "line:Doctor_Armpit_0db51c9",
+    "text": "Doctor: ..."
+   }
+  ]
+ },
+ {
+  "character": "Doc",
+  "sign": "EAR",
+  "node": "Doctor_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Doctor_Ears_0bf5989",
+    "text": "Doctor: Fair enough. I trust you know what you're doing."
+   },
+   {
+    "id": "line:Doctor_Ears_02804d6",
+    "text": "Doctor: ..."
+   }
+  ]
+ },
+ {
+  "character": "Dude",
+  "sign": "EYE",
+  "node": "Dude_Eyes",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Dude_Eyes_038a5f1",
+    "text": "Dude: Can't keep my lids open too long. Looking at stuff stresses me out, man."
+   },
+   {
+    "id": "line:Dude_Eyes_055371e",
+    "text": "Dude: ..."
+   }
+  ]
+ },
+ {
+  "character": "Dude",
+  "sign": "HANDS",
+  "node": "Dude_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Dude_Hands_076adb3",
+    "text": "Dude: Dude, I was, like, diggin' up a geocache recently. Dirt? Don't sweat it."
+   },
+   {
+    "id": "line:Dude_Hands_06d3faa",
+    "text": "Dude: Whoa-whoa!"
+   },
+   {
+    "id": "line:Dude_Hands_0c1560f",
+    "text": "Dude: ..."
+   }
+  ]
+ },
+ {
+  "character": "Dude",
+  "sign": "TEETH",
+  "node": "Dude_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Dude_Teeth_089adb1",
+    "text": "Dude: Hahaha, check it!"
+   },
+   {
+    "id": "line:Dude_Teeth_0db00e3",
+    "text": "Dude: ..."
+   }
+  ]
+ },
+ {
+  "character": "Dude",
+  "sign": "AURAPHOTO",
+  "node": "Dude_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Dude_Photo_0475679",
+    "text": "Dude: Sure, dude!"
+   },
+   {
+    "id": "line:Dude_Photo_0c9a371",
+    "text": "Dude: ..."
+   }
+  ]
+ },
+ {
+  "character": "Dude",
+  "sign": "ARMPIT",
+  "node": "Dude_Armpit",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Dude_Armpit_0a8042d",
+    "text": "Dude: Hold up, bro...gotta watch the strip show first."
+   },
+   {
+    "id": "line:Dude_Armpit_06a9d2e",
+    "text": "Dude: ..."
+   }
+  ]
+ },
+ {
+  "character": "Dude",
+  "sign": "EAR",
+  "node": "Dude_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Dude_Ears_06cf205",
+    "text": "Dude: Uh-huh."
+   },
+   {
+    "id": "line:Dude_Ears_060d599",
+    "text": "Dude: ..."
+   }
+  ]
+ },
+ {
+  "character": "Edgar",
+  "sign": "EYE",
+  "node": "Edgar_Eyes",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Edgar_Eyes_018b52b",
+    "text": "Edgar: Even the memory of her eyes unsettles me so... Forgive me, you wished to see my own..."
+   },
+   {
+    "id": "line:Edgar_Eyes_0923b73",
+    "text": "Edgar: ..."
+   }
+  ]
+ },
+ {
+  "character": "Edgar",
+  "sign": "HANDS",
+  "node": "Edgar_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Edgar_Hands_0185d1b",
+    "text": "Edgar: She had such tender hands. At times I feared they would dissolve into mine, like she was a ghost…"
+   },
+   {
+    "id": "line:Edgar_Hands_04546fb",
+    "text": "Edgar: ..."
+   }
+  ]
+ },
+ {
+  "character": "Edgar",
+  "sign": "TEETH",
+  "node": "Edgar_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Edgar_Teeth_054e7d6",
+    "text": "Edgar: I remember how pearls shone in her mouth... How I cherished her smile..."
+   },
+   {
+    "id": "line:Edgar_Teeth_0fd5b76",
+    "text": "Edgar: ..."
+   }
+  ]
+ },
+ {
+  "character": "Edgar",
+  "sign": "AURAPHOTO",
+  "node": "Edgar_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Edgar_Photo_049a514",
+    "text": "Edgar: Very well."
+   },
+   {
+    "id": "line:Edgar_Photo_0c694d9",
+    "text": "Edgar: ..."
+   }
+  ]
+ },
+ {
+  "character": "Edgar",
+  "sign": "ARMPIT",
+  "node": "Edgar_Armpit",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Edgar_Armpit_0fb6efa",
+    "text": "Edgar: Yes, of course."
+   },
+   {
+    "id": "line:Edgar_Armpit_09a957d",
+    "text": "Edgar: ..."
+   }
+  ]
+ },
+ {
+  "character": "Edgar",
+  "sign": "EAR",
+  "node": "Edgar_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Edgar_Ears_0c6c999",
+    "text": "Edgar: What was, remains."
+   },
+   {
+    "id": "line:Edgar_Ears_0d9bd61",
+    "text": "Edgar: ..."
+   }
+  ]
+ },
+ {
+  "character": "Esenin",
+  "sign": "EYE",
+  "node": "Esenin_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Esenin_Eyes_06ca9f9",
+    "text": "Esenin: Every day is more ridiculous than the last."
+   },
+   {
+    "id": "line:Esenin_Eyes_07497b4",
+    "text": "Esenin: What if I hadn't slept? Or was crying?"
+   },
+   {
+    "id": "line:Esenin_Eyes_0d451cc",
+    "text": "Esenin: I don't understand how this works at all anymore."
+   },
+   {
+    "id": "line:Esenin_Eyes_0bb04ba",
+    "text": "Esenin: And what are you going to do if one sign confirms it? Or several?"
+   },
+   {
+    "id": "line:Esenin_Eyes_0df9d03",
+    "text": "Esenin: ..."
+   }
+  ]
+ },
+ {
+  "character": "Esenin",
+  "sign": "HANDS",
+  "node": "Esenin_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Esenin_Hands_0b19ae8",
+    "text": "Esenin: Fingernails caked with dirt are a sign?"
+   },
+   {
+    "id": "line:Esenin_Hands_00ef75d",
+    "text": "Esenin: They could just wash their hands!"
+   },
+   {
+    "id": "line:Esenin_Hands_0e5c901",
+    "text": "Esenin: You're saying a gardener would automatically become a Visitor, then?"
+   },
+   {
+    "id": "line:Esenin_Hands_0c80870",
+    "text": "Esenin: Fucking nonsense."
+   },
+   {
+    "id": "line:Esenin_Hands_05b83a6",
+    "text": "Esenin: Check my nails."
+   },
+   {
+    "id": "line:Esenin_Hands_051a3b7",
+    "text": "Esenin: ..."
+   }
+  ]
+ },
+ {
+  "character": "Esenin",
+  "sign": "TEETH",
+  "node": "Esenin_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Esenin_Teeth_05da7bf",
+    "text": "Esenin: You want me to show you my teeth?"
+   },
+   {
+    "id": "line:Esenin_Teeth_08293d4",
+    "text": "Esenin: Okay, take a look. Take in that odor of sadness and smoke."
+   },
+   {
+    "id": "line:Esenin_Teeth_03bdb45",
+    "text": "Esenin: ..."
+   }
+  ]
+ },
+ {
+  "character": "Esenin",
+  "sign": "AURAPHOTO",
+  "node": "Esenin_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Esenin_Photo_01d8951",
+    "text": "Esenin: It's all..."
+   },
+   {
+    "id": "line:Esenin_Photo_078acbe",
+    "text": "Esenin: ...A fucked-up mess."
+   },
+   {
+    "id": "line:Esenin_Photo_031e1ff",
+    "text": "Esenin: Ever get the sense that it's all leading to some kind of terrifying hell?"
+   },
+   {
+    "id": "line:Esenin_Photo_0031dde",
+    "text": "Esenin: Everything's supposedly under control, but there's complete chaos all around us."
+   },
+   {
+    "id": "line:Esenin_Photo_0fd3c17",
+    "text": "Esenin: Well, take your damn photo."
+   },
+   {
+    "id": "line:Esenin_Photo_09d74f8",
+    "text": "Esenin: ..."
+   }
+  ]
+ },
+ {
+  "character": "Esenin",
+  "sign": "ARMPIT",
+  "node": "Esenin_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Esenin_Armpit_0042fd8",
+    "text": "Esenin: Fucking seriously? Are you a moron?"
+   },
+   {
+    "id": "line:Esenin_Armpit_0836065",
+    "text": "Esenin: Has FEMA blended your brains?"
+   },
+   {
+    "id": "line:Esenin_Armpit_0f56035",
+    "text": "Esenin: Or are you just blasted? I thought all the strong stuff was gone already..."
+   },
+   {
+    "id": "line:Esenin_Armpit_0be77a2",
+    "text": "Esenin: Well, since you're asking, I'll show you!"
+   },
+   {
+    "id": "line:Esenin_Armpit_05c23a4",
+    "text": "Esenin: ..."
+   }
+  ]
+ },
+ {
+  "character": "Esenin",
+  "sign": "EAR",
+  "node": "Esenin_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Esenin_Ears_0e8c7d4",
+    "text": "Esenin: Do you even know what you're looking for?"
+   },
+   {
+    "id": "line:Esenin_Ears_0dae071",
+    "text": "Esenin: What to watch out for?"
+   },
+   {
+    "id": "line:Esenin_Ears_00cbaf4",
+    "text": "Esenin: Watching you fumble around has really driven home just how royally fucked we are."
+   },
+   {
+    "id": "line:Esenin_Ears_062698d",
+    "text": "Esenin: ..."
+   }
+  ]
+ },
+ {
+  "character": "Experienced",
+  "sign": "EYE",
+  "node": "Experienced_Eyes",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Experienced_Eyes_0ea6a3a",
+    "text": "Experienced: Wanna see if I got a conscience in there?"
+   },
+   {
+    "id": "line:Experienced_Eyes_0e2496f",
+    "text": "Experienced: …"
+   },
+   {
+    "id": "line:Experienced_Eyes_00bb980",
+    "text": "Experienced: Alright, then take a look."
+   },
+   {
+    "id": "line:Experienced_Eyes_0e4c656",
+    "text": "Experienced:  …"
+   }
+  ]
+ },
+ {
+  "character": "Experienced",
+  "sign": "HANDS",
+  "node": "Experienced_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Experienced_Hands_03f7600",
+    "text": "Experienced: No problem, mate. Take a look."
+   },
+   {
+    "id": "line:Experienced_Hands_020b13c",
+    "text": "Experienced: …"
+   }
+  ]
+ },
+ {
+  "character": "Experienced",
+  "sign": "TEETH",
+  "node": "Experienced_Teeth",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Experienced_Teeth_0fc89b1",
+    "text": "Experienced: The screws ain’t exactly handin’ out minty toothbrushes. Don’t freak about the bleeding gums."
+   },
+   {
+    "id": "line:Experienced_Teeth_0fc54f2",
+    "text": "Experienced: …"
+   }
+  ]
+ },
+ {
+  "character": "Experienced",
+  "sign": "AURAPHOTO",
+  "node": "Experienced_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Experienced_Photo_0961fb1",
+    "text": "Experienced: ...Or is this some kinda test?"
+   },
+   {
+    "id": "line:Experienced_Photo_0c7170b",
+    "text": "Experienced: …"
+   },
+   {
+    "id": "line:Experienced_Photo_00cee57",
+    "text": "Experienced: Feels like I’m back gettin’ logged. Photo goin’ in my file and all that."
+   },
+   {
+    "id": "line:Experienced_Photo_072974b",
+    "text": "Experienced: Fine, snap it if you gotta."
+   },
+   {
+    "id": "line:Experienced_Photo_010f9a9",
+    "text": "Experienced: …"
+   }
+  ]
+ },
+ {
+  "character": "Experienced",
+  "sign": "ARMPIT",
+  "node": "Experienced_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Experienced_Armpit_0ef3354",
+    "text": "Experienced: Mate, look... I’ll show ya, but..."
+   },
+   {
+    "id": "line:Experienced_Armpit_04736d5",
+    "text": "Experienced: …"
+   },
+   {
+    "id": "line:Experienced_Armpit_087b7d8",
+    "text": "Experienced: Back in the day, I got burned fuckin' around drunk. So don’t freak out."
+   },
+   {
+    "id": "line:Experienced_Armpit_0148fca",
+    "text": "Experienced: …"
+   }
+  ]
+ },
+ {
+  "character": "Experienced",
+  "sign": "EAR",
+  "node": "Experienced_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Experienced_Ears_005e438",
+    "text": "Experienced: You're losin' it, mate."
+   },
+   {
+    "id": "line:Experienced_Ears_0ad3bca",
+    "text": "Experienced: You really need to see those?"
+   },
+   {
+    "id": "line:Experienced_Ears_039d6b2",
+    "text": "Experienced: …"
+   },
+   {
+    "id": "line:Experienced_Ears_090487f",
+    "text": "Experienced: Fine, fuck it."
+   },
+   {
+    "id": "line:Experienced_Ears_0e0f078",
+    "text": "Experienced: …"
+   }
+  ]
+ },
+ {
+  "character": "Fairytaller",
+  "sign": "EYE",
+  "node": "Fairytaller_Eyes",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Fairytaller_Eyes_0273d94",
+    "text": "Fairytaller: Here."
+   },
+   {
+    "id": "line:Fairytaller_Eyes_07878a3",
+    "text": "Fairytaller: …"
+   }
+  ]
+ },
+ {
+  "character": "Fairytaller",
+  "sign": "HANDS",
+  "node": "Fairytaller_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Fairytaller_Hands_06ee4c5",
+    "text": "Fairytaller: Here."
+   },
+   {
+    "id": "line:Fairytaller_Hands_03e9e58",
+    "text": "Fairytaller: …"
+   }
+  ]
+ },
+ {
+  "character": "Fairytaller",
+  "sign": "TEETH",
+  "node": "Fairytaller_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Fairytaller_Teeth_01e6158",
+    "text": "Fairytaller: Here."
+   },
+   {
+    "id": "line:Fairytaller_Teeth_0629399",
+    "text": "Fairytaller: …"
+   }
+  ]
+ },
+ {
+  "character": "Fairytaller",
+  "sign": "AURAPHOTO",
+  "node": "Fairytaller_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Fairytaller_Photo_02c646e",
+    "text": "Fairytaller: Sounds interesting."
+   },
+   {
+    "id": "line:Fairytaller_Photo_02c4d44",
+    "text": "Fairytaller: …"
+   }
+  ]
+ },
+ {
+  "character": "Fairytaller",
+  "sign": "ARMPIT",
+  "node": "Fairytaller_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Fairytaller_Armpit_02eb681",
+    "text": "Fairytaller: Um… If you insist."
+   },
+   {
+    "id": "line:Fairytaller_Armpit_0551866",
+    "text": "Fairytaller: Here."
+   },
+   {
+    "id": "line:Fairytaller_Armpit_08b6acf",
+    "text": "Fairytaller: …"
+   }
+  ]
+ },
+ {
+  "character": "Fairytaller",
+  "sign": "EAR",
+  "node": "Fairytaller_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Fairytaller_Ears_0955df1",
+    "text": "Fairytaller: Here."
+   },
+   {
+    "id": "line:Fairytaller_Ears_02d5b2d",
+    "text": "Fairytaller: …"
+   }
+  ]
+ },
+ {
+  "character": "Fan",
+  "sign": "EYE",
+  "node": "Fanatic_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Fanatic_Eyes_053fac8",
+    "text": "Fanatic: LOOK INTO MY DARK EYES!"
+   },
+   {
+    "id": "line:Fanatic_Eyes_02731da",
+    "text": "Fanatic: I use them to absorb all the benefits of the righteous beams, transforming them into energy."
+   },
+   {
+    "id": "line:Fanatic_Eyes_0c5e0dd",
+    "text": "Fanatic: I get all of my energy through my EYES!"
+   },
+   {
+    "id": "line:Fanatic_Eyes_043cef9",
+    "text": "Fanatic: ..."
+   }
+  ]
+ },
+ {
+  "character": "Fan",
+  "sign": "HANDS",
+  "node": "Fanatic_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Fanatic_Hands_09c822b",
+    "text": "Fanatic: As you wish, my friend!"
+   },
+   {
+    "id": "line:Fanatic_Hands_0e0c5c4",
+    "text": "Fanatic: Behold these holy nails as much as you like."
+   },
+   {
+    "id": "line:Fanatic_Hands_0a657e0",
+    "text": "Fanatic: I've trained myself to absorb the beneficial sunlight with them."
+   },
+   {
+    "id": "line:Fanatic_Hands_0c358bd",
+    "text": "Fanatic: And open beer bottles, of course!"
+   },
+   {
+    "id": "line:Fanatic_Hands_03ed1e1",
+    "text": "Fanatic: ..."
+   }
+  ]
+ },
+ {
+  "character": "Fan",
+  "sign": "TEETH",
+  "node": "Fanatic_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Fanatic_Teeth_08dda0a",
+    "text": "Fanatic: You want me to show you my teeth?"
+   },
+   {
+    "id": "line:Fanatic_Teeth_091b8b6",
+    "text": "Fanatic: MY TEETH STOOD UP FOR THE TRUTH!"
+   },
+   {
+    "id": "line:Fanatic_Teeth_05d059f",
+    "text": "Fanatic: ...and they fell for it. Martyrs."
+   },
+   {
+    "id": "line:Fanatic_Teeth_06956fa",
+    "text": "Fanatic: You can see that for yourself."
+   },
+   {
+    "id": "line:Fanatic_Teeth_0ea7c7c",
+    "text": "Fanatic: ..."
+   }
+  ]
+ },
+ {
+  "character": "Fan",
+  "sign": "AURAPHOTO",
+  "node": "Fanatic_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Fanatic_Photo_0305b25",
+    "text": "Fanatic: You wish to immortalize me on film?"
+   },
+   {
+    "id": "line:Fanatic_Photo_0e2ae4c",
+    "text": "Fanatic: Hmm... Hmm..."
+   },
+   {
+    "id": "line:Fanatic_Photo_0397c21",
+    "text": "Fanatic: Did you know I once shook hands with the SHINING SUN LEADER himself?"
+   },
+   {
+    "id": "line:Fanatic_Photo_0c7d673",
+    "text": "Fanatic: It was I who taught him how to stare straight into the Sun. But I'll gift you that holy tale later, human."
+   },
+   {
+    "id": "line:Fanatic_Photo_0f5d103",
+    "text": "Fanatic: Go on, GRACE OUR EYES WITH MY IMMORTALIZATION!"
+   },
+   {
+    "id": "line:Fanatic_Photo_05761d7",
+    "text": "Fanatic: ..."
+   }
+  ]
+ },
+ {
+  "character": "Fan",
+  "sign": "ARMPIT",
+  "node": "Fanatic_Armpit",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Fanatic_Armpit_06d9f47",
+    "text": "Fanatic: Ah, a prank-lover, eh?"
+   },
+   {
+    "id": "line:Fanatic_Armpit_0da6935",
+    "text": "Fanatic: Well, give them a sniff if that's what you're into."
+   },
+   {
+    "id": "line:Fanatic_Armpit_02f0fad",
+    "text": "Fanatic: ..."
+   },
+   {
+    "id": "line:Fanatic_Armpit_0081c4b",
+    "text": "Fanatic: This is the result of self-care."
+   },
+   {
+    "id": "line:Fanatic_Armpit_0a9cc74",
+    "text": "Fanatic: Ah, a prank-lover, eh?"
+   },
+   {
+    "id": "line:Fanatic_Armpit_00e4b9b",
+    "text": "Fanatic: Well, give them a sniff if that's what you're into."
+   },
+   {
+    "id": "line:Fanatic_Armpit_0ed4c42",
+    "text": "Fanatic: ..."
+   }
+  ]
+ },
+ {
+  "character": "Fan",
+  "sign": "EAR",
+  "node": "Fanatic_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Fanatic_Ears_0fe5094",
+    "text": "Fanatic: Yes! I receive the righteous signals of LIFE straight through my ears! How did you know?"
+   },
+   {
+    "id": "line:Fanatic_Ears_0c01099",
+    "text": "Fanatic: ..."
+   }
+  ]
+ },
+ {
+  "character": "Fatman",
+  "sign": "TEETH",
+  "node": "Fatman_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Fatman_Teeth_06d8142",
+    "text": "Fatman: What's next, you want me to bend over for you? What a joke, wasting a minister's time with this crap."
+   },
+   {
+    "id": "line:Fatman_Teeth_00e47c0",
+    "text": "Fatman: ..."
+   },
+   {
+    "id": "line:Fatman_Teeth_0316b2d",
+    "text": "Fatman: You just won't let it go, will you?"
+   },
+   {
+    "id": "line:Fatman_Teeth_0b5e5ff",
+    "text": "Fatman: Tch. Alright, here. Look."
+   },
+   {
+    "id": "line:Fatman_Teeth_084de36",
+    "text": "Fatman: ..."
+   }
+  ]
+ },
+ {
+  "character": "Fatman",
+  "sign": "AURAPHOTO",
+  "node": "Fatman_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Fatman_Photo_0c390c6",
+    "text": "Fatman: Go on. Just lemme get up... Like the good old days..."
+   },
+   {
+    "id": "line:Fatman_Photo_09b1238",
+    "text": "Fatman: ..."
+   }
+  ]
+ },
+ {
+  "character": "Fatman",
+  "sign": "ARMPIT",
+  "node": "Fatman_Armpit",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Fatman_Armpit_0eff35b",
+    "text": "Fatman: Hmph. Some funny old tests you've got here."
+   },
+   {
+    "id": "line:Fatman_Armpit_076f871",
+    "text": "Fatman: ..."
+   }
+  ]
+ },
+ {
+  "character": "Firefighter",
+  "sign": "EYE",
+  "node": "Firefighter_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Firefighter_Eyes_077d9a8",
+    "text": "Firefighter: No problem."
+   },
+   {
+    "id": "line:Firefighter_Eyes_0d25bbb",
+    "text": "Firefighter: ..."
+   }
+  ]
+ },
+ {
+  "character": "Firefighter",
+  "sign": "HANDS",
+  "node": "Firefighter_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Firefighter_Hands_0e809bf",
+    "text": "Firefighter: Here, look... *cough*"
+   },
+   {
+    "id": "line:Firefighter_Hands_02132fa",
+    "text": "Firefighter: ..."
+   }
+  ]
+ },
+ {
+  "character": "Firefighter",
+  "sign": "TEETH",
+  "node": "Firefighter_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Firefighter_Teeth_09c1819",
+    "text": "Firefighter: Take a look."
+   },
+   {
+    "id": "line:Firefighter_Teeth_0e48c2d",
+    "text": "Firefighter: ..."
+   }
+  ]
+ },
+ {
+  "character": "Firefighter",
+  "sign": "AURAPHOTO",
+  "node": "Firefighter_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Firefighter_Photo_01ba045",
+    "text": "Firefighter: Sure, whatever. You'll only get a charred corpse, though. That's how it always is."
+   },
+   {
+    "id": "line:Firefighter_Photo_00cdc52",
+    "text": "Firefighter: ..."
+   }
+  ]
+ },
+ {
+  "character": "Firefighter",
+  "sign": "ARMPIT",
+  "node": "Firefighter_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Firefighter_Armpit_0412a37",
+    "text": "Firefighter: You sure? It ain't pretty sight..."
+   },
+   {
+    "id": "line:Firefighter_Armpit_04dcf3b",
+    "text": "Firefighter: ..."
+   }
+  ]
+ },
+ {
+  "character": "Firefighter",
+  "sign": "EAR",
+  "node": "Firefighter_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Firefighter_Ears_0174130",
+    "text": "Firefighter: You won't find much to check. They're charred down to the cartilage."
+   },
+   {
+    "id": "line:Firefighter_Ears_00af63a",
+    "text": "Firefighter: ..."
+   }
+  ]
+ },
+ {
+  "character": "Foreigner",
+  "sign": "EYE",
+  "node": "Foreigner_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Foreigner_Eyes_0aba9fb",
+    "text": "Foreigner: Vbvh?"
+   },
+   {
+    "id": "line:Foreigner_Eyes_0db4669",
+    "text": "Foreigner: ..."
+   }
+  ]
+ },
+ {
+  "character": "Foreigner",
+  "sign": "HANDS",
+  "node": "Foreigner_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Foreigner_Hands_0654052",
+    "text": "Foreigner: Szmwh? Urmv."
+   },
+   {
+    "id": "line:Foreigner_Hands_0f1188a",
+    "text": "Foreigner: ..."
+   }
+  ]
+ },
+ {
+  "character": "Foreigner",
+  "sign": "TEETH",
+  "node": "Foreigner_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Foreigner_Teeth_03ba689",
+    "text": "Foreigner: Dszg? Nb MOUF? Bvzs, rg dzh hvdm hsfg.  Hl dszg mld? Wl R mvvw gl SMYAL?"
+   },
+   {
+    "id": "line:Foreigner_Teeth_07f95d5",
+    "text": "Foreigner: ..."
+   }
+  ]
+ },
+ {
+  "character": "Foreigner",
+  "sign": "AURAPHOTO",
+  "node": "Foreigner_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Foreigner_Photo_0c3c7aa",
+    "text": "Foreigner: Dsviv rh gsv kslgl? Gsrh wvhvievh gl yv uiznvw!"
+   },
+   {
+    "id": "line:Foreigner_Photo_0e6834c",
+    "text": "Foreigner: ..."
+   }
+  ]
+ },
+ {
+  "character": "Foreigner",
+  "sign": "ARMPIT",
+  "node": "Foreigner_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Foreigner_Armpit_090c5f5",
+    "text": "Foreigner: R wlmg ivzoob tvg zmb lu gsrh... yfg dszgvevi..."
+   },
+   {
+    "id": "line:Foreigner_Armpit_0caeb5e",
+    "text": "Foreigner: ..."
+   }
+  ]
+ },
+ {
+  "character": "Foreigner",
+  "sign": "EAR",
+  "node": "Foreigner_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Foreigner_Ears_076f3a7",
+    "text": "Foreigner: Gsvb ziv hrnkob vzih."
+   },
+   {
+    "id": "line:Foreigner_Ears_001e25f",
+    "text": "Foreigner: ..."
+   }
+  ]
+ },
+ {
+  "character": "FormerFema",
+  "sign": "EYE",
+  "node": "FormerFema_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FormerFema_Eyes_0f99d72",
+    "text": "FormerFema: Ah, yes. I love this one. People's eyes are beautiful after all."
+   },
+   {
+    "id": "line:FormerFema_Eyes_0dd2830",
+    "text": "FormerFema: ..."
+   }
+  ]
+ },
+ {
+  "character": "FormerFema",
+  "sign": "HANDS",
+  "node": "FormerFema_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FormerFema_Hands_0aee8f2",
+    "text": "FormerFema: You want me to take off my gloves? No way. Not safe. You'll have to test me like this."
+   },
+   {
+    "id": "line:FormerFema_Hands_09b87e3",
+    "text": "FormerFema: ..."
+   }
+  ]
+ },
+ {
+  "character": "FormerFema",
+  "sign": "TEETH",
+  "node": "FormerFema_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FormerFema_Teeth_05285bc",
+    "text": "FormerFema: So, you actually take your job seriously."
+   },
+   {
+    "id": "line:FormerFema_Teeth_0946bb4",
+    "text": "FormerFema: ..."
+   }
+  ]
+ },
+ {
+  "character": "FormerFema",
+  "sign": "AURAPHOTO",
+  "node": "FormerFema_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FormerFema_Photo_0c3ab82",
+    "text": "FormerFema: I need to warn you, it might look...unusual."
+   },
+   {
+    "id": "line:FormerFema_Photo_0eb7a59",
+    "text": "FormerFema: ..."
+   }
+  ]
+ },
+ {
+  "character": "FormerFema",
+  "sign": "ARMPIT",
+  "node": "FormerFema_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FormerFema_Armpit_0bdb5a1",
+    "text": "FormerFema: You really want to see this?"
+   },
+   {
+    "id": "line:FormerFema_Armpit_05019cf",
+    "text": "FormerFema: ..."
+   }
+  ]
+ },
+ {
+  "character": "FormerFema",
+  "sign": "EAR",
+  "node": "FormerFema_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FormerFema_Ears_0b1a335",
+    "text": "FormerFema: You kidding? We didn't train for this! Don't know about others, but our team never checked for this."
+   },
+   {
+    "id": "line:FormerFema_Ears_09f516a",
+    "text": "FormerFema: ..."
+   }
+  ]
+ },
+ {
+  "character": "FortuneTeller",
+  "sign": "EYE",
+  "node": "FortuneTeller_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FortuneTeller_Eyes_0415701",
+    "text": "FortuneTeller: Oh, my eyes? They're brown, of course."
+   },
+   {
+    "id": "line:FortuneTeller_Eyes_088a05c",
+    "text": "FortuneTeller: ..."
+   }
+  ]
+ },
+ {
+  "character": "FortuneTeller",
+  "sign": "HANDS",
+  "node": "FortuneTeller_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FortuneTeller_Hands_07d86b8",
+    "text": "FortuneTeller: Well, go ahead and look."
+   },
+   {
+    "id": "line:FortuneTeller_Hands_0abf20d",
+    "text": "FortuneTeller: ..."
+   }
+  ]
+ },
+ {
+  "character": "FortuneTeller",
+  "sign": "TEETH",
+  "node": "FortuneTeller_Teeth",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:FortuneTeller_Teeth_04fc7f9",
+    "text": "FortuneTeller: Well, take a look."
+   },
+   {
+    "id": "line:FortuneTeller_Teeth_0590da7",
+    "text": "FortuneTeller: ..."
+   }
+  ]
+ },
+ {
+  "character": "FortuneTeller",
+  "sign": "AURAPHOTO",
+  "node": "FortuneTeller_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FortuneTeller_Photo_032121c",
+    "text": "FortuneTeller: Be careful now. My aura can be blinding!"
+   },
+   {
+    "id": "line:FortuneTeller_Photo_0e42c7f",
+    "text": "FortuneTeller: ..."
+   }
+  ]
+ },
+ {
+  "character": "FortuneTeller",
+  "sign": "ARMPIT",
+  "node": "FortuneTeller_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FortuneTeller_Armpit_060de09",
+    "text": "FortuneTeller: Ohhh, the things the universe puts in my path... Very well, take a look."
+   },
+   {
+    "id": "line:FortuneTeller_Armpit_0a1eda6",
+    "text": "FortuneTeller: ..."
+   }
+  ]
+ },
+ {
+  "character": "FortuneTeller",
+  "sign": "EAR",
+  "node": "FortuneTeller_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FortuneTeller_Ears_0082536",
+    "text": "FortuneTeller: Go ahead and look, but be careful. My ears hear everything—even your thoughts."
+   },
+   {
+    "id": "line:FortuneTeller_Ears_062153f",
+    "text": "FortuneTeller: ..."
+   }
+  ]
+ },
+ {
+  "character": "Fugitive",
+  "sign": "EYE",
+  "node": "Fugitive_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Fugitive_Eyes_06f963d",
+    "text": "Fugitive: Alright."
+   },
+   {
+    "id": "line:Fugitive_Eyes_0fd0208",
+    "text": "Fugitive: ..."
+   }
+  ]
+ },
+ {
+  "character": "Fugitive",
+  "sign": "HANDS",
+  "node": "Fugitive_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Fugitive_Hands_0970e73",
+    "text": "Fugitive: Go ahead. They've taken a beating, that's for sure."
+   },
+   {
+    "id": "line:Fugitive_Hands_0480b6f",
+    "text": "Fugitive: ..."
+   },
+   {
+    "id": "line:Fugitive_Hands_0ed2106",
+    "text": "Fugitive: Dirty, yeah? Fell in a goddamn puddle running from those pigs. Before that, cut 'em climbing over some barbed wire."
+   },
+   {
+    "id": "line:Fugitive_Hands_058ead0",
+    "text": "Fugitive: Fine, take a look."
+   },
+   {
+    "id": "line:Fugitive_Hands_018993f",
+    "text": "Fugitive: ..."
+   }
+  ]
+ },
+ {
+  "character": "Fugitive",
+  "sign": "TEETH",
+  "node": "Fugitive_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Fugitive_Teeth_01b0881",
+    "text": "Fugitive: Sure, take a look."
+   },
+   {
+    "id": "line:Fugitive_Teeth_0b05dcf",
+    "text": "Fugitive: ..."
+   }
+  ]
+ },
+ {
+  "character": "Fugitive",
+  "sign": "AURAPHOTO",
+  "node": "Fugitive_Photo",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Fugitive_Photo_0848972",
+    "text": "Fugitive: Yeah? Didn't think anyone still did that."
+   },
+   {
+    "id": "line:Fugitive_Photo_0f9c8fc",
+    "text": "Fugitive: ..."
+   }
+  ]
+ },
+ {
+  "character": "Fugitive",
+  "sign": "ARMPIT",
+  "node": "Fugitive_Armpit",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Fugitive_Armpit_0766636",
+    "text": "Fugitive: Well, shit... You're not screwing with me, are ya?"
+   },
+   {
+    "id": "line:Fugitive_Armpit_0c9308a",
+    "text": "Fugitive: ..."
+   }
+  ]
+ },
+ {
+  "character": "Fugitive",
+  "sign": "EAR",
+  "node": "Fugitive_Ears",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Fugitive_Ears_0036756",
+    "text": "Fugitive: Seriously? Don't ya think these \"signs\" are meant to spread more panic?"
+   },
+   {
+    "id": "line:Fugitive_Ears_08fce5e",
+    "text": "Fugitive: ..."
+   },
+   {
+    "id": "line:Fugitive_Ears_0dc82e2",
+    "text": "Fugitive: Dirty? Yeah they're dirty. Like anyone's would be, living and working without taking any showers."
+   },
+   {
+    "id": "line:Fugitive_Ears_0f79806",
+    "text": "Fugitive: Seriously? You think you can spot a Visitor by their ears? Alright, be my fuckin' guest."
+   },
+   {
+    "id": "line:Fugitive_Ears_0ffc845",
+    "text": "Fugitive: ..."
+   }
+  ]
+ },
+ {
+  "character": "FunnyGuy",
+  "sign": "EYE",
+  "node": "FunnyGuy_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FunnyGuy_Eyes_0853c9c",
+    "text": "FunnyGuy: Got a dark spot on my iris."
+   },
+   {
+    "id": "line:FunnyGuy_Eyes_0a31eb2",
+    "text": "FunnyGuy: Take a look."
+   },
+   {
+    "id": "line:FunnyGuy_Eyes_0c38d44",
+    "text": "FunnyGuy: ..."
+   }
+  ]
+ },
+ {
+  "character": "FunnyGuy",
+  "sign": "HANDS",
+  "node": "FunnyGuy_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FunnyGuy_Hands_0cf8d82",
+    "text": "FunnyGuy: Just your regular work-worn hands."
+   },
+   {
+    "id": "line:FunnyGuy_Hands_081ecbe",
+    "text": "FunnyGuy: ..."
+   }
+  ]
+ },
+ {
+  "character": "FunnyGuy",
+  "sign": "TEETH",
+  "node": "FunnyGuy_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FunnyGuy_Teeth_01fc2b9",
+    "text": "FunnyGuy: Aw, come on. Brush too hard and you'll wear down the enamel."
+   },
+   {
+    "id": "line:FunnyGuy_Teeth_0876816",
+    "text": "FunnyGuy: ..."
+   }
+  ]
+ },
+ {
+  "character": "FunnyGuy",
+  "sign": "AURAPHOTO",
+  "node": "FunnyGuy_Photo",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:FunnyGuy_Photo_05c8d51",
+    "text": "FunnyGuy: Oh, guess I should button up."
+   },
+   {
+    "id": "line:FunnyGuy_Photo_0f08349",
+    "text": "FunnyGuy: Eh, screw it. It's just one picture."
+   },
+   {
+    "id": "line:FunnyGuy_Photo_0af0ed5",
+    "text": "FunnyGuy: ..."
+   }
+  ]
+ },
+ {
+  "character": "FunnyGuy",
+  "sign": "ARMPIT",
+  "node": "FunnyGuy_Armpit",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:FunnyGuy_Armpit_083d933",
+    "text": "FunnyGuy: Our plant's a real lawsuit waiting to happen."
+   },
+   {
+    "id": "line:FunnyGuy_Armpit_0030634",
+    "text": "FunnyGuy: I was supposed to retire soon."
+   },
+   {
+    "id": "line:FunnyGuy_Armpit_0b79fef",
+    "text": "FunnyGuy: ..."
+   }
+  ]
+ },
+ {
+  "character": "FunnyGuy",
+  "sign": "EAR",
+  "node": "FunnyGuy_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FunnyGuy_Ears_094c29c",
+    "text": "FunnyGuy: Go ahead, why not."
+   },
+   {
+    "id": "line:FunnyGuy_Ears_0181608",
+    "text": "FunnyGuy: ..."
+   }
+  ]
+ },
+ {
+  "character": "GraveDigger",
+  "sign": "EYE",
+  "node": "GraveDigger_Eyes",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:GraveDigger_Eyes_0e8ec6d",
+    "text": "GraveDigger: Nights are my shift."
+   },
+   {
+    "id": "line:GraveDigger_Eyes_0829f7a",
+    "text": "GraveDigger: ..."
+   }
+  ]
+ },
+ {
+  "character": "GraveDigger",
+  "sign": "HANDS",
+  "node": "GraveDigger_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:GraveDigger_Hands_0c6c7db",
+    "text": "GraveDigger: These hands fed me, kept me alive."
+   },
+   {
+    "id": "line:GraveDigger_Hands_056cdd3",
+    "text": "GraveDigger: ..."
+   }
+  ]
+ },
+ {
+  "character": "GraveDigger",
+  "sign": "TEETH",
+  "node": "GraveDigger_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:GraveDigger_Teeth_017fadc",
+    "text": "GraveDigger: When you dig too deep... sometimes you don't just find bones."
+   },
+   {
+    "id": "line:GraveDigger_Teeth_02530b4",
+    "text": "GraveDigger: ..."
+   }
+  ]
+ },
+ {
+  "character": "GraveDigger",
+  "sign": "AURAPHOTO",
+  "node": "GraveDigger_Photo",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:GraveDigger_Photo_030cb7c",
+    "text": "GraveDigger: A photo's a dangerous thing, I tell ya! Like a mirror. It keeps what it sees."
+   },
+   {
+    "id": "line:GraveDigger_Photo_069df75",
+    "text": "GraveDigger: ..."
+   }
+  ]
+ },
+ {
+  "character": "GraveDigger",
+  "sign": "ARMPIT",
+  "node": "GraveDigger_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:GraveDigger_Armpit_0d5ab73",
+    "text": "GraveDigger: Ugh, well, aren't you something...?"
+   },
+   {
+    "id": "line:GraveDigger_Armpit_0cf61f8",
+    "text": "GraveDigger: ..."
+   }
+  ]
+ },
+ {
+  "character": "GraveDigger",
+  "sign": "EAR",
+  "node": "GraveDigger_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:GraveDigger_Ears_00dc2ce",
+    "text": "GraveDigger: Just ears. Ain't nothin' fancy."
+   },
+   {
+    "id": "line:GraveDigger_Ears_09a0f8c",
+    "text": "GraveDigger: ..."
+   }
+  ]
+ },
+ {
+  "character": "Greatmother",
+  "sign": "EYE",
+  "node": "Greatmother_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Greatmother_Eyes_033f348",
+    "text": "Greatmother: Darlin', I've always had busted vessels in my eyes."
+   },
+   {
+    "id": "line:Greatmother_Eyes_00afb11",
+    "text": "Greatmother: Don't see how you reckon you'll figure I'm a Visitor with that."
+   },
+   {
+    "id": "line:Greatmother_Eyes_056f413",
+    "text": "Greatmother: ..."
+   }
+  ]
+ },
+ {
+  "character": "Greatmother",
+  "sign": "HANDS",
+  "node": "Greatmother_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Greatmother_Hands_0a3b396",
+    "text": "Greatmother: That one ain't gone work..."
+   },
+   {
+    "id": "line:Greatmother_Hands_0c6b6d2",
+    "text": "Greatmother: Growin' old ain't a joy, darlin'."
+   },
+   {
+    "id": "line:Greatmother_Hands_0c4fe85",
+    "text": "Greatmother: ..."
+   }
+  ]
+ },
+ {
+  "character": "Greatmother",
+  "sign": "TEETH",
+  "node": "Greatmother_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Greatmother_Teeth_09988a8",
+    "text": "Greatmother: Bless your heart! What teeth, darlin'?"
+   },
+   {
+    "id": "line:Greatmother_Teeth_0076903",
+    "text": "Greatmother: Go on, take yourself a good ol' look!"
+   },
+   {
+    "id": "line:Greatmother_Teeth_0e240a8",
+    "text": "Greatmother: ..."
+   }
+  ]
+ },
+ {
+  "character": "Greatmother",
+  "sign": "AURAPHOTO",
+  "node": "Greatmother_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Greatmother_Photo_0b69287",
+    "text": "Greatmother: Ain't nobody taken a photo of Momma in years!"
+   },
+   {
+    "id": "line:Greatmother_Photo_07dfc11",
+    "text": "Greatmother: Go on, darlin'. Why not?"
+   },
+   {
+    "id": "line:Greatmother_Photo_05e64f3",
+    "text": "Greatmother: ..."
+   }
+  ]
+ },
+ {
+  "character": "Greatmother",
+  "sign": "ARMPIT",
+  "node": "Greatmother_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Greatmother_Armpit_0e92212",
+    "text": "Greatmother: Momma's gettin' old, darlin'. My body just ain't what it used to be."
+   },
+   {
+    "id": "line:Greatmother_Armpit_00fdc19",
+    "text": "Greatmother: ..."
+   }
+  ]
+ },
+ {
+  "character": "Greatmother",
+  "sign": "EAR",
+  "node": "Greatmother_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Greatmother_Ears_0fb483e",
+    "text": "Greatmother: At night I hear this scratchin'. Like somethin's crawlin' 'round underneath us."
+   },
+   {
+    "id": "line:Greatmother_Ears_070b6a8",
+    "text": "Greatmother: ..."
+   }
+  ]
+ },
+ {
+  "character": "Hunter",
+  "sign": "EYE",
+  "node": "Hunter_Eyes",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Hunter_Eyes_05f6eaa",
+    "text": "Hunter: But after that last run-in, they ain't nothing but red."
+   },
+   {
+    "id": "line:Hunter_Eyes_0699b69",
+    "text": "Hunter: I was taking down some varmint and he threw dirt, or shit, or SOMETHIN' into my eyes. Hurts all the damn time now."
+   },
+   {
+    "id": "line:Hunter_Eyes_0e2dcb6",
+    "text": "Hunter: ..."
+   },
+   {
+    "id": "line:Hunter_Eyes_0a102f8",
+    "text": "Hunter: Easy, kid. That smarts somethin' fierce."
+   },
+   {
+    "id": "line:Hunter_Eyes_0a2a522",
+    "text": "Hunter: A life like mine'll drain the color from any fella's eyes."
+   },
+   {
+    "id": "line:Hunter_Eyes_0455790",
+    "text": "Hunter: ..."
+   }
+  ]
+ },
+ {
+  "character": "Hunter",
+  "sign": "HANDS",
+  "node": "Hunter_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Hunter_Hands_0ac0c90",
+    "text": "Hunter: Let's move this along, kid."
+   },
+   {
+    "id": "line:Hunter_Hands_0f1082f",
+    "text": "Hunter: ..."
+   }
+  ]
+ },
+ {
+  "character": "Hunter",
+  "sign": "TEETH",
+  "node": "Hunter_Teeth",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Hunter_Teeth_033625f",
+    "text": "Hunter: Teeth, huh? Fine, I'll show ya."
+   },
+   {
+    "id": "line:Hunter_Teeth_0656e28",
+    "text": "Hunter: ..."
+   }
+  ]
+ },
+ {
+  "character": "Hunter",
+  "sign": "AURAPHOTO",
+  "node": "Hunter_Photo_Gun",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Hunter_Photo_Gun_0ec25fb",
+    "text": "Hunter: Take pictures of somethin' else. Kill some varmint. I don't give a hoot...just get your darn camera outta my face!"
+   },
+   {
+    "id": "line:Hunter_Photo_Gun_0a26479",
+    "text": "Hunter: ...Hm."
+   },
+   {
+    "id": "line:Hunter_Photo_Gun_03f4817",
+    "text": "Hunter: I'll flinch."
+   },
+   {
+    "id": "line:Hunter_Photo_Gun_09d94bc",
+    "text": "Hunter: ..."
+   }
+  ]
+ },
+ {
+  "character": "Hunter",
+  "sign": "ARMPIT",
+  "node": "Hunter_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Hunter_Armpit_0104620",
+    "text": "Hunter: More signs, more easier we can fine those varmints."
+   },
+   {
+    "id": "line:Hunter_Armpit_0d3b012",
+    "text": "Hunter: ..."
+   }
+  ]
+ },
+ {
+  "character": "Hunter",
+  "sign": "EAR",
+  "node": "Hunter_Ears",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Hunter_Ears_0396e18",
+    "text": "Hunter: Heard that report too, kid. ...Fine, take a look."
+   },
+   {
+    "id": "line:Hunter_Ears_0af33fd",
+    "text": "Hunter: ..."
+   }
+  ]
+ },
+ {
+  "character": "Intruder",
+  "sign": "EYE",
+  "node": "Intruder_Eyes",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Intruder_Eyes_0083b66",
+    "text": "Intruder: I heard somewhere that insomnia makes your eyes darker."
+   },
+   {
+    "id": "line:Intruder_Eyes_0efbcc7",
+    "text": "Intruder: I wonder if that's true?"
+   },
+   {
+    "id": "line:Intruder_Eyes_0aedb8b",
+    "text": "Intruder: ..."
+   }
+  ]
+ },
+ {
+  "character": "Intruder",
+  "sign": "HANDS",
+  "node": "Intruder_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Intruder_Hands_007e6d5",
+    "text": "Intruder: These hands are ready to push through any thing in my way."
+   },
+   {
+    "id": "line:Intruder_Hands_09bdd54",
+    "text": "Intruder: In that way, maybe I'm clawing my way into my own dreams?"
+   },
+   {
+    "id": "line:Intruder_Hands_03c7666",
+    "text": "Intruder: ..."
+   }
+  ]
+ },
+ {
+  "character": "Intruder",
+  "sign": "TEETH",
+  "node": "Intruder_Teeth",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Intruder_Teeth_0b86a82",
+    "text": "Intruder: Yes. I'll show you in a moment."
+   },
+   {
+    "id": "line:Intruder_Teeth_0321c28",
+    "text": "Intruder: I'm so tired, I tend to forget things."
+   },
+   {
+    "id": "line:Intruder_Teeth_0769bee",
+    "text": "Intruder: ..."
+   },
+   {
+    "id": "line:Intruder_Teeth_0c5f57c",
+    "text": "Intruder: I think we need to put less focus on the little things. Make all of this seem a little less...odd."
+   },
+   {
+    "id": "line:Intruder_Teeth_0acaeea",
+    "text": "Intruder: I may have a bad memory, but I still remember to brush my teeth."
+   },
+   {
+    "id": "line:Intruder_Teeth_0cce0d6",
+    "text": "Intruder: ..."
+   }
+  ]
+ },
+ {
+  "character": "Intruder",
+  "sign": "AURAPHOTO",
+  "node": "Intruder_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Intruder_Photo_0b17740",
+    "text": "Intruder: I'm curious to see what it looks like."
+   },
+   {
+    "id": "line:Intruder_Photo_0f9014d",
+    "text": "Intruder: ..."
+   }
+  ]
+ },
+ {
+  "character": "Intruder",
+  "sign": "ARMPIT",
+  "node": "Intruder_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Intruder_Armpit_0d36b85",
+    "text": "Intruder: For some reason they hurt, like they're irritated. Odd..."
+   },
+   {
+    "id": "line:Intruder_Armpit_0b7eacc",
+    "text": "Intruder: ..."
+   }
+  ]
+ },
+ {
+  "character": "Intruder",
+  "sign": "EAR",
+  "node": "Intruder_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Intruder_Ears_0a82482",
+    "text": "Intruder: Hmm? Haven't heard of that one before."
+   },
+   {
+    "id": "line:Intruder_Ears_0678d55",
+    "text": "Intruder: Why not, let's give it a try."
+   },
+   {
+    "id": "line:Intruder_Ears_0db12ba",
+    "text": "Intruder: ..."
+   }
+  ]
+ },
+ {
+  "character": "Jacket",
+  "sign": "EYE",
+  "node": "Jacket_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Jacket_Eyes_028669c",
+    "text": "Jacket: I’ll show you my eyes, just…"
+   },
+   {
+    "id": "line:Jacket_Eyes_0265fc8",
+    "text": "Jacket: Honestly, I’m a little nervous. Don’t judge too much."
+   },
+   {
+    "id": "line:Jacket_Eyes_0ee7f89",
+    "text": "Jacket: ..."
+   }
+  ]
+ },
+ {
+  "character": "Jacket",
+  "sign": "HANDS",
+  "node": "Jacket_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Jacket_Hands_0d46fbc",
+    "text": "Jacket: No problem."
+   },
+   {
+    "id": "line:Jacket_Hands_097f870",
+    "text": "Jacket: ..."
+   }
+  ]
+ },
+ {
+  "character": "Jacket",
+  "sign": "TEETH",
+  "node": "Jacket_Teeth",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Jacket_Teeth_08e7161",
+    "text": "Jacket: Yeah, take a look."
+   },
+   {
+    "id": "line:Jacket_Teeth_0e7a25b",
+    "text": "Jacket: …"
+   }
+  ]
+ },
+ {
+  "character": "Jacket",
+  "sign": "AURAPHOTO",
+  "node": "Jacket_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Jacket_Photo_0386cb8",
+    "text": "Jacket: I don’t mind taking a photo, but your camera looks kinda weird."
+   },
+   {
+    "id": "line:Jacket_Photo_05de175",
+    "text": "Jacket: ..."
+   }
+  ]
+ },
+ {
+  "character": "Jacket",
+  "sign": "ARMPIT",
+  "node": "Jacket_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Jacket_Armpit_0323009",
+    "text": "Jacket: Oh, about the armpits…"
+   },
+   {
+    "id": "line:Jacket_Armpit_0cc6357",
+    "text": "Jacket: ..."
+   }
+  ]
+ },
+ {
+  "character": "Jacket",
+  "sign": "EAR",
+  "node": "Jacket_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Jacket_Ears_09ed47f",
+    "text": "Jacket: ..."
+   },
+   {
+    "id": "line:Jacket_Ears_035ce00",
+    "text": "Jacket: Ears weren’t on the list of signs, were they?"
+   },
+   {
+    "id": "line:Jacket_Ears_01ad94a",
+    "text": "Jacket: Though I’ll admit, I am not particularly aware what the signs are. Maybe I just missed that one."
+   },
+   {
+    "id": "line:Jacket_Ears_021541d",
+    "text": "Jacket: ..."
+   }
+  ]
+ },
+ {
+  "character": "Jacob",
+  "sign": "EYE",
+  "node": "Jacob_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Jacob_Eyes_07fb8b9",
+    "text": "Jacob: Haven't slept in days..."
+   },
+   {
+    "id": "line:Jacob_Eyes_097a3bd",
+    "text": "Jacob: ..."
+   }
+  ]
+ },
+ {
+  "character": "Jacob",
+  "sign": "HANDS",
+  "node": "Jacob_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Jacob_Hands_0186651",
+    "text": "Jacob: My hands? Really?"
+   },
+   {
+    "id": "line:Jacob_Hands_08a7e1d",
+    "text": "Jacob: ..."
+   }
+  ]
+ },
+ {
+  "character": "Jacob",
+  "sign": "TEETH",
+  "node": "Jacob_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Jacob_Teeth_0e59a65",
+    "text": "Jacob: Alright..."
+   },
+   {
+    "id": "line:Jacob_Teeth_044662a",
+    "text": "Jacob: ..."
+   }
+  ]
+ },
+ {
+  "character": "Jacob",
+  "sign": "AURAPHOTO",
+  "node": "Jacob_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Jacob_Photo_0b8f9f0",
+    "text": "Jacob: God forbid you show this to anyone in FEMA."
+   },
+   {
+    "id": "line:Jacob_Photo_085e1a4",
+    "text": "Jacob: ..."
+   }
+  ]
+ },
+ {
+  "character": "Jacob",
+  "sign": "ARMPIT",
+  "node": "Jacob_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Jacob_Armpit_087d591",
+    "text": "Jacob: Anything else you want me to show you?"
+   },
+   {
+    "id": "line:Jacob_Armpit_0b60d52",
+    "text": "Jacob: ..."
+   }
+  ]
+ },
+ {
+  "character": "Jacob",
+  "sign": "EAR",
+  "node": "Jacob_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Jacob_Ears_07ee22f",
+    "text": "Jacob: Don't you think these checks are kinda stupid?"
+   },
+   {
+    "id": "line:Jacob_Ears_08e77e3",
+    "text": "Jacob: ..."
+   }
+  ]
+ },
+ {
+  "character": "Leper",
+  "sign": "EYE",
+  "node": "Leper_Eyes",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Leper_Eyes_0488b21",
+    "text": "Leper: Alright, take a look."
+   },
+   {
+    "id": "line:Leper_Eyes_010f05a",
+    "text": "Leper: ..."
+   }
+  ]
+ },
+ {
+  "character": "Leper",
+  "sign": "HANDS",
+  "node": "Leper_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Leper_Hands_082892e",
+    "text": "Leper: Yeah, my skins bad there too."
+   },
+   {
+    "id": "line:Leper_Hands_03283d1",
+    "text": "Leper: ..."
+   }
+  ]
+ },
+ {
+  "character": "Leper",
+  "sign": "TEETH",
+  "node": "Leper_Teeth",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Leper_Teeth_0465130",
+    "text": "Leper: See? Normal."
+   },
+   {
+    "id": "line:Leper_Teeth_0acd9dc",
+    "text": "Leper: …"
+   }
+  ]
+ },
+ {
+  "character": "Leper",
+  "sign": "AURAPHOTO",
+  "node": "Leper_Photo",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Leper_Photo_0e94d85",
+    "text": "Leper: A photo? That’s a sign?"
+   },
+   {
+    "id": "line:Leper_Photo_0f3e5da",
+    "text": "Leper: ..."
+   },
+   {
+    "id": "line:Leper_Photo_0e63dd5",
+    "text": "Leper: Fine, take the picture."
+   },
+   {
+    "id": "line:Leper_Photo_0e5b892",
+    "text": "Leper: ..."
+   }
+  ]
+ },
+ {
+  "character": "Leper",
+  "sign": "ARMPIT",
+  "node": "Leper_Armpit",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Leper_Armpit_04e74b4",
+    "text": "Leper: What? What's that for?"
+   },
+   {
+    "id": "line:Leper_Armpit_0bbd9d1",
+    "text": "Leper: ..."
+   },
+   {
+    "id": "line:Leper_Armpit_0eef043",
+    "text": "Leper: Fine, whatever."
+   },
+   {
+    "id": "line:Leper_Armpit_03886f8",
+    "text": "Leper: ..."
+   }
+  ]
+ },
+ {
+  "character": "Leper",
+  "sign": "EAR",
+  "node": "Leper_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Leper_Ears_022c919",
+    "text": "Leper: What? What the hell do you mean, ears?"
+   },
+   {
+    "id": "line:Leper_Ears_04cf39e",
+    "text": "Leper: No offense, but I know the Visitor signs and that’s not one of them."
+   },
+   {
+    "id": "line:Leper_Ears_0a63ec8",
+    "text": "Leper: But if you really wanna see my ears, go ahead."
+   },
+   {
+    "id": "line:Leper_Ears_00ff779",
+    "text": "Leper: ..."
+   }
+  ]
+ },
+ {
+  "character": "Luka",
+  "sign": "EYE",
+  "node": "Luka_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Luka_Eyes_0f8c340",
+    "text": "Luka: Of course."
+   },
+   {
+    "id": "line:Luka_Eyes_06177cb",
+    "text": "Luka: ..."
+   }
+  ]
+ },
+ {
+  "character": "Luka",
+  "sign": "HANDS",
+  "node": "Luka_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Luka_Hands_0be53f3",
+    "text": "Luka: Here."
+   },
+   {
+    "id": "line:Luka_Hands_02d8a2e",
+    "text": "Luka: ..."
+   }
+  ]
+ },
+ {
+  "character": "Luka",
+  "sign": "TEETH",
+  "node": "Luka_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Luka_Teeth_0d4b58c",
+    "text": "Luka: Here, take a look."
+   },
+   {
+    "id": "line:Luka_Teeth_09a8592",
+    "text": "Luka: ..."
+   }
+  ]
+ },
+ {
+  "character": "Luka",
+  "sign": "AURAPHOTO",
+  "node": "Luka_Photo",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Luka_Photo_07a0521",
+    "text": "Luka: Alrighty!"
+   },
+   {
+    "id": "line:Luka_Photo_079b72c",
+    "text": "Luka: ..."
+   }
+  ]
+ },
+ {
+  "character": "Luka",
+  "sign": "ARMPIT",
+  "node": "Luka_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Luka_Armpit_08274c8",
+    "text": "Luka: Didn't know that mattered too."
+   },
+   {
+    "id": "line:Luka_Armpit_08661dc",
+    "text": "Luka: ..."
+   }
+  ]
+ },
+ {
+  "character": "Luka",
+  "sign": "EAR",
+  "node": "Luka_Ears",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Luka_Ears_01e870b",
+    "text": "Luka: Our voices are lost in the void of the universe."
+   },
+   {
+    "id": "line:Luka_Ears_0ddad39",
+    "text": "Luka: ..."
+   },
+   {
+    "id": "line:Luka_Ears_01f1882",
+    "text": "Luka: But I'm always ready to listen to you!"
+   },
+   {
+    "id": "line:Luka_Ears_0cb69bc",
+    "text": "Luka: Alrighty!"
+   },
+   {
+    "id": "line:Luka_Ears_0bbec6c",
+    "text": "Luka: ..."
+   }
+  ]
+ },
+ {
+  "character": "Marauder",
+  "sign": "EYE",
+  "node": "Marauder_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Marauder_Eyes_03d53bb",
+    "text": "Marauder: Just regular ol' eyes."
+   },
+   {
+    "id": "line:Marauder_Eyes_06cca3c",
+    "text": "Marauder: ..."
+   }
+  ]
+ },
+ {
+  "character": "Marauder",
+  "sign": "HANDS",
+  "node": "Marauder_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Marauder_Hands_02f154d",
+    "text": "Marauder: Hands, palms, fingers."
+   },
+   {
+    "id": "line:Marauder_Hands_095bc14",
+    "text": "Marauder: ..."
+   }
+  ]
+ },
+ {
+  "character": "Marauder",
+  "sign": "TEETH",
+  "node": "Marauder_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Marauder_Teeth_099b960",
+    "text": "Marauder: Alrighty. I'll show ya, and I'll tell ya the story too."
+   },
+   {
+    "id": "line:Marauder_Teeth_056d150",
+    "text": "Marauder: ..."
+   }
+  ]
+ },
+ {
+  "character": "Marauder",
+  "sign": "AURAPHOTO",
+  "node": "Marauder_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Marauder_Photo_0bd0bdc",
+    "text": "Marauder: Come on? Really?"
+   },
+   {
+    "id": "line:Marauder_Photo_0046e8d",
+    "text": "Marauder: Fine, fine. Your house, your rules..."
+   },
+   {
+    "id": "line:Marauder_Photo_015012e",
+    "text": "Marauder: ..."
+   }
+  ]
+ },
+ {
+  "character": "Marauder",
+  "sign": "ARMPIT",
+  "node": "Marauder_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Marauder_Armpit_0ddeac0",
+    "text": "Marauder: Damn... and here I thought I was the one who didn't know how to get by in polite society..."
+   },
+   {
+    "id": "line:Marauder_Armpit_09e7352",
+    "text": "Marauder: ..."
+   }
+  ]
+ },
+ {
+  "character": "Marauder",
+  "sign": "EAR",
+  "node": "Marauder_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Marauder_Ears_0b16ef8",
+    "text": "Marauder: They're not torn or chewed up like some stray mog. Just regular ol' ears."
+   },
+   {
+    "id": "line:Marauder_Ears_0af3353",
+    "text": "Marauder: ..."
+   }
+  ]
+ },
+ {
+  "character": "Mother",
+  "sign": "EYE",
+  "node": "Mother_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Mother_Eyes_041989a",
+    "text": "Mother: Look, then."
+   },
+   {
+    "id": "line:Mother_Eyes_086dc24",
+    "text": "Mother: ..."
+   }
+  ]
+ },
+ {
+  "character": "Mother",
+  "sign": "HANDS",
+  "node": "Mother_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Mother_Hands_07f2535",
+    "text": "Mother: Here, take a look."
+   },
+   {
+    "id": "line:Mother_Hands_08ed8ff",
+    "text": "Mother: ..."
+   }
+  ]
+ },
+ {
+  "character": "Mother",
+  "sign": "TEETH",
+  "node": "Mother_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Mother_Teeth_018248c",
+    "text": "Mother: Please."
+   },
+   {
+    "id": "line:Mother_Teeth_0a06b09",
+    "text": "Mother: ..."
+   }
+  ]
+ },
+ {
+  "character": "Mother",
+  "sign": "AURAPHOTO",
+  "node": "Mother_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Mother_Photo_0f5cc95",
+    "text": "Mother: Can I sit? No?"
+   },
+   {
+    "id": "line:Mother_Photo_0190e9c",
+    "text": "Mother: ..."
+   }
+  ]
+ },
+ {
+  "character": "Mother",
+  "sign": "ARMPIT",
+  "node": "Mother_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Mother_Armpit_0d92f59",
+    "text": "Mother: Look, then."
+   },
+   {
+    "id": "line:Mother_Armpit_0194443",
+    "text": "Mother: ..."
+   }
+  ]
+ },
+ {
+  "character": "Mother",
+  "sign": "EAR",
+  "node": "Mother_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Mother_Ears_0f474b8",
+    "text": "Mother: I haven't cleaned them in a long time. Might well be blocked up by now."
+   },
+   {
+    "id": "line:Mother_Ears_07c4e87",
+    "text": "Mother: ..."
+   }
+  ]
+ },
+ {
+  "character": "Nervous",
+  "sign": "EYE",
+  "node": "Nervous_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Nervous_Eyes_030ac99",
+    "text": "Nervous: I like your eyes."
+   },
+   {
+    "id": "line:Nervous_Eyes_05ac725",
+    "text": "Nervous: ..."
+   }
+  ]
+ },
+ {
+  "character": "Nervous",
+  "sign": "HANDS",
+  "node": "Nervous_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Nervous_Hands_05b3b9b",
+    "text": "Nervous: I've learned to stop picking at my nails."
+   },
+   {
+    "id": "line:Nervous_Hands_0ac2a5e",
+    "text": "Nervous: ..."
+   }
+  ]
+ },
+ {
+  "character": "Nervous",
+  "sign": "TEETH",
+  "node": "Nervous_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Nervous_Teeth_0baf6a7",
+    "text": "Nervous: Those meds made my teeth a little thinny-winny..."
+   },
+   {
+    "id": "line:Nervous_Teeth_0427d67",
+    "text": "Nervous: ..."
+   }
+  ]
+ },
+ {
+  "character": "Nervous",
+  "sign": "AURAPHOTO",
+  "node": "Nervous_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Nervous_Photo_075fc5d",
+    "text": "Nervous: I don't like that."
+   },
+   {
+    "id": "line:Nervous_Photo_0cd504d",
+    "text": "Nervous: Hm."
+   },
+   {
+    "id": "line:Nervous_Photo_07032a0",
+    "text": "Nervous: ..."
+   }
+  ]
+ },
+ {
+  "character": "Nervous",
+  "sign": "ARMPIT",
+  "node": "Nervous_Armpit",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Nervous_Armpit_085003a",
+    "text": "Nervous: They never taught me how to take care of myself."
+   },
+   {
+    "id": "line:Nervous_Armpit_0f95e92",
+    "text": "Nervous: But I saw how they did a little wishy-washy in the hospital."
+   },
+   {
+    "id": "line:Nervous_Armpit_0c13c48",
+    "text": "Nervous: ..."
+   }
+  ]
+ },
+ {
+  "character": "Nervous",
+  "sign": "EAR",
+  "node": "Nervous_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Nervous_Ears_0787bb2",
+    "text": "Nervous: I don't give them any attention."
+   },
+   {
+    "id": "line:Nervous_Ears_0badfd4",
+    "text": "Nervous: ..."
+   }
+  ]
+ },
+ {
+  "character": "NotTrue",
+  "sign": "EYE",
+  "node": "NotTrue_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:NotTrue_Eyes_0341a49",
+    "text": "NotTrue: Oh, deary... Are you sure you want that?"
+   },
+   {
+    "id": "line:NotTrue_Eyes_07657ff",
+    "text": "NotTrue: The eyes are like windows. For light in houses, and for truth in people."
+   },
+   {
+    "id": "line:NotTrue_Eyes_06759ca",
+    "text": "NotTrue: But mine are dusty... The glass is cracked... Moths ate the curtains long ago..."
+   },
+   {
+    "id": "line:NotTrue_Eyes_0c04892",
+    "text": "NotTrue: Don't look, deary. There's nothing there."
+   },
+   {
+    "id": "line:NotTrue_Eyes_0b80e05",
+    "text": "NotTrue: ..."
+   }
+  ]
+ },
+ {
+  "character": "NotTrue",
+  "sign": "HANDS",
+  "node": "NotTrue_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:NotTrue_Hands_0b34446",
+    "text": "NotTrue: ..."
+   },
+   {
+    "id": "line:NotTrue_Hands_07bd404",
+    "text": "NotTrue: ..."
+   }
+  ]
+ },
+ {
+  "character": "NotTrue",
+  "sign": "TEETH",
+  "node": "NotTrue_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:NotTrue_Teeth_06aee02",
+    "text": "NotTrue: My teeth?"
+   },
+   {
+    "id": "line:NotTrue_Teeth_0fec80a",
+    "text": "NotTrue: Aaaaaah."
+   },
+   {
+    "id": "line:NotTrue_Teeth_00aad5c",
+    "text": "NotTrue: ..."
+   }
+  ]
+ },
+ {
+  "character": "NotTrue",
+  "sign": "AURAPHOTO",
+  "node": "NotTrue_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:NotTrue_Photo_0c98ec1",
+    "text": "NotTrue: You're wastin' that film on lil ol' me? Well, I'll be!"
+   },
+   {
+    "id": "line:NotTrue_Photo_0993c6f",
+    "text": "NotTrue: ..."
+   }
+  ]
+ },
+ {
+  "character": "NotTrue",
+  "sign": "ARMPIT",
+  "node": "NotTrue_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:NotTrue_Armpit_07150ab",
+    "text": "NotTrue: Feh! Making an old woman lift her arms... Have you no shame?"
+   },
+   {
+    "id": "line:NotTrue_Armpit_066766f",
+    "text": "NotTrue: Well, what can I do? You are the owner of the fine house."
+   },
+   {
+    "id": "line:NotTrue_Armpit_091b9fa",
+    "text": "NotTrue: ..."
+   }
+  ]
+ },
+ {
+  "character": "NotTrue",
+  "sign": "EAR",
+  "node": "NotTrue_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:NotTrue_Ears_0d357c4",
+    "text": "NotTrue: Mercy me! Now that's quite the notion."
+   },
+   {
+    "id": "line:NotTrue_Ears_031b821",
+    "text": "NotTrue: ..."
+   }
+  ]
+ },
+ {
+  "character": "Nun",
+  "sign": "EYE",
+  "node": "Nun_Eyes",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Nun_Eyes_0306dfe",
+    "text": "Nun: Well, go on then. Go on."
+   },
+   {
+    "id": "line:Nun_Eyes_09ff00c",
+    "text": "Nun: ..."
+   }
+  ]
+ },
+ {
+  "character": "Nun",
+  "sign": "HANDS",
+  "node": "Nun_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Nun_Hands_0544d0c",
+    "text": "Nun: Be quick about it."
+   },
+   {
+    "id": "line:Nun_Hands_04d7036",
+    "text": "Nun: ..."
+   }
+  ]
+ },
+ {
+  "character": "Nun",
+  "sign": "TEETH",
+  "node": "Nun_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Nun_Teeth_04952ce",
+    "text": "Nun: Hmph, if you must."
+   },
+   {
+    "id": "line:Nun_Teeth_0de6700",
+    "text": "Nun: ..."
+   }
+  ]
+ },
+ {
+  "character": "Nun",
+  "sign": "AURAPHOTO",
+  "node": "Nun_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Nun_Photo_08c2639",
+    "text": "Nun: Photography? Pah! I have no time to waste on such nonsense!"
+   },
+   {
+    "id": "line:Nun_Photo_0495e4a",
+    "text": "Nun: ..."
+   }
+  ]
+ },
+ {
+  "character": "Nun",
+  "sign": "ARMPIT",
+  "node": "Nun_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Nun_Armpit_089dfe2",
+    "text": "Nun: Such indecency!"
+   },
+   {
+    "id": "line:Nun_Armpit_0be63cd",
+    "text": "Nun: ..."
+   },
+   {
+    "id": "line:Nun_Armpit_08e8ed8",
+    "text": "Nun: ...I see you shall grant me no peace."
+   },
+   {
+    "id": "line:Nun_Armpit_03237ae",
+    "text": "Nun: Well then... If it is His will, let it be done."
+   },
+   {
+    "id": "line:Nun_Armpit_0ddac62",
+    "text": "Nun: ..."
+   }
+  ]
+ },
+ {
+  "character": "Nun",
+  "sign": "EAR",
+  "node": "Nun_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Nun_Ears_0cc5880",
+    "text": "Nun: You want to check my ears?! How very dare you!"
+   },
+   {
+    "id": "line:Nun_Ears_0012cbd",
+    "text": "Nun: ..."
+   }
+  ]
+ },
+ {
+  "character": "Provocateur",
+  "sign": "EYE",
+  "node": "Provocateur_Eyes",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Provocateur_Eyes_00f4e1e",
+    "text": "Provocateur: And what are you even looking for, hm? Redness?"
+   },
+   {
+    "id": "line:Provocateur_Eyes_02460f1",
+    "text": "Provocateur: And what are you hoping to find there, hm? An evil stare?"
+   },
+   {
+    "id": "line:Provocateur_Eyes_04931f9",
+    "text": "Provocateur: ..."
+   }
+  ]
+ },
+ {
+  "character": "Provocateur",
+  "sign": "HANDS",
+  "node": "Provocateur_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Provocateur_Hands_01acfd1",
+    "text": "Provocateur: My hands? What for?"
+   },
+   {
+    "id": "line:Provocateur_Hands_09553d3",
+    "text": "Provocateur: ..."
+   }
+  ]
+ },
+ {
+  "character": "Provocateur",
+  "sign": "TEETH",
+  "node": "Provocateur_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Provocateur_Teeth_0792627",
+    "text": "Provocateur: Maybe you'd like to see if there are any leftovers you can scavenge while you're in there, hm?"
+   },
+   {
+    "id": "line:Provocateur_Teeth_0f64a81",
+    "text": "Provocateur: ..."
+   }
+  ]
+ },
+ {
+  "character": "Provocateur",
+  "sign": "AURAPHOTO",
+  "node": "Provocateur_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Provocateur_Photo_0ac7c32",
+    "text": "Provocateur: Want me to say cheese for you, too? Hm?"
+   },
+   {
+    "id": "line:Provocateur_Photo_0786164",
+    "text": "Provocateur: I'm sure it'll prove...something."
+   },
+   {
+    "id": "line:Provocateur_Photo_02e98d8",
+    "text": "Provocateur: ..."
+   }
+  ]
+ },
+ {
+  "character": "Provocateur",
+  "sign": "ARMPIT",
+  "node": "Provocateur_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Provocateur_Armpit_00e2700",
+    "text": "Provocateur: What?! My armpits?"
+   },
+   {
+    "id": "line:Provocateur_Armpit_09b4bb2",
+    "text": "Provocateur: ..."
+   }
+  ]
+ },
+ {
+  "character": "Provocateur",
+  "sign": "EAR",
+  "node": "Provocateur_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Provocateur_Ears_01e7dd3",
+    "text": "Provocateur: Oh, believe anything the TV says, do we?"
+   },
+   {
+    "id": "line:Provocateur_Ears_01711fd",
+    "text": "Provocateur: What if they say Visitors all have pubic hair, hm? Will we need to drop our pants for your unconstitutional inspections?"
+   },
+   {
+    "id": "line:Provocateur_Ears_00d2fd9",
+    "text": "Provocateur: ..."
+   }
+  ]
+ },
+ {
+  "character": "Raskolnikov",
+  "sign": "EYE",
+  "node": "Raskolnikov_Eyes",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Raskolnikov_Eyes_08e1500",
+    "text": "Raskolnikov: ..."
+   },
+   {
+    "id": "line:Raskolnikov_Eyes_02a7c0f",
+    "text": "Raskolnikov: Just...don't be scared."
+   },
+   {
+    "id": "line:Raskolnikov_Eyes_0a07fe0",
+    "text": "Raskolnikov: ..."
+   }
+  ]
+ },
+ {
+  "character": "Raskolnikov",
+  "sign": "HANDS",
+  "node": "Raskolnikov_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Raskolnikov_Hands_010018e",
+    "text": "Raskolnikov: Oh... I mean, yeah. Do what you gotta do, man. Go ahead, take a look."
+   },
+   {
+    "id": "line:Raskolnikov_Hands_0244ec5",
+    "text": "Raskolnikov: ..."
+   },
+   {
+    "id": "line:Raskolnikov_Hands_0336bfa",
+    "text": "Raskolnikov: Yeah... They're kinda gnarly. I-I used to try and hide them, but... No point anymore."
+   },
+   {
+    "id": "line:Raskolnikov_Hands_03789e8",
+    "text": "Raskolnikov: …"
+   },
+   {
+    "id": "line:Raskolnikov_Hands_0a83515",
+    "text": "Raskolnikov: ..."
+   }
+  ]
+ },
+ {
+  "character": "Raskolnikov",
+  "sign": "TEETH",
+  "node": "Raskolnikov_Teeth",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Raskolnikov_Teeth_053fd08",
+    "text": "Raskolnikov: Oh... Teeth? Yeah, sure sure."
+   },
+   {
+    "id": "line:Raskolnikov_Teeth_0a57436",
+    "text": "Raskolnikov: ..."
+   }
+  ]
+ },
+ {
+  "character": "Raskolnikov",
+  "sign": "AURAPHOTO",
+  "node": "Raskolnikov_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Raskolnikov_Photo_0130107",
+    "text": "Raskolnikov: Why do you need my picture?"
+   },
+   {
+    "id": "line:Raskolnikov_Photo_08456c0",
+    "text": "Raskolnikov: Can I, like, refuse?"
+   },
+   {
+    "id": "line:Raskolnikov_Photo_01a795c",
+    "text": "Raskolnikov: ..."
+   },
+   {
+    "id": "line:Raskolnikov_Photo_011ce2e",
+    "text": "Raskolnikov: H-Hey, no need to point that gun at me, man! Okay, okay, take my photo! Jeez..."
+   },
+   {
+    "id": "line:Raskolnikov_Photo_0016119",
+    "text": "Raskolnikov: ..."
+   }
+  ]
+ },
+ {
+  "character": "Raskolnikov",
+  "sign": "ARMPIT",
+  "node": "Raskolnikov_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Raskolnikov_Armpit_04d11b2",
+    "text": "Raskolnikov: Aw jeez... A-Are you sure this is necessary?"
+   },
+   {
+    "id": "line:Raskolnikov_Armpit_0ed05d6",
+    "text": "Raskolnikov: ..."
+   }
+  ]
+ },
+ {
+  "character": "Raskolnikov",
+  "sign": "EAR",
+  "node": "Raskolnikov_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Raskolnikov_Ears_0855f12",
+    "text": "Raskolnikov: O-Oh, yeah, sure. But why ears? I hope you're not expecting anything...awful."
+   },
+   {
+    "id": "line:Raskolnikov_Ears_05e2bf3",
+    "text": "Raskolnikov: ..."
+   }
+  ]
+ },
+ {
+  "character": "Rocker",
+  "sign": "EYE",
+  "node": "Rocker_Eyes",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Rocker_Eyes_050ec7a",
+    "text": "Unstable: Still get flashbacks from that wild ride."
+   },
+   {
+    "id": "line:Rocker_Eyes_037557d",
+    "text": "Rocker: ..."
+   }
+  ]
+ },
+ {
+  "character": "Rocker",
+  "sign": "HANDS",
+  "node": "Rocker_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Rocker_Hands_0de3c03",
+    "text": "Rocker: Got that one tattoo."
+   },
+   {
+    "id": "line:Rocker_Hands_0d44fd6",
+    "text": "Rocker: ..."
+   }
+  ]
+ },
+ {
+  "character": "Rocker",
+  "sign": "TEETH",
+  "node": "Rocker_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Rocker_Teeth_09d399f",
+    "text": "Rocker: Yeeeah… These teeth have soaked up way too much smoke."
+   },
+   {
+    "id": "line:Rocker_Teeth_01ae7d8",
+    "text": "Rocker: Funny, huh…"
+   },
+   {
+    "id": "line:Rocker_Teeth_0c81384",
+    "text": "Rocker: ..."
+   }
+  ]
+ },
+ {
+  "character": "Rocker",
+  "sign": "AURAPHOTO",
+  "node": "Rocker_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Rocker_Photo_0c05cd6",
+    "text": "Rocker: Hell, let’s take a photo together. Maybe I'll sign it!"
+   },
+   {
+    "id": "line:Rocker_Photo_02d6129",
+    "text": "Rocker: ..."
+   }
+  ]
+ },
+ {
+  "character": "Rocker",
+  "sign": "ARMPIT",
+  "node": "Rocker_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Rocker_Armpit_0a4504b",
+    "text": "Rocker: Be my guest."
+   },
+   {
+    "id": "line:Rocker_Armpit_02417e9",
+    "text": "Rocker: ..."
+   }
+  ]
+ },
+ {
+  "character": "Rocker",
+  "sign": "EAR",
+  "node": "Rocker_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Rocker_Ears_0cd37a4",
+    "text": "Rocker: I used to stretch my ears. Then… I got bored with it."
+   },
+   {
+    "id": "line:Rocker_Ears_08764b4",
+    "text": "Rocker: ..."
+   }
+  ]
+ },
+ {
+  "character": "Scammer",
+  "sign": "EYE",
+  "node": "Scammer_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Scammer_Eyes_0b23f40",
+    "text": "Scammer: My eyes have been itchy as balls lately."
+   },
+   {
+    "id": "line:Scammer_Eyes_01a1724",
+    "text": "Scammer: You think it's from the sun? Kinda sus right?"
+   },
+   {
+    "id": "line:Scammer_Eyes_0900833",
+    "text": "Scammer: ..."
+   }
+  ]
+ },
+ {
+  "character": "Scammer",
+  "sign": "HANDS",
+  "node": "Scammer_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Scammer_Hands_0759984",
+    "text": "Scammer: Da fuck, bro? I'm just a regular guy."
+   },
+   {
+    "id": "line:Scammer_Hands_052bc2c",
+    "text": "Scammer: I don't do no crap with my nails, man, see?"
+   },
+   {
+    "id": "line:Scammer_Hands_01230f0",
+    "text": "Scammer: ..."
+   }
+  ]
+ },
+ {
+  "character": "Scammer",
+  "sign": "TEETH",
+  "node": "Scammer_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Scammer_Teeth_01021e0",
+    "text": "Scammer: Teeth I can do."
+   },
+   {
+    "id": "line:Scammer_Teeth_04415f2",
+    "text": "Scammer: My homie was a dentist."
+   },
+   {
+    "id": "line:Scammer_Teeth_065a7fe",
+    "text": "Scammer: Guess what? They knocked his fucking teeth out! HAHAHA!"
+   },
+   {
+    "id": "line:Scammer_Teeth_0e91224",
+    "text": "Scammer: Oh, you wanna see them. Aight..."
+   },
+   {
+    "id": "line:Scammer_Teeth_00494bf",
+    "text": "Scammer: ..."
+   }
+  ]
+ },
+ {
+  "character": "Scammer",
+  "sign": "AURAPHOTO",
+  "node": "Scammer_Photo",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Scammer_Photo_0d4a7e4",
+    "text": "Scammer: Wanna snap a pic together? Aight."
+   },
+   {
+    "id": "line:Scammer_Photo_06c5bc3",
+    "text": "Scammer: I'm pretty sensitive to light, f'real."
+   },
+   {
+    "id": "line:Scammer_Photo_0681c91",
+    "text": "Scammer: ..."
+   }
+  ]
+ },
+ {
+  "character": "Scammer",
+  "sign": "ARMPIT",
+  "node": "Scammer_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Scammer_Armpit_0ab714f",
+    "text": "Scammer: Da fuuuck..."
+   },
+   {
+    "id": "line:Scammer_Armpit_05cff92",
+    "text": "Scammer: You picked a freaky hustle this time, douchebag."
+   },
+   {
+    "id": "line:Scammer_Armpit_0f5cd93",
+    "text": "Scammer: ..."
+   }
+  ]
+ },
+ {
+  "character": "Scammer",
+  "sign": "EAR",
+  "node": "Scammer_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Scammer_Ears_057eef8",
+    "text": "Scammer: Hey, hands off my hustle, bro!"
+   },
+   {
+    "id": "line:Scammer_Ears_065972d",
+    "text": "Scammer: You take a peek, tell 'em they've got a Visitor Spirit in 'em, then charge 'em crazy cash to keep your mouth shut. Boom!"
+   },
+   {
+    "id": "line:Scammer_Ears_0a30826",
+    "text": "Scammer: I'm down with it, cause we're bros, bro. But don't try to pull none of that sus shit on me, yeah?"
+   },
+   {
+    "id": "line:Scammer_Ears_054f0ed",
+    "text": "Scammer: ..."
+   }
+  ]
+ },
+ {
+  "character": "Sexy",
+  "sign": "EYE",
+  "node": "FatalDame_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FatalDame_Eyes_0b721bf",
+    "text": "FatalDame: Eyes can give away a lot about how a person thinks."
+   },
+   {
+    "id": "line:FatalDame_Eyes_09ed39a",
+    "text": "FatalDame: ..."
+   }
+  ]
+ },
+ {
+  "character": "Sexy",
+  "sign": "HANDS",
+  "node": "FatalDame_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FatalDame_Hands_0ddd147",
+    "text": "FatalDame: They say nothing compares to holding the hands of someone you love..."
+   },
+   {
+    "id": "line:FatalDame_Hands_073c8ee",
+    "text": "FatalDame: ..."
+   }
+  ]
+ },
+ {
+  "character": "Sexy",
+  "sign": "TEETH",
+  "node": "FatalDame_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FatalDame_Teeth_0b9e053",
+    "text": "FatalDame: Do you like what you see?"
+   },
+   {
+    "id": "line:FatalDame_Teeth_07b8e0e",
+    "text": "FatalDame: ..."
+   }
+  ]
+ },
+ {
+  "character": "Sexy",
+  "sign": "AURAPHOTO",
+  "node": "FatalDame_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FatalDame_Photo_08e442f",
+    "text": "FatalDame: Sorry, baby... I'm tired of posing..."
+   },
+   {
+    "id": "line:FatalDame_Photo_023a6ae",
+    "text": "FatalDame: Let's move on to some more...physical...checks, shall we?"
+   },
+   {
+    "id": "line:FatalDame_Photo_009f8e6",
+    "text": "FatalDame: ..."
+   }
+  ]
+ },
+ {
+  "character": "Sexy",
+  "sign": "ARMPIT",
+  "node": "FatalDame_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FatalDame_Armpit_07e92f9",
+    "text": "FatalDame: Of course, baby. I can't never refuse you..."
+   },
+   {
+    "id": "line:FatalDame_Armpit_0990672",
+    "text": "FatalDame: …"
+   }
+  ]
+ },
+ {
+  "character": "Sexy",
+  "sign": "EAR",
+  "node": "FatalDame_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:FatalDame_Ears_031b72d",
+    "text": "FatalDame: Mm, is this your fetish, baby?"
+   },
+   {
+    "id": "line:FatalDame_Ears_0902806",
+    "text": "FatalDame: Tell me...I don't mind."
+   },
+   {
+    "id": "line:FatalDame_Ears_0cc9d0d",
+    "text": "FatalDame: ..."
+   }
+  ]
+ },
+ {
+  "character": "Sirin",
+  "sign": "EYE",
+  "node": "Sirin_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Sirin_Eyes_066254e",
+    "text": "Sirin: My sister and I have similar eyes."
+   },
+   {
+    "id": "line:Sirin_Eyes_0323016",
+    "text": "Sirin: ..."
+   }
+  ]
+ },
+ {
+  "character": "Sirin",
+  "sign": "HANDS",
+  "node": "Sirin_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Sirin_Hands_0110335",
+    "text": "Sirin: My sister helps me."
+   },
+   {
+    "id": "line:Sirin_Hands_0c7510b",
+    "text": "Sirin: ..."
+   }
+  ]
+ },
+ {
+  "character": "Sirin",
+  "sign": "TEETH",
+  "node": "Sirin_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Sirin_Teeth_02994b0",
+    "text": "Sirin: Take a look."
+   },
+   {
+    "id": "line:Sirin_Teeth_0a763ee",
+    "text": "Sirin: ..."
+   }
+  ]
+ },
+ {
+  "character": "Sirin",
+  "sign": "AURAPHOTO",
+  "node": "Sirin_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Sirin_Photo_0e3750e",
+    "text": "Sirin: I don't care if anything's left after."
+   },
+   {
+    "id": "line:Sirin_Photo_0ab293e",
+    "text": "Sirin: Do whatever you think you should."
+   },
+   {
+    "id": "line:Sirin_Photo_0c6b19c",
+    "text": "Sirin: ..."
+   }
+  ]
+ },
+ {
+  "character": "Sirin",
+  "sign": "ARMPIT",
+  "node": "Sirin_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Sirin_Armpit_024ae43",
+    "text": "Sirin: My sister shaves my armpits. She takes care of me."
+   },
+   {
+    "id": "line:Sirin_Armpit_0dfcdda",
+    "text": "Sirin: ..."
+   }
+  ]
+ },
+ {
+  "character": "Sirin",
+  "sign": "EAR",
+  "node": "Sirin_Ears",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Sirin_Ears_0ae3e21",
+    "text": "Sirin: All I have left is an earring."
+   },
+   {
+    "id": "line:Sirin_Ears_0108984",
+    "text": "Sirin: It reminds me of my parents."
+   },
+   {
+    "id": "line:Sirin_Ears_0387720",
+    "text": "Sirin: ..."
+   }
+  ]
+ },
+ {
+  "character": "TaxiDriver",
+  "sign": "EYE",
+  "node": "TaxiDriver_Eyes",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:TaxiDriver_Eyes_0539502",
+    "text": "TaxiDriver: My eyes are always tired. Hard to keep 'em shut though."
+   },
+   {
+    "id": "line:TaxiDriver_Eyes_0034d83",
+    "text": "TaxiDriver: ..."
+   },
+   {
+    "id": "line:TaxiDriver_Eyes_0f4269f",
+    "text": "TaxiDriver: I'm just used to... watchin' everything. Who's drivin' behind me, who's starin', who's stayin' eerily quiet..."
+   },
+   {
+    "id": "line:TaxiDriver_Eyes_03e6b45",
+    "text": "TaxiDriver: Work habits. Can't shake 'em. So I kinda got insomnia now."
+   },
+   {
+    "id": "line:TaxiDriver_Eyes_00e1d79",
+    "text": "TaxiDriver: ..."
+   }
+  ]
+ },
+ {
+  "character": "TaxiDriver",
+  "sign": "HANDS",
+  "node": "TaxiDriver_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:TaxiDriver_Hands_0d7afd4",
+    "text": "TaxiDriver: Alright... They ain't exactly pretty, though."
+   },
+   {
+    "id": "line:TaxiDriver_Hands_00d746c",
+    "text": "TaxiDriver: ..."
+   }
+  ]
+ },
+ {
+  "character": "TaxiDriver",
+  "sign": "TEETH",
+  "node": "TaxiDriver_Teeth",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:TaxiDriver_Teeth_0a70d1d",
+    "text": "TaxiDriver: Teeth are just teeth, you know? Nothin' special."
+   },
+   {
+    "id": "line:TaxiDriver_Teeth_06dde98",
+    "text": "TaxiDriver: I always kinda kept an eye on mine. Even whitened 'em when I was a kid."
+   },
+   {
+    "id": "line:TaxiDriver_Teeth_0816952",
+    "text": "TaxiDriver: ..."
+   }
+  ]
+ },
+ {
+  "character": "TaxiDriver",
+  "sign": "AURAPHOTO",
+  "node": "TaxiDriver_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:TaxiDriver_Photo_0e84785",
+    "text": "TaxiDriver: Go on, man. I'm ready."
+   },
+   {
+    "id": "line:TaxiDriver_Photo_0bcf126",
+    "text": "TaxiDriver: ..."
+   }
+  ]
+ },
+ {
+  "character": "TaxiDriver",
+  "sign": "ARMPIT",
+  "node": "TaxiDriver_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:TaxiDriver_Armpit_0bab3ec",
+    "text": "TaxiDriver: Nothin' special about 'em, really."
+   },
+   {
+    "id": "line:TaxiDriver_Armpit_09b6314",
+    "text": "TaxiDriver: ..."
+   }
+  ]
+ },
+ {
+  "character": "TaxiDriver",
+  "sign": "EAR",
+  "node": "TaxiDriver_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:TaxiDriver_Ears_007d354",
+    "text": "TaxiDriver: My ears? They're just like anybody else's. Nothin' interestin' about 'em."
+   },
+   {
+    "id": "line:TaxiDriver_Ears_02c132b",
+    "text": "TaxiDriver: ..."
+   }
+  ]
+ },
+ {
+  "character": "Teacher",
+  "sign": "EYE",
+  "node": "Teacher_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Teacher_Eyes_02ac586",
+    "text": "Teacher: Look..."
+   },
+   {
+    "id": "line:Teacher_Eyes_01c4232",
+    "text": "Teacher: ..."
+   }
+  ]
+ },
+ {
+  "character": "Teacher",
+  "sign": "HANDS",
+  "node": "Teacher_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Teacher_Hands_017e74c",
+    "text": "Teacher: Here..."
+   },
+   {
+    "id": "line:Teacher_Hands_0db89f2",
+    "text": "Teacher: ..."
+   }
+  ]
+ },
+ {
+  "character": "Teacher",
+  "sign": "TEETH",
+  "node": "Teacher_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Teacher_Teeth_08fc9f3",
+    "text": "Teacher: See?"
+   },
+   {
+    "id": "line:Teacher_Teeth_0e9968d",
+    "text": "Teacher: ..."
+   }
+  ]
+ },
+ {
+  "character": "Teacher",
+  "sign": "AURAPHOTO",
+  "node": "Teacher_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Teacher_Photo_031997e",
+    "text": "Teacher: Fine, if you must..."
+   },
+   {
+    "id": "line:Teacher_Photo_09e57da",
+    "text": "Teacher: ..."
+   }
+  ]
+ },
+ {
+  "character": "Teacher",
+  "sign": "ARMPIT",
+  "node": "Teacher_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Teacher_Armpit_06da366",
+    "text": "Teacher: Are... Are you sure this is really necessary? These confounded signs..."
+   },
+   {
+    "id": "line:Teacher_Armpit_021840b",
+    "text": "Teacher: ..."
+   }
+  ]
+ },
+ {
+  "character": "Teacher",
+  "sign": "EAR",
+  "node": "Teacher_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Teacher_Ears_060fd4e",
+    "text": "Teacher: ..."
+   },
+   {
+    "id": "line:Teacher_Ears_030d2af",
+    "text": "Teacher: ..."
+   }
+  ]
+ },
+ {
+  "character": "Theorist",
+  "sign": "EYE",
+  "node": "Theorist_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Theorist_Eyes_0da10f7",
+    "text": "Theorist: Ah, the eyes. Yes, of course."
+   },
+   {
+    "id": "line:Theorist_Eyes_0c282cd",
+    "text": "Theorist: …"
+   }
+  ]
+ },
+ {
+  "character": "Theorist",
+  "sign": "HANDS",
+  "node": "Theorist_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Theorist_Hands_09793ad",
+    "text": "Theorist: Sure."
+   },
+   {
+    "id": "line:Theorist_Hands_0245f2d",
+    "text": "Theorist: ..."
+   }
+  ]
+ },
+ {
+  "character": "Theorist",
+  "sign": "TEETH",
+  "node": "Theorist_Teeth",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Theorist_Teeth_046ce8f",
+    "text": "Theorist: Here."
+   },
+   {
+    "id": "line:Theorist_Teeth_093cc81",
+    "text": "Theorist: ..."
+   }
+  ]
+ },
+ {
+  "character": "Theorist",
+  "sign": "AURAPHOTO",
+  "node": "Theorist_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Theorist_Photo_044905e",
+    "text": "Theorist: A photo?"
+   },
+   {
+    "id": "line:Theorist_Photo_0b2a89d",
+    "text": "Theorist: …"
+   }
+  ]
+ },
+ {
+  "character": "Theorist",
+  "sign": "ARMPIT",
+  "node": "Theorist_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Theorist_Armpit_0359fd6",
+    "text": "Theorist: Armpits, you say? ...Now that's unusual."
+   },
+   {
+    "id": "line:Theorist_Armpit_00594ee",
+    "text": "Theorist: …"
+   }
+  ]
+ },
+ {
+  "character": "Theorist",
+  "sign": "EAR",
+  "node": "Theorist_Ears",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Theorist_Ears_0437fcd",
+    "text": "Theorist: Ears? Ah, I see."
+   },
+   {
+    "id": "line:Theorist_Ears_0e23cb0",
+    "text": "Theorist: …"
+   }
+  ]
+ },
+ {
+  "character": "Tough",
+  "sign": "EYE",
+  "node": "Tough_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Tough_Eyes_0fce340",
+    "text": "Tough: I've seen a lot of shit in my life."
+   },
+   {
+    "id": "line:Tough_Eyes_0849ecc",
+    "text": "Tough: I'm sure it's all right there, if you care to look."
+   },
+   {
+    "id": "line:Tough_Eyes_0f5c4bb",
+    "text": "Tough: …"
+   }
+  ]
+ },
+ {
+  "character": "Tough",
+  "sign": "HANDS",
+  "node": "Tough_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Tough_Hands_098c9c6",
+    "text": "Tough: I like feeling pretty."
+   },
+   {
+    "id": "line:Tough_Hands_0228cff",
+    "text": "Tough: Nobody ever says it to me, but it’s nice to feel that way for myself."
+   },
+   {
+    "id": "line:Tough_Hands_0f34c93",
+    "text": "Tough: …"
+   }
+  ]
+ },
+ {
+  "character": "Tough",
+  "sign": "TEETH",
+  "node": "Tough_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Tough_Teeth_040efd8",
+    "text": "Tough: My canines stick out, they've been that way since I was a kid."
+   },
+   {
+    "id": "line:Tough_Teeth_0f7f77b",
+    "text": "Tough: I got teased for it a lot. Not anymore."
+   },
+   {
+    "id": "line:Tough_Teeth_0c955f1",
+    "text": "Tough: …"
+   }
+  ]
+ },
+ {
+  "character": "Tough",
+  "sign": "AURAPHOTO",
+  "node": "Tough_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Tough_Photo_0718853",
+    "text": "Tough: I don’t take pictures often. But sure, let’s see what comes out."
+   },
+   {
+    "id": "line:Tough_Photo_068c147",
+    "text": "Tough: …"
+   }
+  ]
+ },
+ {
+  "character": "Tough",
+  "sign": "EAR",
+  "node": "Tough_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Tough_Ears_02d1701",
+    "text": "Tough: Just got my ears pierced, actually."
+   },
+   {
+    "id": "line:Tough_Ears_0936760",
+    "text": "Tough: …"
+   }
+  ]
+ },
+ {
+  "character": "Tourist",
+  "sign": "EYE",
+  "node": "Tourist_Eyes",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Tourist_Eyes_01bf0b4",
+    "text": "Tourist: My eyes? No problem."
+   },
+   {
+    "id": "line:Tourist_Eyes_0a6f3fa",
+    "text": "Tourist: …"
+   }
+  ]
+ },
+ {
+  "character": "Tourist",
+  "sign": "HANDS",
+  "node": "Tourist_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Tourist_Hands_028e249",
+    "text": "Tourist: My hands? You're looking for some kind of rash?"
+   },
+   {
+    "id": "line:Tourist_Hands_073f97e",
+    "text": "Tourist: …"
+   }
+  ]
+ },
+ {
+  "character": "Tourist",
+  "sign": "TEETH",
+  "node": "Tourist_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Tourist_Teeth_0aceaa6",
+    "text": "Tourist: You mean…teeth can show if I caught the virus?"
+   },
+   {
+    "id": "line:Tourist_Teeth_0190f4d",
+    "text": "Tourist: …"
+   },
+   {
+    "id": "line:Tourist_Teeth_067a841",
+    "text": "Tourist: Well, if it helps…"
+   },
+   {
+    "id": "line:Tourist_Teeth_0f83af8",
+    "text": "Tourist: …"
+   }
+  ]
+ },
+ {
+  "character": "Tourist",
+  "sign": "AURAPHOTO",
+  "node": "Tourist_Photo",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Tourist_Photo_05b48a7",
+    "text": "Tourist: Is that some kind of government tech to detect infections?"
+   },
+   {
+    "id": "line:Tourist_Photo_0d4ed26",
+    "text": "Tourist: If that's what this is, I'm happy to try it."
+   },
+   {
+    "id": "line:Tourist_Photo_077ab4c",
+    "text": "Tourist: …"
+   }
+  ]
+ },
+ {
+  "character": "Tourist",
+  "sign": "ARMPIT",
+  "node": "Tourist_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Tourist_Armpit_0c4c542",
+    "text": "Tourist: What?"
+   },
+   {
+    "id": "line:Tourist_Armpit_00b93e9",
+    "text": "Tourist: …"
+   },
+   {
+    "id": "line:Tourist_Armpit_01720c6",
+    "text": "Tourist: …"
+   }
+  ]
+ },
+ {
+  "character": "Tourist",
+  "sign": "EAR",
+  "node": "Tourist_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Tourist_Ears_079e44c",
+    "text": "Tourist: Oh, that makes sense. What if the virus spreads through the ear canal?"
+   },
+   {
+    "id": "line:Tourist_Ears_0c630d1",
+    "text": "Tourist: …"
+   }
+  ]
+ },
+ {
+  "character": "Unstable",
+  "sign": "EYE",
+  "node": "Unstable_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Unstable_Eyes_072298c",
+    "text": "Unstable: I saw the report. The eyes should be a kinda dark, murky green."
+   },
+   {
+    "id": "line:Unstable_Eyes_0c96234",
+    "text": "Unstable: Don’t mix it up though, there’s lots of types of green in the world these days."
+   },
+   {
+    "id": "line:Unstable_Eyes_0947067",
+    "text": "Unstable: …"
+   }
+  ]
+ },
+ {
+  "character": "Unstable",
+  "sign": "HANDS",
+  "node": "Unstable_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Unstable_Hands_0228e92",
+    "text": "Unstable: I kinda get itchy a lot, like ants running all over... Ha."
+   },
+   {
+    "id": "line:Unstable_Hands_0967649",
+    "text": "Unstable: Don't think I've been picking at anything, so my hands should be fine."
+   },
+   {
+    "id": "line:Unstable_Hands_01983c1",
+    "text": "Unstable: ..."
+   }
+  ]
+ },
+ {
+  "character": "Unstable",
+  "sign": "TEETH",
+  "node": "Unstable_Teeth",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Unstable_Teeth_0ea7d61",
+    "text": "Unstable: Did I tell you I can taste Enerjeka even when I’m not drinking it?"
+   },
+   {
+    "id": "line:Unstable_Teeth_060e928",
+    "text": "Unstable: Feels like it's made of some mad chemicals."
+   },
+   {
+    "id": "line:Unstable_Teeth_0ca5f4b",
+    "text": "Unstable: But who cares, right?"
+   },
+   {
+    "id": "line:Unstable_Teeth_0f808e9",
+    "text": "Unstable: …"
+   }
+  ]
+ },
+ {
+  "character": "Unstable",
+  "sign": "AURAPHOTO",
+  "node": "Unstable_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Unstable_Photo_072a783",
+    "text": "Unstable: I only ever got my pictures taken at parties."
+   },
+   {
+    "id": "line:Unstable_Photo_0128d5d",
+    "text": "Unstable: People don’t really throw parties anymore. Or maybe they just don’t invite me. Ha."
+   },
+   {
+    "id": "line:Unstable_Photo_0bbc708",
+    "text": "Unstable: …"
+   }
+  ]
+ },
+ {
+  "character": "Unstable",
+  "sign": "ARMPIT",
+  "node": "Unstable_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Unstable_Armpit_05c6d63",
+    "text": "Unstable: Ah, the only sign that makes sense."
+   },
+   {
+    "id": "line:Unstable_Armpit_059ab57",
+    "text": "Unstable: …"
+   }
+  ]
+ },
+ {
+  "character": "Unstable",
+  "sign": "EAR",
+  "node": "Unstable_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Unstable_Ears_021926d",
+    "text": "Unstable: Fine, why not."
+   },
+   {
+    "id": "line:Unstable_Ears_077bd09",
+    "text": "Unstable: …"
+   }
+  ]
+ },
+ {
+  "character": "Wheelchair",
+  "sign": "EYE",
+  "node": "Wheelchair_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Wheelchair_Eyes_02b0330",
+    "text": "Wheelchair: Where do you want me to look? Right at you?"
+   },
+   {
+    "id": "line:Wheelchair_Eyes_0d21171",
+    "text": "Wheelchair:..."
+   }
+  ]
+ },
+ {
+  "character": "Wheelchair",
+  "sign": "HANDS",
+  "node": "Wheelchair_Hands",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Wheelchair_Hands_04505ed",
+    "text": "Wheelchair: Hey, I'm just grateful I still even HAVE hands."
+   },
+   {
+    "id": "line:Wheelchair_Hands_04dfb8c",
+    "text": "Wheelchair: If I didn't, I wouldn't be able to race!"
+   },
+   {
+    "id": "line:Wheelchair_Hands_0409ace",
+    "text": "Wheelchair:..."
+   }
+  ]
+ },
+ {
+  "character": "Wheelchair",
+  "sign": "TEETH",
+  "node": "Wheelchair_Teeth",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Wheelchair_Teeth_0f1f749",
+    "text": "Wheelchair: Here, take a look."
+   },
+   {
+    "id": "line:Wheelchair_Teeth_0f16e5f",
+    "text": "Wheelchair: ..."
+   }
+  ]
+ },
+ {
+  "character": "Wheelchair",
+  "sign": "AURAPHOTO",
+  "node": "Wheelchair_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Wheelchair_Photo_0c772bc",
+    "text": "Wheelchair: You wanna take a photo of me?"
+   },
+   {
+    "id": "line:Wheelchair_Photo_0ea3139",
+    "text": "Wheelchair: Not really the biggest fan of being photographed, but whatever."
+   },
+   {
+    "id": "line:Wheelchair_Photo_0070fc5",
+    "text": "Wheelchair: ..."
+   }
+  ]
+ },
+ {
+  "character": "Wheelchair",
+  "sign": "ARMPIT",
+  "node": "Wheelchair_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Wheelchair_Armpit_04a006a",
+    "text": "Wheelchair: Huh?"
+   },
+   {
+    "id": "line:Wheelchair_Armpit_06fdd41",
+    "text": "Wheelchair: Sure thing, I guess... HAHAHAHA, okay, damn, that's good!"
+   },
+   {
+    "id": "line:Wheelchair_Armpit_06bc294",
+    "text": "Wheelchair:..."
+   }
+  ]
+ },
+ {
+  "character": "Wheelchair",
+  "sign": "EAR",
+  "node": "Wheelchair_Ears",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Wheelchair_Ears_0f570f2",
+    "text": "Wheelchair: So you picked up that broadcast, too?"
+   },
+   {
+    "id": "line:Wheelchair_Ears_0ab2c96",
+    "text": "Wheelchair: ..."
+   },
+   {
+    "id": "line:Wheelchair_Ears_044904f",
+    "text": "Wheelchair: ..."
+   },
+   {
+    "id": "line:Wheelchair_Ears_029dd06",
+    "text": "Wheelchair: Well, yeah. What? Yeah?"
+   },
+   {
+    "id": "line:Wheelchair_Ears_0fb5b4a",
+    "text": "Wheelchair: ...Wait, you didn't?"
+   },
+   {
+    "id": "line:Wheelchair_Ears_061ab27",
+    "text": "Wheelchair: ..."
+   }
+  ]
+ },
+ {
+  "character": "Widow",
+  "sign": "EYE",
+  "node": "Widow_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Widow_Eyes_028b9bc",
+    "text": "Widow: What are you looking for? Redness?"
+   },
+   {
+    "id": "line:Widow_Eyes_0e75924",
+    "text": "Widow: If you must..."
+   },
+   {
+    "id": "line:Widow_Eyes_009a0a5",
+    "text": "Widow: ..."
+   }
+  ]
+ },
+ {
+  "character": "Widow",
+  "sign": "HANDS",
+  "node": "Widow_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Widow_Hands_0a13908",
+    "text": "Widow: Hands...? One second."
+   },
+   {
+    "id": "line:Widow_Hands_02f2db4",
+    "text": "Widow: They're worn out from carrying the one they refused to save."
+   },
+   {
+    "id": "line:Widow_Hands_066cab7",
+    "text": "Widow: ..."
+   }
+  ]
+ },
+ {
+  "character": "Widow",
+  "sign": "TEETH",
+  "node": "Widow_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Widow_Teeth_0c45747",
+    "text": "Widow: What?"
+   },
+   {
+    "id": "line:Widow_Teeth_05a6004",
+    "text": "Widow: Um... Okay."
+   },
+   {
+    "id": "line:Widow_Teeth_05c0434",
+    "text": "Widow: ..."
+   }
+  ]
+ },
+ {
+  "character": "Widow",
+  "sign": "AURAPHOTO",
+  "node": "Widow_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Widow_Photo_04d4c05",
+    "text": "Widow: No one helped me save my husband, and now..."
+   },
+   {
+    "id": "line:Widow_Photo_0d30fbf",
+    "text": "Widow: YOU WANT TO MEMORIALIZE HIS DEATH?"
+   },
+   {
+    "id": "line:Widow_Photo_0e3ec53",
+    "text": "Widow: ..."
+   },
+   {
+    "id": "line:Widow_Photo_0e2b98e",
+    "text": "Widow: I have no words left."
+   },
+   {
+    "id": "line:Widow_Photo_06bb696",
+    "text": "Widow: Just do what you want and leave me alone."
+   },
+   {
+    "id": "line:Widow_Photo_0fe9f49",
+    "text": "Widow: ..."
+   }
+  ]
+ },
+ {
+  "character": "Widow",
+  "sign": "ARMPIT",
+  "node": "Widow_Armpit",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Widow_Armpit_05c996d",
+    "text": "Widow: Are you insane?"
+   },
+   {
+    "id": "line:Widow_Armpit_0732501",
+    "text": "Widow: Please tell me, ARE YOU INSANE?!"
+   },
+   {
+    "id": "line:Widow_Armpit_0172de8",
+    "text": "Widow: If those devils told you to jump off a cliff, would you be the first over the edge?"
+   },
+   {
+    "id": "line:Widow_Armpit_06f931f",
+    "text": "Widow: You... For fuck's— I have no words."
+   },
+   {
+    "id": "line:Widow_Armpit_087c76b",
+    "text": "Widow: ..."
+   }
+  ]
+ },
+ {
+  "character": "Widow",
+  "sign": "EAR",
+  "node": "Widow_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Widow_Ears_073b82e",
+    "text": "Widow: What do you want from me?"
+   },
+   {
+    "id": "line:Widow_Ears_069a9d9",
+    "text": "Widow: ..."
+   }
+  ]
+ },
+ {
+  "character": "Widow",
+  "sign": "EAR",
+  "node": "Widow_Ears_Gun",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Widow_Ears_Gun_088b17c",
+    "text": "Widow: Really? You'd go that far...?"
+   },
+   {
+    "id": "line:Widow_Ears_Gun_0bcd32e",
+    "text": "Widow: I don't know what to tell you."
+   },
+   {
+    "id": "line:Widow_Ears_Gun_0690ff2",
+    "text": "Widow: ..."
+   }
+  ]
+ },
+ {
+  "character": "Wifefema",
+  "sign": "EYE",
+  "node": "Wifefema_Eyes",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Wifefema_Eyes_036c54c",
+    "text": "Wifefema: It's so damn dry here... That's why I'm blinking a lot."
+   },
+   {
+    "id": "line:Wifefema_Eyes_0d552ef",
+    "text": "Wifefema: ..."
+   }
+  ]
+ },
+ {
+  "character": "Wifefema",
+  "sign": "HANDS",
+  "node": "Wifefema_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Wifefema_Hands_0bba680",
+    "text": "Wifefema: Sure."
+   },
+   {
+    "id": "line:Wifefema_Hands_0b2c718",
+    "text": "Wifefema: ..."
+   }
+  ]
+ },
+ {
+  "character": "Wifefema",
+  "sign": "TEETH",
+  "node": "Wifefema_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Wifefema_Teeth_0456da6",
+    "text": "Wifefema: Here."
+   },
+   {
+    "id": "line:Wifefema_Teeth_05dd7a1",
+    "text": "Wifefema: ..."
+   }
+  ]
+ },
+ {
+  "character": "Wifefema",
+  "sign": "AURAPHOTO",
+  "node": "Wifefema_Photo",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Wifefema_Photo_0bd28cb",
+    "text": "Wifefema: If you insist... Just don't go showin' my hubby, now."
+   },
+   {
+    "id": "line:Wifefema_Photo_0214c50",
+    "text": "Wifefema: ..."
+   }
+  ]
+ },
+ {
+  "character": "Wifefema",
+  "sign": "ARMPIT",
+  "node": "Wifefema_Armpit",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Wifefema_Armpit_03d68e4",
+    "text": "Wifefema: You can put that look back in your pocket, mister. You asked for it!"
+   },
+   {
+    "id": "line:Wifefema_Armpit_0ac1091",
+    "text": "Wifefema: ..."
+   }
+  ]
+ },
+ {
+  "character": "Wifefema",
+  "sign": "EAR",
+  "node": "Wifefema_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Wifefema_Ears_036641b",
+    "text": "Here, take a look."
+   },
+   {
+    "id": "line:Wifefema_Ears_0e4c32a",
+    "text": "Wifefema: ..."
+   }
+  ]
+ },
+ {
+  "character": "Wolfhound",
+  "sign": "EYE",
+  "node": "Wolfhound_Eyes",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Wolfhound_Eyes_025e91c",
+    "text": "Wolfhound: Looking to find a stranger in me? Eh?"
+   },
+   {
+    "id": "line:Wolfhound_Eyes_010b744",
+    "text": "Wolfhound: Not afraid you'll see yourself in there?"
+   },
+   {
+    "id": "line:Wolfhound_Eyes_0d5a77e",
+    "text": "Wolfhound: ..."
+   }
+  ]
+ },
+ {
+  "character": "Wolfhound",
+  "sign": "HANDS",
+  "node": "Wolfhound_Hands",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Wolfhound_Hands_08d7cb0",
+    "text": "Wolfhound: Yeah, they ain't clean. Killed some mug just the other day, actually."
+   },
+   {
+    "id": "line:Wolfhound_Hands_025fcf5",
+    "text": "Wolfhound: They tried to kill me first, mate. Like I'd just stand there waitin' like a muppet."
+   },
+   {
+    "id": "line:Wolfhound_Hands_025ccbc",
+    "text": "Wolfhound: Some freeze, some run."
+   },
+   {
+    "id": "line:Wolfhound_Hands_0a0174b",
+    "text": "Wolfhound: Me? I hit back, sunshine."
+   },
+   {
+    "id": "line:Wolfhound_Hands_0d9a506",
+    "text": "Wolfhound: ..."
+   }
+  ]
+ },
+ {
+  "character": "Wolfhound",
+  "sign": "TEETH",
+  "node": "Wolfhound_Teeth",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Wolfhound_Teeth_0c6f2f7",
+    "text": "Wolfhound: Careful now, sunshine."
+   },
+   {
+    "id": "line:Wolfhound_Teeth_03d8e55",
+    "text": "Wolfhound: Get too close and I'll have to sink these teeth right into your neck."
+   },
+   {
+    "id": "line:Wolfhound_Teeth_04d5c89",
+    "text": "Wolfhound: ..."
+   }
+  ]
+ },
+ {
+  "character": "Wolfhound",
+  "sign": "AURAPHOTO",
+  "node": "Wolfhound_Photo",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Wolfhound_Photo_0aabc04",
+    "text": "Wolfhound: I don't appreciate bein' photographed, sunshine."
+   },
+   {
+    "id": "line:Wolfhound_Photo_0cf41b5",
+    "text": "Wolfhound: If I find out those photos've ended up anywhere but the rubbish, you and me'll be 'aving words."
+   },
+   {
+    "id": "line:Wolfhound_Photo_04a2740",
+    "text": "Wolfhound: Got it?"
+   },
+   {
+    "id": "line:Wolfhound_Photo_0344fb0",
+    "text": "Wolfhound: ..."
+   }
+  ]
+ },
+ {
+  "character": "Wolfhound",
+  "sign": "ARMPIT",
+  "node": "Wolfhound_Armpit",
+  "isImposterBranch": true,
+  "lines": [
+   {
+    "id": "line:Wolfhound_Armpit_09a7b1c",
+    "text": "Wolfhound: That, I don't respect, sunshine. And I'll remember it."
+   },
+   {
+    "id": "line:Wolfhound_Armpit_0057b1a",
+    "text": "Wolfhound: ..."
+   }
+  ]
+ },
+ {
+  "character": "Wolfhound",
+  "sign": "EAR",
+  "node": "Wolfhound_Ears",
+  "isImposterBranch": false,
+  "lines": [
+   {
+    "id": "line:Wolfhound_Ears_05455e1",
+    "text": "Wolfhound: What next? \"My, what big teeth you 'ave!\" This is mental."
+   },
+   {
+    "id": "line:Wolfhound_Ears_0d040f1",
+    "text": "Wolfhound: ..."
+   }
+  ]
+ }
+]

@@ -1,0 +1,3755 @@
+[
+ {
+  "character": "Alkonost",
+  "sign": "EYE",
+  "node": "Alkonost_Eyes",
+  "lines": [
+   "line:Alkonost_Eyes_0f5c738",
+   "line:Alkonost_Eyes_019d944",
+   "line:Alkonost_Eyes_02cc81b",
+   "line:Alkonost_Eyes_0a454eb",
+   "line:Alkonost_Eyes_0086006"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Alkonost",
+  "sign": "HANDS",
+  "node": "Alkonost_Hands",
+  "lines": [
+   "line:Alkonost_Hands_0a11ac7",
+   "line:Alkonost_Hands_04effe9"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Alkonost",
+  "sign": "TEETH",
+  "node": "Alkonost_Teeth",
+  "lines": [
+   "line:Alkonost_Teeth_0aedb97",
+   "line:Alkonost_Teeth_0091081",
+   "line:Alkonost_Teeth_0d32053"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Alkonost",
+  "sign": "AURAPHOTO",
+  "node": "Alkonost_Photo",
+  "lines": [
+   "line:Alkonost_Photo_0718558",
+   "line:Alkonost_Photo_08cff6b",
+   "line:Alkonost_Photo_00531bf"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Alkonost",
+  "sign": "ARMPIT",
+  "node": "Alkonost_Armpit",
+  "lines": [
+   "line:Alkonost_Armpit_0d4f1cb",
+   "line:Alkonost_Armpit_0dcde84"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Alkonost",
+  "sign": "EAR",
+  "node": "Alkonost_Ears",
+  "lines": [
+   "line:Alkonost_Ears_0152215",
+   "line:Alkonost_Ears_0d269ae",
+   "line:Alkonost_Ears_08a71fa"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Alt",
+  "sign": "EYE",
+  "node": "Alt_Eyes",
+  "lines": [
+   "line:Alt_Eyes_04f2012",
+   "line:Alt_Eyes_0a3dadb"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Alt",
+  "sign": "HANDS",
+  "node": "Alt_Hands",
+  "lines": [
+   "line:Alt_Hands_039e262",
+   "line:Alt_Hands_03a6871",
+   "line:Alt_Hands_05e1834",
+   "line:Alt_Hands_0c047e4"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Alt",
+  "sign": "TEETH",
+  "node": "Alt_Teeth",
+  "lines": [
+   "line:Alt_Teeth_03ad714",
+   "line:Alt_Teeth_0bc33cf",
+   "line:Alt_Teeth_06f6feb"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Alt",
+  "sign": "AURAPHOTO",
+  "node": "Alt_Photo",
+  "lines": [
+   "line:Alt_Photo_0ea467e",
+   "line:Alt_Photo_088b0ef"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Alt",
+  "sign": "ARMPIT",
+  "node": "Alt_Armpit",
+  "lines": [
+   "line:Alt_Armpit_0b34e96",
+   "line:Alt_Armpit_0690e2c",
+   "line:Alt_Armpit_05ebd27"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Alt",
+  "sign": "EAR",
+  "node": "Alt_Ears",
+  "lines": [
+   "line:Alt_Ears_03aa796",
+   "line:Alt_Ears_0a0bdbb"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Anger",
+  "sign": "EYE",
+  "node": "Anger_Eyes",
+  "lines": [
+   "line:Anger_Eyes_070bb2c",
+   "line:Anger_Eyes_057ecdf"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Anger",
+  "sign": "HANDS",
+  "node": "Anger_Hands",
+  "lines": [
+   "line:Anger_Hands_091cb31",
+   "line:Anger_Hands_094fef5"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Anger",
+  "sign": "TEETH",
+  "node": "Anger_Teeth",
+  "lines": [
+   "line:Anger_Teeth_0d341e3",
+   "line:Anger_Teeth_0322e01"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Anger",
+  "sign": "AURAPHOTO",
+  "node": "Anger_Photo",
+  "lines": [
+   "line:Anger_Photo_0566de4",
+   "line:Anger_Photo_08e48a2"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Anger",
+  "sign": "ARMPIT",
+  "node": "Anger_Armpit",
+  "lines": [
+   "line:Anger_Armpit_0f83332",
+   "line:Anger_Armpit_0477d77"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Anger",
+  "sign": "EAR",
+  "node": "Anger_Ears",
+  "lines": [
+   "line:Anger_Ears_06e1895",
+   "line:Anger_Ears_0583a97"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Anxiety",
+  "sign": "EYE",
+  "node": "Anxiety_Eyes",
+  "lines": [
+   "line:Anxiety_Eyes_007b2a7",
+   "line:Anxiety_Eyes_0977f42",
+   "line:Anxiety_Eyes_046023f",
+   "line:Anxiety_Eyes_0fd0e73"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Anxiety",
+  "sign": "HANDS",
+  "node": "Anxiety_Hands",
+  "lines": [
+   "line:Anxiety_Hands_0c705b4",
+   "line:Anxiety_Hands_05e6450",
+   "line:Anxiety_Hands_06b2d98"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Anxiety",
+  "sign": "TEETH",
+  "node": "Anxiety_Teeth",
+  "lines": [
+   "line:Anxiety_Teeth_0cc57a5",
+   "line:Anxiety_Teeth_0b2e7c5",
+   "line:Anxiety_Teeth_06e74da",
+   "line:Anxiety_Teeth_01800b2",
+   "line:Anxiety_Teeth_03fb6e0",
+   "line:Anxiety_Teeth_0d7c9e9"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Anxiety",
+  "sign": "AURAPHOTO",
+  "node": "Anxiety_Photo",
+  "lines": [
+   "line:Anxiety_Photo_033880d",
+   "line:Anxiety_Photo_036a35a",
+   "line:Anxiety_Photo_0f11148",
+   "line:Anxiety_Photo_0406a0e"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Anxiety",
+  "sign": "ARMPIT",
+  "node": "Anxiety_Armpit",
+  "lines": [
+   "line:Anxiety_Armpit_0af5fc4",
+   "line:Anxiety_Armpit_0a0ea04",
+   "line:Anxiety_Armpit_02cd238"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Anxiety",
+  "sign": "EAR",
+  "node": "Anxiety_Ears",
+  "lines": [
+   "line:Anxiety_Ears_0df1bae",
+   "line:Anxiety_Ears_0f7b04e",
+   "line:Anxiety_Ears_0577d53"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Bald",
+  "sign": "EYE",
+  "node": "Bald_Eyes",
+  "lines": [
+   "line:Bald_Eyes_0f27462",
+   "line:Bald_Eyes_097c95a"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Bald",
+  "sign": "HANDS",
+  "node": "Bald_Hands",
+  "lines": [
+   "line:Bald_Hands_047bfdf",
+   "line:Bald_Hands_0468805"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Bald",
+  "sign": "TEETH",
+  "node": "Bald_Teeth",
+  "lines": [
+   "line:Bald_Teeth_0682b1d",
+   "line:Bald_Teeth_01127b1"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Bald",
+  "sign": "AURAPHOTO",
+  "node": "Bald_Photo",
+  "lines": [
+   "line:Bald_Photo_0b444c9",
+   "line:Bald_Photo_0b21761"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Bald",
+  "sign": "ARMPIT",
+  "node": "Bald_Armpit",
+  "lines": [
+   "line:Bald_Armpit_0bff792",
+   "line:Bald_Armpit_0c176bd",
+   "line:Bald_Armpit_041c7d2",
+   "line:Bald_Armpit_0830f11",
+   "line:Bald_Armpit_021a31e"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Bald",
+  "sign": "EAR",
+  "node": "Bald_Ears",
+  "lines": [
+   "line:Bald_Ears_01d466a",
+   "line:Bald_Ears_0c42e60"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Ballerina",
+  "sign": "EYE",
+  "node": "Ballerina_Eyes",
+  "lines": [
+   "line:Ballerina_Eyes_0ba8378",
+   "line:Ballerina_Eyes_0d49e38",
+   "line:Ballerina_Eyes_0ecf009"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Ballerina",
+  "sign": "HANDS",
+  "node": "Ballerina_Hands",
+  "lines": [
+   "line:Ballerina_Hands_060e4e4",
+   "line:Ballerina_Hands_00c042e",
+   "line:Ballerina_Hands_03cd050"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Ballerina",
+  "sign": "TEETH",
+  "node": "Ballerina_Teeth",
+  "lines": [
+   "line:Ballerina_Teeth_018d631",
+   "line:Ballerina_Teeth_034e1cf",
+   "line:Ballerina_Teeth_07cf1fb"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Ballerina",
+  "sign": "AURAPHOTO",
+  "node": "Ballerina_Photo",
+  "lines": [
+   "line:Ballerina_Photo_066c216",
+   "line:Ballerina_Photo_0d12a9a",
+   "line:Ballerina_Photo_05bc0bb"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Ballerina",
+  "sign": "ARMPIT",
+  "node": "Ballerina_Armpit",
+  "lines": [
+   "line:Ballerina_Armpit_043425f",
+   "line:Ballerina_Armpit_08d9312"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Ballerina",
+  "sign": "EAR",
+  "node": "Ballerina_Ears",
+  "lines": [
+   "line:Ballerina_Ears_03604e9",
+   "line:Ballerina_Ears_05ef528"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Bestson",
+  "sign": "EYE",
+  "node": "Bestson_Eyes",
+  "lines": [
+   "line:Bestson_Eyes_04ab7f5",
+   "line:Bestson_Eyes_01d3f00"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Bestson",
+  "sign": "HANDS",
+  "node": "Bestson_Hands",
+  "lines": [
+   "line:Bestson_Hands_0e219a7",
+   "line:Bestson_Hands_074a187"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Bestson",
+  "sign": "TEETH",
+  "node": "Bestson_Teeth",
+  "lines": [
+   "line:Bestson_Teeth_07feb4a",
+   "line:Bestson_Teeth_0466b50"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Bestson",
+  "sign": "AURAPHOTO",
+  "node": "Bestson_Photo",
+  "lines": [
+   "line:Bestson_Photo_0273242",
+   "line:Bestson_Photo_03ed4b8"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Bestson",
+  "sign": "ARMPIT",
+  "node": "Bestson_Armpit",
+  "lines": [
+   "line:Bestson_Armpit_000dfa0",
+   "line:Bestson_Armpit_063a4c6"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Bestson",
+  "sign": "EAR",
+  "node": "Bestson_Ears",
+  "lines": [
+   "line:Bestson_Ears_0be7814",
+   "line:Bestson_Ears_07013da"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "BigLebowski",
+  "sign": "EYE",
+  "node": "BigLebowski_Eyes",
+  "lines": [
+   "line:BigLebowski_Eyes_01970dc",
+   "line:BigLebowski_Eyes_0effe55"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "BigLebowski",
+  "sign": "HANDS",
+  "node": "BigLebowski_Hands",
+  "lines": [
+   "line:BigLebowski_Hands_026864f",
+   "line:BigLebowski_Hands_088a3e3",
+   "line:BigLebowski_Hands_07d7ea8",
+   "line:BigLebowski_Hands_01adcbb",
+   "line:BigLebowski_Hands_0d1c23a",
+   "line:BigLebowski_Hands_059f39a"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "BigLebowski",
+  "sign": "TEETH",
+  "node": "BigLebowski_Teeth",
+  "lines": [
+   "line:BigLebowski_Teeth_0c889b9",
+   "line:BigLebowski_Teeth_0b71b83"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "BigLebowski",
+  "sign": "AURAPHOTO",
+  "node": "BigLebowski_Photo",
+  "lines": [
+   "line:BigLebowski_Photo_07ea442",
+   "line:BigLebowski_Photo_007f361",
+   "line:BigLebowski_Photo_00818ec"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "BigLebowski",
+  "sign": "EAR",
+  "node": "BigLebowski_Ears",
+  "lines": [
+   "line:BigLebowski_Ears_080e67b",
+   "line:BigLebowski_Ears_0140d7b"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Blind",
+  "sign": "EYE",
+  "node": "Blind_Eyes",
+  "lines": [
+   "line:Blind_Eyes_0607280",
+   "line:Blind_Eyes_03fbc06"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Blind",
+  "sign": "HANDS",
+  "node": "Blind_Hands",
+  "lines": [
+   "line:Blind_Hands_07b48bd",
+   "line:Blind_Hands_0a1165a"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Blind",
+  "sign": "TEETH",
+  "node": "Blind_Teeth",
+  "lines": [
+   "line:Blind_Teeth_04c571e",
+   "line:Blind_Teeth_0b8c49c"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Blind",
+  "sign": "AURAPHOTO",
+  "node": "Blind_Photo",
+  "lines": [
+   "line:Blind_Photo_0bb91a7",
+   "line:Blind_Photo_0bd8603"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Blind",
+  "sign": "ARMPIT",
+  "node": "Blind_Armpit",
+  "lines": [
+   "line:Blind_Armpit_009d9d4",
+   "line:Blind_Armpit_02e7552"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Blind",
+  "sign": "EAR",
+  "node": "Blind_Ears",
+  "lines": [
+   "line:Blind_Ears_00b8a51",
+   "line:Blind_Ears_0f3dc74"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Buddy",
+  "sign": "EYE",
+  "node": "Buddy_Eyes",
+  "lines": [
+   "line:Buddy_Eyes_018de8d",
+   "line:Buddy_Eyes_050d3ee"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Buddy",
+  "sign": "EYE",
+  "node": "Fatman_Eyes",
+  "lines": [
+   "line:Fatman_Eyes_06d38ce",
+   "line:Fatman_Eyes_0efd0d8"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Buddy",
+  "sign": "HANDS",
+  "node": "Buddy_Hands",
+  "lines": [
+   "line:Buddy_Hands_0086de5",
+   "line:Buddy_Hands_0713bea"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Buddy",
+  "sign": "HANDS",
+  "node": "Fatman_Hands",
+  "lines": [
+   "line:Fatman_Hands_0ff0cec",
+   "line:Fatman_Hands_022152d"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Buddy",
+  "sign": "TEETH",
+  "node": "Buddy_Teeth",
+  "lines": [
+   "line:Buddy_Teeth_0fa8546",
+   "line:Buddy_Teeth_0c490c8"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Buddy",
+  "sign": "AURAPHOTO",
+  "node": "Buddy_Photo",
+  "lines": [
+   "line:Buddy_Photo_066ef22",
+   "line:Buddy_Photo_040fae3"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Buddy",
+  "sign": "ARMPIT",
+  "node": "Buddy_Armpit",
+  "lines": [
+   "line:Buddy_Armpit_0e6e420",
+   "line:Buddy_Armpit_0f1af7a"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Buddy",
+  "sign": "EAR",
+  "node": "Buddy_Ears",
+  "lines": [
+   "line:Buddy_Ears_0ac6626",
+   "line:Buddy_Ears_0304fae"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Buddy",
+  "sign": "EAR",
+  "node": "Fatman_Ears",
+  "lines": [
+   "line:Fatman_Ears_0bea36b",
+   "line:Fatman_Ears_00c6c80"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Cold",
+  "sign": "EYE",
+  "node": "Cold_Eyes",
+  "lines": [
+   "line:Cold_Eyes_083cc02",
+   "line:Cold_Eyes_00ae88d",
+   "line:Cold_Eyes_0a48646"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Cold",
+  "sign": "HANDS",
+  "node": "Cold_Hands",
+  "lines": [
+   "line:Cold_Hands_0967f38",
+   "line:Cold_Hands_0eea474",
+   "line:Cold_Hands_016281d",
+   "line:Cold_Hands_0f55709"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Cold",
+  "sign": "TEETH",
+  "node": "Cold_Teeth",
+  "lines": [
+   "line:Cold_Teeth_03cbefb",
+   "line:Cold_Teeth_0a6538e",
+   "line:Cold_Teeth_0d30991"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Cold",
+  "sign": "AURAPHOTO",
+  "node": "Cold_Photo",
+  "lines": [
+   "line:Cold_Photo_0838d7b",
+   "line:Cold_Photo_0e76fbc",
+   "line:Cold_Photo_0c3172f",
+   "line:Cold_Photo_00a8b4f"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Cold",
+  "sign": "ARMPIT",
+  "node": "Cold_Armpit",
+  "lines": [
+   "line:Cold_Armpit_0e44be9",
+   "line:Cold_Armpit_0b4af68",
+   "line:Cold_Armpit_06ec859",
+   "line:Cold_Armpit_068ca44",
+   "line:Cold_Armpit_018f45c"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Cold",
+  "sign": "EAR",
+  "node": "Cold_Ears",
+  "lines": [
+   "line:Cold_Ears_06b59e8",
+   "line:Cold_Ears_080557d",
+   "line:Cold_Ears_0d082da"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Couple",
+  "sign": "EYE",
+  "node": "Couple_Eyes",
+  "lines": [
+   "line:Couple_Eyes_0d65c54",
+   "line:Couple_Eyes_0b97b2b",
+   "line:Couple_Eyes_0bcc40a"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Couple",
+  "sign": "HANDS",
+  "node": "Couple_Hands",
+  "lines": [
+   "line:Couple_Hands_0b31ec5",
+   "line:Couple_Hands_061efcf"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Couple",
+  "sign": "TEETH",
+  "node": "Couple_Teeth",
+  "lines": [
+   "line:Couple_Teeth_0cd96bc",
+   "line:Couple_Teeth_0a1a0ce"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Couple",
+  "sign": "AURAPHOTO",
+  "node": "Couple_Photo",
+  "lines": [
+   "line:Couple_Photo_026b1b7",
+   "line:Couple_Photo_036f144",
+   "line:Couple_Photo_016db2b",
+   "line:Couple_Photo_034d891",
+   "line:Couple_Photo_0eeb804"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Couple",
+  "sign": "ARMPIT",
+  "node": "Couple_Armpit",
+  "lines": [
+   "line:Couple_Armpit_03f4403",
+   "line:Couple_Armpit_0410460"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Couple",
+  "sign": "EAR",
+  "node": "Couple_Ears",
+  "lines": [
+   "line:Couple_Ears_002d8ed",
+   "line:Couple_Ears_0c36835",
+   "line:Couple_Ears_0c00c3f",
+   "line:Couple_Ears_0d90b24",
+   "line:Couple_Ears_039e960",
+   "line:Couple_Ears_0cb0d6b",
+   "line:Couple_Ears_017f5fe"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "CultistOne",
+  "sign": "EYE",
+  "node": "Cultist1_Eyes",
+  "lines": [
+   "line:Cultist1_Eyes_07aa212",
+   "line:Cultist1_Eyes_0330f69"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "CultistOne",
+  "sign": "HANDS",
+  "node": "Cultist1_Hands",
+  "lines": [
+   "line:Cultist1_Hands_0e78f96",
+   "line:Cultist1_Hands_01f2281"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "CultistOne",
+  "sign": "TEETH",
+  "node": "Cultist1_Teeth",
+  "lines": [
+   "line:Cultist1_Teeth_0a23e8d",
+   "line:Cultist1_Teeth_0096727"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "CultistOne",
+  "sign": "AURAPHOTO",
+  "node": "Cultist1_Photo",
+  "lines": [
+   "line:Cultist1_Photo_0e1a928",
+   "line:Cultist1_Photo_0147428",
+   "line:Cultist1_Photo_0cb7dbb"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "CultistOne",
+  "sign": "ARMPIT",
+  "node": "Cultist1_Armpit",
+  "lines": [
+   "line:Cultist1_Armpit_030ef2f",
+   "line:Cultist1_Armpit_0567335"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "CultistOne",
+  "sign": "EAR",
+  "node": "Cultist1_Ears",
+  "lines": [
+   "line:Cultist1_Ears_0d73801",
+   "line:Cultist1_Ears_0308e5e"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "CultistThree",
+  "sign": "EYE",
+  "node": "Cultist3_Eyes",
+  "lines": [
+   "line:Cultist3_Eyes_08e1515",
+   "line:Cultist3_Eyes_0e857be"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "CultistThree",
+  "sign": "HANDS",
+  "node": "Cultist3_Hands",
+  "lines": [
+   "line:Cultist3_Hands_07dd8e7",
+   "line:Cultist3_Hands_0f762c5"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "CultistThree",
+  "sign": "TEETH",
+  "node": "Cultist3_Teeth",
+  "lines": [
+   "line:Cultist3_Teeth_0db061a",
+   "line:Cultist3_Teeth_06b4d22"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "CultistThree",
+  "sign": "AURAPHOTO",
+  "node": "Cultist3_Photo",
+  "lines": [
+   "line:Cultist3_Photo_0c4accf",
+   "line:Cultist3_Photo_0a93a28"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "CultistThree",
+  "sign": "ARMPIT",
+  "node": "Cultist3_Armpit",
+  "lines": [
+   "line:Cultist3_Armpit_0ebefd9",
+   "line:Cultist3_Armpit_0327d80"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "CultistThree",
+  "sign": "EAR",
+  "node": "Cultist3_Ears",
+  "lines": [
+   "line:Cultist3_Ears_0f3086c",
+   "line:Cultist3_Ears_07b012c"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "CultistTwo",
+  "sign": "EYE",
+  "node": "Cultist2_Eyes",
+  "lines": [
+   "line:Cultist2_Eyes_0144eb6",
+   "line:Cultist2_Eyes_0181923"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "CultistTwo",
+  "sign": "HANDS",
+  "node": "Cultist2_Hands",
+  "lines": [
+   "line:Cultist2_Hands_0565b87",
+   "line:Cultist2_Hands_022eb07"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "CultistTwo",
+  "sign": "TEETH",
+  "node": "Cultist2_Teeth",
+  "lines": [
+   "line:Cultist2_Teeth_01b951e",
+   "line:Cultist2_Teeth_041707e",
+   "line:Cultist2_Teeth_05fddfc"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "CultistTwo",
+  "sign": "AURAPHOTO",
+  "node": "Cultist2_Photo",
+  "lines": [
+   "line:Cultist2_Photo_0344f61",
+   "line:Cultist2_Photo_073396f",
+   "line:Cultist2_Photo_0b17cac"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "CultistTwo",
+  "sign": "ARMPIT",
+  "node": "Cultist2_Armpit",
+  "lines": [
+   "line:Cultist2_Armpit_00d9cd8",
+   "line:Cultist2_Armpit_01cf4ea"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "CultistTwo",
+  "sign": "EAR",
+  "node": "Cultist2_Ears",
+  "lines": [
+   "line:Cultist2_Ears_0df809b",
+   "line:Cultist2_Ears_08c4dee"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Daughter",
+  "sign": "EYE",
+  "node": "Daughter_Eyes",
+  "lines": [
+   "line:Daughter_Eyes_081c02f",
+   "line:Daughter_Eyes_0707f88",
+   "line:Daughter_Eyes_09241b2",
+   "line:Daughter_Eyes_0b93d66"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Daughter",
+  "sign": "HANDS",
+  "node": "Daughter_Hands",
+  "lines": [
+   "line:Daughter_Hands_069c6f0",
+   "line:Daughter_Hands_0501f2e",
+   "line:Daughter_Hands_0eb8e48",
+   "line:Daughter_Hands_0f57559"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Daughter",
+  "sign": "TEETH",
+  "node": "Daughter_Teeth",
+  "lines": [
+   "line:Daughter_Teeth_0edf43e",
+   "line:Daughter_Teeth_04b3012",
+   "line:Daughter_Teeth_0cdf7d4",
+   "line:Daughter_Teeth_030b97f"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Daughter",
+  "sign": "AURAPHOTO",
+  "node": "Daughter_Photo",
+  "lines": [
+   "line:Daughter_Photo_052fe5e",
+   "line:Daughter_Photo_03b6527",
+   "line:Daughter_Photo_0ac1ec6",
+   "line:Daughter_Photo_08d386d"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Daughter",
+  "sign": "EAR",
+  "node": "Daughter_Ears",
+  "lines": [
+   "line:Daughter_Ears_0797223",
+   "line:Daughter_Ears_0a2550f"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Doc",
+  "sign": "EYE",
+  "node": "Doctor_Eyes",
+  "lines": [
+   "line:Doctor_Eyes_057f2d9",
+   "line:Doctor_Eyes_00306a5",
+   "line:Doctor_Eyes_024d460",
+   "line:Doctor_Eyes_03acf9f"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Doc",
+  "sign": "HANDS",
+  "node": "Doctor_Hands",
+  "lines": [
+   "line:Doctor_Hands_0073ddc",
+   "line:Doctor_Hands_0f6f956",
+   "line:Doctor_Hands_087ef7f",
+   "line:Doctor_Hands_03db016"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Doc",
+  "sign": "TEETH",
+  "node": "Doctor_Teeth",
+  "lines": [
+   "line:Doctor_Teeth_0cb0833",
+   "line:Doctor_Teeth_040aaec",
+   "line:Doctor_Teeth_0b8926a",
+   "line:Doctor_Teeth_03520dd"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Doc",
+  "sign": "AURAPHOTO",
+  "node": "Doctor_Photo",
+  "lines": [
+   "line:Doctor_Photo_00a0977",
+   "line:Doctor_Photo_0353b00",
+   "line:Doctor_Photo_0eefed1"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Doc",
+  "sign": "ARMPIT",
+  "node": "Doctor_Armpit",
+  "lines": [
+   "line:Doctor_Armpit_0dd8566",
+   "line:Doctor_Armpit_0db51c9"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Doc",
+  "sign": "EAR",
+  "node": "Doctor_Ears",
+  "lines": [
+   "line:Doctor_Ears_0bf5989",
+   "line:Doctor_Ears_02804d6"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Dude",
+  "sign": "EYE",
+  "node": "Dude_Eyes",
+  "lines": [
+   "line:Dude_Eyes_038a5f1",
+   "line:Dude_Eyes_055371e"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Dude",
+  "sign": "HANDS",
+  "node": "Dude_Hands",
+  "lines": [
+   "line:Dude_Hands_076adb3",
+   "line:Dude_Hands_06d3faa",
+   "line:Dude_Hands_0c1560f"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Dude",
+  "sign": "TEETH",
+  "node": "Dude_Teeth",
+  "lines": [
+   "line:Dude_Teeth_089adb1",
+   "line:Dude_Teeth_0db00e3"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Dude",
+  "sign": "AURAPHOTO",
+  "node": "Dude_Photo",
+  "lines": [
+   "line:Dude_Photo_0475679",
+   "line:Dude_Photo_0c9a371"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Dude",
+  "sign": "ARMPIT",
+  "node": "Dude_Armpit",
+  "lines": [
+   "line:Dude_Armpit_0a8042d",
+   "line:Dude_Armpit_06a9d2e"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Dude",
+  "sign": "EAR",
+  "node": "Dude_Ears",
+  "lines": [
+   "line:Dude_Ears_06cf205",
+   "line:Dude_Ears_060d599"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Edgar",
+  "sign": "EYE",
+  "node": "Edgar_Eyes",
+  "lines": [
+   "line:Edgar_Eyes_018b52b",
+   "line:Edgar_Eyes_0923b73"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Edgar",
+  "sign": "HANDS",
+  "node": "Edgar_Hands",
+  "lines": [
+   "line:Edgar_Hands_0185d1b",
+   "line:Edgar_Hands_04546fb"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Edgar",
+  "sign": "TEETH",
+  "node": "Edgar_Teeth",
+  "lines": [
+   "line:Edgar_Teeth_054e7d6",
+   "line:Edgar_Teeth_0fd5b76"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Edgar",
+  "sign": "AURAPHOTO",
+  "node": "Edgar_Photo",
+  "lines": [
+   "line:Edgar_Photo_049a514",
+   "line:Edgar_Photo_0c694d9"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Edgar",
+  "sign": "ARMPIT",
+  "node": "Edgar_Armpit",
+  "lines": [
+   "line:Edgar_Armpit_0fb6efa",
+   "line:Edgar_Armpit_09a957d"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Edgar",
+  "sign": "EAR",
+  "node": "Edgar_Ears",
+  "lines": [
+   "line:Edgar_Ears_0c6c999",
+   "line:Edgar_Ears_0d9bd61"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Esenin",
+  "sign": "EYE",
+  "node": "Esenin_Eyes",
+  "lines": [
+   "line:Esenin_Eyes_06ca9f9",
+   "line:Esenin_Eyes_07497b4",
+   "line:Esenin_Eyes_0d451cc",
+   "line:Esenin_Eyes_0bb04ba",
+   "line:Esenin_Eyes_0df9d03"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Esenin",
+  "sign": "HANDS",
+  "node": "Esenin_Hands",
+  "lines": [
+   "line:Esenin_Hands_0b19ae8",
+   "line:Esenin_Hands_00ef75d",
+   "line:Esenin_Hands_0e5c901",
+   "line:Esenin_Hands_0c80870",
+   "line:Esenin_Hands_05b83a6",
+   "line:Esenin_Hands_051a3b7"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Esenin",
+  "sign": "TEETH",
+  "node": "Esenin_Teeth",
+  "lines": [
+   "line:Esenin_Teeth_05da7bf",
+   "line:Esenin_Teeth_08293d4",
+   "line:Esenin_Teeth_03bdb45"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Esenin",
+  "sign": "AURAPHOTO",
+  "node": "Esenin_Photo",
+  "lines": [
+   "line:Esenin_Photo_01d8951",
+   "line:Esenin_Photo_078acbe",
+   "line:Esenin_Photo_031e1ff",
+   "line:Esenin_Photo_0031dde",
+   "line:Esenin_Photo_0fd3c17",
+   "line:Esenin_Photo_09d74f8"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Esenin",
+  "sign": "ARMPIT",
+  "node": "Esenin_Armpit",
+  "lines": [
+   "line:Esenin_Armpit_0042fd8",
+   "line:Esenin_Armpit_0836065",
+   "line:Esenin_Armpit_0f56035",
+   "line:Esenin_Armpit_0be77a2",
+   "line:Esenin_Armpit_05c23a4"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Esenin",
+  "sign": "EAR",
+  "node": "Esenin_Ears",
+  "lines": [
+   "line:Esenin_Ears_0e8c7d4",
+   "line:Esenin_Ears_0dae071",
+   "line:Esenin_Ears_00cbaf4",
+   "line:Esenin_Ears_062698d"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Experienced",
+  "sign": "EYE",
+  "node": "Experienced_Eyes",
+  "lines": [
+   "line:Experienced_Eyes_0ea6a3a",
+   "line:Experienced_Eyes_0e2496f",
+   "line:Experienced_Eyes_00bb980",
+   "line:Experienced_Eyes_0e4c656"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Experienced",
+  "sign": "HANDS",
+  "node": "Experienced_Hands",
+  "lines": [
+   "line:Experienced_Hands_03f7600",
+   "line:Experienced_Hands_020b13c"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Experienced",
+  "sign": "TEETH",
+  "node": "Experienced_Teeth",
+  "lines": [
+   "line:Experienced_Teeth_0fc89b1",
+   "line:Experienced_Teeth_0fc54f2"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Experienced",
+  "sign": "AURAPHOTO",
+  "node": "Experienced_Photo",
+  "lines": [
+   "line:Experienced_Photo_0961fb1",
+   "line:Experienced_Photo_0c7170b",
+   "line:Experienced_Photo_00cee57",
+   "line:Experienced_Photo_072974b",
+   "line:Experienced_Photo_010f9a9"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Experienced",
+  "sign": "ARMPIT",
+  "node": "Experienced_Armpit",
+  "lines": [
+   "line:Experienced_Armpit_0ef3354",
+   "line:Experienced_Armpit_04736d5",
+   "line:Experienced_Armpit_087b7d8",
+   "line:Experienced_Armpit_0148fca"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Experienced",
+  "sign": "EAR",
+  "node": "Experienced_Ears",
+  "lines": [
+   "line:Experienced_Ears_005e438",
+   "line:Experienced_Ears_0ad3bca",
+   "line:Experienced_Ears_039d6b2",
+   "line:Experienced_Ears_090487f",
+   "line:Experienced_Ears_0e0f078"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Fairytaller",
+  "sign": "EYE",
+  "node": "Fairytaller_Eyes",
+  "lines": [
+   "line:Fairytaller_Eyes_0273d94",
+   "line:Fairytaller_Eyes_07878a3"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Fairytaller",
+  "sign": "HANDS",
+  "node": "Fairytaller_Hands",
+  "lines": [
+   "line:Fairytaller_Hands_06ee4c5",
+   "line:Fairytaller_Hands_03e9e58"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Fairytaller",
+  "sign": "TEETH",
+  "node": "Fairytaller_Teeth",
+  "lines": [
+   "line:Fairytaller_Teeth_01e6158",
+   "line:Fairytaller_Teeth_0629399"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Fairytaller",
+  "sign": "AURAPHOTO",
+  "node": "Fairytaller_Photo",
+  "lines": [
+   "line:Fairytaller_Photo_02c646e",
+   "line:Fairytaller_Photo_02c4d44"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Fairytaller",
+  "sign": "ARMPIT",
+  "node": "Fairytaller_Armpit",
+  "lines": [
+   "line:Fairytaller_Armpit_02eb681",
+   "line:Fairytaller_Armpit_0551866",
+   "line:Fairytaller_Armpit_08b6acf"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Fairytaller",
+  "sign": "EAR",
+  "node": "Fairytaller_Ears",
+  "lines": [
+   "line:Fairytaller_Ears_0955df1",
+   "line:Fairytaller_Ears_02d5b2d"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Fan",
+  "sign": "EYE",
+  "node": "Fanatic_Eyes",
+  "lines": [
+   "line:Fanatic_Eyes_053fac8",
+   "line:Fanatic_Eyes_02731da",
+   "line:Fanatic_Eyes_0c5e0dd",
+   "line:Fanatic_Eyes_043cef9"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Fan",
+  "sign": "HANDS",
+  "node": "Fanatic_Hands",
+  "lines": [
+   "line:Fanatic_Hands_09c822b",
+   "line:Fanatic_Hands_0e0c5c4",
+   "line:Fanatic_Hands_0a657e0",
+   "line:Fanatic_Hands_0c358bd",
+   "line:Fanatic_Hands_03ed1e1"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Fan",
+  "sign": "TEETH",
+  "node": "Fanatic_Teeth",
+  "lines": [
+   "line:Fanatic_Teeth_08dda0a",
+   "line:Fanatic_Teeth_091b8b6",
+   "line:Fanatic_Teeth_05d059f",
+   "line:Fanatic_Teeth_06956fa",
+   "line:Fanatic_Teeth_0ea7c7c"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Fan",
+  "sign": "AURAPHOTO",
+  "node": "Fanatic_Photo",
+  "lines": [
+   "line:Fanatic_Photo_0305b25",
+   "line:Fanatic_Photo_0e2ae4c",
+   "line:Fanatic_Photo_0397c21",
+   "line:Fanatic_Photo_0c7d673",
+   "line:Fanatic_Photo_0f5d103",
+   "line:Fanatic_Photo_05761d7"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Fan",
+  "sign": "ARMPIT",
+  "node": "Fanatic_Armpit",
+  "lines": [
+   "line:Fanatic_Armpit_06d9f47",
+   "line:Fanatic_Armpit_0da6935",
+   "line:Fanatic_Armpit_02f0fad",
+   "line:Fanatic_Armpit_0081c4b",
+   "line:Fanatic_Armpit_0a9cc74",
+   "line:Fanatic_Armpit_00e4b9b",
+   "line:Fanatic_Armpit_0ed4c42"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Fan",
+  "sign": "EAR",
+  "node": "Fanatic_Ears",
+  "lines": [
+   "line:Fanatic_Ears_0fe5094",
+   "line:Fanatic_Ears_0c01099"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Fatman",
+  "sign": "TEETH",
+  "node": "Fatman_Teeth",
+  "lines": [
+   "line:Fatman_Teeth_06d8142",
+   "line:Fatman_Teeth_00e47c0",
+   "line:Fatman_Teeth_0316b2d",
+   "line:Fatman_Teeth_0b5e5ff",
+   "line:Fatman_Teeth_084de36"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Fatman",
+  "sign": "AURAPHOTO",
+  "node": "Fatman_Photo",
+  "lines": [
+   "line:Fatman_Photo_0c390c6",
+   "line:Fatman_Photo_09b1238"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Fatman",
+  "sign": "ARMPIT",
+  "node": "Fatman_Armpit",
+  "lines": [
+   "line:Fatman_Armpit_0eff35b",
+   "line:Fatman_Armpit_076f871"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Firefighter",
+  "sign": "EYE",
+  "node": "Firefighter_Eyes",
+  "lines": [
+   "line:Firefighter_Eyes_077d9a8",
+   "line:Firefighter_Eyes_0d25bbb"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Firefighter",
+  "sign": "HANDS",
+  "node": "Firefighter_Hands",
+  "lines": [
+   "line:Firefighter_Hands_0e809bf",
+   "line:Firefighter_Hands_02132fa"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Firefighter",
+  "sign": "TEETH",
+  "node": "Firefighter_Teeth",
+  "lines": [
+   "line:Firefighter_Teeth_09c1819",
+   "line:Firefighter_Teeth_0e48c2d"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Firefighter",
+  "sign": "AURAPHOTO",
+  "node": "Firefighter_Photo",
+  "lines": [
+   "line:Firefighter_Photo_01ba045",
+   "line:Firefighter_Photo_00cdc52"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Firefighter",
+  "sign": "ARMPIT",
+  "node": "Firefighter_Armpit",
+  "lines": [
+   "line:Firefighter_Armpit_0412a37",
+   "line:Firefighter_Armpit_04dcf3b"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Firefighter",
+  "sign": "EAR",
+  "node": "Firefighter_Ears",
+  "lines": [
+   "line:Firefighter_Ears_0174130",
+   "line:Firefighter_Ears_00af63a"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Foreigner",
+  "sign": "EYE",
+  "node": "Foreigner_Eyes",
+  "lines": [
+   "line:Foreigner_Eyes_0aba9fb",
+   "line:Foreigner_Eyes_0db4669"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Foreigner",
+  "sign": "HANDS",
+  "node": "Foreigner_Hands",
+  "lines": [
+   "line:Foreigner_Hands_0654052",
+   "line:Foreigner_Hands_0f1188a"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Foreigner",
+  "sign": "TEETH",
+  "node": "Foreigner_Teeth",
+  "lines": [
+   "line:Foreigner_Teeth_03ba689",
+   "line:Foreigner_Teeth_07f95d5"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Foreigner",
+  "sign": "AURAPHOTO",
+  "node": "Foreigner_Photo",
+  "lines": [
+   "line:Foreigner_Photo_0c3c7aa",
+   "line:Foreigner_Photo_0e6834c"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Foreigner",
+  "sign": "ARMPIT",
+  "node": "Foreigner_Armpit",
+  "lines": [
+   "line:Foreigner_Armpit_090c5f5",
+   "line:Foreigner_Armpit_0caeb5e"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Foreigner",
+  "sign": "EAR",
+  "node": "Foreigner_Ears",
+  "lines": [
+   "line:Foreigner_Ears_076f3a7",
+   "line:Foreigner_Ears_001e25f"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "FormerFema",
+  "sign": "EYE",
+  "node": "FormerFema_Eyes",
+  "lines": [
+   "line:FormerFema_Eyes_0f99d72",
+   "line:FormerFema_Eyes_0dd2830"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "FormerFema",
+  "sign": "HANDS",
+  "node": "FormerFema_Hands",
+  "lines": [
+   "line:FormerFema_Hands_0aee8f2",
+   "line:FormerFema_Hands_09b87e3"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "FormerFema",
+  "sign": "TEETH",
+  "node": "FormerFema_Teeth",
+  "lines": [
+   "line:FormerFema_Teeth_05285bc",
+   "line:FormerFema_Teeth_0946bb4"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "FormerFema",
+  "sign": "AURAPHOTO",
+  "node": "FormerFema_Photo",
+  "lines": [
+   "line:FormerFema_Photo_0c3ab82",
+   "line:FormerFema_Photo_0eb7a59"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "FormerFema",
+  "sign": "ARMPIT",
+  "node": "FormerFema_Armpit",
+  "lines": [
+   "line:FormerFema_Armpit_0bdb5a1",
+   "line:FormerFema_Armpit_05019cf"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "FormerFema",
+  "sign": "EAR",
+  "node": "FormerFema_Ears",
+  "lines": [
+   "line:FormerFema_Ears_0b1a335",
+   "line:FormerFema_Ears_09f516a"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "FortuneTeller",
+  "sign": "EYE",
+  "node": "FortuneTeller_Eyes",
+  "lines": [
+   "line:FortuneTeller_Eyes_0415701",
+   "line:FortuneTeller_Eyes_088a05c"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "FortuneTeller",
+  "sign": "HANDS",
+  "node": "FortuneTeller_Hands",
+  "lines": [
+   "line:FortuneTeller_Hands_07d86b8",
+   "line:FortuneTeller_Hands_0abf20d"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "FortuneTeller",
+  "sign": "TEETH",
+  "node": "FortuneTeller_Teeth",
+  "lines": [
+   "line:FortuneTeller_Teeth_04fc7f9",
+   "line:FortuneTeller_Teeth_0590da7"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "FortuneTeller",
+  "sign": "AURAPHOTO",
+  "node": "FortuneTeller_Photo",
+  "lines": [
+   "line:FortuneTeller_Photo_032121c",
+   "line:FortuneTeller_Photo_0e42c7f"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "FortuneTeller",
+  "sign": "ARMPIT",
+  "node": "FortuneTeller_Armpit",
+  "lines": [
+   "line:FortuneTeller_Armpit_060de09",
+   "line:FortuneTeller_Armpit_0a1eda6"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "FortuneTeller",
+  "sign": "EAR",
+  "node": "FortuneTeller_Ears",
+  "lines": [
+   "line:FortuneTeller_Ears_0082536",
+   "line:FortuneTeller_Ears_062153f"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Fugitive",
+  "sign": "EYE",
+  "node": "Fugitive_Eyes",
+  "lines": [
+   "line:Fugitive_Eyes_06f963d",
+   "line:Fugitive_Eyes_0fd0208"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Fugitive",
+  "sign": "HANDS",
+  "node": "Fugitive_Hands",
+  "lines": [
+   "line:Fugitive_Hands_0970e73",
+   "line:Fugitive_Hands_0480b6f",
+   "line:Fugitive_Hands_0ed2106",
+   "line:Fugitive_Hands_058ead0",
+   "line:Fugitive_Hands_018993f"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Fugitive",
+  "sign": "TEETH",
+  "node": "Fugitive_Teeth",
+  "lines": [
+   "line:Fugitive_Teeth_01b0881",
+   "line:Fugitive_Teeth_0b05dcf"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Fugitive",
+  "sign": "AURAPHOTO",
+  "node": "Fugitive_Photo",
+  "lines": [
+   "line:Fugitive_Photo_0848972",
+   "line:Fugitive_Photo_0f9c8fc"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Fugitive",
+  "sign": "ARMPIT",
+  "node": "Fugitive_Armpit",
+  "lines": [
+   "line:Fugitive_Armpit_0766636",
+   "line:Fugitive_Armpit_0c9308a"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Fugitive",
+  "sign": "EAR",
+  "node": "Fugitive_Ears",
+  "lines": [
+   "line:Fugitive_Ears_0036756",
+   "line:Fugitive_Ears_08fce5e",
+   "line:Fugitive_Ears_0dc82e2",
+   "line:Fugitive_Ears_0f79806",
+   "line:Fugitive_Ears_0ffc845"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "FunnyGuy",
+  "sign": "EYE",
+  "node": "FunnyGuy_Eyes",
+  "lines": [
+   "line:FunnyGuy_Eyes_0853c9c",
+   "line:FunnyGuy_Eyes_0a31eb2",
+   "line:FunnyGuy_Eyes_0c38d44"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "FunnyGuy",
+  "sign": "HANDS",
+  "node": "FunnyGuy_Hands",
+  "lines": [
+   "line:FunnyGuy_Hands_0cf8d82",
+   "line:FunnyGuy_Hands_081ecbe"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "FunnyGuy",
+  "sign": "TEETH",
+  "node": "FunnyGuy_Teeth",
+  "lines": [
+   "line:FunnyGuy_Teeth_01fc2b9",
+   "line:FunnyGuy_Teeth_0876816"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "FunnyGuy",
+  "sign": "AURAPHOTO",
+  "node": "FunnyGuy_Photo",
+  "lines": [
+   "line:FunnyGuy_Photo_05c8d51",
+   "line:FunnyGuy_Photo_0f08349",
+   "line:FunnyGuy_Photo_0af0ed5"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "FunnyGuy",
+  "sign": "ARMPIT",
+  "node": "FunnyGuy_Armpit",
+  "lines": [
+   "line:FunnyGuy_Armpit_083d933",
+   "line:FunnyGuy_Armpit_0030634",
+   "line:FunnyGuy_Armpit_0b79fef"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "FunnyGuy",
+  "sign": "EAR",
+  "node": "FunnyGuy_Ears",
+  "lines": [
+   "line:FunnyGuy_Ears_094c29c",
+   "line:FunnyGuy_Ears_0181608"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "GraveDigger",
+  "sign": "EYE",
+  "node": "GraveDigger_Eyes",
+  "lines": [
+   "line:GraveDigger_Eyes_0e8ec6d",
+   "line:GraveDigger_Eyes_0829f7a"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "GraveDigger",
+  "sign": "HANDS",
+  "node": "GraveDigger_Hands",
+  "lines": [
+   "line:GraveDigger_Hands_0c6c7db",
+   "line:GraveDigger_Hands_056cdd3"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "GraveDigger",
+  "sign": "TEETH",
+  "node": "GraveDigger_Teeth",
+  "lines": [
+   "line:GraveDigger_Teeth_017fadc",
+   "line:GraveDigger_Teeth_02530b4"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "GraveDigger",
+  "sign": "AURAPHOTO",
+  "node": "GraveDigger_Photo",
+  "lines": [
+   "line:GraveDigger_Photo_030cb7c",
+   "line:GraveDigger_Photo_069df75"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "GraveDigger",
+  "sign": "ARMPIT",
+  "node": "GraveDigger_Armpit",
+  "lines": [
+   "line:GraveDigger_Armpit_0d5ab73",
+   "line:GraveDigger_Armpit_0cf61f8"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "GraveDigger",
+  "sign": "EAR",
+  "node": "GraveDigger_Ears",
+  "lines": [
+   "line:GraveDigger_Ears_00dc2ce",
+   "line:GraveDigger_Ears_09a0f8c"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Greatmother",
+  "sign": "EYE",
+  "node": "Greatmother_Eyes",
+  "lines": [
+   "line:Greatmother_Eyes_033f348",
+   "line:Greatmother_Eyes_00afb11",
+   "line:Greatmother_Eyes_056f413"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Greatmother",
+  "sign": "HANDS",
+  "node": "Greatmother_Hands",
+  "lines": [
+   "line:Greatmother_Hands_0a3b396",
+   "line:Greatmother_Hands_0c6b6d2",
+   "line:Greatmother_Hands_0c4fe85"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Greatmother",
+  "sign": "TEETH",
+  "node": "Greatmother_Teeth",
+  "lines": [
+   "line:Greatmother_Teeth_09988a8",
+   "line:Greatmother_Teeth_0076903",
+   "line:Greatmother_Teeth_0e240a8"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Greatmother",
+  "sign": "AURAPHOTO",
+  "node": "Greatmother_Photo",
+  "lines": [
+   "line:Greatmother_Photo_0b69287",
+   "line:Greatmother_Photo_07dfc11",
+   "line:Greatmother_Photo_05e64f3"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Greatmother",
+  "sign": "ARMPIT",
+  "node": "Greatmother_Armpit",
+  "lines": [
+   "line:Greatmother_Armpit_0e92212",
+   "line:Greatmother_Armpit_00fdc19"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Greatmother",
+  "sign": "EAR",
+  "node": "Greatmother_Ears",
+  "lines": [
+   "line:Greatmother_Ears_0fb483e",
+   "line:Greatmother_Ears_070b6a8"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Hunter",
+  "sign": "EYE",
+  "node": "Hunter_Eyes",
+  "lines": [
+   "line:Hunter_Eyes_05f6eaa",
+   "line:Hunter_Eyes_0699b69",
+   "line:Hunter_Eyes_0e2dcb6",
+   "line:Hunter_Eyes_0a102f8",
+   "line:Hunter_Eyes_0a2a522",
+   "line:Hunter_Eyes_0455790"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Hunter",
+  "sign": "HANDS",
+  "node": "Hunter_Hands",
+  "lines": [
+   "line:Hunter_Hands_0ac0c90",
+   "line:Hunter_Hands_0f1082f"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Hunter",
+  "sign": "TEETH",
+  "node": "Hunter_Teeth",
+  "lines": [
+   "line:Hunter_Teeth_033625f",
+   "line:Hunter_Teeth_0656e28"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Hunter",
+  "sign": "AURAPHOTO",
+  "node": "Hunter_Photo_Gun",
+  "lines": [
+   "line:Hunter_Photo_Gun_0ec25fb",
+   "line:Hunter_Photo_Gun_0a26479",
+   "line:Hunter_Photo_Gun_03f4817",
+   "line:Hunter_Photo_Gun_09d94bc"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Hunter",
+  "sign": "ARMPIT",
+  "node": "Hunter_Armpit",
+  "lines": [
+   "line:Hunter_Armpit_0104620",
+   "line:Hunter_Armpit_0d3b012"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Hunter",
+  "sign": "EAR",
+  "node": "Hunter_Ears",
+  "lines": [
+   "line:Hunter_Ears_0396e18",
+   "line:Hunter_Ears_0af33fd"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Intruder",
+  "sign": "EYE",
+  "node": "Intruder_Eyes",
+  "lines": [
+   "line:Intruder_Eyes_0083b66",
+   "line:Intruder_Eyes_0efbcc7",
+   "line:Intruder_Eyes_0aedb8b"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Intruder",
+  "sign": "HANDS",
+  "node": "Intruder_Hands",
+  "lines": [
+   "line:Intruder_Hands_007e6d5",
+   "line:Intruder_Hands_09bdd54",
+   "line:Intruder_Hands_03c7666"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Intruder",
+  "sign": "TEETH",
+  "node": "Intruder_Teeth",
+  "lines": [
+   "line:Intruder_Teeth_0b86a82",
+   "line:Intruder_Teeth_0321c28",
+   "line:Intruder_Teeth_0769bee",
+   "line:Intruder_Teeth_0c5f57c",
+   "line:Intruder_Teeth_0acaeea",
+   "line:Intruder_Teeth_0cce0d6"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Intruder",
+  "sign": "AURAPHOTO",
+  "node": "Intruder_Photo",
+  "lines": [
+   "line:Intruder_Photo_0b17740",
+   "line:Intruder_Photo_0f9014d"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Intruder",
+  "sign": "ARMPIT",
+  "node": "Intruder_Armpit",
+  "lines": [
+   "line:Intruder_Armpit_0d36b85",
+   "line:Intruder_Armpit_0b7eacc"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Intruder",
+  "sign": "EAR",
+  "node": "Intruder_Ears",
+  "lines": [
+   "line:Intruder_Ears_0a82482",
+   "line:Intruder_Ears_0678d55",
+   "line:Intruder_Ears_0db12ba"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Jacket",
+  "sign": "EYE",
+  "node": "Jacket_Eyes",
+  "lines": [
+   "line:Jacket_Eyes_028669c",
+   "line:Jacket_Eyes_0265fc8",
+   "line:Jacket_Eyes_0ee7f89"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Jacket",
+  "sign": "HANDS",
+  "node": "Jacket_Hands",
+  "lines": [
+   "line:Jacket_Hands_0d46fbc",
+   "line:Jacket_Hands_097f870"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Jacket",
+  "sign": "TEETH",
+  "node": "Jacket_Teeth",
+  "lines": [
+   "line:Jacket_Teeth_08e7161",
+   "line:Jacket_Teeth_0e7a25b"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Jacket",
+  "sign": "AURAPHOTO",
+  "node": "Jacket_Photo",
+  "lines": [
+   "line:Jacket_Photo_0386cb8",
+   "line:Jacket_Photo_05de175"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Jacket",
+  "sign": "ARMPIT",
+  "node": "Jacket_Armpit",
+  "lines": [
+   "line:Jacket_Armpit_0323009",
+   "line:Jacket_Armpit_0cc6357"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Jacket",
+  "sign": "EAR",
+  "node": "Jacket_Ears",
+  "lines": [
+   "line:Jacket_Ears_09ed47f",
+   "line:Jacket_Ears_035ce00",
+   "line:Jacket_Ears_01ad94a",
+   "line:Jacket_Ears_021541d"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Jacob",
+  "sign": "EYE",
+  "node": "Jacob_Eyes",
+  "lines": [
+   "line:Jacob_Eyes_07fb8b9",
+   "line:Jacob_Eyes_097a3bd"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Jacob",
+  "sign": "HANDS",
+  "node": "Jacob_Hands",
+  "lines": [
+   "line:Jacob_Hands_0186651",
+   "line:Jacob_Hands_08a7e1d"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Jacob",
+  "sign": "TEETH",
+  "node": "Jacob_Teeth",
+  "lines": [
+   "line:Jacob_Teeth_0e59a65",
+   "line:Jacob_Teeth_044662a"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Jacob",
+  "sign": "AURAPHOTO",
+  "node": "Jacob_Photo",
+  "lines": [
+   "line:Jacob_Photo_0b8f9f0",
+   "line:Jacob_Photo_085e1a4"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Jacob",
+  "sign": "ARMPIT",
+  "node": "Jacob_Armpit",
+  "lines": [
+   "line:Jacob_Armpit_087d591",
+   "line:Jacob_Armpit_0b60d52"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Jacob",
+  "sign": "EAR",
+  "node": "Jacob_Ears",
+  "lines": [
+   "line:Jacob_Ears_07ee22f",
+   "line:Jacob_Ears_08e77e3"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Leper",
+  "sign": "EYE",
+  "node": "Leper_Eyes",
+  "lines": [
+   "line:Leper_Eyes_0488b21",
+   "line:Leper_Eyes_010f05a"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Leper",
+  "sign": "HANDS",
+  "node": "Leper_Hands",
+  "lines": [
+   "line:Leper_Hands_082892e",
+   "line:Leper_Hands_03283d1"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Leper",
+  "sign": "TEETH",
+  "node": "Leper_Teeth",
+  "lines": [
+   "line:Leper_Teeth_0465130",
+   "line:Leper_Teeth_0acd9dc"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Leper",
+  "sign": "AURAPHOTO",
+  "node": "Leper_Photo",
+  "lines": [
+   "line:Leper_Photo_0e94d85",
+   "line:Leper_Photo_0f3e5da",
+   "line:Leper_Photo_0e63dd5",
+   "line:Leper_Photo_0e5b892"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Leper",
+  "sign": "ARMPIT",
+  "node": "Leper_Armpit",
+  "lines": [
+   "line:Leper_Armpit_04e74b4",
+   "line:Leper_Armpit_0bbd9d1",
+   "line:Leper_Armpit_0eef043",
+   "line:Leper_Armpit_03886f8"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Leper",
+  "sign": "EAR",
+  "node": "Leper_Ears",
+  "lines": [
+   "line:Leper_Ears_022c919",
+   "line:Leper_Ears_04cf39e",
+   "line:Leper_Ears_0a63ec8",
+   "line:Leper_Ears_00ff779"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Luka",
+  "sign": "EYE",
+  "node": "Luka_Eyes",
+  "lines": [
+   "line:Luka_Eyes_0f8c340",
+   "line:Luka_Eyes_06177cb"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Luka",
+  "sign": "HANDS",
+  "node": "Luka_Hands",
+  "lines": [
+   "line:Luka_Hands_0be53f3",
+   "line:Luka_Hands_02d8a2e"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Luka",
+  "sign": "TEETH",
+  "node": "Luka_Teeth",
+  "lines": [
+   "line:Luka_Teeth_0d4b58c",
+   "line:Luka_Teeth_09a8592"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Luka",
+  "sign": "AURAPHOTO",
+  "node": "Luka_Photo",
+  "lines": [
+   "line:Luka_Photo_07a0521",
+   "line:Luka_Photo_079b72c"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Luka",
+  "sign": "ARMPIT",
+  "node": "Luka_Armpit",
+  "lines": [
+   "line:Luka_Armpit_08274c8",
+   "line:Luka_Armpit_08661dc"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Luka",
+  "sign": "EAR",
+  "node": "Luka_Ears",
+  "lines": [
+   "line:Luka_Ears_01e870b",
+   "line:Luka_Ears_0ddad39",
+   "line:Luka_Ears_01f1882",
+   "line:Luka_Ears_0cb69bc",
+   "line:Luka_Ears_0bbec6c"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Marauder",
+  "sign": "EYE",
+  "node": "Marauder_Eyes",
+  "lines": [
+   "line:Marauder_Eyes_03d53bb",
+   "line:Marauder_Eyes_06cca3c"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Marauder",
+  "sign": "HANDS",
+  "node": "Marauder_Hands",
+  "lines": [
+   "line:Marauder_Hands_02f154d",
+   "line:Marauder_Hands_095bc14"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Marauder",
+  "sign": "TEETH",
+  "node": "Marauder_Teeth",
+  "lines": [
+   "line:Marauder_Teeth_099b960",
+   "line:Marauder_Teeth_056d150"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Marauder",
+  "sign": "AURAPHOTO",
+  "node": "Marauder_Photo",
+  "lines": [
+   "line:Marauder_Photo_0bd0bdc",
+   "line:Marauder_Photo_0046e8d",
+   "line:Marauder_Photo_015012e"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Marauder",
+  "sign": "ARMPIT",
+  "node": "Marauder_Armpit",
+  "lines": [
+   "line:Marauder_Armpit_0ddeac0",
+   "line:Marauder_Armpit_09e7352"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Marauder",
+  "sign": "EAR",
+  "node": "Marauder_Ears",
+  "lines": [
+   "line:Marauder_Ears_0b16ef8",
+   "line:Marauder_Ears_0af3353"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Mother",
+  "sign": "EYE",
+  "node": "Mother_Eyes",
+  "lines": [
+   "line:Mother_Eyes_041989a",
+   "line:Mother_Eyes_086dc24"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Mother",
+  "sign": "HANDS",
+  "node": "Mother_Hands",
+  "lines": [
+   "line:Mother_Hands_07f2535",
+   "line:Mother_Hands_08ed8ff"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Mother",
+  "sign": "TEETH",
+  "node": "Mother_Teeth",
+  "lines": [
+   "line:Mother_Teeth_018248c",
+   "line:Mother_Teeth_0a06b09"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Mother",
+  "sign": "AURAPHOTO",
+  "node": "Mother_Photo",
+  "lines": [
+   "line:Mother_Photo_0f5cc95",
+   "line:Mother_Photo_0190e9c"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Mother",
+  "sign": "ARMPIT",
+  "node": "Mother_Armpit",
+  "lines": [
+   "line:Mother_Armpit_0d92f59",
+   "line:Mother_Armpit_0194443"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Mother",
+  "sign": "EAR",
+  "node": "Mother_Ears",
+  "lines": [
+   "line:Mother_Ears_0f474b8",
+   "line:Mother_Ears_07c4e87"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Nervous",
+  "sign": "EYE",
+  "node": "Nervous_Eyes",
+  "lines": [
+   "line:Nervous_Eyes_030ac99",
+   "line:Nervous_Eyes_05ac725"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Nervous",
+  "sign": "HANDS",
+  "node": "Nervous_Hands",
+  "lines": [
+   "line:Nervous_Hands_05b3b9b",
+   "line:Nervous_Hands_0ac2a5e"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Nervous",
+  "sign": "TEETH",
+  "node": "Nervous_Teeth",
+  "lines": [
+   "line:Nervous_Teeth_0baf6a7",
+   "line:Nervous_Teeth_0427d67"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Nervous",
+  "sign": "AURAPHOTO",
+  "node": "Nervous_Photo",
+  "lines": [
+   "line:Nervous_Photo_075fc5d",
+   "line:Nervous_Photo_0cd504d",
+   "line:Nervous_Photo_07032a0"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Nervous",
+  "sign": "ARMPIT",
+  "node": "Nervous_Armpit",
+  "lines": [
+   "line:Nervous_Armpit_085003a",
+   "line:Nervous_Armpit_0f95e92",
+   "line:Nervous_Armpit_0c13c48"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Nervous",
+  "sign": "EAR",
+  "node": "Nervous_Ears",
+  "lines": [
+   "line:Nervous_Ears_0787bb2",
+   "line:Nervous_Ears_0badfd4"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "NotTrue",
+  "sign": "EYE",
+  "node": "NotTrue_Eyes",
+  "lines": [
+   "line:NotTrue_Eyes_0341a49",
+   "line:NotTrue_Eyes_07657ff",
+   "line:NotTrue_Eyes_06759ca",
+   "line:NotTrue_Eyes_0c04892",
+   "line:NotTrue_Eyes_0b80e05"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "NotTrue",
+  "sign": "HANDS",
+  "node": "NotTrue_Hands",
+  "lines": [
+   "line:NotTrue_Hands_0b34446",
+   "line:NotTrue_Hands_07bd404"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "NotTrue",
+  "sign": "TEETH",
+  "node": "NotTrue_Teeth",
+  "lines": [
+   "line:NotTrue_Teeth_06aee02",
+   "line:NotTrue_Teeth_0fec80a",
+   "line:NotTrue_Teeth_00aad5c"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "NotTrue",
+  "sign": "AURAPHOTO",
+  "node": "NotTrue_Photo",
+  "lines": [
+   "line:NotTrue_Photo_0c98ec1",
+   "line:NotTrue_Photo_0993c6f"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "NotTrue",
+  "sign": "ARMPIT",
+  "node": "NotTrue_Armpit",
+  "lines": [
+   "line:NotTrue_Armpit_07150ab",
+   "line:NotTrue_Armpit_066766f",
+   "line:NotTrue_Armpit_091b9fa"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "NotTrue",
+  "sign": "EAR",
+  "node": "NotTrue_Ears",
+  "lines": [
+   "line:NotTrue_Ears_0d357c4",
+   "line:NotTrue_Ears_031b821"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Nun",
+  "sign": "EYE",
+  "node": "Nun_Eyes",
+  "lines": [
+   "line:Nun_Eyes_0306dfe",
+   "line:Nun_Eyes_09ff00c"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Nun",
+  "sign": "HANDS",
+  "node": "Nun_Hands",
+  "lines": [
+   "line:Nun_Hands_0544d0c",
+   "line:Nun_Hands_04d7036"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Nun",
+  "sign": "TEETH",
+  "node": "Nun_Teeth",
+  "lines": [
+   "line:Nun_Teeth_04952ce",
+   "line:Nun_Teeth_0de6700"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Nun",
+  "sign": "AURAPHOTO",
+  "node": "Nun_Photo",
+  "lines": [
+   "line:Nun_Photo_08c2639",
+   "line:Nun_Photo_0495e4a"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Nun",
+  "sign": "ARMPIT",
+  "node": "Nun_Armpit",
+  "lines": [
+   "line:Nun_Armpit_089dfe2",
+   "line:Nun_Armpit_0be63cd",
+   "line:Nun_Armpit_08e8ed8",
+   "line:Nun_Armpit_03237ae",
+   "line:Nun_Armpit_0ddac62"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Nun",
+  "sign": "EAR",
+  "node": "Nun_Ears",
+  "lines": [
+   "line:Nun_Ears_0cc5880",
+   "line:Nun_Ears_0012cbd"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Provocateur",
+  "sign": "EYE",
+  "node": "Provocateur_Eyes",
+  "lines": [
+   "line:Provocateur_Eyes_00f4e1e",
+   "line:Provocateur_Eyes_02460f1",
+   "line:Provocateur_Eyes_04931f9"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Provocateur",
+  "sign": "HANDS",
+  "node": "Provocateur_Hands",
+  "lines": [
+   "line:Provocateur_Hands_01acfd1",
+   "line:Provocateur_Hands_09553d3"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Provocateur",
+  "sign": "TEETH",
+  "node": "Provocateur_Teeth",
+  "lines": [
+   "line:Provocateur_Teeth_0792627",
+   "line:Provocateur_Teeth_0f64a81"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Provocateur",
+  "sign": "AURAPHOTO",
+  "node": "Provocateur_Photo",
+  "lines": [
+   "line:Provocateur_Photo_0ac7c32",
+   "line:Provocateur_Photo_0786164",
+   "line:Provocateur_Photo_02e98d8"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Provocateur",
+  "sign": "ARMPIT",
+  "node": "Provocateur_Armpit",
+  "lines": [
+   "line:Provocateur_Armpit_00e2700",
+   "line:Provocateur_Armpit_09b4bb2"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Provocateur",
+  "sign": "EAR",
+  "node": "Provocateur_Ears",
+  "lines": [
+   "line:Provocateur_Ears_01e7dd3",
+   "line:Provocateur_Ears_01711fd",
+   "line:Provocateur_Ears_00d2fd9"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Raskolnikov",
+  "sign": "EYE",
+  "node": "Raskolnikov_Eyes",
+  "lines": [
+   "line:Raskolnikov_Eyes_08e1500",
+   "line:Raskolnikov_Eyes_02a7c0f",
+   "line:Raskolnikov_Eyes_0a07fe0"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Raskolnikov",
+  "sign": "HANDS",
+  "node": "Raskolnikov_Hands",
+  "lines": [
+   "line:Raskolnikov_Hands_010018e",
+   "line:Raskolnikov_Hands_0244ec5",
+   "line:Raskolnikov_Hands_0336bfa",
+   "line:Raskolnikov_Hands_03789e8",
+   "line:Raskolnikov_Hands_0a83515"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Raskolnikov",
+  "sign": "TEETH",
+  "node": "Raskolnikov_Teeth",
+  "lines": [
+   "line:Raskolnikov_Teeth_053fd08",
+   "line:Raskolnikov_Teeth_0a57436"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Raskolnikov",
+  "sign": "AURAPHOTO",
+  "node": "Raskolnikov_Photo",
+  "lines": [
+   "line:Raskolnikov_Photo_0130107",
+   "line:Raskolnikov_Photo_08456c0",
+   "line:Raskolnikov_Photo_01a795c",
+   "line:Raskolnikov_Photo_011ce2e",
+   "line:Raskolnikov_Photo_0016119"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Raskolnikov",
+  "sign": "ARMPIT",
+  "node": "Raskolnikov_Armpit",
+  "lines": [
+   "line:Raskolnikov_Armpit_04d11b2",
+   "line:Raskolnikov_Armpit_0ed05d6"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Raskolnikov",
+  "sign": "EAR",
+  "node": "Raskolnikov_Ears",
+  "lines": [
+   "line:Raskolnikov_Ears_0855f12",
+   "line:Raskolnikov_Ears_05e2bf3"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Rocker",
+  "sign": "EYE",
+  "node": "Rocker_Eyes",
+  "lines": [
+   "line:Rocker_Eyes_050ec7a",
+   "line:Rocker_Eyes_037557d"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Rocker",
+  "sign": "HANDS",
+  "node": "Rocker_Hands",
+  "lines": [
+   "line:Rocker_Hands_0de3c03",
+   "line:Rocker_Hands_0d44fd6"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Rocker",
+  "sign": "TEETH",
+  "node": "Rocker_Teeth",
+  "lines": [
+   "line:Rocker_Teeth_09d399f",
+   "line:Rocker_Teeth_01ae7d8",
+   "line:Rocker_Teeth_0c81384"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Rocker",
+  "sign": "AURAPHOTO",
+  "node": "Rocker_Photo",
+  "lines": [
+   "line:Rocker_Photo_0c05cd6",
+   "line:Rocker_Photo_02d6129"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Rocker",
+  "sign": "ARMPIT",
+  "node": "Rocker_Armpit",
+  "lines": [
+   "line:Rocker_Armpit_0a4504b",
+   "line:Rocker_Armpit_02417e9"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Rocker",
+  "sign": "EAR",
+  "node": "Rocker_Ears",
+  "lines": [
+   "line:Rocker_Ears_0cd37a4",
+   "line:Rocker_Ears_08764b4"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Scammer",
+  "sign": "EYE",
+  "node": "Scammer_Eyes",
+  "lines": [
+   "line:Scammer_Eyes_0b23f40",
+   "line:Scammer_Eyes_01a1724",
+   "line:Scammer_Eyes_0900833"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Scammer",
+  "sign": "HANDS",
+  "node": "Scammer_Hands",
+  "lines": [
+   "line:Scammer_Hands_0759984",
+   "line:Scammer_Hands_052bc2c",
+   "line:Scammer_Hands_01230f0"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Scammer",
+  "sign": "TEETH",
+  "node": "Scammer_Teeth",
+  "lines": [
+   "line:Scammer_Teeth_01021e0",
+   "line:Scammer_Teeth_04415f2",
+   "line:Scammer_Teeth_065a7fe",
+   "line:Scammer_Teeth_0e91224",
+   "line:Scammer_Teeth_00494bf"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Scammer",
+  "sign": "AURAPHOTO",
+  "node": "Scammer_Photo",
+  "lines": [
+   "line:Scammer_Photo_0d4a7e4",
+   "line:Scammer_Photo_06c5bc3",
+   "line:Scammer_Photo_0681c91"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Scammer",
+  "sign": "ARMPIT",
+  "node": "Scammer_Armpit",
+  "lines": [
+   "line:Scammer_Armpit_0ab714f",
+   "line:Scammer_Armpit_05cff92",
+   "line:Scammer_Armpit_0f5cd93"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Scammer",
+  "sign": "EAR",
+  "node": "Scammer_Ears",
+  "lines": [
+   "line:Scammer_Ears_057eef8",
+   "line:Scammer_Ears_065972d",
+   "line:Scammer_Ears_0a30826",
+   "line:Scammer_Ears_054f0ed"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Sexy",
+  "sign": "EYE",
+  "node": "FatalDame_Eyes",
+  "lines": [
+   "line:FatalDame_Eyes_0b721bf",
+   "line:FatalDame_Eyes_09ed39a"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Sexy",
+  "sign": "HANDS",
+  "node": "FatalDame_Hands",
+  "lines": [
+   "line:FatalDame_Hands_0ddd147",
+   "line:FatalDame_Hands_073c8ee"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Sexy",
+  "sign": "TEETH",
+  "node": "FatalDame_Teeth",
+  "lines": [
+   "line:FatalDame_Teeth_0b9e053",
+   "line:FatalDame_Teeth_07b8e0e"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Sexy",
+  "sign": "AURAPHOTO",
+  "node": "FatalDame_Photo",
+  "lines": [
+   "line:FatalDame_Photo_08e442f",
+   "line:FatalDame_Photo_023a6ae",
+   "line:FatalDame_Photo_009f8e6"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Sexy",
+  "sign": "ARMPIT",
+  "node": "FatalDame_Armpit",
+  "lines": [
+   "line:FatalDame_Armpit_07e92f9",
+   "line:FatalDame_Armpit_0990672"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Sexy",
+  "sign": "EAR",
+  "node": "FatalDame_Ears",
+  "lines": [
+   "line:FatalDame_Ears_031b72d",
+   "line:FatalDame_Ears_0902806",
+   "line:FatalDame_Ears_0cc9d0d"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Sirin",
+  "sign": "EYE",
+  "node": "Sirin_Eyes",
+  "lines": [
+   "line:Sirin_Eyes_066254e",
+   "line:Sirin_Eyes_0323016"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Sirin",
+  "sign": "HANDS",
+  "node": "Sirin_Hands",
+  "lines": [
+   "line:Sirin_Hands_0110335",
+   "line:Sirin_Hands_0c7510b"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Sirin",
+  "sign": "TEETH",
+  "node": "Sirin_Teeth",
+  "lines": [
+   "line:Sirin_Teeth_02994b0",
+   "line:Sirin_Teeth_0a763ee"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Sirin",
+  "sign": "AURAPHOTO",
+  "node": "Sirin_Photo",
+  "lines": [
+   "line:Sirin_Photo_0e3750e",
+   "line:Sirin_Photo_0ab293e",
+   "line:Sirin_Photo_0c6b19c"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Sirin",
+  "sign": "ARMPIT",
+  "node": "Sirin_Armpit",
+  "lines": [
+   "line:Sirin_Armpit_024ae43",
+   "line:Sirin_Armpit_0dfcdda"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Sirin",
+  "sign": "EAR",
+  "node": "Sirin_Ears",
+  "lines": [
+   "line:Sirin_Ears_0ae3e21",
+   "line:Sirin_Ears_0108984",
+   "line:Sirin_Ears_0387720"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "TaxiDriver",
+  "sign": "EYE",
+  "node": "TaxiDriver_Eyes",
+  "lines": [
+   "line:TaxiDriver_Eyes_0539502",
+   "line:TaxiDriver_Eyes_0034d83",
+   "line:TaxiDriver_Eyes_0f4269f",
+   "line:TaxiDriver_Eyes_03e6b45",
+   "line:TaxiDriver_Eyes_00e1d79"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "TaxiDriver",
+  "sign": "HANDS",
+  "node": "TaxiDriver_Hands",
+  "lines": [
+   "line:TaxiDriver_Hands_0d7afd4",
+   "line:TaxiDriver_Hands_00d746c"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "TaxiDriver",
+  "sign": "TEETH",
+  "node": "TaxiDriver_Teeth",
+  "lines": [
+   "line:TaxiDriver_Teeth_0a70d1d",
+   "line:TaxiDriver_Teeth_06dde98",
+   "line:TaxiDriver_Teeth_0816952"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "TaxiDriver",
+  "sign": "AURAPHOTO",
+  "node": "TaxiDriver_Photo",
+  "lines": [
+   "line:TaxiDriver_Photo_0e84785",
+   "line:TaxiDriver_Photo_0bcf126"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "TaxiDriver",
+  "sign": "ARMPIT",
+  "node": "TaxiDriver_Armpit",
+  "lines": [
+   "line:TaxiDriver_Armpit_0bab3ec",
+   "line:TaxiDriver_Armpit_09b6314"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "TaxiDriver",
+  "sign": "EAR",
+  "node": "TaxiDriver_Ears",
+  "lines": [
+   "line:TaxiDriver_Ears_007d354",
+   "line:TaxiDriver_Ears_02c132b"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Teacher",
+  "sign": "EYE",
+  "node": "Teacher_Eyes",
+  "lines": [
+   "line:Teacher_Eyes_02ac586",
+   "line:Teacher_Eyes_01c4232"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Teacher",
+  "sign": "HANDS",
+  "node": "Teacher_Hands",
+  "lines": [
+   "line:Teacher_Hands_017e74c",
+   "line:Teacher_Hands_0db89f2"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Teacher",
+  "sign": "TEETH",
+  "node": "Teacher_Teeth",
+  "lines": [
+   "line:Teacher_Teeth_08fc9f3",
+   "line:Teacher_Teeth_0e9968d"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Teacher",
+  "sign": "AURAPHOTO",
+  "node": "Teacher_Photo",
+  "lines": [
+   "line:Teacher_Photo_031997e",
+   "line:Teacher_Photo_09e57da"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Teacher",
+  "sign": "ARMPIT",
+  "node": "Teacher_Armpit",
+  "lines": [
+   "line:Teacher_Armpit_06da366",
+   "line:Teacher_Armpit_021840b"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Teacher",
+  "sign": "EAR",
+  "node": "Teacher_Ears",
+  "lines": [
+   "line:Teacher_Ears_060fd4e",
+   "line:Teacher_Ears_030d2af"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Theorist",
+  "sign": "EYE",
+  "node": "Theorist_Eyes",
+  "lines": [
+   "line:Theorist_Eyes_0da10f7",
+   "line:Theorist_Eyes_0c282cd"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Theorist",
+  "sign": "HANDS",
+  "node": "Theorist_Hands",
+  "lines": [
+   "line:Theorist_Hands_09793ad",
+   "line:Theorist_Hands_0245f2d"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Theorist",
+  "sign": "TEETH",
+  "node": "Theorist_Teeth",
+  "lines": [
+   "line:Theorist_Teeth_046ce8f",
+   "line:Theorist_Teeth_093cc81"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Theorist",
+  "sign": "AURAPHOTO",
+  "node": "Theorist_Photo",
+  "lines": [
+   "line:Theorist_Photo_044905e",
+   "line:Theorist_Photo_0b2a89d"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Theorist",
+  "sign": "ARMPIT",
+  "node": "Theorist_Armpit",
+  "lines": [
+   "line:Theorist_Armpit_0359fd6",
+   "line:Theorist_Armpit_00594ee"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Theorist",
+  "sign": "EAR",
+  "node": "Theorist_Ears",
+  "lines": [
+   "line:Theorist_Ears_0437fcd",
+   "line:Theorist_Ears_0e23cb0"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Tough",
+  "sign": "EYE",
+  "node": "Tough_Eyes",
+  "lines": [
+   "line:Tough_Eyes_0fce340",
+   "line:Tough_Eyes_0849ecc",
+   "line:Tough_Eyes_0f5c4bb"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Tough",
+  "sign": "HANDS",
+  "node": "Tough_Hands",
+  "lines": [
+   "line:Tough_Hands_098c9c6",
+   "line:Tough_Hands_0228cff",
+   "line:Tough_Hands_0f34c93"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Tough",
+  "sign": "TEETH",
+  "node": "Tough_Teeth",
+  "lines": [
+   "line:Tough_Teeth_040efd8",
+   "line:Tough_Teeth_0f7f77b",
+   "line:Tough_Teeth_0c955f1"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Tough",
+  "sign": "AURAPHOTO",
+  "node": "Tough_Photo",
+  "lines": [
+   "line:Tough_Photo_0718853",
+   "line:Tough_Photo_068c147"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Tough",
+  "sign": "EAR",
+  "node": "Tough_Ears",
+  "lines": [
+   "line:Tough_Ears_02d1701",
+   "line:Tough_Ears_0936760"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Tourist",
+  "sign": "EYE",
+  "node": "Tourist_Eyes",
+  "lines": [
+   "line:Tourist_Eyes_01bf0b4",
+   "line:Tourist_Eyes_0a6f3fa"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Tourist",
+  "sign": "HANDS",
+  "node": "Tourist_Hands",
+  "lines": [
+   "line:Tourist_Hands_028e249",
+   "line:Tourist_Hands_073f97e"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Tourist",
+  "sign": "TEETH",
+  "node": "Tourist_Teeth",
+  "lines": [
+   "line:Tourist_Teeth_0aceaa6",
+   "line:Tourist_Teeth_0190f4d",
+   "line:Tourist_Teeth_067a841",
+   "line:Tourist_Teeth_0f83af8"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Tourist",
+  "sign": "AURAPHOTO",
+  "node": "Tourist_Photo",
+  "lines": [
+   "line:Tourist_Photo_05b48a7",
+   "line:Tourist_Photo_0d4ed26",
+   "line:Tourist_Photo_077ab4c"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Tourist",
+  "sign": "ARMPIT",
+  "node": "Tourist_Armpit",
+  "lines": [
+   "line:Tourist_Armpit_0c4c542",
+   "line:Tourist_Armpit_00b93e9",
+   "line:Tourist_Armpit_01720c6"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Tourist",
+  "sign": "EAR",
+  "node": "Tourist_Ears",
+  "lines": [
+   "line:Tourist_Ears_079e44c",
+   "line:Tourist_Ears_0c630d1"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Unstable",
+  "sign": "EYE",
+  "node": "Unstable_Eyes",
+  "lines": [
+   "line:Unstable_Eyes_072298c",
+   "line:Unstable_Eyes_0c96234",
+   "line:Unstable_Eyes_0947067"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Unstable",
+  "sign": "HANDS",
+  "node": "Unstable_Hands",
+  "lines": [
+   "line:Unstable_Hands_0228e92",
+   "line:Unstable_Hands_0967649",
+   "line:Unstable_Hands_01983c1"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Unstable",
+  "sign": "TEETH",
+  "node": "Unstable_Teeth",
+  "lines": [
+   "line:Unstable_Teeth_0ea7d61",
+   "line:Unstable_Teeth_060e928",
+   "line:Unstable_Teeth_0ca5f4b",
+   "line:Unstable_Teeth_0f808e9"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Unstable",
+  "sign": "AURAPHOTO",
+  "node": "Unstable_Photo",
+  "lines": [
+   "line:Unstable_Photo_072a783",
+   "line:Unstable_Photo_0128d5d",
+   "line:Unstable_Photo_0bbc708"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Unstable",
+  "sign": "ARMPIT",
+  "node": "Unstable_Armpit",
+  "lines": [
+   "line:Unstable_Armpit_05c6d63",
+   "line:Unstable_Armpit_059ab57"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Unstable",
+  "sign": "EAR",
+  "node": "Unstable_Ears",
+  "lines": [
+   "line:Unstable_Ears_021926d",
+   "line:Unstable_Ears_077bd09"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Wheelchair",
+  "sign": "EYE",
+  "node": "Wheelchair_Eyes",
+  "lines": [
+   "line:Wheelchair_Eyes_02b0330",
+   "line:Wheelchair_Eyes_0d21171"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Wheelchair",
+  "sign": "HANDS",
+  "node": "Wheelchair_Hands",
+  "lines": [
+   "line:Wheelchair_Hands_04505ed",
+   "line:Wheelchair_Hands_04dfb8c",
+   "line:Wheelchair_Hands_0409ace"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Wheelchair",
+  "sign": "TEETH",
+  "node": "Wheelchair_Teeth",
+  "lines": [
+   "line:Wheelchair_Teeth_0f1f749",
+   "line:Wheelchair_Teeth_0f16e5f"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Wheelchair",
+  "sign": "AURAPHOTO",
+  "node": "Wheelchair_Photo",
+  "lines": [
+   "line:Wheelchair_Photo_0c772bc",
+   "line:Wheelchair_Photo_0ea3139",
+   "line:Wheelchair_Photo_0070fc5"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Wheelchair",
+  "sign": "ARMPIT",
+  "node": "Wheelchair_Armpit",
+  "lines": [
+   "line:Wheelchair_Armpit_04a006a",
+   "line:Wheelchair_Armpit_06fdd41",
+   "line:Wheelchair_Armpit_06bc294"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Wheelchair",
+  "sign": "EAR",
+  "node": "Wheelchair_Ears",
+  "lines": [
+   "line:Wheelchair_Ears_0f570f2",
+   "line:Wheelchair_Ears_0ab2c96",
+   "line:Wheelchair_Ears_044904f",
+   "line:Wheelchair_Ears_029dd06",
+   "line:Wheelchair_Ears_0fb5b4a",
+   "line:Wheelchair_Ears_061ab27"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Widow",
+  "sign": "EYE",
+  "node": "Widow_Eyes",
+  "lines": [
+   "line:Widow_Eyes_028b9bc",
+   "line:Widow_Eyes_0e75924",
+   "line:Widow_Eyes_009a0a5"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Widow",
+  "sign": "HANDS",
+  "node": "Widow_Hands",
+  "lines": [
+   "line:Widow_Hands_0a13908",
+   "line:Widow_Hands_02f2db4",
+   "line:Widow_Hands_066cab7"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Widow",
+  "sign": "TEETH",
+  "node": "Widow_Teeth",
+  "lines": [
+   "line:Widow_Teeth_0c45747",
+   "line:Widow_Teeth_05a6004",
+   "line:Widow_Teeth_05c0434"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Widow",
+  "sign": "AURAPHOTO",
+  "node": "Widow_Photo",
+  "lines": [
+   "line:Widow_Photo_04d4c05",
+   "line:Widow_Photo_0d30fbf",
+   "line:Widow_Photo_0e3ec53",
+   "line:Widow_Photo_0e2b98e",
+   "line:Widow_Photo_06bb696",
+   "line:Widow_Photo_0fe9f49"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Widow",
+  "sign": "ARMPIT",
+  "node": "Widow_Armpit",
+  "lines": [
+   "line:Widow_Armpit_05c996d",
+   "line:Widow_Armpit_0732501",
+   "line:Widow_Armpit_0172de8",
+   "line:Widow_Armpit_06f931f",
+   "line:Widow_Armpit_087c76b"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Widow",
+  "sign": "EAR",
+  "node": "Widow_Ears",
+  "lines": [
+   "line:Widow_Ears_073b82e",
+   "line:Widow_Ears_069a9d9"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Widow",
+  "sign": "EAR",
+  "node": "Widow_Ears_Gun",
+  "lines": [
+   "line:Widow_Ears_Gun_088b17c",
+   "line:Widow_Ears_Gun_0bcd32e",
+   "line:Widow_Ears_Gun_0690ff2"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Wifefema",
+  "sign": "EYE",
+  "node": "Wifefema_Eyes",
+  "lines": [
+   "line:Wifefema_Eyes_036c54c",
+   "line:Wifefema_Eyes_0d552ef"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Wifefema",
+  "sign": "HANDS",
+  "node": "Wifefema_Hands",
+  "lines": [
+   "line:Wifefema_Hands_0bba680",
+   "line:Wifefema_Hands_0b2c718"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Wifefema",
+  "sign": "TEETH",
+  "node": "Wifefema_Teeth",
+  "lines": [
+   "line:Wifefema_Teeth_0456da6",
+   "line:Wifefema_Teeth_05dd7a1"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Wifefema",
+  "sign": "AURAPHOTO",
+  "node": "Wifefema_Photo",
+  "lines": [
+   "line:Wifefema_Photo_0bd28cb",
+   "line:Wifefema_Photo_0214c50"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Wifefema",
+  "sign": "ARMPIT",
+  "node": "Wifefema_Armpit",
+  "lines": [
+   "line:Wifefema_Armpit_03d68e4",
+   "line:Wifefema_Armpit_0ac1091"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Wifefema",
+  "sign": "EAR",
+  "node": "Wifefema_Ears",
+  "lines": [
+   "line:Wifefema_Ears_036641b",
+   "line:Wifefema_Ears_0e4c32a"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Wolfhound",
+  "sign": "EYE",
+  "node": "Wolfhound_Eyes",
+  "lines": [
+   "line:Wolfhound_Eyes_025e91c",
+   "line:Wolfhound_Eyes_010b744",
+   "line:Wolfhound_Eyes_0d5a77e"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Wolfhound",
+  "sign": "HANDS",
+  "node": "Wolfhound_Hands",
+  "lines": [
+   "line:Wolfhound_Hands_08d7cb0",
+   "line:Wolfhound_Hands_025fcf5",
+   "line:Wolfhound_Hands_025ccbc",
+   "line:Wolfhound_Hands_0a0174b",
+   "line:Wolfhound_Hands_0d9a506"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Wolfhound",
+  "sign": "TEETH",
+  "node": "Wolfhound_Teeth",
+  "lines": [
+   "line:Wolfhound_Teeth_0c6f2f7",
+   "line:Wolfhound_Teeth_03d8e55",
+   "line:Wolfhound_Teeth_04d5c89"
+  ],
+  "isImposterBranch": false
+ },
+ {
+  "character": "Wolfhound",
+  "sign": "AURAPHOTO",
+  "node": "Wolfhound_Photo",
+  "lines": [
+   "line:Wolfhound_Photo_0aabc04",
+   "line:Wolfhound_Photo_0cf41b5",
+   "line:Wolfhound_Photo_04a2740",
+   "line:Wolfhound_Photo_0344fb0"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Wolfhound",
+  "sign": "ARMPIT",
+  "node": "Wolfhound_Armpit",
+  "lines": [
+   "line:Wolfhound_Armpit_09a7b1c",
+   "line:Wolfhound_Armpit_0057b1a"
+  ],
+  "isImposterBranch": true
+ },
+ {
+  "character": "Wolfhound",
+  "sign": "EAR",
+  "node": "Wolfhound_Ears",
+  "lines": [
+   "line:Wolfhound_Ears_05455e1",
+   "line:Wolfhound_Ears_0d040f1"
+  ],
+  "isImposterBranch": false
+ }
+]
