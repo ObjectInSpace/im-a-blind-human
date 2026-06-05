@@ -1,0 +1,3830 @@
+{
+ "LiberationSans SDF - Fallback": {
+  "EYE_human": [
+   "human_pupil_34",
+   "human_white_8_11_36",
+   "human_pupil_14",
+   "human_pupil_48"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_8"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_18"
+  ]
+ },
+ "LiberationSans SDF": {
+  "EYE_human": [
+   "human_pupil_34",
+   "human_white_8_11_36",
+   "human_pupil_14",
+   "human_pupil_48"
+  ],
+  "HANDS_human": [
+   "human_hands_17",
+   "human_hands_38"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_13",
+   "fake_hands_10",
+   "fake_hands_8"
+  ],
+  "TEETH_human": [
+   "human_tooth_48"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_2"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_7",
+   "human_photo_18"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_13",
+   "fake_photo_9"
+  ],
+  "EAR_imposter": [
+   "fake_ear_8",
+   "fake_ear_14"
+  ]
+ },
+ "NotoNaskhArabic-Regular SDF": {
+  "EYE_human": [
+   "human_white_33",
+   "human_pupil_34",
+   "human_white_8_11_36",
+   "human_white_31",
+   "human_white_17",
+   "human_white_20",
+   "human_pupil_50",
+   "human_pupil_14",
+   "human_white_39",
+   "human_white_40",
+   "human_white_28_34",
+   "human_pupil_8",
+   "human_pupil_7",
+   "human_pupil_11",
+   "human_pupil_12",
+   "human_pupil_22",
+   "human_white_22_24_25",
+   "human_pupil_47",
+   "human_white_18",
+   "human_pupil_28",
+   "human_white_41",
+   "human_pupil_4",
+   "human_white_21"
+  ],
+  "EYE_imposter": [
+   "fake_pupil_4",
+   "fake_white_5",
+   "fake_white_1",
+   "fake_pupil_2"
+  ],
+  "HANDS_human": [
+   "human_hands_36",
+   "human_hands_51",
+   "human_hands_11",
+   "human_hands_37",
+   "human_hands_26",
+   "human_hands_50",
+   "human_hands_44 (2)",
+   "human_hands_52",
+   "human_hands_43 (2)",
+   "human_hands_17",
+   "human_hands_28",
+   "human_hands_49",
+   "human_hands_20",
+   "human_hands_21",
+   "human_hands_9",
+   "human_hands_48 (2)",
+   "human_hands_10",
+   "human_hands_41",
+   "human_hands_24",
+   "human_hands_2",
+   "human_hands_27"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_8",
+   "fake_hands_13",
+   "fake_hands_9"
+  ],
+  "TEETH_human": [
+   "human_tooth_18",
+   "human_tooth_22",
+   "human_tooth_10",
+   "human_mainchar_tooth",
+   "human_tooth_54",
+   "human_tooth_39",
+   "human_tooth_54(2)",
+   "human_tooth_19",
+   "human_tooth_50",
+   "human_tooth_28",
+   "human_tooth_35",
+   "human_tooth_51",
+   "human_tooth_6"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth frame_animation_3",
+   "fake_mainchar_tooth"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_34",
+   "human_photo_42",
+   "human_photo_44",
+   "human_photo_9",
+   "human_photo_14",
+   "human_photo_39",
+   "human_photo_23",
+   "human_photo_27",
+   "human_photo_45",
+   "human_photo_21",
+   "human_photo_20",
+   "human_photo_36",
+   "human_photo_48 (2)",
+   "human_photo_28"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_16",
+   "fake_photo_1",
+   "fake_photo_15"
+  ],
+  "ARMPIT_other": [
+   "armpit_6_4",
+   "armpit_6"
+  ],
+  "ARMPIT_human": [
+   "armpit_2_clean_4",
+   "armpit_4_clean_0",
+   "armpit_4_clean_2",
+   "armpit_3_clean_iodine_4",
+   "armpit_4_clean_4",
+   "armpit_2_clean_fungal_1",
+   "armpit_4_clean_redness_5",
+   "armpit_5_clear_fungal_4",
+   "armpit_5_clean_1",
+   "armpit_4_clean_redness_1"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_5_hairy_3",
+   "armpit_2_hairy_0",
+   "armpit_5_hairy_0",
+   "armpit_5_hairy_1",
+   "armpit_1_hairy_fungal_2",
+   "armpit_5_hairy_fungal_0",
+   "armpit_1_hairy_3",
+   "armpit_4_hairy_0",
+   "armpit_1_hairy_1",
+   "armpit_5_hairy_fungal_4",
+   "armpit_2_hairy_5",
+   "armpit_4_hairy_redness_1",
+   "armpit_4_hairy_3",
+   "armpit_2_hairy_fungal",
+   "armpit_5_hairy_fungal"
+  ],
+  "EAR_imposter": [
+   "fake_ear_cockroach_15",
+   "fake_ear_1",
+   "fake_ear_12",
+   "fake_ear_cockroach_16",
+   "fake_ear_injury_2",
+   "fake_ear_injury_0",
+   "fake_ear_6"
+  ]
+ },
+ "VCR OSD Mono Cyr SDF": {
+  "EYE_human": [
+   "human_pupil_50",
+   "human_white_20",
+   "human_white_19_37_38",
+   "human_white_40",
+   "human_pupil_34",
+   "human_white_43 (2)",
+   "human_white_17",
+   "human_pupil_36",
+   "human_pupil_8",
+   "human_pupil_7",
+   "human_pupil_40",
+   "human_white_28_34",
+   "human_pupil_39",
+   "human_pupil_1",
+   "human_pupil_19",
+   "human_white_12",
+   "human_pupil_21",
+   "human_pupil_3",
+   "human_pupil_42",
+   "human_white_13",
+   "human_white_32",
+   "human_white_14",
+   "human_white_10",
+   "human_pupil_29",
+   "human_white_2",
+   "human_pupil_43",
+   "human_pupil_9",
+   "human_pupil_37",
+   "human_pupil_31",
+   "human_white_6",
+   "human_pupil_26",
+   "human_pupil_11",
+   "human_pupil_12"
+  ],
+  "EYE_imposter": [
+   "fake_white_5",
+   "fake_white_2",
+   "fake_white_1",
+   "fake_pupil_6",
+   "fake_pupil_1",
+   "fake_pupil_5"
+  ],
+  "HANDS_human": [
+   "human_hands_11",
+   "human_hands_37",
+   "human_hands_26",
+   "human_hands_43 (2)",
+   "human_hands_49",
+   "human_hands_44 (2)",
+   "human_hands_52",
+   "human_hands_48",
+   "human_hands_21",
+   "human_hands_35",
+   "human_hands_27",
+   "human_hands_31",
+   "human_hands_22",
+   "human_hands_1",
+   "human_hands_44",
+   "human_hands_46",
+   "human_hands_25",
+   "human_hands_16",
+   "human_hands_4",
+   "human_hands_23",
+   "human_hands_29",
+   "human_hands_40",
+   "human_hands_19",
+   "human_hands_9"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_12",
+   "fake_hands_3",
+   "fake_hands_2",
+   "fake_hands_9",
+   "fake_hands_7",
+   "fake_hands_17",
+   "fake_hands_15",
+   "fake_hands_14",
+   "fake_hands_5"
+  ],
+  "TEETH_human": [
+   "human_tooth_22",
+   "human_tooth_10",
+   "human_tooth_39",
+   "human_tooth_29",
+   "human_tooth_53(2)",
+   "human_tooth_54",
+   "human_tooth_18",
+   "human_tooth_19",
+   "human_mainchar_tooth",
+   "human_tooth_45",
+   "human_tooth_9",
+   "human_tooth_16",
+   "human_tooth_57",
+   "human_tooth_40",
+   "human_tooth_26",
+   "human_tooth_13",
+   "human_tooth_32",
+   "human_tooth_25",
+   "human_tooth_38",
+   "human_tooth_4",
+   "human_tooth_37"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_4",
+   "fake_tooth_5"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_9",
+   "human_photo_34",
+   "human_photo_27",
+   "human_photo_45",
+   "human_photo_23",
+   "human_photo_5",
+   "human_photo_41",
+   "human_photo_2",
+   "human_photo_38",
+   "human_photo_42",
+   "human_photo_35",
+   "human_photo_31",
+   "human_photo_43",
+   "human_photo_48",
+   "human_photo_26",
+   "human_photo_46",
+   "human_photo_22",
+   "human_photo_30",
+   "human_photo_25",
+   "human_photo_50",
+   "human_photo_33",
+   "human_photo_12"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_16",
+   "fake_photo_1",
+   "fake_photo_3",
+   "fake_photo_2",
+   "fake_photo_4",
+   "fake_photo_10"
+  ],
+  "ARMPIT_human": [
+   "armpit_4_clean_redness",
+   "armpit_5_clean",
+   "armpit_5_clear_fungal",
+   "armpit_1_clean"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_4_hairy_fungal",
+   "armpit_1_hairy"
+  ],
+  "EAR_imposter": [
+   "fake_ear_1",
+   "fake_ear_3",
+   "fake_ear_12",
+   "fake_ear_4",
+   "fake_ear_cockroach",
+   "fake_ear_13",
+   "fake_ear_catlady"
+  ]
+ },
+ "DotGothic16-Regular SDF": {
+  "EYE_human": [
+   "human_white_20",
+   "human_white_19_37_38",
+   "human_white_33",
+   "human_white_40",
+   "human_pupil_29",
+   "human_pupil_37",
+   "human_white_30",
+   "human_white_44",
+   "human_pupil_20",
+   "human_pupil_4",
+   "human_pupil_50",
+   "human_pupil_11",
+   "human_pupil_12"
+  ],
+  "HANDS_human": [
+   "human_hands_11",
+   "human_hands_37",
+   "human_hands_26",
+   "human_hands_43 (2)",
+   "human_hands_36",
+   "human_hands_40",
+   "human_hands_19",
+   "human_hands_30",
+   "human_hands_9"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_12",
+   "fake_hands_5",
+   "fake_hands_1"
+  ],
+  "TEETH_human": [
+   "human_tooth_22",
+   "human_tooth_10",
+   "human_tooth_39",
+   "human_tooth_57",
+   "human_tooth_40",
+   "human_tooth_4",
+   "human_tooth_37",
+   "human_tooth_42",
+   "human_tooth_15",
+   "human_tooth_49 (2)",
+   "human_tooth_46",
+   "human_tooth_51"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_5",
+   "fake_tooth frame_animation"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_34",
+   "human_photo_27",
+   "human_photo_33",
+   "human_photo_12",
+   "human_photo_10",
+   "human_photo_8"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_10",
+   "fake_photo_7",
+   "fake_photo_4",
+   "fake_photo_14"
+  ],
+  "ARMPIT_human": [
+   "armpit_4_clean_redness"
+  ],
+  "EAR_imposter": [
+   "fake_ear_14",
+   "fake_ear_7",
+   "fake_ear_injury",
+   "fake_ear_5",
+   "fake_ear_15",
+   "fake_ear_6"
+  ]
+ },
+ "NotoSansJP-Medium SDF": {
+  "EYE_human": [
+   "human_pupil_14",
+   "human_pupil_48",
+   "human_white_39",
+   "human_white_43 (2)",
+   "human_white_17",
+   "human_pupil_36",
+   "human_white_20",
+   "human_white_28_34",
+   "human_pupil_1",
+   "human_pupil_19",
+   "human_white_2",
+   "human_pupil_45",
+   "human_pupil_20",
+   "human_white_7",
+   "human_pupil_5",
+   "human_white_4",
+   "human_pupil_22",
+   "human_white_22_24_25",
+   "human_pupil_34",
+   "human_white_8_11_36",
+   "human_pupil_8",
+   "human_pupil_7",
+   "human_pupil_40",
+   "human_white_33",
+   "human_white_40",
+   "human_pupil_9",
+   "human_pupil_10",
+   "human_pupil_3",
+   "human_white_43",
+   "human_pupil_15",
+   "human_white_6",
+   "human_pupil_26",
+   "human_pupil_29",
+   "human_white_15",
+   "human_pupil_35",
+   "human_pupil_17",
+   "human_pupil_42",
+   "human_white_13",
+   "human_white_14",
+   "human_white_10",
+   "human_pupil_31",
+   "human_pupil_32",
+   "human_white_32"
+  ],
+  "EYE_imposter": [
+   "fake_white_1",
+   "fake_white_5",
+   "fake_pupil_1",
+   "fake_pupil_5"
+  ],
+  "HANDS_human": [
+   "human_hands_17",
+   "human_hands_50",
+   "human_hands_44 (2)",
+   "human_hands_52",
+   "human_hands_11",
+   "human_hands_37",
+   "human_hands_26",
+   "human_hands_27",
+   "human_hands_31",
+   "human_hands_4",
+   "human_hands_23",
+   "human_hands_29",
+   "human_hands_47",
+   "human_hands_21",
+   "human_hands_35",
+   "human_hands_18",
+   "human_hands_22",
+   "human_hands_45 (2)",
+   "human_hands_1",
+   "human_hands_25",
+   "human_hands_32",
+   "human_hands_3",
+   "human_hands_46",
+   "human_hands_16",
+   "human_hands_44"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_17",
+   "fake_hands_1",
+   "fake_hands_7",
+   "fake_hands_15",
+   "fake_hands_9",
+   "fake_hands_12",
+   "fake_hands_14"
+  ],
+  "TEETH_human": [
+   "human_tooth_50",
+   "human_tooth_53",
+   "human_tooth_53(2)",
+   "human_tooth_54",
+   "human_tooth_18",
+   "human_tooth_22",
+   "human_tooth_10",
+   "human_mainchar_tooth",
+   "human_tooth_45",
+   "human_tooth_26",
+   "human_tooth_13",
+   "human_tooth_32",
+   "human_tooth_49 (2)",
+   "human_tooth_47",
+   "human_tooth_55",
+   "human_tooth_46",
+   "human_tooth_14",
+   "human_tooth_7",
+   "human_tooth_44",
+   "human_tooth_52",
+   "human_tooth_19",
+   "human_tooth_39",
+   "human_tooth_57",
+   "human_tooth_16",
+   "human_tooth_40"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth frame_animation",
+   "fake_tooth_9"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_23",
+   "human_photo_34",
+   "human_photo_38",
+   "human_photo_35",
+   "human_photo_31",
+   "human_photo_43",
+   "human_photo_30",
+   "human_photo_44",
+   "human_photo_14",
+   "human_photo_41",
+   "human_photo_2",
+   "human_photo_33",
+   "human_photo_25",
+   "human_photo_47",
+   "human_photo_20",
+   "human_photo_5",
+   "human_photo_39",
+   "human_photo_18",
+   "human_photo_40 (2)",
+   "human_photo_46",
+   "human_photo_3",
+   "human_photo_22",
+   "human_photo_19"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_3",
+   "fake_photo_6",
+   "fake_photo_7",
+   "fake_tv_photofits2",
+   "fake_photo_4",
+   "fake_tv_photo",
+   "fake_photo_1"
+  ],
+  "ARMPIT_human": [
+   "armpit_3_clean_iodine",
+   "armpit_4_clean_redness",
+   "armpit_2_clean",
+   "armpit_1_clean_redness",
+   "armpit_5_clean"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_1_hairy",
+   "armpit_2_hairy",
+   "armpit_4_hairy",
+   "armpit_4_hairy_fungal"
+  ],
+  "EAR_imposter": [
+   "fake_ear_1",
+   "fake_ear_12",
+   "fake_ear_13",
+   "fake_ear_15",
+   "fake_ear_7",
+   "fake_ear_4"
+  ]
+ },
+ "NotoSansKR-SemiBold SDF": {
+  "EYE_human": [
+   "human_white_31",
+   "human_pupil_14",
+   "human_white_43 (2)",
+   "human_white_8_11_36",
+   "human_pupil_48",
+   "human_pupil_49",
+   "human_pupil_36",
+   "human_white_17",
+   "human_pupil_34",
+   "human_pupil_27",
+   "human_pupil_50",
+   "human_white_20",
+   "human_white_40",
+   "human_white_33",
+   "human_pupil_11",
+   "human_pupil_12"
+  ],
+  "EYE_imposter": [
+   "fake_white_2",
+   "fake_white_5"
+  ],
+  "HANDS_human": [
+   "human_hands_49",
+   "human_hands_50",
+   "human_hands_44 (2)",
+   "human_hands_9",
+   "human_hands_11",
+   "human_hands_43 (2)",
+   "human_hands_36"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_13",
+   "fake_hands_2",
+   "fake_hands_19",
+   "fake_hands_12"
+  ],
+  "TEETH_human": [
+   "human_tooth_41",
+   "human_tooth_53",
+   "human_tooth_52",
+   "human_tooth_53(2)",
+   "human_tooth_54",
+   "human_tooth_17",
+   "human_tooth_15",
+   "human_tooth_22",
+   "human_tooth_10",
+   "human_tooth_39"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth frame_animation_1",
+   "fake_tooth frame_animation_3",
+   "fake_tv_teeth"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_49",
+   "human_photo_45",
+   "human_photo_44",
+   "human_photo_5",
+   "human_photo_9",
+   "human_photo_14",
+   "human_photo_23",
+   "human_photo_39",
+   "human_photo_4",
+   "human_photo_34",
+   "human_photo_27"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_16",
+   "fake_photo_14"
+  ],
+  "ARMPIT_human": [
+   "armpit_5_clear_fungal_4",
+   "armpit_4_clean_redness"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_2_hairy_fungal_3",
+   "armpit_1_hairy_fungal_3",
+   "armpit_5_hairy_fungal_4",
+   "armpit_4_hairy_redness_1",
+   "armpit_5_hairy_1",
+   "armpit_5_hairy_fungal_3"
+  ],
+  "EAR_imposter": [
+   "fake_ear_cockroach_15",
+   "fake_ear_injury_1",
+   "fake_ear_cockroach_6",
+   "fake_ear_cockroach_16",
+   "fake_ear_injury_0",
+   "fake_tv_ear",
+   "fake_ear_14",
+   "fake_ear_5"
+  ]
+ },
+ "AnonymousPro-Regular SDF": {
+  "EYE_human": [
+   "human_pupil_50",
+   "human_white_20",
+   "human_white_33",
+   "human_white_40",
+   "human_pupil_7",
+   "human_pupil_22",
+   "human_white_22_24_25",
+   "human_pupil_47",
+   "human_white_18",
+   "human_pupil_28",
+   "human_white_41",
+   "human_pupil_4",
+   "human_white_21",
+   "human_pupil_11",
+   "human_pupil_12"
+  ],
+  "EYE_imposter": [
+   "fake_pupil_5",
+   "fake_pupil_2"
+  ],
+  "HANDS_human": [
+   "human_hands_11",
+   "human_hands_43 (2)",
+   "human_hands_36",
+   "human_hands_48 (2)",
+   "human_hands_10",
+   "human_hands_41",
+   "human_hands_24",
+   "human_hands_2",
+   "human_hands_9"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_12"
+  ],
+  "TEETH_human": [
+   "human_tooth_22",
+   "human_tooth_10",
+   "human_tooth_39",
+   "human_tooth_28",
+   "human_tooth_35",
+   "human_tooth_51",
+   "human_tooth_6"
+  ],
+  "TEETH_imposter": [
+   "fake_mainchar_tooth"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_34",
+   "human_photo_27",
+   "human_photo_21",
+   "human_photo_20",
+   "human_photo_36",
+   "human_photo_48 (2)",
+   "human_photo_28"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_15"
+  ],
+  "ARMPIT_other": [
+   "armpit_6"
+  ],
+  "ARMPIT_human": [
+   "armpit_4_clean_redness"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_2_hairy_fungal",
+   "armpit_5_hairy_fungal"
+  ],
+  "EAR_imposter": [
+   "fake_ear_6"
+  ]
+ },
+ "ChakraPetch-SemiBold SDF": {
+  "EYE_human": [
+   "human_pupil_50",
+   "human_pupil_34",
+   "human_white_43 (2)",
+   "human_white_17",
+   "human_pupil_36",
+   "human_white_20",
+   "human_pupil_8",
+   "human_pupil_7",
+   "human_pupil_40",
+   "human_white_19_37_38",
+   "human_white_40",
+   "human_white_28_34",
+   "human_pupil_39",
+   "human_pupil_1",
+   "human_pupil_19",
+   "human_white_12",
+   "human_pupil_21",
+   "human_pupil_3",
+   "human_pupil_42",
+   "human_white_13",
+   "human_white_32",
+   "human_white_14",
+   "human_white_10",
+   "human_pupil_29",
+   "human_white_2",
+   "human_pupil_43",
+   "human_pupil_9",
+   "human_pupil_37",
+   "human_white_33",
+   "human_pupil_35",
+   "human_white_43",
+   "human_pupil_15",
+   "human_pupil_31",
+   "human_white_6",
+   "human_pupil_26",
+   "human_white_8_11_36",
+   "human_white_23",
+   "human_white_1",
+   "human_white_5_29",
+   "human_white_44",
+   "human_pupil_27",
+   "human_pupil_6",
+   "human_pupil_30",
+   "human_pupil_38",
+   "human_pupil_47",
+   "human_white_18",
+   "human_pupil_32",
+   "human_white_27",
+   "human_white_3_35",
+   "human_white_16",
+   "human_white_26",
+   "human_pupil_28",
+   "human_pupil_14",
+   "human_white_39",
+   "human_pupil_23",
+   "human_pupil_17",
+   "human_white_15",
+   "human_pupil_25",
+   "human_pupil_48",
+   "human_pupil_11",
+   "human_pupil_12",
+   "human_pupil_2",
+   "human_pupil_22",
+   "human_white_22_24_25",
+   "human_white_41",
+   "human_pupil_4",
+   "human_white_21",
+   "human_pupil_16"
+  ],
+  "EYE_imposter": [
+   "fake_white_5",
+   "fake_white_2",
+   "fake_white_1",
+   "fake_pupil_6",
+   "fake_pupil_1",
+   "fake_white_4",
+   "fake_pupil_5",
+   "fake_white_3",
+   "fake_pupil_3",
+   "fake_pupil_2"
+  ],
+  "HANDS_human": [
+   "human_hands_49",
+   "human_hands_44 (2)",
+   "human_hands_52",
+   "human_hands_48",
+   "human_hands_11",
+   "human_hands_21",
+   "human_hands_35",
+   "human_hands_37",
+   "human_hands_26",
+   "human_hands_43 (2)",
+   "human_hands_27",
+   "human_hands_31",
+   "human_hands_22",
+   "human_hands_1",
+   "human_hands_44",
+   "human_hands_46",
+   "human_hands_25",
+   "human_hands_16",
+   "human_hands_4",
+   "human_hands_23",
+   "human_hands_29",
+   "human_hands_7",
+   "human_hands_36",
+   "human_hands_40",
+   "human_hands_19",
+   "human_hands_50",
+   "human_hands_45 (2)",
+   "human_hands_32",
+   "human_hands_3",
+   "human_hands_17",
+   "human_hands_38",
+   "human_hands_54 (kowafuwa fek)",
+   "human_hands_14",
+   "human_hands_9",
+   "human_hands_8",
+   "human_hands_20",
+   "human_hands_48 (2)",
+   "human_hands_10",
+   "human_hands_13",
+   "human_hands_42",
+   "human_hands_33",
+   "human_hands_41",
+   "human_hands_24",
+   "human_hands_2"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_2",
+   "fake_hands_9",
+   "fake_hands_7",
+   "fake_hands_12",
+   "fake_hands_17",
+   "fake_hands_15",
+   "fake_hands_14",
+   "fake_hands_5",
+   "fake_hands_3",
+   "fake_tv_hands",
+   "fake_hands_4",
+   "fake_hands frame",
+   "fake_hands_8",
+   "fake_hands_19"
+  ],
+  "TEETH_human": [
+   "human_tooth_29",
+   "human_tooth_53(2)",
+   "human_tooth_54",
+   "human_tooth_18",
+   "human_tooth_22",
+   "human_tooth_10",
+   "human_tooth_19",
+   "human_mainchar_tooth",
+   "human_tooth_39",
+   "human_tooth_45",
+   "human_tooth_9",
+   "human_tooth_16",
+   "human_tooth_57",
+   "human_tooth_40",
+   "human_tooth_26",
+   "human_tooth_13",
+   "human_tooth_32",
+   "human_tooth_4",
+   "human_tooth_25",
+   "human_tooth_38",
+   "human_tooth_50",
+   "human_tooth_37",
+   "human_tooth_49 (2)",
+   "human_tooth_49",
+   "human_tooth_2",
+   "human_tooth_15",
+   "human_tooth_1",
+   "human_tooth_34",
+   "human_tooth_53",
+   "human_tooth_27",
+   "human_tooth_42",
+   "human_tooth_43",
+   "human_tooth_28",
+   "human_tooth_35",
+   "human_tooth_51",
+   "human_tooth_6"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_4",
+   "fake_tooth_5",
+   "fake_tooth_9",
+   "fake_tooth_1",
+   "fake_tooth_10",
+   "fake_tooth_8",
+   "fake_mainchar_tooth"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_45",
+   "human_photo_23",
+   "human_photo_5",
+   "human_photo_34",
+   "human_photo_41",
+   "human_photo_2",
+   "human_photo_38",
+   "human_photo_42",
+   "human_photo_27",
+   "human_photo_35",
+   "human_photo_31",
+   "human_photo_43",
+   "human_photo_48",
+   "human_photo_26",
+   "human_photo_46",
+   "human_photo_22",
+   "human_photo_30",
+   "human_photo_33",
+   "human_photo_25",
+   "human_photo_50",
+   "human_photo_24",
+   "human_photo_44",
+   "human_photo_12",
+   "human_photo_3",
+   "human_photo_19",
+   "human_photo_14",
+   "human_photo_13",
+   "human_photo_4",
+   "human_photo_37",
+   "human_photo_39",
+   "human_photo_10",
+   "human_photo_51",
+   "human_photo_6",
+   "human_photo_16",
+   "human_photo_1",
+   "human_photo_40 (2)",
+   "human_photo_29",
+   "human_photo_21",
+   "human_photo_20",
+   "human_photo_36",
+   "human_photo_48 (2)",
+   "human_photo_28"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_16",
+   "fake_photo_1",
+   "fake_photo_3",
+   "fake_photo_2",
+   "fake_photo_4",
+   "fake_photo_10",
+   "fake_photo_14",
+   "fake_tv_photofits1",
+   "fake_photo_8",
+   "fake_photo_15"
+  ],
+  "ARMPIT_other": [
+   "armpit_6",
+   "armpit_6_4"
+  ],
+  "ARMPIT_human": [
+   "armpit_5_clean",
+   "armpit_5_clear_fungal",
+   "armpit_4_clean_redness",
+   "armpit_1_clean",
+   "armpit_4_clean_3",
+   "armpit_1_clean_0",
+   "armpit_3_clean_iodine"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_4_hairy_fungal",
+   "armpit_1_hairy",
+   "armpit_3_hairy",
+   "armpit_1_hairy_fungal",
+   "armpit_4_hairy_redness",
+   "armpit_2_hairy_fungal",
+   "armpit_5_hairy_fungal"
+  ],
+  "EAR_imposter": [
+   "fake_ear_1",
+   "fake_ear_3",
+   "fake_ear_12",
+   "fake_ear_4",
+   "fake_ear_cockroach",
+   "fake_ear_13",
+   "fake_ear_catlady",
+   "fake_ear_6",
+   "fake_ear_15",
+   "fake_ear_injury",
+   "fake_ear_14",
+   "fake_ear_5",
+   "fake_ear_7",
+   "fake_ear_cockroach_14",
+   "fake_ear_9"
+  ]
+ },
+ "NotoSansSC-Medium SDF": {
+  "EYE_human": [
+   "human_pupil_34",
+   "human_white_8_11_36",
+   "human_white_17",
+   "human_pupil_8",
+   "human_pupil_40",
+   "human_white_19_37_38",
+   "human_white_28_34",
+   "human_pupil_19",
+   "human_white_27",
+   "human_pupil_2",
+   "human_pupil_17",
+   "human_pupil_15",
+   "human_white_2",
+   "human_pupil_43",
+   "human_pupil_37",
+   "human_pupil_45",
+   "human_pupil_14",
+   "human_white_39",
+   "human_pupil_3",
+   "human_white_43",
+   "human_pupil_31",
+   "human_pupil_48",
+   "human_white_20",
+   "human_pupil_39",
+   "human_pupil_1",
+   "human_pupil_10",
+   "human_pupil_20",
+   "human_white_7",
+   "human_pupil_46",
+   "human_pupil_7",
+   "human_white_32",
+   "human_pupil_32",
+   "human_white_13",
+   "human_white_15",
+   "human_pupil_35",
+   "human_pupil_42",
+   "human_white_14",
+   "human_white_10",
+   "human_white_6",
+   "human_pupil_26",
+   "human_pupil_29",
+   "human_white_30",
+   "human_pupil_30",
+   "human_pupil_22",
+   "human_pupil_12",
+   "human_pupil_4",
+   "human_pupil_50",
+   "human_white_40",
+   "human_white_33",
+   "human_pupil_11"
+  ],
+  "EYE_imposter": [
+   "fake_white_1",
+   "fake_pupil_1",
+   "fake_white_2",
+   "fake_white_5",
+   "fake_pupil_5"
+  ],
+  "HANDS_human": [
+   "human_hands_17",
+   "human_hands_52",
+   "human_hands_21",
+   "human_hands_35",
+   "human_hands_22",
+   "human_hands_6",
+   "human_hands_1",
+   "human_hands_46",
+   "human_hands_23",
+   "human_hands_27",
+   "human_hands_47",
+   "human_hands_50",
+   "human_hands_44 (2)",
+   "human_hands_51",
+   "human_hands_11",
+   "human_hands_37",
+   "human_hands_4",
+   "human_hands_29",
+   "human_hands_18",
+   "human_hands_43 (2)",
+   "human_hands_45 (2)",
+   "human_hands_32",
+   "human_hands_3",
+   "human_hands_44",
+   "human_hands_25",
+   "human_hands_16",
+   "human_hands_39",
+   "human_hands_30",
+   "human_hands_36",
+   "human_hands_9"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_2",
+   "fake_hands_15",
+   "fake_hands_5",
+   "fake_hands_17",
+   "fake_hands_1",
+   "fake_hands_7",
+   "fake_hands_14",
+   "fake_hands_12"
+  ],
+  "TEETH_human": [
+   "human_tooth_53(2)",
+   "human_tooth_19",
+   "human_tooth_57",
+   "human_tooth_26",
+   "human_tooth_32",
+   "human_tooth_4",
+   "human_tooth_25",
+   "human_tooth_38",
+   "human_tooth_49 (2)",
+   "human_tooth_47",
+   "human_tooth_54",
+   "human_tooth_18",
+   "human_tooth_1",
+   "human_tooth_55",
+   "human_tooth_14",
+   "human_tooth_7",
+   "human_tooth_24",
+   "human_tooth_50",
+   "human_tooth_53",
+   "human_tooth_22",
+   "human_tooth_10",
+   "human_tooth_45",
+   "human_tooth_13",
+   "human_tooth_44",
+   "human_tooth_46",
+   "human_tooth_52",
+   "human_tooth_16",
+   "human_tooth_34",
+   "human_tooth_42",
+   "human_tooth_15",
+   "human_tooth_51",
+   "human_tooth_35",
+   "human_tooth_39"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_9",
+   "fake_tooth frame_animation"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_44",
+   "human_photo_14",
+   "human_photo_34",
+   "human_photo_41",
+   "human_photo_46",
+   "human_photo_50",
+   "human_photo_42",
+   "human_photo_43",
+   "human_photo_5",
+   "human_photo_38",
+   "human_photo_31",
+   "human_photo_30",
+   "human_photo_20",
+   "human_photo_21",
+   "human_photo_27",
+   "human_photo_23",
+   "human_photo_39",
+   "human_photo_18",
+   "human_photo_3",
+   "human_photo_40 (2)",
+   "human_photo_22",
+   "human_photo_19",
+   "human_photo_10",
+   "human_photo_36"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_6",
+   "fake_photo_7",
+   "fake_tv_photofits2",
+   "fake_photo_3",
+   "fake_tv_photo",
+   "fake_photo_1",
+   "fake_photo_8"
+  ],
+  "ARMPIT_human": [
+   "armpit_3_clear",
+   "armpit_3_clean_iodine",
+   "armpit_5_clear_fungal",
+   "armpit_4_clean_redness",
+   "armpit_1_clean_redness",
+   "armpit_5_clean"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_4_hairy_fungal",
+   "armpit_2_hairy",
+   "armpit_4_hairy",
+   "armpit_2_hairy_fungal"
+  ],
+  "EAR_imposter": [
+   "fake_ear_1",
+   "fake_ear_cockroach",
+   "fake_ear_15",
+   "fake_ear_12",
+   "fake_ear_4",
+   "fake_ear_13",
+   "fake_ear_catlady",
+   "fake_ear_7",
+   "fake_ear_6"
+  ]
+ },
+ "NotoSansTC-Medium SDF": {
+  "EYE_human": [
+   "human_pupil_34",
+   "human_white_8_11_36",
+   "human_white_17",
+   "human_pupil_8",
+   "human_pupil_40",
+   "human_white_19_37_38",
+   "human_white_28_34",
+   "human_pupil_19",
+   "human_white_27",
+   "human_pupil_2",
+   "human_pupil_17",
+   "human_pupil_15",
+   "human_white_2",
+   "human_pupil_43",
+   "human_pupil_37",
+   "human_pupil_45",
+   "human_pupil_14",
+   "human_white_39",
+   "human_pupil_3",
+   "human_white_43",
+   "human_pupil_31",
+   "human_pupil_48",
+   "human_white_20",
+   "human_pupil_39",
+   "human_pupil_1",
+   "human_pupil_10",
+   "human_pupil_20",
+   "human_white_7",
+   "human_pupil_46",
+   "human_pupil_7",
+   "human_white_32",
+   "human_pupil_32",
+   "human_white_13",
+   "human_white_15",
+   "human_pupil_35",
+   "human_pupil_42",
+   "human_white_14",
+   "human_white_10",
+   "human_white_6",
+   "human_pupil_26",
+   "human_pupil_29",
+   "human_white_30",
+   "human_pupil_30",
+   "human_pupil_22",
+   "human_pupil_12",
+   "human_pupil_4",
+   "human_pupil_50",
+   "human_white_40",
+   "human_white_33",
+   "human_pupil_11"
+  ],
+  "EYE_imposter": [
+   "fake_white_1",
+   "fake_pupil_1",
+   "fake_white_2",
+   "fake_white_5",
+   "fake_pupil_5"
+  ],
+  "HANDS_human": [
+   "human_hands_17",
+   "human_hands_52",
+   "human_hands_21",
+   "human_hands_35",
+   "human_hands_22",
+   "human_hands_6",
+   "human_hands_1",
+   "human_hands_46",
+   "human_hands_23",
+   "human_hands_27",
+   "human_hands_47",
+   "human_hands_50",
+   "human_hands_44 (2)",
+   "human_hands_51",
+   "human_hands_11",
+   "human_hands_37",
+   "human_hands_4",
+   "human_hands_29",
+   "human_hands_18",
+   "human_hands_43 (2)",
+   "human_hands_45 (2)",
+   "human_hands_32",
+   "human_hands_3",
+   "human_hands_44",
+   "human_hands_25",
+   "human_hands_16",
+   "human_hands_39",
+   "human_hands_30",
+   "human_hands_36",
+   "human_hands_9"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_2",
+   "fake_hands_15",
+   "fake_hands_5",
+   "fake_hands_17",
+   "fake_hands_1",
+   "fake_hands_7",
+   "fake_hands_14",
+   "fake_hands_12"
+  ],
+  "TEETH_human": [
+   "human_tooth_53(2)",
+   "human_tooth_19",
+   "human_tooth_57",
+   "human_tooth_26",
+   "human_tooth_32",
+   "human_tooth_4",
+   "human_tooth_25",
+   "human_tooth_38",
+   "human_tooth_49 (2)",
+   "human_tooth_47",
+   "human_tooth_54",
+   "human_tooth_18",
+   "human_tooth_1",
+   "human_tooth_55",
+   "human_tooth_14",
+   "human_tooth_7",
+   "human_tooth_24",
+   "human_tooth_50",
+   "human_tooth_53",
+   "human_tooth_22",
+   "human_tooth_10",
+   "human_tooth_45",
+   "human_tooth_13",
+   "human_tooth_44",
+   "human_tooth_46",
+   "human_tooth_52",
+   "human_tooth_16",
+   "human_tooth_34",
+   "human_tooth_42",
+   "human_tooth_15",
+   "human_tooth_51",
+   "human_tooth_35",
+   "human_tooth_39"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_9",
+   "fake_tooth frame_animation"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_44",
+   "human_photo_14",
+   "human_photo_34",
+   "human_photo_41",
+   "human_photo_46",
+   "human_photo_50",
+   "human_photo_42",
+   "human_photo_43",
+   "human_photo_5",
+   "human_photo_38",
+   "human_photo_31",
+   "human_photo_30",
+   "human_photo_20",
+   "human_photo_21",
+   "human_photo_27",
+   "human_photo_23",
+   "human_photo_39",
+   "human_photo_18",
+   "human_photo_3",
+   "human_photo_40 (2)",
+   "human_photo_22",
+   "human_photo_19",
+   "human_photo_10",
+   "human_photo_36"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_6",
+   "fake_photo_7",
+   "fake_tv_photofits2",
+   "fake_photo_3",
+   "fake_tv_photo",
+   "fake_photo_1",
+   "fake_photo_8"
+  ],
+  "ARMPIT_human": [
+   "armpit_3_clear",
+   "armpit_3_clean_iodine",
+   "armpit_5_clear_fungal",
+   "armpit_4_clean_redness",
+   "armpit_1_clean_redness",
+   "armpit_5_clean"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_4_hairy_fungal",
+   "armpit_2_hairy",
+   "armpit_4_hairy",
+   "armpit_2_hairy_fungal"
+  ],
+  "EAR_imposter": [
+   "fake_ear_1",
+   "fake_ear_cockroach",
+   "fake_ear_15",
+   "fake_ear_12",
+   "fake_ear_4",
+   "fake_ear_13",
+   "fake_ear_catlady",
+   "fake_ear_7",
+   "fake_ear_6"
+  ]
+ },
+ "NotoSans-SemiBold SDF": {
+  "EYE_human": [
+   "human_pupil_34",
+   "human_white_8_11_36",
+   "human_pupil_14",
+   "human_pupil_48",
+   "human_white_17",
+   "human_pupil_36",
+   "human_white_20",
+   "human_pupil_8",
+   "human_pupil_7",
+   "human_white_19_37_38",
+   "human_white_33",
+   "human_white_40",
+   "human_pupil_1",
+   "human_pupil_19",
+   "human_white_26",
+   "human_pupil_2",
+   "human_pupil_17",
+   "human_white_15",
+   "human_pupil_3",
+   "human_pupil_29",
+   "human_pupil_43",
+   "human_pupil_37",
+   "human_pupil_20",
+   "human_pupil_5",
+   "human_white_22_24_25",
+   "human_pupil_47",
+   "human_white_18",
+   "human_pupil_28",
+   "human_white_44",
+   "human_pupil_27",
+   "human_pupil_30",
+   "human_pupil_11",
+   "human_pupil_23",
+   "human_white_30",
+   "human_pupil_38",
+   "human_pupil_41",
+   "human_white_9",
+   "human_pupil_44",
+   "human_pupil_10",
+   "human_white_7",
+   "human_pupil_22",
+   "human_white_21",
+   "human_pupil_49",
+   "human_white_43",
+   "human_pupil_24",
+   "human_pupil_4",
+   "human_pupil_35",
+   "human_pupil_50",
+   "human_pupil_46",
+   "human_white_4",
+   "human_white_41",
+   "human_white_39",
+   "human_white_28_34",
+   "human_pupil_12",
+   "human_pupil_6",
+   "human_pupil_25"
+  ],
+  "EYE_imposter": [
+   "fake_white_1",
+   "fake_pupil_1",
+   "fake_pupil_2",
+   "fake_pupil_4",
+   "fake_white_4"
+  ],
+  "HANDS_human": [
+   "human_hands_17",
+   "human_hands_48",
+   "human_hands_11",
+   "human_hands_21",
+   "human_hands_37",
+   "human_hands_45 (2)",
+   "human_hands_1",
+   "human_hands_16",
+   "human_hands_30",
+   "human_hands_38",
+   "human_hands_9",
+   "human_hands_13",
+   "human_hands_39",
+   "human_hands_50 (2)",
+   "human_hands_45",
+   "human_hands_34",
+   "human_hands_12",
+   "human_hands_47",
+   "human_hands_36",
+   "human_hands_28",
+   "human_hands_51",
+   "human_hands_43 (2)",
+   "human_hands_25",
+   "human_hands_5",
+   "human_hands_40",
+   "human_hands_19",
+   "human_hands_7",
+   "human_hands_43",
+   "human_hands_41",
+   "human_hands_50",
+   "human_hands_3",
+   "human_hands_42",
+   "human_hands_26",
+   "human_hands_32",
+   "human_hands_24",
+   "human_hands_2",
+   "human_hands_44 (2)",
+   "human_hands_33",
+   "human_hands_48 (2)",
+   "human_hands_6"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_9",
+   "fake_hands_7",
+   "fake_hands_12",
+   "fake_hands_14",
+   "fake_hands_1",
+   "fake_tv_hands",
+   "fake_hands_19",
+   "fake_hands_3",
+   "fake_hands_8",
+   "fake_hands_2",
+   "fake_hands frame",
+   "fake_hands_4"
+  ],
+  "TEETH_human": [
+   "human_mainchar_tooth",
+   "human_tooth_39",
+   "human_tooth_16",
+   "human_tooth_26",
+   "human_tooth_32",
+   "human_tooth_4",
+   "human_tooth_25",
+   "human_tooth_49 (2)",
+   "human_tooth_46",
+   "human_tooth_37",
+   "human_tooth_17",
+   "human_tooth_56",
+   "human_tooth_47",
+   "human_tooth_55",
+   "human_tooth_14",
+   "human_tooth_7",
+   "human_tooth_6",
+   "human_tooth_30",
+   "human_tooth_42",
+   "human_tooth_15",
+   "human_tooth_54",
+   "human_tooth_18",
+   "human_tooth_1",
+   "human_tooth_34",
+   "human_tooth_57",
+   "human_tooth_13",
+   "human_tooth_11",
+   "human_tooth_20",
+   "human_tooth_33",
+   "human_tooth_35",
+   "human_tooth_51",
+   "human_tooth_53",
+   "human_tooth_3",
+   "human_tooth_50",
+   "human_tooth_24",
+   "human_tooth_28",
+   "human_tooth_44",
+   "human_tooth_49",
+   "human_tooth_52",
+   "human_tooth_22",
+   "human_tooth_10"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth frame_animation",
+   "fake_tv_teeth",
+   "fake_tooth_3",
+   "fake_tooth_7",
+   "fake_tooth_5",
+   "fake_tooth_4",
+   "fake_tooth_10",
+   "fake_mainchar_tooth",
+   "fake_tooth_8"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_14",
+   "human_photo_23",
+   "human_photo_5",
+   "human_photo_34",
+   "human_photo_2",
+   "human_photo_38",
+   "human_photo_42",
+   "human_photo_35",
+   "human_photo_48",
+   "human_photo_26",
+   "human_photo_29",
+   "human_photo_46",
+   "human_photo_30",
+   "human_photo_33",
+   "human_photo_25",
+   "human_photo_12",
+   "human_photo_24",
+   "human_photo_4",
+   "human_photo_10",
+   "human_photo_6",
+   "human_photo_32",
+   "human_photo_8",
+   "human_photo_17",
+   "human_photo_27",
+   "human_photo_40 (2)",
+   "human_photo_40",
+   "human_photo_9",
+   "human_photo_36",
+   "human_photo_47",
+   "human_photo_21",
+   "human_photo_20",
+   "human_photo_48 (2)",
+   "human_photo_28",
+   "human_photo_11",
+   "human_photo_37",
+   "human_photo_7",
+   "human_photo_15",
+   "human_photo_13",
+   "human_photo_1",
+   "human_photo_31"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_tv_photo",
+   "fake_photo_1",
+   "fake_photo_4",
+   "fake_photo_10",
+   "fake_photo_9",
+   "fake_tv_photofits1",
+   "fake_photo_8",
+   "fake_photo_5",
+   "fake_photo_7",
+   "fake_tv_photofits2",
+   "fake_photo_13",
+   "fake_photo_14",
+   "fake_photo_6",
+   "fake_photo_15"
+  ],
+  "ARMPIT_human": [
+   "armpit_4_clean_redness",
+   "armpit_3_clear",
+   "armpit_4_clean_fungal",
+   "armpit_5_clear_fungal",
+   "armpit_5_clean_5",
+   "armpit_2_clean",
+   "armpit_5_clean"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_4_hairy_redness",
+   "armpit_1_hairy",
+   "armpit_2_hairy",
+   "armpit_1_hairy_fungal",
+   "armpit_4_hairy",
+   "armpit_2_hairy_fungal",
+   "armpit_5_hairy"
+  ],
+  "EAR_imposter": [
+   "fake_ear_3",
+   "fake_ear_12",
+   "fake_ear_13",
+   "fake_ear_15",
+   "fake_ear_7",
+   "fake_ear_6",
+   "fake_ear_injury",
+   "fake_ear_4",
+   "fake_ear_14",
+   "fake_ear_5",
+   "fake_ear_2",
+   "fake_ear_10",
+   "fake_ear_burnt",
+   "fake_ear_catlady"
+  ]
+ },
+ "Alkonost": {
+  "EYE_human": [
+   "human_white_19_37_38",
+   "human_pupil_37"
+  ],
+  "HANDS_human": [
+   "human_hands_22"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_8"
+  ],
+  "TEETH_human": [
+   "human_tooth_38"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_37",
+   "human_photo_17"
+  ],
+  "ARMPIT_human": [
+   "armpit_1_clean_0",
+   "armpit_1_clean_1",
+   "armpit_1_clean_2",
+   "armpit_1_clean_3",
+   "armpit_1_clean_4",
+   "armpit_1_clean_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_1_hairy_0",
+   "armpit_1_hairy_1",
+   "armpit_1_hairy_2",
+   "armpit_1_hairy_3",
+   "armpit_1_hairy_4",
+   "armpit_1_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_2"
+  ]
+ },
+ "Alt": {
+  "EYE_human": [
+   "human_white_41",
+   "human_pupil_41"
+  ],
+  "HANDS_human": [
+   "human_hands_45",
+   "human_hands_45 (2)"
+  ],
+  "TEETH_human": [
+   "human_tooth_49",
+   "human_tooth_49 (2)"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_43"
+  ],
+  "ARMPIT_human": [
+   "armpit_1_clean_redness_0",
+   "armpit_1_clean_redness_1",
+   "armpit_1_clean_redness_2",
+   "armpit_1_clean_redness_3",
+   "armpit_1_clean_redness_4",
+   "armpit_1_clean_redness_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_4"
+  ]
+ },
+ "Anger": {
+  "EYE_human": [
+   "human_white_9",
+   "human_pupil_9"
+  ],
+  "HANDS_human": [
+   "human_hands_9"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_5"
+  ],
+  "TEETH_human": [
+   "human_tooth_9"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_5"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_9"
+  ],
+  "ARMPIT_human": [
+   "armpit_4_clean_0",
+   "armpit_4_clean_1",
+   "armpit_4_clean_2",
+   "armpit_4_clean_3",
+   "armpit_4_clean_4",
+   "armpit_4_clean_5",
+   "armpit_4_clean_redness_0",
+   "armpit_4_clean_redness_1",
+   "armpit_4_clean_redness_2",
+   "armpit_4_clean_redness_3",
+   "armpit_4_clean_redness_4",
+   "armpit_4_clean_redness_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_12"
+  ]
+ },
+ "Anxiety": {
+  "EYE_imposter": [
+   "fake_white_1",
+   "fake_pupil_1"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_1"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_1"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_1"
+  ],
+  "ARMPIT_human": [
+   "armpit_2_clean_fungal_0",
+   "armpit_2_clean_fungal_1",
+   "armpit_2_clean_fungal_2",
+   "armpit_2_clean_fungal_3",
+   "armpit_2_clean_fungal_4",
+   "armpit_2_clean_fungal_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_cockroach_0",
+   "fake_ear_cockroach_1",
+   "fake_ear_cockroach_2",
+   "fake_ear_cockroach_3",
+   "fake_ear_cockroach_4",
+   "fake_ear_cockroach_5",
+   "fake_ear_cockroach_6",
+   "fake_ear_cockroach_7",
+   "fake_ear_cockroach_8",
+   "fake_ear_cockroach_9",
+   "fake_ear_cockroach_10",
+   "fake_ear_cockroach_11",
+   "fake_ear_cockroach_12",
+   "fake_ear_cockroach_13",
+   "fake_ear_cockroach_14",
+   "fake_ear_cockroach_15",
+   "fake_ear_cockroach_16",
+   "fake_ear_cockroach_17",
+   "fake_ear_cockroach_18",
+   "fake_ear_cockroach_19"
+  ]
+ },
+ "Bald": {
+  "EYE_human": [
+   "human_white_22_24_25",
+   "human_pupil_39"
+  ],
+  "HANDS_human": [
+   "human_hands_43",
+   "human_hands_43 (2)"
+  ],
+  "TEETH_human": [
+   "human_tooth_47"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_41"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_13"
+  ],
+  "ARMPIT_human": [
+   "armpit_2_clean_0",
+   "armpit_2_clean_1",
+   "armpit_2_clean_2",
+   "armpit_2_clean_3",
+   "armpit_2_clean_4",
+   "armpit_2_clean_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_2_hairy_fungal_0",
+   "armpit_2_hairy_fungal_1",
+   "armpit_2_hairy_fungal_2",
+   "armpit_2_hairy_fungal_3",
+   "armpit_2_hairy_fungal_4",
+   "armpit_2_hairy_fungal_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_1"
+  ]
+ },
+ "Ballerina": {
+  "EYE_human": [
+   "human_white_39",
+   "human_pupil_1"
+  ],
+  "EYE_imposter": [
+   "fake_white_5",
+   "fake_pupil_5"
+  ],
+  "HANDS_human": [
+   "human_hands_1"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_14"
+  ],
+  "TEETH_human": [
+   "human_tooth_1"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_1"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_1"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_11"
+  ],
+  "ARMPIT_human": [
+   "armpit_1_clean_0",
+   "armpit_1_clean_1",
+   "armpit_1_clean_2",
+   "armpit_1_clean_3",
+   "armpit_1_clean_4",
+   "armpit_1_clean_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_2_hairy_fungal_0",
+   "armpit_2_hairy_fungal_1",
+   "armpit_2_hairy_fungal_2",
+   "armpit_2_hairy_fungal_3",
+   "armpit_2_hairy_fungal_4",
+   "armpit_2_hairy_fungal_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_catlady"
+  ]
+ },
+ "Bestson": {
+  "EYE_human": [
+   "human_white_28_34",
+   "human_pupil_28",
+   "human_white_23"
+  ],
+  "HANDS_human": [
+   "human_hands_28",
+   "human_hands_21"
+  ],
+  "TEETH_human": [
+   "human_tooth_28",
+   "human_tooth_24"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_27"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_9"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_4_hairy_0",
+   "armpit_4_hairy_1",
+   "armpit_4_hairy_2",
+   "armpit_4_hairy_3",
+   "armpit_4_hairy_4",
+   "armpit_4_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_7"
+  ]
+ },
+ "BigLebowski": {
+  "EYE_human": [
+   "human_white_5_29",
+   "human_pupil_29"
+  ],
+  "HANDS_human": [
+   "human_hands_29"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_12"
+  ],
+  "TEETH_human": [
+   "human_tooth_29"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_29",
+   "human_photo_34"
+  ],
+  "EAR_imposter": [
+   "fake_ear_14"
+  ]
+ },
+ "Blind": {
+  "EYE_human": [
+   "human_white_13"
+  ],
+  "HANDS_human": [
+   "human_hands_13"
+  ],
+  "TEETH_human": [
+   "human_tooth_13"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_13"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_2_hairy_0",
+   "armpit_2_hairy_1",
+   "armpit_2_hairy_2",
+   "armpit_2_hairy_3",
+   "armpit_2_hairy_4",
+   "armpit_2_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_7"
+  ]
+ },
+ "Buddy": {
+  "EYE_human": [
+   "human_white_22_24_25",
+   "human_pupil_26",
+   "human_white_28_34"
+  ],
+  "HANDS_human": [
+   "human_hands_25"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_10"
+  ],
+  "TEETH_human": [
+   "human_tooth_25"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_25"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_4_hairy_fungal_0",
+   "armpit_4_hairy_fungal_1",
+   "armpit_4_hairy_fungal_2",
+   "armpit_4_hairy_fungal_3",
+   "armpit_4_hairy_fungal_4",
+   "armpit_4_hairy_fungal_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_7"
+  ]
+ },
+ "Cold": {
+  "EYE_imposter": [
+   "fake_white_2",
+   "fake_pupil_2"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_2"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_2"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_2"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_2_hairy_fungal_0",
+   "armpit_2_hairy_fungal_1",
+   "armpit_2_hairy_fungal_2",
+   "armpit_2_hairy_fungal_3",
+   "armpit_2_hairy_fungal_4",
+   "armpit_2_hairy_fungal_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_4"
+  ]
+ },
+ "Couple": {
+  "EYE_human": [
+   "human_white_30",
+   "human_pupil_30",
+   "human_white_31"
+  ],
+  "HANDS_human": [
+   "human_hands_30",
+   "human_hands_31"
+  ],
+  "TEETH_human": [
+   "human_tooth_30"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_30"
+  ],
+  "ARMPIT_human": [
+   "armpit_4_clean_0",
+   "armpit_4_clean_1",
+   "armpit_4_clean_2",
+   "armpit_4_clean_3",
+   "armpit_4_clean_4",
+   "armpit_4_clean_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_4_hairy_0",
+   "armpit_4_hairy_1",
+   "armpit_4_hairy_2",
+   "armpit_4_hairy_3",
+   "armpit_4_hairy_4",
+   "armpit_4_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_7"
+  ]
+ },
+ "CultistOne": {
+  "EYE_human": [
+   "human_pupil_38"
+  ],
+  "EYE_imposter": [
+   "fake_white_5"
+  ],
+  "HANDS_human": [
+   "human_hands_33"
+  ],
+  "TEETH_human": [
+   "human_tooth_33"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_33"
+  ],
+  "ARMPIT_human": [
+   "armpit_3_clean_iodine_0",
+   "armpit_3_clean_iodine_1",
+   "armpit_3_clean_iodine_2",
+   "armpit_3_clean_iodine_3",
+   "armpit_3_clean_iodine_4",
+   "armpit_3_clean_iodine_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_1"
+  ]
+ },
+ "CultistThree": {
+  "EYE_human": [
+   "human_white_40",
+   "human_pupil_34"
+  ],
+  "HANDS_human": [
+   "human_hands_35"
+  ],
+  "TEETH_human": [
+   "human_tooth_35"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_35"
+  ],
+  "ARMPIT_human": [
+   "armpit_3_clean_iodine_0",
+   "armpit_3_clean_iodine_1",
+   "armpit_3_clean_iodine_2",
+   "armpit_3_clean_iodine_3",
+   "armpit_3_clean_iodine_4",
+   "armpit_3_clean_iodine_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_15"
+  ]
+ },
+ "CultistTwo": {
+  "EYE_human": [
+   "human_pupil_16",
+   "human_pupil_50"
+  ],
+  "EYE_imposter": [
+   "fake_white_3"
+  ],
+  "HANDS_human": [
+   "human_hands_34"
+  ],
+  "TEETH_human": [
+   "human_tooth_34"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_34"
+  ],
+  "ARMPIT_human": [
+   "armpit_3_clean_iodine_0",
+   "armpit_3_clean_iodine_1",
+   "armpit_3_clean_iodine_2",
+   "armpit_3_clean_iodine_3",
+   "armpit_3_clean_iodine_4",
+   "armpit_3_clean_iodine_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_7"
+  ]
+ },
+ "Daughter": {
+  "EYE_human": [
+   "human_white_14",
+   "human_pupil_7"
+  ],
+  "HANDS_human": [
+   "human_hands_7"
+  ],
+  "TEETH_human": [
+   "human_tooth_7"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_7"
+  ],
+  "EAR_imposter": [
+   "fake_ear_13"
+  ]
+ },
+ "Doc": {
+  "EYE_human": [
+   "human_white_5_29",
+   "human_pupil_5"
+  ],
+  "HANDS_human": [
+   "human_hands_5",
+   "human_hands_39"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_1"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_5",
+   "human_photo_33"
+  ],
+  "ARMPIT_human": [
+   "armpit_5_clean_0",
+   "armpit_5_clean_1",
+   "armpit_5_clean_2",
+   "armpit_5_clean_3",
+   "armpit_5_clean_4",
+   "armpit_5_clean_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_15"
+  ]
+ },
+ "Dude": {
+  "EYE_human": [
+   "human_white_27",
+   "human_pupil_27",
+   "human_white_14"
+  ],
+  "HANDS_human": [
+   "human_hands_27",
+   "human_hands_33"
+  ],
+  "TEETH_human": [
+   "human_tooth_27"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_29"
+  ],
+  "ARMPIT_human": [
+   "armpit_2_clean_0",
+   "armpit_2_clean_1",
+   "armpit_2_clean_2",
+   "armpit_2_clean_3",
+   "armpit_2_clean_4",
+   "armpit_2_clean_5",
+   "armpit_2_clean_fungal_0",
+   "armpit_2_clean_fungal_1",
+   "armpit_2_clean_fungal_2",
+   "armpit_2_clean_fungal_3",
+   "armpit_2_clean_fungal_4",
+   "armpit_2_clean_fungal_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_4"
+  ]
+ },
+ "Edgar": {
+  "EYE_human": [
+   "human_white_19_37_38",
+   "human_pupil_19",
+   "human_white_33",
+   "human_pupil_38"
+  ],
+  "HANDS_human": [
+   "human_hands_19"
+  ],
+  "TEETH_human": [
+   "human_tooth_19",
+   "human_tooth_37"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_19"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_2_hairy_fungal_0",
+   "armpit_2_hairy_fungal_1",
+   "armpit_2_hairy_fungal_2",
+   "armpit_2_hairy_fungal_3",
+   "armpit_2_hairy_fungal_4",
+   "armpit_2_hairy_fungal_5",
+   "armpit_2_hairy_0",
+   "armpit_2_hairy_1",
+   "armpit_2_hairy_2",
+   "armpit_2_hairy_3",
+   "armpit_2_hairy_4",
+   "armpit_2_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_8"
+  ]
+ },
+ "Esenin": {
+  "EYE_human": [
+   "human_white_1",
+   "human_pupil_1"
+  ],
+  "HANDS_human": [
+   "human_hands_1"
+  ],
+  "TEETH_human": [
+   "human_tooth_10"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_1"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_2_hairy_0",
+   "armpit_2_hairy_1",
+   "armpit_2_hairy_2",
+   "armpit_2_hairy_3",
+   "armpit_2_hairy_4",
+   "armpit_2_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_1"
+  ]
+ },
+ "Experienced": {
+  "EYE_human": [
+   "human_white_27",
+   "human_pupil_44"
+  ],
+  "HANDS_human": [
+   "human_hands_48",
+   "human_hands_48 (2)"
+  ],
+  "TEETH_human": [
+   "human_tooth_52"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_7"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_46"
+  ],
+  "ARMPIT_human": [
+   "armpit_3_clean_iodine_0",
+   "armpit_3_clean_iodine_1",
+   "armpit_3_clean_iodine_2",
+   "armpit_3_clean_iodine_3",
+   "armpit_3_clean_iodine_4",
+   "armpit_3_clean_iodine_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_15"
+  ]
+ },
+ "Fairytaller": {
+  "EYE_human": [
+   "human_white_22_24_25",
+   "human_pupil_40",
+   "human_white_4"
+  ],
+  "HANDS_human": [
+   "human_hands_44",
+   "human_hands_44 (2)"
+  ],
+  "TEETH_human": [
+   "human_tooth_48"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_42"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_2_hairy_0",
+   "armpit_2_hairy_1",
+   "armpit_2_hairy_2",
+   "armpit_4_hairy_3",
+   "armpit_4_hairy_4",
+   "armpit_4_hairy_5",
+   "armpit_2_hairy_3",
+   "armpit_2_hairy_4",
+   "armpit_2_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_8",
+   "fake_ear_7"
+  ]
+ },
+ "Fan": {
+  "EYE_human": [
+   "human_white_2",
+   "human_pupil_2",
+   "human_white_4"
+  ],
+  "HANDS_human": [
+   "human_hands_2"
+  ],
+  "TEETH_human": [
+   "human_tooth_2"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_2",
+   "human_photo_39"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_4_hairy_redness_0",
+   "armpit_4_hairy_redness_1",
+   "armpit_4_hairy_redness_2",
+   "armpit_4_hairy_redness_3",
+   "armpit_4_hairy_redness_4",
+   "armpit_4_hairy_redness_5",
+   "armpit_4_hairy_0",
+   "armpit_4_hairy_1",
+   "armpit_4_hairy_2",
+   "armpit_4_hairy_3",
+   "armpit_4_hairy_4",
+   "armpit_4_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_8"
+  ]
+ },
+ "Fatman": {
+  "EYE_human": [
+   "human_white_31",
+   "human_pupil_31",
+   "human_white_23"
+  ],
+  "HANDS_human": [
+   "human_hands_31",
+   "human_hands_38"
+  ],
+  "TEETH_human": [
+   "human_tooth_45"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_31"
+  ],
+  "ARMPIT_human": [
+   "armpit_4_clean_fungal_0",
+   "armpit_4_clean_fungal_1",
+   "armpit_4_clean_fungal_2",
+   "armpit_4_clean_fungal_3",
+   "armpit_4_clean_fungal_4",
+   "armpit_4_clean_fungal_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_4_hairy_0",
+   "armpit_4_hairy_1",
+   "armpit_4_hairy_2",
+   "armpit_4_hairy_3",
+   "armpit_4_hairy_4",
+   "armpit_4_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_8"
+  ]
+ },
+ "Firefighter": {
+  "EYE_human": [
+   "human_white_16",
+   "human_pupil_16"
+  ],
+  "HANDS_human": [
+   "human_hands_16",
+   "human_hands_44 (2)"
+  ],
+  "TEETH_human": [
+   "human_tooth_16"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_16"
+  ],
+  "ARMPIT_other": [
+   "armpit_6_0",
+   "armpit_6_1",
+   "armpit_6_2",
+   "armpit_6_3",
+   "armpit_6_4",
+   "armpit_6_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_burnt"
+  ]
+ },
+ "Foreigner": {
+  "EYE_human": [
+   "human_white_12",
+   "human_pupil_12"
+  ],
+  "HANDS_human": [
+   "human_hands_12"
+  ],
+  "TEETH_human": [
+   "human_tooth_12"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_12"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_1_hairy_0",
+   "armpit_1_hairy_1",
+   "armpit_1_hairy_2",
+   "armpit_1_hairy_3",
+   "armpit_1_hairy_4",
+   "armpit_1_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_5"
+  ]
+ },
+ "FormerFema": {
+  "EYE_human": [
+   "human_white_10",
+   "human_pupil_10"
+  ],
+  "HANDS_human": [
+   "human_hands_10"
+  ],
+  "TEETH_human": [
+   "human_tooth_10"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_10"
+  ],
+  "ARMPIT_human": [
+   "armpit_2_clean_fungal_0",
+   "armpit_2_clean_fungal_1",
+   "armpit_2_clean_fungal_2",
+   "armpit_2_clean_fungal_3",
+   "armpit_2_clean_fungal_4",
+   "armpit_2_clean_fungal_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_8"
+  ]
+ },
+ "FortuneTeller": {
+  "EYE_human": [
+   "human_white_26",
+   "human_pupil_25",
+   "human_white_15"
+  ],
+  "HANDS_human": [
+   "human_hands_26"
+  ],
+  "TEETH_human": [
+   "human_tooth_26",
+   "human_tooth_44"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_26"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_7"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_1_hairy_0",
+   "armpit_1_hairy_1",
+   "armpit_1_hairy_2",
+   "armpit_1_hairy_3",
+   "armpit_1_hairy_4",
+   "armpit_1_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_2"
+  ]
+ },
+ "Fugitive": {
+  "EYE_human": [
+   "human_white_17",
+   "human_pupil_17",
+   "human_white_40"
+  ],
+  "HANDS_human": [
+   "human_hands_17"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_7"
+  ],
+  "TEETH_human": [
+   "human_tooth_17"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_17",
+   "human_photo_19"
+  ],
+  "ARMPIT_human": [
+   "armpit_1_clean_redness_0",
+   "armpit_1_clean_redness_1",
+   "armpit_1_clean_redness_2",
+   "armpit_1_clean_redness_3",
+   "armpit_1_clean_redness_4",
+   "armpit_1_clean_redness_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_2_hairy_0",
+   "armpit_2_hairy_1",
+   "armpit_2_hairy_2",
+   "armpit_2_hairy_3",
+   "armpit_2_hairy_4",
+   "armpit_2_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_injury_0",
+   "fake_ear_injury_1",
+   "fake_ear_injury_2",
+   "fake_ear_injury_3",
+   "fake_ear_injury_4"
+  ]
+ },
+ "FunnyGuy": {
+  "EYE_human": [
+   "human_white_9",
+   "human_pupil_43"
+  ],
+  "HANDS_human": [
+   "human_hands_47"
+  ],
+  "TEETH_human": [
+   "human_tooth_51"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_45"
+  ],
+  "ARMPIT_human": [
+   "armpit_5_clear_fungal_0",
+   "armpit_5_clear_fungal_1",
+   "armpit_5_clear_fungal_2",
+   "armpit_5_clear_fungal_3",
+   "armpit_5_clear_fungal_4",
+   "armpit_5_clear_fungal_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_4_hairy_fungal_0",
+   "armpit_4_hairy_fungal_1",
+   "armpit_4_hairy_fungal_2",
+   "armpit_4_hairy_fungal_3",
+   "armpit_4_hairy_fungal_4",
+   "armpit_4_hairy_fungal_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_1"
+  ]
+ },
+ "GraveDigger": {
+  "EYE_human": [
+   "human_white_20",
+   "human_pupil_20"
+  ],
+  "HANDS_human": [
+   "human_hands_20"
+  ],
+  "TEETH_human": [
+   "human_tooth_20"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_20"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_6"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_5_hairy_0",
+   "armpit_5_hairy_1",
+   "armpit_5_hairy_2",
+   "armpit_5_hairy_3",
+   "armpit_5_hairy_4",
+   "armpit_5_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_15"
+  ]
+ },
+ "Greatmother": {
+  "EYE_imposter": [
+   "fake_white_3",
+   "fake_pupil_3"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_3"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_3"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_3"
+  ],
+  "ARMPIT_human": [
+   "armpit_5_clean_0",
+   "armpit_5_clean_1",
+   "armpit_5_clean_2",
+   "armpit_5_clean_3",
+   "armpit_5_clean_4",
+   "armpit_5_clean_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_cockroach_0",
+   "fake_ear_cockroach_1",
+   "fake_ear_cockroach_2",
+   "fake_ear_cockroach_3",
+   "fake_ear_cockroach_4",
+   "fake_ear_cockroach_5",
+   "fake_ear_cockroach_6",
+   "fake_ear_cockroach_7",
+   "fake_ear_cockroach_8",
+   "fake_ear_cockroach_9",
+   "fake_ear_cockroach_10",
+   "fake_ear_cockroach_11",
+   "fake_ear_cockroach_12",
+   "fake_ear_cockroach_13",
+   "fake_ear_cockroach_14",
+   "fake_ear_cockroach_15",
+   "fake_ear_cockroach_16",
+   "fake_ear_cockroach_17",
+   "fake_ear_cockroach_18",
+   "fake_ear_cockroach_19"
+  ]
+ },
+ "Hunter": {
+  "EYE_human": [
+   "human_white_8_11_36",
+   "human_pupil_8",
+   "human_white_15"
+  ],
+  "HANDS_human": [
+   "human_hands_8"
+  ],
+  "TEETH_human": [
+   "human_tooth_34"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_1"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_15",
+   "human_photo_8"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_5_hairy_0",
+   "armpit_5_hairy_1",
+   "armpit_5_hairy_2",
+   "armpit_5_hairy_3",
+   "armpit_5_hairy_4",
+   "armpit_5_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_15"
+  ]
+ },
+ "Intruder": {
+  "EYE_human": [
+   "human_white_26",
+   "human_pupil_36"
+  ],
+  "EYE_imposter": [
+   "fake_white_5"
+  ],
+  "HANDS_human": [
+   "human_hands_36",
+   "human_hands_27"
+  ],
+  "TEETH_human": [
+   "human_tooth_34"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_1"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_36"
+  ],
+  "ARMPIT_other": [
+   "armpit_6_0",
+   "armpit_6_1",
+   "armpit_6_2",
+   "armpit_6_3",
+   "armpit_6_4",
+   "armpit_6_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_burnt"
+  ]
+ },
+ "Jacket": {
+  "EYE_human": [
+   "human_white_32",
+   "human_pupil_46"
+  ],
+  "HANDS_human": [
+   "human_hands_42",
+   "human_hands_54 (kowafuwa fek)"
+  ],
+  "TEETH_human": [
+   "human_tooth_54",
+   "human_tooth_54(2)"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_48",
+   "human_photo_48 (2)"
+  ],
+  "ARMPIT_human": [
+   "armpit_1_clean_redness_0",
+   "armpit_1_clean_redness_1",
+   "armpit_1_clean_redness_2",
+   "armpit_1_clean_redness_3",
+   "armpit_1_clean_redness_4",
+   "armpit_1_clean_redness_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_1"
+  ]
+ },
+ "Jacob": {
+  "EYE_human": [
+   "human_white_26",
+   "human_pupil_50"
+  ],
+  "EYE_imposter": [
+   "fake_white_5"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_19"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_10"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_16"
+  ],
+  "ARMPIT_human": [
+   "armpit_4_clean_redness_0",
+   "armpit_4_clean_redness_1",
+   "armpit_4_clean_redness_2",
+   "armpit_4_clean_redness_3",
+   "armpit_4_clean_redness_4",
+   "armpit_4_clean_redness_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_cockroach_0",
+   "fake_ear_cockroach_1",
+   "fake_ear_cockroach_2",
+   "fake_ear_cockroach_3",
+   "fake_ear_cockroach_4",
+   "fake_ear_cockroach_5",
+   "fake_ear_cockroach_6",
+   "fake_ear_cockroach_7",
+   "fake_ear_cockroach_8",
+   "fake_ear_cockroach_9",
+   "fake_ear_cockroach_10",
+   "fake_ear_cockroach_11",
+   "fake_ear_cockroach_12",
+   "fake_ear_cockroach_13",
+   "fake_ear_cockroach_14",
+   "fake_ear_cockroach_15",
+   "fake_ear_cockroach_16",
+   "fake_ear_cockroach_17",
+   "fake_ear_cockroach_18",
+   "fake_ear_cockroach_19"
+  ]
+ },
+ "Leper": {
+  "EYE_human": [
+   "human_white_3_35",
+   "human_pupil_50"
+  ],
+  "HANDS_human": [
+   "human_hands_49"
+  ],
+  "TEETH_human": [
+   "human_tooth_30"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_1"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_40",
+   "human_photo_40 (2)"
+  ],
+  "ARMPIT_human": [
+   "armpit_2_clean_0",
+   "armpit_2_clean_1",
+   "armpit_2_clean_2",
+   "armpit_2_clean_3",
+   "armpit_2_clean_4",
+   "armpit_2_clean_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_2_hairy_fungal_0",
+   "armpit_2_hairy_fungal_1",
+   "armpit_2_hairy_fungal_2",
+   "armpit_2_hairy_fungal_3",
+   "armpit_2_hairy_fungal_4",
+   "armpit_2_hairy_fungal_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_12"
+  ]
+ },
+ "Luka": {
+  "EYE_human": [
+   "human_white_8_11_36",
+   "human_pupil_11"
+  ],
+  "HANDS_human": [
+   "human_hands_11"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_8"
+  ],
+  "TEETH_human": [
+   "human_tooth_11"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_11",
+   "human_photo_24"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_2_hairy_0",
+   "armpit_2_hairy_1",
+   "armpit_2_hairy_2",
+   "armpit_2_hairy_3",
+   "armpit_2_hairy_4",
+   "armpit_2_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_9"
+  ]
+ },
+ "Marauder": {
+  "EYE_human": [
+   "human_white_14",
+   "human_pupil_14",
+   "human_white_12"
+  ],
+  "HANDS_human": [
+   "human_hands_14"
+  ],
+  "TEETH_human": [
+   "human_tooth_14",
+   "human_tooth_41"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_14"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_10"
+  ],
+  "ARMPIT_human": [
+   "armpit_5_clean_0",
+   "armpit_5_clean_1",
+   "armpit_5_clean_2",
+   "armpit_5_clean_3",
+   "armpit_5_clean_4",
+   "armpit_5_clean_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_5_hairy_fungal_0",
+   "armpit_5_hairy_fungal_1",
+   "armpit_5_hairy_fungal_2",
+   "armpit_5_hairy_fungal_3",
+   "armpit_5_hairy_fungal_4",
+   "armpit_5_hairy_fungal_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_15"
+  ]
+ },
+ "Mother": {
+  "EYE_human": [
+   "human_white_22_24_25",
+   "human_pupil_22"
+  ],
+  "HANDS_human": [
+   "human_hands_22"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_8"
+  ],
+  "TEETH_human": [
+   "human_tooth_43"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_22"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_7"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_1_hairy_0",
+   "armpit_1_hairy_1",
+   "armpit_1_hairy_2",
+   "armpit_1_hairy_3",
+   "armpit_1_hairy_4",
+   "armpit_1_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_6"
+  ]
+ },
+ "Nervous": {
+  "EYE_human": [
+   "human_white_44",
+   "human_pupil_49"
+  ],
+  "HANDS_human": [
+   "human_hands_52"
+  ],
+  "TEETH_human": [
+   "human_tooth_57"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_9"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_51"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_15"
+  ],
+  "ARMPIT_human": [
+   "armpit_2_clean_0",
+   "armpit_2_clean_1",
+   "armpit_2_clean_2",
+   "armpit_2_clean_3",
+   "armpit_2_clean_4",
+   "armpit_2_clean_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_2_hairy_0",
+   "armpit_2_hairy_1",
+   "armpit_2_hairy_2",
+   "armpit_2_hairy_3",
+   "armpit_2_hairy_4",
+   "armpit_2_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_injury_0",
+   "fake_ear_injury_1",
+   "fake_ear_injury_2",
+   "fake_ear_injury_3",
+   "fake_ear_injury_4"
+  ]
+ },
+ "NotTrue": {
+  "EYE_imposter": [
+   "fake_white_4",
+   "fake_pupil_4"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_4"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_4"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_4"
+  ],
+  "ARMPIT_human": [
+   "armpit_5_clear_fungal_0",
+   "armpit_5_clear_fungal_1",
+   "armpit_5_clear_fungal_2",
+   "armpit_5_clear_fungal_3",
+   "armpit_5_clear_fungal_4",
+   "armpit_5_clear_fungal_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_15"
+  ]
+ },
+ "Nun": {
+  "EYE_human": [
+   "human_white_39",
+   "human_pupil_38"
+  ],
+  "HANDS_human": [
+   "human_hands_37"
+  ],
+  "TEETH_human": [
+   "human_tooth_39"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_14",
+   "human_photo_39"
+  ],
+  "ARMPIT_human": [
+   "armpit_5_clear_fungal_0",
+   "armpit_5_clear_fungal_1",
+   "armpit_5_clear_fungal_2",
+   "armpit_5_clear_fungal_3",
+   "armpit_5_clear_fungal_4",
+   "armpit_5_clear_fungal_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_5_hairy_fungal_0",
+   "armpit_5_hairy_fungal_1",
+   "armpit_5_hairy_fungal_2",
+   "armpit_5_hairy_fungal_3",
+   "armpit_5_hairy_fungal_4",
+   "armpit_5_hairy_fungal_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_15",
+   "fake_ear_cockroach_0",
+   "fake_ear_cockroach_1",
+   "fake_ear_cockroach_2",
+   "fake_ear_cockroach_3",
+   "fake_ear_cockroach_4",
+   "fake_ear_cockroach_5",
+   "fake_ear_cockroach_6",
+   "fake_ear_cockroach_7",
+   "fake_ear_cockroach_8",
+   "fake_ear_cockroach_9",
+   "fake_ear_cockroach_10",
+   "fake_ear_cockroach_11",
+   "fake_ear_cockroach_12",
+   "fake_ear_cockroach_13",
+   "fake_ear_cockroach_14",
+   "fake_ear_cockroach_15",
+   "fake_ear_cockroach_16",
+   "fake_ear_cockroach_17",
+   "fake_ear_cockroach_18",
+   "fake_ear_cockroach_19"
+  ]
+ },
+ "Player": {
+  "EYE_human": [
+   "human_white_5_29",
+   "human_white_27"
+  ],
+  "TEETH_human": [
+   "human_mainchar_tooth"
+  ],
+  "TEETH_imposter": [
+   "fake_mainchar_tooth"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_2_hairy_0",
+   "armpit_2_hairy_1",
+   "armpit_2_hairy_2",
+   "armpit_2_hairy_3",
+   "armpit_2_hairy_4",
+   "armpit_2_hairy_5",
+   "armpit_2_hairy_fungal_0",
+   "armpit_2_hairy_fungal_1",
+   "armpit_2_hairy_fungal_2",
+   "armpit_2_hairy_fungal_3",
+   "armpit_2_hairy_fungal_4",
+   "armpit_2_hairy_fungal_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_1"
+  ]
+ },
+ "Provocateur": {
+  "EYE_human": [
+   "human_white_21",
+   "human_pupil_21"
+  ],
+  "HANDS_human": [
+   "human_hands_21"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_5"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_21"
+  ],
+  "ARMPIT_human": [
+   "armpit_3_clear_0",
+   "armpit_3_clear_1",
+   "armpit_3_clear_2",
+   "armpit_3_clear_3",
+   "armpit_3_clear_4",
+   "armpit_3_clear_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_3_hairy_0",
+   "armpit_3_hairy_1",
+   "armpit_3_hairy_2",
+   "armpit_3_hairy_3",
+   "armpit_3_hairy_4",
+   "armpit_3_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_injury_0",
+   "fake_ear_injury_1",
+   "fake_ear_injury_2",
+   "fake_ear_injury_3",
+   "fake_ear_injury_4"
+  ]
+ },
+ "Raskolnikov": {
+  "EYE_human": [
+   "human_white_18",
+   "human_pupil_35",
+   "human_white_28_34",
+   "human_pupil_23"
+  ],
+  "HANDS_human": [
+   "human_hands_4"
+  ],
+  "TEETH_human": [
+   "human_tooth_3",
+   "human_tooth_42"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_33",
+   "human_photo_28"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_1_hairy_0",
+   "armpit_1_hairy_1",
+   "armpit_1_hairy_2",
+   "armpit_1_hairy_3",
+   "armpit_1_hairy_4",
+   "armpit_1_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_2"
+  ]
+ },
+ "Rocker": {
+  "EYE_human": [
+   "human_white_32",
+   "human_pupil_48"
+  ],
+  "HANDS_human": [
+   "human_hands_51"
+  ],
+  "TEETH_human": [
+   "human_tooth_56"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_50"
+  ],
+  "ARMPIT_human": [
+   "armpit_2_clean_0",
+   "armpit_2_clean_1",
+   "armpit_2_clean_2",
+   "armpit_2_clean_3",
+   "armpit_2_clean_4",
+   "armpit_2_clean_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_2_hairy_0",
+   "armpit_2_hairy_1",
+   "armpit_2_hairy_2",
+   "armpit_2_hairy_3",
+   "armpit_2_hairy_4",
+   "armpit_2_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_4"
+  ]
+ },
+ "Scammer": {
+  "EYE_human": [
+   "human_white_5_29",
+   "human_pupil_4",
+   "human_white_4"
+  ],
+  "HANDS_human": [
+   "human_hands_4",
+   "human_hands_33"
+  ],
+  "TEETH_human": [
+   "human_tooth_4"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_4",
+   "human_photo_15"
+  ],
+  "ARMPIT_human": [
+   "armpit_1_clean_0",
+   "armpit_1_clean_1",
+   "armpit_1_clean_2",
+   "armpit_1_clean_3",
+   "armpit_1_clean_4",
+   "armpit_1_clean_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_3_hairy_0",
+   "armpit_3_hairy_1",
+   "armpit_3_hairy_2",
+   "armpit_3_hairy_3",
+   "armpit_3_hairy_4",
+   "armpit_3_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_1"
+  ]
+ },
+ "Sexy": {
+  "EYE_human": [
+   "human_white_5_29",
+   "human_pupil_9"
+  ],
+  "EYE_imposter": [
+   "fake_pupil_6"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_15"
+  ],
+  "TEETH_human": [
+   "human_tooth_46"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_13"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_8"
+  ],
+  "ARMPIT_human": [
+   "armpit_1_clean_0",
+   "armpit_1_clean_1",
+   "armpit_1_clean_2",
+   "armpit_1_clean_3",
+   "armpit_1_clean_4",
+   "armpit_1_clean_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_1_hairy_0",
+   "armpit_1_hairy_1",
+   "armpit_1_hairy_2",
+   "armpit_1_hairy_3",
+   "armpit_1_hairy_4",
+   "armpit_1_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_5"
+  ]
+ },
+ "Sirin": {
+  "EYE_human": [
+   "human_white_19_37_38",
+   "human_pupil_37",
+   "human_white_4"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_8"
+  ],
+  "TEETH_human": [
+   "human_tooth_37",
+   "human_tooth_38"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_38"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_1"
+  ],
+  "ARMPIT_human": [
+   "armpit_3_clear_0",
+   "armpit_3_clear_1",
+   "armpit_3_clear_2",
+   "armpit_3_clear_3",
+   "armpit_3_clear_4",
+   "armpit_3_clear_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_3_hairy_0",
+   "armpit_3_hairy_1",
+   "armpit_3_hairy_2",
+   "armpit_3_hairy_3",
+   "armpit_3_hairy_4",
+   "armpit_3_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_6"
+  ]
+ },
+ "TV": {
+  "HANDS_imposter": [
+   "fake_tv_hands"
+  ],
+  "TEETH_imposter": [
+   "fake_tv_teeth"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_tv_photofits1",
+   "fake_tv_photofits2",
+   "fake_tv_photo"
+  ],
+  "ARMPIT_imposter": [
+   "fake_tv_armpitshair",
+   "fake_tv_wetarmpit"
+  ],
+  "EAR_imposter": [
+   "fake_tv_ear"
+  ]
+ },
+ "TaxiDriver": {
+  "EYE_human": [
+   "human_white_15",
+   "human_pupil_15",
+   "human_white_26"
+  ],
+  "HANDS_human": [
+   "human_hands_41",
+   "human_hands_40"
+  ],
+  "TEETH_human": [
+   "human_tooth_15",
+   "human_tooth_42"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_15"
+  ],
+  "ARMPIT_human": [
+   "armpit_3_clear_0",
+   "armpit_3_clear_1",
+   "armpit_3_clear_2",
+   "armpit_3_clear_3",
+   "armpit_3_clear_4",
+   "armpit_3_clear_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_3_hairy_0",
+   "armpit_3_hairy_1",
+   "armpit_3_hairy_2",
+   "armpit_3_hairy_3",
+   "armpit_3_hairy_4",
+   "armpit_3_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_15"
+  ]
+ },
+ "Teacher": {
+  "EYE_human": [
+   "human_white_18",
+   "human_pupil_38"
+  ],
+  "HANDS_human": [
+   "human_hands_18"
+  ],
+  "TEETH_human": [
+   "human_tooth_18"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_18"
+  ],
+  "ARMPIT_human": [
+   "armpit_1_clean_0",
+   "armpit_1_clean_1",
+   "armpit_1_clean_2",
+   "armpit_1_clean_3",
+   "armpit_1_clean_4",
+   "armpit_1_clean_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_injury_0",
+   "fake_ear_injury_1",
+   "fake_ear_injury_2",
+   "fake_ear_injury_3",
+   "fake_ear_injury_4"
+  ]
+ },
+ "Theorist": {
+  "EYE_human": [
+   "human_white_22_24_25",
+   "human_pupil_24",
+   "human_white_32"
+  ],
+  "HANDS_human": [
+   "human_hands_24"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_9"
+  ],
+  "TEETH_human": [
+   "human_tooth_24"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_24"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_8"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_2_hairy_0",
+   "armpit_2_hairy_1",
+   "armpit_2_hairy_2",
+   "armpit_2_hairy_3",
+   "armpit_2_hairy_4",
+   "armpit_2_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_7",
+   "fake_ear_1"
+  ]
+ },
+ "Tough": {
+  "EYE_human": [
+   "human_white_1",
+   "human_pupil_45"
+  ],
+  "HANDS_human": [
+   "human_hands_23"
+  ],
+  "TEETH_human": [
+   "human_tooth_53",
+   "human_tooth_53(2)"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_47"
+  ],
+  "ARMPIT_human": [
+   "armpit_1_clean_0",
+   "armpit_1_clean_1",
+   "armpit_1_clean_2",
+   "armpit_1_clean_3",
+   "armpit_1_clean_4",
+   "armpit_1_clean_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_1_hairy_0",
+   "armpit_1_hairy_1",
+   "armpit_1_hairy_2",
+   "armpit_1_hairy_3",
+   "armpit_1_hairy_4",
+   "armpit_1_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_14"
+  ]
+ },
+ "Tourist": {
+  "EYE_human": [
+   "human_white_14",
+   "human_pupil_42"
+  ],
+  "EYE_imposter": [
+   "fake_white_4"
+  ],
+  "HANDS_human": [
+   "human_hands_46"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_17"
+  ],
+  "TEETH_human": [
+   "human_tooth_50"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_44"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_14"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_4_hairy_redness_0",
+   "armpit_4_hairy_redness_1",
+   "armpit_4_hairy_redness_2",
+   "armpit_4_hairy_redness_3",
+   "armpit_4_hairy_redness_4",
+   "armpit_4_hairy_redness_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_12"
+  ]
+ },
+ "Twins": {
+  "EYE_human": [
+   "human_white_19_37_38",
+   "human_pupil_37",
+   "human_white_4"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_8"
+  ],
+  "TEETH_human": [
+   "human_tooth_37",
+   "human_tooth_38"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_38"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_1"
+  ],
+  "ARMPIT_human": [
+   "armpit_3_clear_0",
+   "armpit_3_clear_1",
+   "armpit_3_clear_2",
+   "armpit_3_clear_3",
+   "armpit_3_clear_4",
+   "armpit_3_clear_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_3_hairy_0",
+   "armpit_3_hairy_1",
+   "armpit_3_hairy_2",
+   "armpit_3_hairy_3",
+   "armpit_3_hairy_4",
+   "armpit_3_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_6"
+  ]
+ },
+ "Unstable": {
+  "EYE_human": [
+   "human_white_43",
+   "human_pupil_47",
+   "human_white_43 (2)"
+  ],
+  "HANDS_human": [
+   "human_hands_50",
+   "human_hands_50 (2)"
+  ],
+  "TEETH_human": [
+   "human_tooth_55"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_8"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_49"
+  ],
+  "ARMPIT_human": [
+   "armpit_3_clean_iodine_0",
+   "armpit_3_clean_iodine_1",
+   "armpit_3_clean_iodine_2",
+   "armpit_3_clean_iodine_3",
+   "armpit_3_clean_iodine_4",
+   "armpit_3_clean_iodine_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_2_hairy_0",
+   "armpit_2_hairy_1",
+   "armpit_2_hairy_2",
+   "armpit_2_hairy_3",
+   "armpit_2_hairy_4",
+   "armpit_2_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_injury_0",
+   "fake_ear_injury_1",
+   "fake_ear_injury_2",
+   "fake_ear_injury_3",
+   "fake_ear_injury_4"
+  ]
+ },
+ "Vigilante": {
+  "TEETH_human": [
+   "human_tooth_12"
+  ],
+  "TEETH_imposter": [
+   "fake_tooth_1"
+  ]
+ },
+ "Wheelchair": {
+  "EYE_human": [
+   "human_white_30",
+   "human_pupil_32",
+   "human_white_32"
+  ],
+  "HANDS_human": [
+   "human_hands_32"
+  ],
+  "HANDS_imposter": [
+   "fake_hands_13"
+  ],
+  "TEETH_human": [
+   "human_tooth_32",
+   "human_tooth_20"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_32"
+  ],
+  "AURAPHOTO_imposter": [
+   "fake_photo_10"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_4_hairy_0",
+   "armpit_4_hairy_1",
+   "armpit_4_hairy_2",
+   "armpit_4_hairy_3",
+   "armpit_4_hairy_4",
+   "armpit_4_hairy_5",
+   "armpit_4_hairy_redness_0",
+   "armpit_4_hairy_redness_1",
+   "armpit_4_hairy_redness_2",
+   "armpit_4_hairy_redness_3",
+   "armpit_4_hairy_redness_4",
+   "armpit_4_hairy_redness_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_8"
+  ]
+ },
+ "Widow": {
+  "EYE_human": [
+   "human_pupil_3"
+  ],
+  "EYE_imposter": [
+   "fake_white_4"
+  ],
+  "HANDS_human": [
+   "human_hands_3"
+  ],
+  "TEETH_human": [
+   "human_tooth_3"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_3"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_1_hairy_fungal_0",
+   "armpit_1_hairy_fungal_1",
+   "armpit_1_hairy_fungal_2",
+   "armpit_1_hairy_fungal_3",
+   "armpit_1_hairy_fungal_4",
+   "armpit_1_hairy_fungal_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_10"
+  ]
+ },
+ "Wifefema": {
+  "EYE_human": [
+   "human_white_7",
+   "human_pupil_23",
+   "human_white_33"
+  ],
+  "HANDS_human": [
+   "human_hands_23"
+  ],
+  "TEETH_human": [
+   "human_tooth_22"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_23"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_1_hairy_0",
+   "armpit_1_hairy_1",
+   "armpit_1_hairy_2",
+   "armpit_1_hairy_3",
+   "armpit_1_hairy_4",
+   "armpit_1_hairy_5",
+   "armpit_1_hairy_fungal_0",
+   "armpit_1_hairy_fungal_1",
+   "armpit_1_hairy_fungal_2",
+   "armpit_1_hairy_fungal_3",
+   "armpit_1_hairy_fungal_4",
+   "armpit_1_hairy_fungal_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_3"
+  ]
+ },
+ "WolfHound": {
+  "EYE_human": [
+   "human_white_6",
+   "human_pupil_6"
+  ],
+  "HANDS_human": [
+   "human_hands_6"
+  ],
+  "TEETH_human": [
+   "human_tooth_6",
+   "human_tooth_40"
+  ],
+  "AURAPHOTO_human": [
+   "human_photo_6",
+   "human_photo_13"
+  ],
+  "ARMPIT_human": [
+   "armpit_4_clean_fungal_0",
+   "armpit_4_clean_fungal_1",
+   "armpit_4_clean_fungal_2",
+   "armpit_4_clean_fungal_3",
+   "armpit_4_clean_fungal_4",
+   "armpit_4_clean_fungal_5"
+  ],
+  "ARMPIT_imposter": [
+   "armpit_4_hairy_0",
+   "armpit_4_hairy_1",
+   "armpit_4_hairy_2",
+   "armpit_4_hairy_3",
+   "armpit_4_hairy_4",
+   "armpit_4_hairy_5"
+  ],
+  "EAR_imposter": [
+   "fake_ear_15"
+  ]
+ }
+}

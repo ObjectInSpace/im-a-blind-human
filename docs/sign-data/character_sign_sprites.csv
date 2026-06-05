@@ -1,0 +1,556 @@
+character,sign,side,sprites
+Alkonost,ARMPIT,human,armpit_1_clean_0; armpit_1_clean_1; armpit_1_clean_2; armpit_1_clean_3; armpit_1_clean_4; armpit_1_clean_5
+Alkonost,ARMPIT,imposter,armpit_1_hairy_0; armpit_1_hairy_1; armpit_1_hairy_2; armpit_1_hairy_3; armpit_1_hairy_4; armpit_1_hairy_5
+Alkonost,AURAPHOTO,human,human_photo_37; human_photo_17
+Alkonost,EAR,imposter,fake_ear_2
+Alkonost,EYE,human,human_white_19_37_38; human_pupil_37
+Alkonost,HANDS,human,human_hands_22
+Alkonost,HANDS,imposter,fake_hands_8
+Alkonost,TEETH,human,human_tooth_38
+Alt,ARMPIT,human,armpit_1_clean_redness_0; armpit_1_clean_redness_1; armpit_1_clean_redness_2; armpit_1_clean_redness_3; armpit_1_clean_redness_4; armpit_1_clean_redness_5
+Alt,AURAPHOTO,human,human_photo_43
+Alt,EAR,imposter,fake_ear_4
+Alt,EYE,human,human_white_41; human_pupil_41
+Alt,HANDS,human,human_hands_45; human_hands_45 (2)
+Alt,TEETH,human,human_tooth_49; human_tooth_49 (2)
+Anger,ARMPIT,human,armpit_4_clean_0; armpit_4_clean_1; armpit_4_clean_2; armpit_4_clean_3; armpit_4_clean_4; armpit_4_clean_5; armpit_4_clean_redness_0; armpit_4_clean_redness_1; armpit_4_clean_redness_2; armpit_4_clean_redness_3; armpit_4_clean_redness_4; armpit_4_clean_redness_5
+Anger,AURAPHOTO,human,human_photo_9
+Anger,EAR,imposter,fake_ear_12
+Anger,EYE,human,human_white_9; human_pupil_9
+Anger,HANDS,human,human_hands_9
+Anger,HANDS,imposter,fake_hands_5
+Anger,TEETH,human,human_tooth_9
+Anger,TEETH,imposter,fake_tooth_5
+AnonymousPro-Regular SDF,ARMPIT,human,armpit_4_clean_redness
+AnonymousPro-Regular SDF,ARMPIT,imposter,armpit_2_hairy_fungal; armpit_5_hairy_fungal
+AnonymousPro-Regular SDF,ARMPIT,other,armpit_6
+AnonymousPro-Regular SDF,AURAPHOTO,human,human_photo_34; human_photo_27; human_photo_21; human_photo_20; human_photo_36; human_photo_48 (2); human_photo_28
+AnonymousPro-Regular SDF,AURAPHOTO,imposter,fake_photo_15
+AnonymousPro-Regular SDF,EAR,imposter,fake_ear_6
+AnonymousPro-Regular SDF,EYE,human,human_pupil_50; human_white_20; human_white_33; human_white_40; human_pupil_7; human_pupil_22; human_white_22_24_25; human_pupil_47; human_white_18; human_pupil_28; human_white_41; human_pupil_4; human_white_21; human_pupil_11; human_pupil_12
+AnonymousPro-Regular SDF,EYE,imposter,fake_pupil_5; fake_pupil_2
+AnonymousPro-Regular SDF,HANDS,human,human_hands_11; human_hands_43 (2); human_hands_36; human_hands_48 (2); human_hands_10; human_hands_41; human_hands_24; human_hands_2; human_hands_9
+AnonymousPro-Regular SDF,HANDS,imposter,fake_hands_12
+AnonymousPro-Regular SDF,TEETH,human,human_tooth_22; human_tooth_10; human_tooth_39; human_tooth_28; human_tooth_35; human_tooth_51; human_tooth_6
+AnonymousPro-Regular SDF,TEETH,imposter,fake_mainchar_tooth
+Anxiety,ARMPIT,human,armpit_2_clean_fungal_0; armpit_2_clean_fungal_1; armpit_2_clean_fungal_2; armpit_2_clean_fungal_3; armpit_2_clean_fungal_4; armpit_2_clean_fungal_5
+Anxiety,AURAPHOTO,imposter,fake_photo_1
+Anxiety,EAR,imposter,fake_ear_cockroach_0; fake_ear_cockroach_1; fake_ear_cockroach_2; fake_ear_cockroach_3; fake_ear_cockroach_4; fake_ear_cockroach_5; fake_ear_cockroach_6; fake_ear_cockroach_7; fake_ear_cockroach_8; fake_ear_cockroach_9; fake_ear_cockroach_10; fake_ear_cockroach_11; fake_ear_cockroach_12; fake_ear_cockroach_13; fake_ear_cockroach_14; fake_ear_cockroach_15; fake_ear_cockroach_16; fake_ear_cockroach_17; fake_ear_cockroach_18; fake_ear_cockroach_19
+Anxiety,EYE,imposter,fake_white_1; fake_pupil_1
+Anxiety,HANDS,imposter,fake_hands_1
+Anxiety,TEETH,imposter,fake_tooth_1
+Bald,ARMPIT,human,armpit_2_clean_0; armpit_2_clean_1; armpit_2_clean_2; armpit_2_clean_3; armpit_2_clean_4; armpit_2_clean_5
+Bald,ARMPIT,imposter,armpit_2_hairy_fungal_0; armpit_2_hairy_fungal_1; armpit_2_hairy_fungal_2; armpit_2_hairy_fungal_3; armpit_2_hairy_fungal_4; armpit_2_hairy_fungal_5
+Bald,AURAPHOTO,human,human_photo_41
+Bald,AURAPHOTO,imposter,fake_photo_13
+Bald,EAR,imposter,fake_ear_1
+Bald,EYE,human,human_white_22_24_25; human_pupil_39
+Bald,HANDS,human,human_hands_43; human_hands_43 (2)
+Bald,TEETH,human,human_tooth_47
+Ballerina,ARMPIT,human,armpit_1_clean_0; armpit_1_clean_1; armpit_1_clean_2; armpit_1_clean_3; armpit_1_clean_4; armpit_1_clean_5
+Ballerina,ARMPIT,imposter,armpit_2_hairy_fungal_0; armpit_2_hairy_fungal_1; armpit_2_hairy_fungal_2; armpit_2_hairy_fungal_3; armpit_2_hairy_fungal_4; armpit_2_hairy_fungal_5
+Ballerina,AURAPHOTO,human,human_photo_1
+Ballerina,AURAPHOTO,imposter,fake_photo_11
+Ballerina,EAR,imposter,fake_ear_catlady
+Ballerina,EYE,human,human_white_39; human_pupil_1
+Ballerina,EYE,imposter,fake_white_5; fake_pupil_5
+Ballerina,HANDS,human,human_hands_1
+Ballerina,HANDS,imposter,fake_hands_14
+Ballerina,TEETH,human,human_tooth_1
+Ballerina,TEETH,imposter,fake_tooth_1
+Bestson,ARMPIT,imposter,armpit_4_hairy_0; armpit_4_hairy_1; armpit_4_hairy_2; armpit_4_hairy_3; armpit_4_hairy_4; armpit_4_hairy_5
+Bestson,AURAPHOTO,human,human_photo_27
+Bestson,AURAPHOTO,imposter,fake_photo_9
+Bestson,EAR,imposter,fake_ear_7
+Bestson,EYE,human,human_white_28_34; human_pupil_28; human_white_23
+Bestson,HANDS,human,human_hands_28; human_hands_21
+Bestson,TEETH,human,human_tooth_28; human_tooth_24
+BigLebowski,AURAPHOTO,human,human_photo_29; human_photo_34
+BigLebowski,EAR,imposter,fake_ear_14
+BigLebowski,EYE,human,human_white_5_29; human_pupil_29
+BigLebowski,HANDS,human,human_hands_29
+BigLebowski,HANDS,imposter,fake_hands_12
+BigLebowski,TEETH,human,human_tooth_29
+Blind,ARMPIT,imposter,armpit_2_hairy_0; armpit_2_hairy_1; armpit_2_hairy_2; armpit_2_hairy_3; armpit_2_hairy_4; armpit_2_hairy_5
+Blind,AURAPHOTO,human,human_photo_13
+Blind,EAR,imposter,fake_ear_7
+Blind,EYE,human,human_white_13
+Blind,HANDS,human,human_hands_13
+Blind,TEETH,human,human_tooth_13
+Buddy,ARMPIT,imposter,armpit_4_hairy_fungal_0; armpit_4_hairy_fungal_1; armpit_4_hairy_fungal_2; armpit_4_hairy_fungal_3; armpit_4_hairy_fungal_4; armpit_4_hairy_fungal_5
+Buddy,AURAPHOTO,human,human_photo_25
+Buddy,EAR,imposter,fake_ear_7
+Buddy,EYE,human,human_white_22_24_25; human_pupil_26; human_white_28_34
+Buddy,HANDS,human,human_hands_25
+Buddy,HANDS,imposter,fake_hands_10
+Buddy,TEETH,human,human_tooth_25
+ChakraPetch-SemiBold SDF,ARMPIT,human,armpit_5_clean; armpit_5_clear_fungal; armpit_4_clean_redness; armpit_1_clean; armpit_4_clean_3; armpit_1_clean_0; armpit_3_clean_iodine
+ChakraPetch-SemiBold SDF,ARMPIT,imposter,armpit_4_hairy_fungal; armpit_1_hairy; armpit_3_hairy; armpit_1_hairy_fungal; armpit_4_hairy_redness; armpit_2_hairy_fungal; armpit_5_hairy_fungal
+ChakraPetch-SemiBold SDF,ARMPIT,other,armpit_6; armpit_6_4
+ChakraPetch-SemiBold SDF,AURAPHOTO,human,human_photo_45; human_photo_23; human_photo_5; human_photo_34; human_photo_41; human_photo_2; human_photo_38; human_photo_42; human_photo_27; human_photo_35; human_photo_31; human_photo_43; human_photo_48; human_photo_26; human_photo_46; human_photo_22; human_photo_30; human_photo_33; human_photo_25; human_photo_50; human_photo_24; human_photo_44; human_photo_12; human_photo_3; human_photo_19; human_photo_14; human_photo_13; human_photo_4; human_photo_37; human_photo_39; human_photo_10; human_photo_51; human_photo_6; human_photo_16; human_photo_1; human_photo_40 (2); human_photo_29; human_photo_21; human_photo_20; human_photo_36; human_photo_48 (2); human_photo_28
+ChakraPetch-SemiBold SDF,AURAPHOTO,imposter,fake_photo_16; fake_photo_1; fake_photo_3; fake_photo_2; fake_photo_4; fake_photo_10; fake_photo_14; fake_tv_photofits1; fake_photo_8; fake_photo_15
+ChakraPetch-SemiBold SDF,EAR,imposter,fake_ear_1; fake_ear_3; fake_ear_12; fake_ear_4; fake_ear_cockroach; fake_ear_13; fake_ear_catlady; fake_ear_6; fake_ear_15; fake_ear_injury; fake_ear_14; fake_ear_5; fake_ear_7; fake_ear_cockroach_14; fake_ear_9
+ChakraPetch-SemiBold SDF,EYE,human,human_pupil_50; human_pupil_34; human_white_43 (2); human_white_17; human_pupil_36; human_white_20; human_pupil_8; human_pupil_7; human_pupil_40; human_white_19_37_38; human_white_40; human_white_28_34; human_pupil_39; human_pupil_1; human_pupil_19; human_white_12; human_pupil_21; human_pupil_3; human_pupil_42; human_white_13; human_white_32; human_white_14; human_white_10; human_pupil_29; human_white_2; human_pupil_43; human_pupil_9; human_pupil_37; human_white_33; human_pupil_35; human_white_43; human_pupil_15; human_pupil_31; human_white_6; human_pupil_26; human_white_8_11_36; human_white_23; human_white_1; human_white_5_29; human_white_44; human_pupil_27; human_pupil_6; human_pupil_30; human_pupil_38; human_pupil_47; human_white_18; human_pupil_32; human_white_27; human_white_3_35; human_white_16; human_white_26; human_pupil_28; human_pupil_14; human_white_39; human_pupil_23; human_pupil_17; human_white_15; human_pupil_25; human_pupil_48; human_pupil_11; human_pupil_12; human_pupil_2; human_pupil_22; human_white_22_24_25; human_white_41; human_pupil_4; human_white_21; human_pupil_16
+ChakraPetch-SemiBold SDF,EYE,imposter,fake_white_5; fake_white_2; fake_white_1; fake_pupil_6; fake_pupil_1; fake_white_4; fake_pupil_5; fake_white_3; fake_pupil_3; fake_pupil_2
+ChakraPetch-SemiBold SDF,HANDS,human,human_hands_49; human_hands_44 (2); human_hands_52; human_hands_48; human_hands_11; human_hands_21; human_hands_35; human_hands_37; human_hands_26; human_hands_43 (2); human_hands_27; human_hands_31; human_hands_22; human_hands_1; human_hands_44; human_hands_46; human_hands_25; human_hands_16; human_hands_4; human_hands_23; human_hands_29; human_hands_7; human_hands_36; human_hands_40; human_hands_19; human_hands_50; human_hands_45 (2); human_hands_32; human_hands_3; human_hands_17; human_hands_38; human_hands_54 (kowafuwa fek); human_hands_14; human_hands_9; human_hands_8; human_hands_20; human_hands_48 (2); human_hands_10; human_hands_13; human_hands_42; human_hands_33; human_hands_41; human_hands_24; human_hands_2
+ChakraPetch-SemiBold SDF,HANDS,imposter,fake_hands_2; fake_hands_9; fake_hands_7; fake_hands_12; fake_hands_17; fake_hands_15; fake_hands_14; fake_hands_5; fake_hands_3; fake_tv_hands; fake_hands_4; fake_hands frame; fake_hands_8; fake_hands_19
+ChakraPetch-SemiBold SDF,TEETH,human,human_tooth_29; human_tooth_53(2); human_tooth_54; human_tooth_18; human_tooth_22; human_tooth_10; human_tooth_19; human_mainchar_tooth; human_tooth_39; human_tooth_45; human_tooth_9; human_tooth_16; human_tooth_57; human_tooth_40; human_tooth_26; human_tooth_13; human_tooth_32; human_tooth_4; human_tooth_25; human_tooth_38; human_tooth_50; human_tooth_37; human_tooth_49 (2); human_tooth_49; human_tooth_2; human_tooth_15; human_tooth_1; human_tooth_34; human_tooth_53; human_tooth_27; human_tooth_42; human_tooth_43; human_tooth_28; human_tooth_35; human_tooth_51; human_tooth_6
+ChakraPetch-SemiBold SDF,TEETH,imposter,fake_tooth_4; fake_tooth_5; fake_tooth_9; fake_tooth_1; fake_tooth_10; fake_tooth_8; fake_mainchar_tooth
+Cold,ARMPIT,imposter,armpit_2_hairy_fungal_0; armpit_2_hairy_fungal_1; armpit_2_hairy_fungal_2; armpit_2_hairy_fungal_3; armpit_2_hairy_fungal_4; armpit_2_hairy_fungal_5
+Cold,AURAPHOTO,imposter,fake_photo_2
+Cold,EAR,imposter,fake_ear_4
+Cold,EYE,imposter,fake_white_2; fake_pupil_2
+Cold,HANDS,imposter,fake_hands_2
+Cold,TEETH,imposter,fake_tooth_2
+Couple,ARMPIT,human,armpit_4_clean_0; armpit_4_clean_1; armpit_4_clean_2; armpit_4_clean_3; armpit_4_clean_4; armpit_4_clean_5
+Couple,ARMPIT,imposter,armpit_4_hairy_0; armpit_4_hairy_1; armpit_4_hairy_2; armpit_4_hairy_3; armpit_4_hairy_4; armpit_4_hairy_5
+Couple,AURAPHOTO,human,human_photo_30
+Couple,EAR,imposter,fake_ear_7
+Couple,EYE,human,human_white_30; human_pupil_30; human_white_31
+Couple,HANDS,human,human_hands_30; human_hands_31
+Couple,TEETH,human,human_tooth_30
+CultistOne,ARMPIT,human,armpit_3_clean_iodine_0; armpit_3_clean_iodine_1; armpit_3_clean_iodine_2; armpit_3_clean_iodine_3; armpit_3_clean_iodine_4; armpit_3_clean_iodine_5
+CultistOne,AURAPHOTO,human,human_photo_33
+CultistOne,EAR,imposter,fake_ear_1
+CultistOne,EYE,human,human_pupil_38
+CultistOne,EYE,imposter,fake_white_5
+CultistOne,HANDS,human,human_hands_33
+CultistOne,TEETH,human,human_tooth_33
+CultistThree,ARMPIT,human,armpit_3_clean_iodine_0; armpit_3_clean_iodine_1; armpit_3_clean_iodine_2; armpit_3_clean_iodine_3; armpit_3_clean_iodine_4; armpit_3_clean_iodine_5
+CultistThree,AURAPHOTO,human,human_photo_35
+CultistThree,EAR,imposter,fake_ear_15
+CultistThree,EYE,human,human_white_40; human_pupil_34
+CultistThree,HANDS,human,human_hands_35
+CultistThree,TEETH,human,human_tooth_35
+CultistTwo,ARMPIT,human,armpit_3_clean_iodine_0; armpit_3_clean_iodine_1; armpit_3_clean_iodine_2; armpit_3_clean_iodine_3; armpit_3_clean_iodine_4; armpit_3_clean_iodine_5
+CultistTwo,AURAPHOTO,human,human_photo_34
+CultistTwo,EAR,imposter,fake_ear_7
+CultistTwo,EYE,human,human_pupil_16; human_pupil_50
+CultistTwo,EYE,imposter,fake_white_3
+CultistTwo,HANDS,human,human_hands_34
+CultistTwo,TEETH,human,human_tooth_34
+Daughter,AURAPHOTO,human,human_photo_7
+Daughter,EAR,imposter,fake_ear_13
+Daughter,EYE,human,human_white_14; human_pupil_7
+Daughter,HANDS,human,human_hands_7
+Daughter,TEETH,human,human_tooth_7
+Doc,ARMPIT,human,armpit_5_clean_0; armpit_5_clean_1; armpit_5_clean_2; armpit_5_clean_3; armpit_5_clean_4; armpit_5_clean_5
+Doc,AURAPHOTO,human,human_photo_5; human_photo_33
+Doc,EAR,imposter,fake_ear_15
+Doc,EYE,human,human_white_5_29; human_pupil_5
+Doc,HANDS,human,human_hands_5; human_hands_39
+Doc,TEETH,imposter,fake_tooth_1
+DotGothic16-Regular SDF,ARMPIT,human,armpit_4_clean_redness
+DotGothic16-Regular SDF,AURAPHOTO,human,human_photo_34; human_photo_27; human_photo_33; human_photo_12; human_photo_10; human_photo_8
+DotGothic16-Regular SDF,AURAPHOTO,imposter,fake_photo_10; fake_photo_7; fake_photo_4; fake_photo_14
+DotGothic16-Regular SDF,EAR,imposter,fake_ear_14; fake_ear_7; fake_ear_injury; fake_ear_5; fake_ear_15; fake_ear_6
+DotGothic16-Regular SDF,EYE,human,human_white_20; human_white_19_37_38; human_white_33; human_white_40; human_pupil_29; human_pupil_37; human_white_30; human_white_44; human_pupil_20; human_pupil_4; human_pupil_50; human_pupil_11; human_pupil_12
+DotGothic16-Regular SDF,HANDS,human,human_hands_11; human_hands_37; human_hands_26; human_hands_43 (2); human_hands_36; human_hands_40; human_hands_19; human_hands_30; human_hands_9
+DotGothic16-Regular SDF,HANDS,imposter,fake_hands_12; fake_hands_5; fake_hands_1
+DotGothic16-Regular SDF,TEETH,human,human_tooth_22; human_tooth_10; human_tooth_39; human_tooth_57; human_tooth_40; human_tooth_4; human_tooth_37; human_tooth_42; human_tooth_15; human_tooth_49 (2); human_tooth_46; human_tooth_51
+DotGothic16-Regular SDF,TEETH,imposter,fake_tooth_5; fake_tooth frame_animation
+Dude,ARMPIT,human,armpit_2_clean_0; armpit_2_clean_1; armpit_2_clean_2; armpit_2_clean_3; armpit_2_clean_4; armpit_2_clean_5; armpit_2_clean_fungal_0; armpit_2_clean_fungal_1; armpit_2_clean_fungal_2; armpit_2_clean_fungal_3; armpit_2_clean_fungal_4; armpit_2_clean_fungal_5
+Dude,AURAPHOTO,human,human_photo_29
+Dude,EAR,imposter,fake_ear_4
+Dude,EYE,human,human_white_27; human_pupil_27; human_white_14
+Dude,HANDS,human,human_hands_27; human_hands_33
+Dude,TEETH,human,human_tooth_27
+Edgar,ARMPIT,imposter,armpit_2_hairy_fungal_0; armpit_2_hairy_fungal_1; armpit_2_hairy_fungal_2; armpit_2_hairy_fungal_3; armpit_2_hairy_fungal_4; armpit_2_hairy_fungal_5; armpit_2_hairy_0; armpit_2_hairy_1; armpit_2_hairy_2; armpit_2_hairy_3; armpit_2_hairy_4; armpit_2_hairy_5
+Edgar,AURAPHOTO,human,human_photo_19
+Edgar,AURAPHOTO,imposter,fake_photo_5
+Edgar,EAR,imposter,fake_ear_8
+Edgar,EYE,human,human_white_19_37_38; human_pupil_19; human_white_33; human_pupil_38
+Edgar,HANDS,human,human_hands_19
+Edgar,TEETH,human,human_tooth_19; human_tooth_37
+Esenin,ARMPIT,imposter,armpit_2_hairy_0; armpit_2_hairy_1; armpit_2_hairy_2; armpit_2_hairy_3; armpit_2_hairy_4; armpit_2_hairy_5
+Esenin,AURAPHOTO,human,human_photo_1
+Esenin,EAR,imposter,fake_ear_1
+Esenin,EYE,human,human_white_1; human_pupil_1
+Esenin,HANDS,human,human_hands_1
+Esenin,TEETH,human,human_tooth_10
+Experienced,ARMPIT,human,armpit_3_clean_iodine_0; armpit_3_clean_iodine_1; armpit_3_clean_iodine_2; armpit_3_clean_iodine_3; armpit_3_clean_iodine_4; armpit_3_clean_iodine_5
+Experienced,AURAPHOTO,human,human_photo_46
+Experienced,EAR,imposter,fake_ear_15
+Experienced,EYE,human,human_white_27; human_pupil_44
+Experienced,HANDS,human,human_hands_48; human_hands_48 (2)
+Experienced,TEETH,human,human_tooth_52
+Experienced,TEETH,imposter,fake_tooth_7
+Fairytaller,ARMPIT,imposter,armpit_2_hairy_0; armpit_2_hairy_1; armpit_2_hairy_2; armpit_4_hairy_3; armpit_4_hairy_4; armpit_4_hairy_5; armpit_2_hairy_3; armpit_2_hairy_4; armpit_2_hairy_5
+Fairytaller,AURAPHOTO,human,human_photo_42
+Fairytaller,EAR,imposter,fake_ear_8; fake_ear_7
+Fairytaller,EYE,human,human_white_22_24_25; human_pupil_40; human_white_4
+Fairytaller,HANDS,human,human_hands_44; human_hands_44 (2)
+Fairytaller,TEETH,human,human_tooth_48
+Fan,ARMPIT,imposter,armpit_4_hairy_redness_0; armpit_4_hairy_redness_1; armpit_4_hairy_redness_2; armpit_4_hairy_redness_3; armpit_4_hairy_redness_4; armpit_4_hairy_redness_5; armpit_4_hairy_0; armpit_4_hairy_1; armpit_4_hairy_2; armpit_4_hairy_3; armpit_4_hairy_4; armpit_4_hairy_5
+Fan,AURAPHOTO,human,human_photo_2; human_photo_39
+Fan,EAR,imposter,fake_ear_8
+Fan,EYE,human,human_white_2; human_pupil_2; human_white_4
+Fan,HANDS,human,human_hands_2
+Fan,TEETH,human,human_tooth_2
+Fatman,ARMPIT,human,armpit_4_clean_fungal_0; armpit_4_clean_fungal_1; armpit_4_clean_fungal_2; armpit_4_clean_fungal_3; armpit_4_clean_fungal_4; armpit_4_clean_fungal_5
+Fatman,ARMPIT,imposter,armpit_4_hairy_0; armpit_4_hairy_1; armpit_4_hairy_2; armpit_4_hairy_3; armpit_4_hairy_4; armpit_4_hairy_5
+Fatman,AURAPHOTO,human,human_photo_31
+Fatman,EAR,imposter,fake_ear_8
+Fatman,EYE,human,human_white_31; human_pupil_31; human_white_23
+Fatman,HANDS,human,human_hands_31; human_hands_38
+Fatman,TEETH,human,human_tooth_45
+Firefighter,ARMPIT,other,armpit_6_0; armpit_6_1; armpit_6_2; armpit_6_3; armpit_6_4; armpit_6_5
+Firefighter,AURAPHOTO,human,human_photo_16
+Firefighter,EAR,imposter,fake_ear_burnt
+Firefighter,EYE,human,human_white_16; human_pupil_16
+Firefighter,HANDS,human,human_hands_16; human_hands_44 (2)
+Firefighter,TEETH,human,human_tooth_16
+Foreigner,ARMPIT,imposter,armpit_1_hairy_0; armpit_1_hairy_1; armpit_1_hairy_2; armpit_1_hairy_3; armpit_1_hairy_4; armpit_1_hairy_5
+Foreigner,AURAPHOTO,human,human_photo_12
+Foreigner,EAR,imposter,fake_ear_5
+Foreigner,EYE,human,human_white_12; human_pupil_12
+Foreigner,HANDS,human,human_hands_12
+Foreigner,TEETH,human,human_tooth_12
+FormerFema,ARMPIT,human,armpit_2_clean_fungal_0; armpit_2_clean_fungal_1; armpit_2_clean_fungal_2; armpit_2_clean_fungal_3; armpit_2_clean_fungal_4; armpit_2_clean_fungal_5
+FormerFema,AURAPHOTO,human,human_photo_10
+FormerFema,EAR,imposter,fake_ear_8
+FormerFema,EYE,human,human_white_10; human_pupil_10
+FormerFema,HANDS,human,human_hands_10
+FormerFema,TEETH,human,human_tooth_10
+FortuneTeller,ARMPIT,imposter,armpit_1_hairy_0; armpit_1_hairy_1; armpit_1_hairy_2; armpit_1_hairy_3; armpit_1_hairy_4; armpit_1_hairy_5
+FortuneTeller,AURAPHOTO,human,human_photo_26
+FortuneTeller,AURAPHOTO,imposter,fake_photo_7
+FortuneTeller,EAR,imposter,fake_ear_2
+FortuneTeller,EYE,human,human_white_26; human_pupil_25; human_white_15
+FortuneTeller,HANDS,human,human_hands_26
+FortuneTeller,TEETH,human,human_tooth_26; human_tooth_44
+Fugitive,ARMPIT,human,armpit_1_clean_redness_0; armpit_1_clean_redness_1; armpit_1_clean_redness_2; armpit_1_clean_redness_3; armpit_1_clean_redness_4; armpit_1_clean_redness_5
+Fugitive,ARMPIT,imposter,armpit_2_hairy_0; armpit_2_hairy_1; armpit_2_hairy_2; armpit_2_hairy_3; armpit_2_hairy_4; armpit_2_hairy_5
+Fugitive,AURAPHOTO,human,human_photo_17; human_photo_19
+Fugitive,EAR,imposter,fake_ear_injury_0; fake_ear_injury_1; fake_ear_injury_2; fake_ear_injury_3; fake_ear_injury_4
+Fugitive,EYE,human,human_white_17; human_pupil_17; human_white_40
+Fugitive,HANDS,human,human_hands_17
+Fugitive,HANDS,imposter,fake_hands_7
+Fugitive,TEETH,human,human_tooth_17
+FunnyGuy,ARMPIT,human,armpit_5_clear_fungal_0; armpit_5_clear_fungal_1; armpit_5_clear_fungal_2; armpit_5_clear_fungal_3; armpit_5_clear_fungal_4; armpit_5_clear_fungal_5
+FunnyGuy,ARMPIT,imposter,armpit_4_hairy_fungal_0; armpit_4_hairy_fungal_1; armpit_4_hairy_fungal_2; armpit_4_hairy_fungal_3; armpit_4_hairy_fungal_4; armpit_4_hairy_fungal_5
+FunnyGuy,AURAPHOTO,human,human_photo_45
+FunnyGuy,EAR,imposter,fake_ear_1
+FunnyGuy,EYE,human,human_white_9; human_pupil_43
+FunnyGuy,HANDS,human,human_hands_47
+FunnyGuy,TEETH,human,human_tooth_51
+GraveDigger,ARMPIT,imposter,armpit_5_hairy_0; armpit_5_hairy_1; armpit_5_hairy_2; armpit_5_hairy_3; armpit_5_hairy_4; armpit_5_hairy_5
+GraveDigger,AURAPHOTO,human,human_photo_20
+GraveDigger,AURAPHOTO,imposter,fake_photo_6
+GraveDigger,EAR,imposter,fake_ear_15
+GraveDigger,EYE,human,human_white_20; human_pupil_20
+GraveDigger,HANDS,human,human_hands_20
+GraveDigger,TEETH,human,human_tooth_20
+Greatmother,ARMPIT,human,armpit_5_clean_0; armpit_5_clean_1; armpit_5_clean_2; armpit_5_clean_3; armpit_5_clean_4; armpit_5_clean_5
+Greatmother,AURAPHOTO,imposter,fake_photo_3
+Greatmother,EAR,imposter,fake_ear_cockroach_0; fake_ear_cockroach_1; fake_ear_cockroach_2; fake_ear_cockroach_3; fake_ear_cockroach_4; fake_ear_cockroach_5; fake_ear_cockroach_6; fake_ear_cockroach_7; fake_ear_cockroach_8; fake_ear_cockroach_9; fake_ear_cockroach_10; fake_ear_cockroach_11; fake_ear_cockroach_12; fake_ear_cockroach_13; fake_ear_cockroach_14; fake_ear_cockroach_15; fake_ear_cockroach_16; fake_ear_cockroach_17; fake_ear_cockroach_18; fake_ear_cockroach_19
+Greatmother,EYE,imposter,fake_white_3; fake_pupil_3
+Greatmother,HANDS,imposter,fake_hands_3
+Greatmother,TEETH,imposter,fake_tooth_3
+Hunter,ARMPIT,imposter,armpit_5_hairy_0; armpit_5_hairy_1; armpit_5_hairy_2; armpit_5_hairy_3; armpit_5_hairy_4; armpit_5_hairy_5
+Hunter,AURAPHOTO,human,human_photo_15; human_photo_8
+Hunter,EAR,imposter,fake_ear_15
+Hunter,EYE,human,human_white_8_11_36; human_pupil_8; human_white_15
+Hunter,HANDS,human,human_hands_8
+Hunter,TEETH,human,human_tooth_34
+Hunter,TEETH,imposter,fake_tooth_1
+Intruder,ARMPIT,other,armpit_6_0; armpit_6_1; armpit_6_2; armpit_6_3; armpit_6_4; armpit_6_5
+Intruder,AURAPHOTO,human,human_photo_36
+Intruder,EAR,imposter,fake_ear_burnt
+Intruder,EYE,human,human_white_26; human_pupil_36
+Intruder,EYE,imposter,fake_white_5
+Intruder,HANDS,human,human_hands_36; human_hands_27
+Intruder,TEETH,human,human_tooth_34
+Intruder,TEETH,imposter,fake_tooth_1
+Jacket,ARMPIT,human,armpit_1_clean_redness_0; armpit_1_clean_redness_1; armpit_1_clean_redness_2; armpit_1_clean_redness_3; armpit_1_clean_redness_4; armpit_1_clean_redness_5
+Jacket,AURAPHOTO,human,human_photo_48; human_photo_48 (2)
+Jacket,EAR,imposter,fake_ear_1
+Jacket,EYE,human,human_white_32; human_pupil_46
+Jacket,HANDS,human,human_hands_42; human_hands_54 (kowafuwa fek)
+Jacket,TEETH,human,human_tooth_54; human_tooth_54(2)
+Jacob,ARMPIT,human,armpit_4_clean_redness_0; armpit_4_clean_redness_1; armpit_4_clean_redness_2; armpit_4_clean_redness_3; armpit_4_clean_redness_4; armpit_4_clean_redness_5
+Jacob,AURAPHOTO,imposter,fake_photo_16
+Jacob,EAR,imposter,fake_ear_cockroach_0; fake_ear_cockroach_1; fake_ear_cockroach_2; fake_ear_cockroach_3; fake_ear_cockroach_4; fake_ear_cockroach_5; fake_ear_cockroach_6; fake_ear_cockroach_7; fake_ear_cockroach_8; fake_ear_cockroach_9; fake_ear_cockroach_10; fake_ear_cockroach_11; fake_ear_cockroach_12; fake_ear_cockroach_13; fake_ear_cockroach_14; fake_ear_cockroach_15; fake_ear_cockroach_16; fake_ear_cockroach_17; fake_ear_cockroach_18; fake_ear_cockroach_19
+Jacob,EYE,human,human_white_26; human_pupil_50
+Jacob,EYE,imposter,fake_white_5
+Jacob,HANDS,imposter,fake_hands_19
+Jacob,TEETH,imposter,fake_tooth_10
+Leper,ARMPIT,human,armpit_2_clean_0; armpit_2_clean_1; armpit_2_clean_2; armpit_2_clean_3; armpit_2_clean_4; armpit_2_clean_5
+Leper,ARMPIT,imposter,armpit_2_hairy_fungal_0; armpit_2_hairy_fungal_1; armpit_2_hairy_fungal_2; armpit_2_hairy_fungal_3; armpit_2_hairy_fungal_4; armpit_2_hairy_fungal_5
+Leper,AURAPHOTO,human,human_photo_40; human_photo_40 (2)
+Leper,EAR,imposter,fake_ear_12
+Leper,EYE,human,human_white_3_35; human_pupil_50
+Leper,HANDS,human,human_hands_49
+Leper,TEETH,human,human_tooth_30
+Leper,TEETH,imposter,fake_tooth_1
+LiberationSans SDF,AURAPHOTO,human,human_photo_7; human_photo_18
+LiberationSans SDF,AURAPHOTO,imposter,fake_photo_13; fake_photo_9
+LiberationSans SDF,EAR,imposter,fake_ear_8; fake_ear_14
+LiberationSans SDF,EYE,human,human_pupil_34; human_white_8_11_36; human_pupil_14; human_pupil_48
+LiberationSans SDF,HANDS,human,human_hands_17; human_hands_38
+LiberationSans SDF,HANDS,imposter,fake_hands_13; fake_hands_10; fake_hands_8
+LiberationSans SDF,TEETH,human,human_tooth_48
+LiberationSans SDF,TEETH,imposter,fake_tooth_2
+LiberationSans SDF - Fallback,AURAPHOTO,human,human_photo_18
+LiberationSans SDF - Fallback,EYE,human,human_pupil_34; human_white_8_11_36; human_pupil_14; human_pupil_48
+LiberationSans SDF - Fallback,HANDS,imposter,fake_hands_8
+Luka,ARMPIT,imposter,armpit_2_hairy_0; armpit_2_hairy_1; armpit_2_hairy_2; armpit_2_hairy_3; armpit_2_hairy_4; armpit_2_hairy_5
+Luka,AURAPHOTO,human,human_photo_11; human_photo_24
+Luka,EAR,imposter,fake_ear_9
+Luka,EYE,human,human_white_8_11_36; human_pupil_11
+Luka,HANDS,human,human_hands_11
+Luka,HANDS,imposter,fake_hands_8
+Luka,TEETH,human,human_tooth_11
+Marauder,ARMPIT,human,armpit_5_clean_0; armpit_5_clean_1; armpit_5_clean_2; armpit_5_clean_3; armpit_5_clean_4; armpit_5_clean_5
+Marauder,ARMPIT,imposter,armpit_5_hairy_fungal_0; armpit_5_hairy_fungal_1; armpit_5_hairy_fungal_2; armpit_5_hairy_fungal_3; armpit_5_hairy_fungal_4; armpit_5_hairy_fungal_5
+Marauder,AURAPHOTO,human,human_photo_14
+Marauder,AURAPHOTO,imposter,fake_photo_10
+Marauder,EAR,imposter,fake_ear_15
+Marauder,EYE,human,human_white_14; human_pupil_14; human_white_12
+Marauder,HANDS,human,human_hands_14
+Marauder,TEETH,human,human_tooth_14; human_tooth_41
+Mother,ARMPIT,imposter,armpit_1_hairy_0; armpit_1_hairy_1; armpit_1_hairy_2; armpit_1_hairy_3; armpit_1_hairy_4; armpit_1_hairy_5
+Mother,AURAPHOTO,human,human_photo_22
+Mother,AURAPHOTO,imposter,fake_photo_7
+Mother,EAR,imposter,fake_ear_6
+Mother,EYE,human,human_white_22_24_25; human_pupil_22
+Mother,HANDS,human,human_hands_22
+Mother,HANDS,imposter,fake_hands_8
+Mother,TEETH,human,human_tooth_43
+Nervous,ARMPIT,human,armpit_2_clean_0; armpit_2_clean_1; armpit_2_clean_2; armpit_2_clean_3; armpit_2_clean_4; armpit_2_clean_5
+Nervous,ARMPIT,imposter,armpit_2_hairy_0; armpit_2_hairy_1; armpit_2_hairy_2; armpit_2_hairy_3; armpit_2_hairy_4; armpit_2_hairy_5
+Nervous,AURAPHOTO,human,human_photo_51
+Nervous,AURAPHOTO,imposter,fake_photo_15
+Nervous,EAR,imposter,fake_ear_injury_0; fake_ear_injury_1; fake_ear_injury_2; fake_ear_injury_3; fake_ear_injury_4
+Nervous,EYE,human,human_white_44; human_pupil_49
+Nervous,HANDS,human,human_hands_52
+Nervous,TEETH,human,human_tooth_57
+Nervous,TEETH,imposter,fake_tooth_9
+NotTrue,ARMPIT,human,armpit_5_clear_fungal_0; armpit_5_clear_fungal_1; armpit_5_clear_fungal_2; armpit_5_clear_fungal_3; armpit_5_clear_fungal_4; armpit_5_clear_fungal_5
+NotTrue,AURAPHOTO,imposter,fake_photo_4
+NotTrue,EAR,imposter,fake_ear_15
+NotTrue,EYE,imposter,fake_white_4; fake_pupil_4
+NotTrue,HANDS,imposter,fake_hands_4
+NotTrue,TEETH,imposter,fake_tooth_4
+NotoNaskhArabic-Regular SDF,ARMPIT,human,armpit_2_clean_4; armpit_4_clean_0; armpit_4_clean_2; armpit_3_clean_iodine_4; armpit_4_clean_4; armpit_2_clean_fungal_1; armpit_4_clean_redness_5; armpit_5_clear_fungal_4; armpit_5_clean_1; armpit_4_clean_redness_1
+NotoNaskhArabic-Regular SDF,ARMPIT,imposter,armpit_5_hairy_3; armpit_2_hairy_0; armpit_5_hairy_0; armpit_5_hairy_1; armpit_1_hairy_fungal_2; armpit_5_hairy_fungal_0; armpit_1_hairy_3; armpit_4_hairy_0; armpit_1_hairy_1; armpit_5_hairy_fungal_4; armpit_2_hairy_5; armpit_4_hairy_redness_1; armpit_4_hairy_3; armpit_2_hairy_fungal; armpit_5_hairy_fungal
+NotoNaskhArabic-Regular SDF,ARMPIT,other,armpit_6_4; armpit_6
+NotoNaskhArabic-Regular SDF,AURAPHOTO,human,human_photo_34; human_photo_42; human_photo_44; human_photo_9; human_photo_14; human_photo_39; human_photo_23; human_photo_27; human_photo_45; human_photo_21; human_photo_20; human_photo_36; human_photo_48 (2); human_photo_28
+NotoNaskhArabic-Regular SDF,AURAPHOTO,imposter,fake_photo_16; fake_photo_1; fake_photo_15
+NotoNaskhArabic-Regular SDF,EAR,imposter,fake_ear_cockroach_15; fake_ear_1; fake_ear_12; fake_ear_cockroach_16; fake_ear_injury_2; fake_ear_injury_0; fake_ear_6
+NotoNaskhArabic-Regular SDF,EYE,human,human_white_33; human_pupil_34; human_white_8_11_36; human_white_31; human_white_17; human_white_20; human_pupil_50; human_pupil_14; human_white_39; human_white_40; human_white_28_34; human_pupil_8; human_pupil_7; human_pupil_11; human_pupil_12; human_pupil_22; human_white_22_24_25; human_pupil_47; human_white_18; human_pupil_28; human_white_41; human_pupil_4; human_white_21
+NotoNaskhArabic-Regular SDF,EYE,imposter,fake_pupil_4; fake_white_5; fake_white_1; fake_pupil_2
+NotoNaskhArabic-Regular SDF,HANDS,human,human_hands_36; human_hands_51; human_hands_11; human_hands_37; human_hands_26; human_hands_50; human_hands_44 (2); human_hands_52; human_hands_43 (2); human_hands_17; human_hands_28; human_hands_49; human_hands_20; human_hands_21; human_hands_9; human_hands_48 (2); human_hands_10; human_hands_41; human_hands_24; human_hands_2; human_hands_27
+NotoNaskhArabic-Regular SDF,HANDS,imposter,fake_hands_8; fake_hands_13; fake_hands_9
+NotoNaskhArabic-Regular SDF,TEETH,human,human_tooth_18; human_tooth_22; human_tooth_10; human_mainchar_tooth; human_tooth_54; human_tooth_39; human_tooth_54(2); human_tooth_19; human_tooth_50; human_tooth_28; human_tooth_35; human_tooth_51; human_tooth_6
+NotoNaskhArabic-Regular SDF,TEETH,imposter,fake_tooth frame_animation_3; fake_mainchar_tooth
+NotoSans-SemiBold SDF,ARMPIT,human,armpit_4_clean_redness; armpit_3_clear; armpit_4_clean_fungal; armpit_5_clear_fungal; armpit_5_clean_5; armpit_2_clean; armpit_5_clean
+NotoSans-SemiBold SDF,ARMPIT,imposter,armpit_4_hairy_redness; armpit_1_hairy; armpit_2_hairy; armpit_1_hairy_fungal; armpit_4_hairy; armpit_2_hairy_fungal; armpit_5_hairy
+NotoSans-SemiBold SDF,AURAPHOTO,human,human_photo_14; human_photo_23; human_photo_5; human_photo_34; human_photo_2; human_photo_38; human_photo_42; human_photo_35; human_photo_48; human_photo_26; human_photo_29; human_photo_46; human_photo_30; human_photo_33; human_photo_25; human_photo_12; human_photo_24; human_photo_4; human_photo_10; human_photo_6; human_photo_32; human_photo_8; human_photo_17; human_photo_27; human_photo_40 (2); human_photo_40; human_photo_9; human_photo_36; human_photo_47; human_photo_21; human_photo_20; human_photo_48 (2); human_photo_28; human_photo_11; human_photo_37; human_photo_7; human_photo_15; human_photo_13; human_photo_1; human_photo_31
+NotoSans-SemiBold SDF,AURAPHOTO,imposter,fake_tv_photo; fake_photo_1; fake_photo_4; fake_photo_10; fake_photo_9; fake_tv_photofits1; fake_photo_8; fake_photo_5; fake_photo_7; fake_tv_photofits2; fake_photo_13; fake_photo_14; fake_photo_6; fake_photo_15
+NotoSans-SemiBold SDF,EAR,imposter,fake_ear_3; fake_ear_12; fake_ear_13; fake_ear_15; fake_ear_7; fake_ear_6; fake_ear_injury; fake_ear_4; fake_ear_14; fake_ear_5; fake_ear_2; fake_ear_10; fake_ear_burnt; fake_ear_catlady
+NotoSans-SemiBold SDF,EYE,human,human_pupil_34; human_white_8_11_36; human_pupil_14; human_pupil_48; human_white_17; human_pupil_36; human_white_20; human_pupil_8; human_pupil_7; human_white_19_37_38; human_white_33; human_white_40; human_pupil_1; human_pupil_19; human_white_26; human_pupil_2; human_pupil_17; human_white_15; human_pupil_3; human_pupil_29; human_pupil_43; human_pupil_37; human_pupil_20; human_pupil_5; human_white_22_24_25; human_pupil_47; human_white_18; human_pupil_28; human_white_44; human_pupil_27; human_pupil_30; human_pupil_11; human_pupil_23; human_white_30; human_pupil_38; human_pupil_41; human_white_9; human_pupil_44; human_pupil_10; human_white_7; human_pupil_22; human_white_21; human_pupil_49; human_white_43; human_pupil_24; human_pupil_4; human_pupil_35; human_pupil_50; human_pupil_46; human_white_4; human_white_41; human_white_39; human_white_28_34; human_pupil_12; human_pupil_6; human_pupil_25
+NotoSans-SemiBold SDF,EYE,imposter,fake_white_1; fake_pupil_1; fake_pupil_2; fake_pupil_4; fake_white_4
+NotoSans-SemiBold SDF,HANDS,human,human_hands_17; human_hands_48; human_hands_11; human_hands_21; human_hands_37; human_hands_45 (2); human_hands_1; human_hands_16; human_hands_30; human_hands_38; human_hands_9; human_hands_13; human_hands_39; human_hands_50 (2); human_hands_45; human_hands_34; human_hands_12; human_hands_47; human_hands_36; human_hands_28; human_hands_51; human_hands_43 (2); human_hands_25; human_hands_5; human_hands_40; human_hands_19; human_hands_7; human_hands_43; human_hands_41; human_hands_50; human_hands_3; human_hands_42; human_hands_26; human_hands_32; human_hands_24; human_hands_2; human_hands_44 (2); human_hands_33; human_hands_48 (2); human_hands_6
+NotoSans-SemiBold SDF,HANDS,imposter,fake_hands_9; fake_hands_7; fake_hands_12; fake_hands_14; fake_hands_1; fake_tv_hands; fake_hands_19; fake_hands_3; fake_hands_8; fake_hands_2; fake_hands frame; fake_hands_4
+NotoSans-SemiBold SDF,TEETH,human,human_mainchar_tooth; human_tooth_39; human_tooth_16; human_tooth_26; human_tooth_32; human_tooth_4; human_tooth_25; human_tooth_49 (2); human_tooth_46; human_tooth_37; human_tooth_17; human_tooth_56; human_tooth_47; human_tooth_55; human_tooth_14; human_tooth_7; human_tooth_6; human_tooth_30; human_tooth_42; human_tooth_15; human_tooth_54; human_tooth_18; human_tooth_1; human_tooth_34; human_tooth_57; human_tooth_13; human_tooth_11; human_tooth_20; human_tooth_33; human_tooth_35; human_tooth_51; human_tooth_53; human_tooth_3; human_tooth_50; human_tooth_24; human_tooth_28; human_tooth_44; human_tooth_49; human_tooth_52; human_tooth_22; human_tooth_10
+NotoSans-SemiBold SDF,TEETH,imposter,fake_tooth frame_animation; fake_tv_teeth; fake_tooth_3; fake_tooth_7; fake_tooth_5; fake_tooth_4; fake_tooth_10; fake_mainchar_tooth; fake_tooth_8
+NotoSansJP-Medium SDF,ARMPIT,human,armpit_3_clean_iodine; armpit_4_clean_redness; armpit_2_clean; armpit_1_clean_redness; armpit_5_clean
+NotoSansJP-Medium SDF,ARMPIT,imposter,armpit_1_hairy; armpit_2_hairy; armpit_4_hairy; armpit_4_hairy_fungal
+NotoSansJP-Medium SDF,AURAPHOTO,human,human_photo_23; human_photo_34; human_photo_38; human_photo_35; human_photo_31; human_photo_43; human_photo_30; human_photo_44; human_photo_14; human_photo_41; human_photo_2; human_photo_33; human_photo_25; human_photo_47; human_photo_20; human_photo_5; human_photo_39; human_photo_18; human_photo_40 (2); human_photo_46; human_photo_3; human_photo_22; human_photo_19
+NotoSansJP-Medium SDF,AURAPHOTO,imposter,fake_photo_3; fake_photo_6; fake_photo_7; fake_tv_photofits2; fake_photo_4; fake_tv_photo; fake_photo_1
+NotoSansJP-Medium SDF,EAR,imposter,fake_ear_1; fake_ear_12; fake_ear_13; fake_ear_15; fake_ear_7; fake_ear_4
+NotoSansJP-Medium SDF,EYE,human,human_pupil_14; human_pupil_48; human_white_39; human_white_43 (2); human_white_17; human_pupil_36; human_white_20; human_white_28_34; human_pupil_1; human_pupil_19; human_white_2; human_pupil_45; human_pupil_20; human_white_7; human_pupil_5; human_white_4; human_pupil_22; human_white_22_24_25; human_pupil_34; human_white_8_11_36; human_pupil_8; human_pupil_7; human_pupil_40; human_white_33; human_white_40; human_pupil_9; human_pupil_10; human_pupil_3; human_white_43; human_pupil_15; human_white_6; human_pupil_26; human_pupil_29; human_white_15; human_pupil_35; human_pupil_17; human_pupil_42; human_white_13; human_white_14; human_white_10; human_pupil_31; human_pupil_32; human_white_32
+NotoSansJP-Medium SDF,EYE,imposter,fake_white_1; fake_white_5; fake_pupil_1; fake_pupil_5
+NotoSansJP-Medium SDF,HANDS,human,human_hands_17; human_hands_50; human_hands_44 (2); human_hands_52; human_hands_11; human_hands_37; human_hands_26; human_hands_27; human_hands_31; human_hands_4; human_hands_23; human_hands_29; human_hands_47; human_hands_21; human_hands_35; human_hands_18; human_hands_22; human_hands_45 (2); human_hands_1; human_hands_25; human_hands_32; human_hands_3; human_hands_46; human_hands_16; human_hands_44
+NotoSansJP-Medium SDF,HANDS,imposter,fake_hands_17; fake_hands_1; fake_hands_7; fake_hands_15; fake_hands_9; fake_hands_12; fake_hands_14
+NotoSansJP-Medium SDF,TEETH,human,human_tooth_50; human_tooth_53; human_tooth_53(2); human_tooth_54; human_tooth_18; human_tooth_22; human_tooth_10; human_mainchar_tooth; human_tooth_45; human_tooth_26; human_tooth_13; human_tooth_32; human_tooth_49 (2); human_tooth_47; human_tooth_55; human_tooth_46; human_tooth_14; human_tooth_7; human_tooth_44; human_tooth_52; human_tooth_19; human_tooth_39; human_tooth_57; human_tooth_16; human_tooth_40
+NotoSansJP-Medium SDF,TEETH,imposter,fake_tooth frame_animation; fake_tooth_9
+NotoSansKR-SemiBold SDF,ARMPIT,human,armpit_5_clear_fungal_4; armpit_4_clean_redness
+NotoSansKR-SemiBold SDF,ARMPIT,imposter,armpit_2_hairy_fungal_3; armpit_1_hairy_fungal_3; armpit_5_hairy_fungal_4; armpit_4_hairy_redness_1; armpit_5_hairy_1; armpit_5_hairy_fungal_3
+NotoSansKR-SemiBold SDF,AURAPHOTO,human,human_photo_49; human_photo_45; human_photo_44; human_photo_5; human_photo_9; human_photo_14; human_photo_23; human_photo_39; human_photo_4; human_photo_34; human_photo_27
+NotoSansKR-SemiBold SDF,AURAPHOTO,imposter,fake_photo_16; fake_photo_14
+NotoSansKR-SemiBold SDF,EAR,imposter,fake_ear_cockroach_15; fake_ear_injury_1; fake_ear_cockroach_6; fake_ear_cockroach_16; fake_ear_injury_0; fake_tv_ear; fake_ear_14; fake_ear_5
+NotoSansKR-SemiBold SDF,EYE,human,human_white_31; human_pupil_14; human_white_43 (2); human_white_8_11_36; human_pupil_48; human_pupil_49; human_pupil_36; human_white_17; human_pupil_34; human_pupil_27; human_pupil_50; human_white_20; human_white_40; human_white_33; human_pupil_11; human_pupil_12
+NotoSansKR-SemiBold SDF,EYE,imposter,fake_white_2; fake_white_5
+NotoSansKR-SemiBold SDF,HANDS,human,human_hands_49; human_hands_50; human_hands_44 (2); human_hands_9; human_hands_11; human_hands_43 (2); human_hands_36
+NotoSansKR-SemiBold SDF,HANDS,imposter,fake_hands_13; fake_hands_2; fake_hands_19; fake_hands_12
+NotoSansKR-SemiBold SDF,TEETH,human,human_tooth_41; human_tooth_53; human_tooth_52; human_tooth_53(2); human_tooth_54; human_tooth_17; human_tooth_15; human_tooth_22; human_tooth_10; human_tooth_39
+NotoSansKR-SemiBold SDF,TEETH,imposter,fake_tooth frame_animation_1; fake_tooth frame_animation_3; fake_tv_teeth
+NotoSansSC-Medium SDF,ARMPIT,human,armpit_3_clear; armpit_3_clean_iodine; armpit_5_clear_fungal; armpit_4_clean_redness; armpit_1_clean_redness; armpit_5_clean
+NotoSansSC-Medium SDF,ARMPIT,imposter,armpit_4_hairy_fungal; armpit_2_hairy; armpit_4_hairy; armpit_2_hairy_fungal
+NotoSansSC-Medium SDF,AURAPHOTO,human,human_photo_44; human_photo_14; human_photo_34; human_photo_41; human_photo_46; human_photo_50; human_photo_42; human_photo_43; human_photo_5; human_photo_38; human_photo_31; human_photo_30; human_photo_20; human_photo_21; human_photo_27; human_photo_23; human_photo_39; human_photo_18; human_photo_3; human_photo_40 (2); human_photo_22; human_photo_19; human_photo_10; human_photo_36
+NotoSansSC-Medium SDF,AURAPHOTO,imposter,fake_photo_6; fake_photo_7; fake_tv_photofits2; fake_photo_3; fake_tv_photo; fake_photo_1; fake_photo_8
+NotoSansSC-Medium SDF,EAR,imposter,fake_ear_1; fake_ear_cockroach; fake_ear_15; fake_ear_12; fake_ear_4; fake_ear_13; fake_ear_catlady; fake_ear_7; fake_ear_6
+NotoSansSC-Medium SDF,EYE,human,human_pupil_34; human_white_8_11_36; human_white_17; human_pupil_8; human_pupil_40; human_white_19_37_38; human_white_28_34; human_pupil_19; human_white_27; human_pupil_2; human_pupil_17; human_pupil_15; human_white_2; human_pupil_43; human_pupil_37; human_pupil_45; human_pupil_14; human_white_39; human_pupil_3; human_white_43; human_pupil_31; human_pupil_48; human_white_20; human_pupil_39; human_pupil_1; human_pupil_10; human_pupil_20; human_white_7; human_pupil_46; human_pupil_7; human_white_32; human_pupil_32; human_white_13; human_white_15; human_pupil_35; human_pupil_42; human_white_14; human_white_10; human_white_6; human_pupil_26; human_pupil_29; human_white_30; human_pupil_30; human_pupil_22; human_pupil_12; human_pupil_4; human_pupil_50; human_white_40; human_white_33; human_pupil_11
+NotoSansSC-Medium SDF,EYE,imposter,fake_white_1; fake_pupil_1; fake_white_2; fake_white_5; fake_pupil_5
+NotoSansSC-Medium SDF,HANDS,human,human_hands_17; human_hands_52; human_hands_21; human_hands_35; human_hands_22; human_hands_6; human_hands_1; human_hands_46; human_hands_23; human_hands_27; human_hands_47; human_hands_50; human_hands_44 (2); human_hands_51; human_hands_11; human_hands_37; human_hands_4; human_hands_29; human_hands_18; human_hands_43 (2); human_hands_45 (2); human_hands_32; human_hands_3; human_hands_44; human_hands_25; human_hands_16; human_hands_39; human_hands_30; human_hands_36; human_hands_9
+NotoSansSC-Medium SDF,HANDS,imposter,fake_hands_2; fake_hands_15; fake_hands_5; fake_hands_17; fake_hands_1; fake_hands_7; fake_hands_14; fake_hands_12
+NotoSansSC-Medium SDF,TEETH,human,human_tooth_53(2); human_tooth_19; human_tooth_57; human_tooth_26; human_tooth_32; human_tooth_4; human_tooth_25; human_tooth_38; human_tooth_49 (2); human_tooth_47; human_tooth_54; human_tooth_18; human_tooth_1; human_tooth_55; human_tooth_14; human_tooth_7; human_tooth_24; human_tooth_50; human_tooth_53; human_tooth_22; human_tooth_10; human_tooth_45; human_tooth_13; human_tooth_44; human_tooth_46; human_tooth_52; human_tooth_16; human_tooth_34; human_tooth_42; human_tooth_15; human_tooth_51; human_tooth_35; human_tooth_39
+NotoSansSC-Medium SDF,TEETH,imposter,fake_tooth_9; fake_tooth frame_animation
+NotoSansTC-Medium SDF,ARMPIT,human,armpit_3_clear; armpit_3_clean_iodine; armpit_5_clear_fungal; armpit_4_clean_redness; armpit_1_clean_redness; armpit_5_clean
+NotoSansTC-Medium SDF,ARMPIT,imposter,armpit_4_hairy_fungal; armpit_2_hairy; armpit_4_hairy; armpit_2_hairy_fungal
+NotoSansTC-Medium SDF,AURAPHOTO,human,human_photo_44; human_photo_14; human_photo_34; human_photo_41; human_photo_46; human_photo_50; human_photo_42; human_photo_43; human_photo_5; human_photo_38; human_photo_31; human_photo_30; human_photo_20; human_photo_21; human_photo_27; human_photo_23; human_photo_39; human_photo_18; human_photo_3; human_photo_40 (2); human_photo_22; human_photo_19; human_photo_10; human_photo_36
+NotoSansTC-Medium SDF,AURAPHOTO,imposter,fake_photo_6; fake_photo_7; fake_tv_photofits2; fake_photo_3; fake_tv_photo; fake_photo_1; fake_photo_8
+NotoSansTC-Medium SDF,EAR,imposter,fake_ear_1; fake_ear_cockroach; fake_ear_15; fake_ear_12; fake_ear_4; fake_ear_13; fake_ear_catlady; fake_ear_7; fake_ear_6
+NotoSansTC-Medium SDF,EYE,human,human_pupil_34; human_white_8_11_36; human_white_17; human_pupil_8; human_pupil_40; human_white_19_37_38; human_white_28_34; human_pupil_19; human_white_27; human_pupil_2; human_pupil_17; human_pupil_15; human_white_2; human_pupil_43; human_pupil_37; human_pupil_45; human_pupil_14; human_white_39; human_pupil_3; human_white_43; human_pupil_31; human_pupil_48; human_white_20; human_pupil_39; human_pupil_1; human_pupil_10; human_pupil_20; human_white_7; human_pupil_46; human_pupil_7; human_white_32; human_pupil_32; human_white_13; human_white_15; human_pupil_35; human_pupil_42; human_white_14; human_white_10; human_white_6; human_pupil_26; human_pupil_29; human_white_30; human_pupil_30; human_pupil_22; human_pupil_12; human_pupil_4; human_pupil_50; human_white_40; human_white_33; human_pupil_11
+NotoSansTC-Medium SDF,EYE,imposter,fake_white_1; fake_pupil_1; fake_white_2; fake_white_5; fake_pupil_5
+NotoSansTC-Medium SDF,HANDS,human,human_hands_17; human_hands_52; human_hands_21; human_hands_35; human_hands_22; human_hands_6; human_hands_1; human_hands_46; human_hands_23; human_hands_27; human_hands_47; human_hands_50; human_hands_44 (2); human_hands_51; human_hands_11; human_hands_37; human_hands_4; human_hands_29; human_hands_18; human_hands_43 (2); human_hands_45 (2); human_hands_32; human_hands_3; human_hands_44; human_hands_25; human_hands_16; human_hands_39; human_hands_30; human_hands_36; human_hands_9
+NotoSansTC-Medium SDF,HANDS,imposter,fake_hands_2; fake_hands_15; fake_hands_5; fake_hands_17; fake_hands_1; fake_hands_7; fake_hands_14; fake_hands_12
+NotoSansTC-Medium SDF,TEETH,human,human_tooth_53(2); human_tooth_19; human_tooth_57; human_tooth_26; human_tooth_32; human_tooth_4; human_tooth_25; human_tooth_38; human_tooth_49 (2); human_tooth_47; human_tooth_54; human_tooth_18; human_tooth_1; human_tooth_55; human_tooth_14; human_tooth_7; human_tooth_24; human_tooth_50; human_tooth_53; human_tooth_22; human_tooth_10; human_tooth_45; human_tooth_13; human_tooth_44; human_tooth_46; human_tooth_52; human_tooth_16; human_tooth_34; human_tooth_42; human_tooth_15; human_tooth_51; human_tooth_35; human_tooth_39
+NotoSansTC-Medium SDF,TEETH,imposter,fake_tooth_9; fake_tooth frame_animation
+Nun,ARMPIT,human,armpit_5_clear_fungal_0; armpit_5_clear_fungal_1; armpit_5_clear_fungal_2; armpit_5_clear_fungal_3; armpit_5_clear_fungal_4; armpit_5_clear_fungal_5
+Nun,ARMPIT,imposter,armpit_5_hairy_fungal_0; armpit_5_hairy_fungal_1; armpit_5_hairy_fungal_2; armpit_5_hairy_fungal_3; armpit_5_hairy_fungal_4; armpit_5_hairy_fungal_5
+Nun,AURAPHOTO,human,human_photo_14; human_photo_39
+Nun,EAR,imposter,fake_ear_15; fake_ear_cockroach_0; fake_ear_cockroach_1; fake_ear_cockroach_2; fake_ear_cockroach_3; fake_ear_cockroach_4; fake_ear_cockroach_5; fake_ear_cockroach_6; fake_ear_cockroach_7; fake_ear_cockroach_8; fake_ear_cockroach_9; fake_ear_cockroach_10; fake_ear_cockroach_11; fake_ear_cockroach_12; fake_ear_cockroach_13; fake_ear_cockroach_14; fake_ear_cockroach_15; fake_ear_cockroach_16; fake_ear_cockroach_17; fake_ear_cockroach_18; fake_ear_cockroach_19
+Nun,EYE,human,human_white_39; human_pupil_38
+Nun,HANDS,human,human_hands_37
+Nun,TEETH,human,human_tooth_39
+Player,ARMPIT,imposter,armpit_2_hairy_0; armpit_2_hairy_1; armpit_2_hairy_2; armpit_2_hairy_3; armpit_2_hairy_4; armpit_2_hairy_5; armpit_2_hairy_fungal_0; armpit_2_hairy_fungal_1; armpit_2_hairy_fungal_2; armpit_2_hairy_fungal_3; armpit_2_hairy_fungal_4; armpit_2_hairy_fungal_5
+Player,EAR,imposter,fake_ear_1
+Player,EYE,human,human_white_5_29; human_white_27
+Player,TEETH,human,human_mainchar_tooth
+Player,TEETH,imposter,fake_mainchar_tooth
+Provocateur,ARMPIT,human,armpit_3_clear_0; armpit_3_clear_1; armpit_3_clear_2; armpit_3_clear_3; armpit_3_clear_4; armpit_3_clear_5
+Provocateur,ARMPIT,imposter,armpit_3_hairy_0; armpit_3_hairy_1; armpit_3_hairy_2; armpit_3_hairy_3; armpit_3_hairy_4; armpit_3_hairy_5
+Provocateur,AURAPHOTO,human,human_photo_21
+Provocateur,EAR,imposter,fake_ear_injury_0; fake_ear_injury_1; fake_ear_injury_2; fake_ear_injury_3; fake_ear_injury_4
+Provocateur,EYE,human,human_white_21; human_pupil_21
+Provocateur,HANDS,human,human_hands_21
+Provocateur,TEETH,imposter,fake_tooth_5
+Raskolnikov,ARMPIT,imposter,armpit_1_hairy_0; armpit_1_hairy_1; armpit_1_hairy_2; armpit_1_hairy_3; armpit_1_hairy_4; armpit_1_hairy_5
+Raskolnikov,AURAPHOTO,human,human_photo_33; human_photo_28
+Raskolnikov,EAR,imposter,fake_ear_2
+Raskolnikov,EYE,human,human_white_18; human_pupil_35; human_white_28_34; human_pupil_23
+Raskolnikov,HANDS,human,human_hands_4
+Raskolnikov,TEETH,human,human_tooth_3; human_tooth_42
+Rocker,ARMPIT,human,armpit_2_clean_0; armpit_2_clean_1; armpit_2_clean_2; armpit_2_clean_3; armpit_2_clean_4; armpit_2_clean_5
+Rocker,ARMPIT,imposter,armpit_2_hairy_0; armpit_2_hairy_1; armpit_2_hairy_2; armpit_2_hairy_3; armpit_2_hairy_4; armpit_2_hairy_5
+Rocker,AURAPHOTO,human,human_photo_50
+Rocker,EAR,imposter,fake_ear_4
+Rocker,EYE,human,human_white_32; human_pupil_48
+Rocker,HANDS,human,human_hands_51
+Rocker,TEETH,human,human_tooth_56
+Scammer,ARMPIT,human,armpit_1_clean_0; armpit_1_clean_1; armpit_1_clean_2; armpit_1_clean_3; armpit_1_clean_4; armpit_1_clean_5
+Scammer,ARMPIT,imposter,armpit_3_hairy_0; armpit_3_hairy_1; armpit_3_hairy_2; armpit_3_hairy_3; armpit_3_hairy_4; armpit_3_hairy_5
+Scammer,AURAPHOTO,human,human_photo_4; human_photo_15
+Scammer,EAR,imposter,fake_ear_1
+Scammer,EYE,human,human_white_5_29; human_pupil_4; human_white_4
+Scammer,HANDS,human,human_hands_4; human_hands_33
+Scammer,TEETH,human,human_tooth_4
+Sexy,ARMPIT,human,armpit_1_clean_0; armpit_1_clean_1; armpit_1_clean_2; armpit_1_clean_3; armpit_1_clean_4; armpit_1_clean_5
+Sexy,ARMPIT,imposter,armpit_1_hairy_0; armpit_1_hairy_1; armpit_1_hairy_2; armpit_1_hairy_3; armpit_1_hairy_4; armpit_1_hairy_5
+Sexy,AURAPHOTO,human,human_photo_13
+Sexy,AURAPHOTO,imposter,fake_photo_8
+Sexy,EAR,imposter,fake_ear_5
+Sexy,EYE,human,human_white_5_29; human_pupil_9
+Sexy,EYE,imposter,fake_pupil_6
+Sexy,HANDS,imposter,fake_hands_15
+Sexy,TEETH,human,human_tooth_46
+Sirin,ARMPIT,human,armpit_3_clear_0; armpit_3_clear_1; armpit_3_clear_2; armpit_3_clear_3; armpit_3_clear_4; armpit_3_clear_5
+Sirin,ARMPIT,imposter,armpit_3_hairy_0; armpit_3_hairy_1; armpit_3_hairy_2; armpit_3_hairy_3; armpit_3_hairy_4; armpit_3_hairy_5
+Sirin,AURAPHOTO,human,human_photo_38
+Sirin,AURAPHOTO,imposter,fake_photo_1
+Sirin,EAR,imposter,fake_ear_6
+Sirin,EYE,human,human_white_19_37_38; human_pupil_37; human_white_4
+Sirin,HANDS,imposter,fake_hands_8
+Sirin,TEETH,human,human_tooth_37; human_tooth_38
+TV,ARMPIT,imposter,fake_tv_armpitshair; fake_tv_wetarmpit
+TV,AURAPHOTO,imposter,fake_tv_photofits1; fake_tv_photofits2; fake_tv_photo
+TV,EAR,imposter,fake_tv_ear
+TV,HANDS,imposter,fake_tv_hands
+TV,TEETH,imposter,fake_tv_teeth
+TaxiDriver,ARMPIT,human,armpit_3_clear_0; armpit_3_clear_1; armpit_3_clear_2; armpit_3_clear_3; armpit_3_clear_4; armpit_3_clear_5
+TaxiDriver,ARMPIT,imposter,armpit_3_hairy_0; armpit_3_hairy_1; armpit_3_hairy_2; armpit_3_hairy_3; armpit_3_hairy_4; armpit_3_hairy_5
+TaxiDriver,AURAPHOTO,human,human_photo_15
+TaxiDriver,EAR,imposter,fake_ear_15
+TaxiDriver,EYE,human,human_white_15; human_pupil_15; human_white_26
+TaxiDriver,HANDS,human,human_hands_41; human_hands_40
+TaxiDriver,TEETH,human,human_tooth_15; human_tooth_42
+Teacher,ARMPIT,human,armpit_1_clean_0; armpit_1_clean_1; armpit_1_clean_2; armpit_1_clean_3; armpit_1_clean_4; armpit_1_clean_5
+Teacher,AURAPHOTO,human,human_photo_18
+Teacher,EAR,imposter,fake_ear_injury_0; fake_ear_injury_1; fake_ear_injury_2; fake_ear_injury_3; fake_ear_injury_4
+Teacher,EYE,human,human_white_18; human_pupil_38
+Teacher,HANDS,human,human_hands_18
+Teacher,TEETH,human,human_tooth_18
+Theorist,ARMPIT,imposter,armpit_2_hairy_0; armpit_2_hairy_1; armpit_2_hairy_2; armpit_2_hairy_3; armpit_2_hairy_4; armpit_2_hairy_5
+Theorist,AURAPHOTO,human,human_photo_24
+Theorist,AURAPHOTO,imposter,fake_photo_8
+Theorist,EAR,imposter,fake_ear_7; fake_ear_1
+Theorist,EYE,human,human_white_22_24_25; human_pupil_24; human_white_32
+Theorist,HANDS,human,human_hands_24
+Theorist,HANDS,imposter,fake_hands_9
+Theorist,TEETH,human,human_tooth_24
+Tough,ARMPIT,human,armpit_1_clean_0; armpit_1_clean_1; armpit_1_clean_2; armpit_1_clean_3; armpit_1_clean_4; armpit_1_clean_5
+Tough,ARMPIT,imposter,armpit_1_hairy_0; armpit_1_hairy_1; armpit_1_hairy_2; armpit_1_hairy_3; armpit_1_hairy_4; armpit_1_hairy_5
+Tough,AURAPHOTO,human,human_photo_47
+Tough,EAR,imposter,fake_ear_14
+Tough,EYE,human,human_white_1; human_pupil_45
+Tough,HANDS,human,human_hands_23
+Tough,TEETH,human,human_tooth_53; human_tooth_53(2)
+Tourist,ARMPIT,imposter,armpit_4_hairy_redness_0; armpit_4_hairy_redness_1; armpit_4_hairy_redness_2; armpit_4_hairy_redness_3; armpit_4_hairy_redness_4; armpit_4_hairy_redness_5
+Tourist,AURAPHOTO,human,human_photo_44
+Tourist,AURAPHOTO,imposter,fake_photo_14
+Tourist,EAR,imposter,fake_ear_12
+Tourist,EYE,human,human_white_14; human_pupil_42
+Tourist,EYE,imposter,fake_white_4
+Tourist,HANDS,human,human_hands_46
+Tourist,HANDS,imposter,fake_hands_17
+Tourist,TEETH,human,human_tooth_50
+Twins,ARMPIT,human,armpit_3_clear_0; armpit_3_clear_1; armpit_3_clear_2; armpit_3_clear_3; armpit_3_clear_4; armpit_3_clear_5
+Twins,ARMPIT,imposter,armpit_3_hairy_0; armpit_3_hairy_1; armpit_3_hairy_2; armpit_3_hairy_3; armpit_3_hairy_4; armpit_3_hairy_5
+Twins,AURAPHOTO,human,human_photo_38
+Twins,AURAPHOTO,imposter,fake_photo_1
+Twins,EAR,imposter,fake_ear_6
+Twins,EYE,human,human_white_19_37_38; human_pupil_37; human_white_4
+Twins,HANDS,imposter,fake_hands_8
+Twins,TEETH,human,human_tooth_37; human_tooth_38
+Unstable,ARMPIT,human,armpit_3_clean_iodine_0; armpit_3_clean_iodine_1; armpit_3_clean_iodine_2; armpit_3_clean_iodine_3; armpit_3_clean_iodine_4; armpit_3_clean_iodine_5
+Unstable,ARMPIT,imposter,armpit_2_hairy_0; armpit_2_hairy_1; armpit_2_hairy_2; armpit_2_hairy_3; armpit_2_hairy_4; armpit_2_hairy_5
+Unstable,AURAPHOTO,human,human_photo_49
+Unstable,EAR,imposter,fake_ear_injury_0; fake_ear_injury_1; fake_ear_injury_2; fake_ear_injury_3; fake_ear_injury_4
+Unstable,EYE,human,human_white_43; human_pupil_47; human_white_43 (2)
+Unstable,HANDS,human,human_hands_50; human_hands_50 (2)
+Unstable,TEETH,human,human_tooth_55
+Unstable,TEETH,imposter,fake_tooth_8
+VCR OSD Mono Cyr SDF,ARMPIT,human,armpit_4_clean_redness; armpit_5_clean; armpit_5_clear_fungal; armpit_1_clean
+VCR OSD Mono Cyr SDF,ARMPIT,imposter,armpit_4_hairy_fungal; armpit_1_hairy
+VCR OSD Mono Cyr SDF,AURAPHOTO,human,human_photo_9; human_photo_34; human_photo_27; human_photo_45; human_photo_23; human_photo_5; human_photo_41; human_photo_2; human_photo_38; human_photo_42; human_photo_35; human_photo_31; human_photo_43; human_photo_48; human_photo_26; human_photo_46; human_photo_22; human_photo_30; human_photo_25; human_photo_50; human_photo_33; human_photo_12
+VCR OSD Mono Cyr SDF,AURAPHOTO,imposter,fake_photo_16; fake_photo_1; fake_photo_3; fake_photo_2; fake_photo_4; fake_photo_10
+VCR OSD Mono Cyr SDF,EAR,imposter,fake_ear_1; fake_ear_3; fake_ear_12; fake_ear_4; fake_ear_cockroach; fake_ear_13; fake_ear_catlady
+VCR OSD Mono Cyr SDF,EYE,human,human_pupil_50; human_white_20; human_white_19_37_38; human_white_40; human_pupil_34; human_white_43 (2); human_white_17; human_pupil_36; human_pupil_8; human_pupil_7; human_pupil_40; human_white_28_34; human_pupil_39; human_pupil_1; human_pupil_19; human_white_12; human_pupil_21; human_pupil_3; human_pupil_42; human_white_13; human_white_32; human_white_14; human_white_10; human_pupil_29; human_white_2; human_pupil_43; human_pupil_9; human_pupil_37; human_pupil_31; human_white_6; human_pupil_26; human_pupil_11; human_pupil_12
+VCR OSD Mono Cyr SDF,EYE,imposter,fake_white_5; fake_white_2; fake_white_1; fake_pupil_6; fake_pupil_1; fake_pupil_5
+VCR OSD Mono Cyr SDF,HANDS,human,human_hands_11; human_hands_37; human_hands_26; human_hands_43 (2); human_hands_49; human_hands_44 (2); human_hands_52; human_hands_48; human_hands_21; human_hands_35; human_hands_27; human_hands_31; human_hands_22; human_hands_1; human_hands_44; human_hands_46; human_hands_25; human_hands_16; human_hands_4; human_hands_23; human_hands_29; human_hands_40; human_hands_19; human_hands_9
+VCR OSD Mono Cyr SDF,HANDS,imposter,fake_hands_12; fake_hands_3; fake_hands_2; fake_hands_9; fake_hands_7; fake_hands_17; fake_hands_15; fake_hands_14; fake_hands_5
+VCR OSD Mono Cyr SDF,TEETH,human,human_tooth_22; human_tooth_10; human_tooth_39; human_tooth_29; human_tooth_53(2); human_tooth_54; human_tooth_18; human_tooth_19; human_mainchar_tooth; human_tooth_45; human_tooth_9; human_tooth_16; human_tooth_57; human_tooth_40; human_tooth_26; human_tooth_13; human_tooth_32; human_tooth_25; human_tooth_38; human_tooth_4; human_tooth_37
+VCR OSD Mono Cyr SDF,TEETH,imposter,fake_tooth_4; fake_tooth_5
+Vigilante,TEETH,human,human_tooth_12
+Vigilante,TEETH,imposter,fake_tooth_1
+Wheelchair,ARMPIT,imposter,armpit_4_hairy_0; armpit_4_hairy_1; armpit_4_hairy_2; armpit_4_hairy_3; armpit_4_hairy_4; armpit_4_hairy_5; armpit_4_hairy_redness_0; armpit_4_hairy_redness_1; armpit_4_hairy_redness_2; armpit_4_hairy_redness_3; armpit_4_hairy_redness_4; armpit_4_hairy_redness_5
+Wheelchair,AURAPHOTO,human,human_photo_32
+Wheelchair,AURAPHOTO,imposter,fake_photo_10
+Wheelchair,EAR,imposter,fake_ear_8
+Wheelchair,EYE,human,human_white_30; human_pupil_32; human_white_32
+Wheelchair,HANDS,human,human_hands_32
+Wheelchair,HANDS,imposter,fake_hands_13
+Wheelchair,TEETH,human,human_tooth_32; human_tooth_20
+Widow,ARMPIT,imposter,armpit_1_hairy_fungal_0; armpit_1_hairy_fungal_1; armpit_1_hairy_fungal_2; armpit_1_hairy_fungal_3; armpit_1_hairy_fungal_4; armpit_1_hairy_fungal_5
+Widow,AURAPHOTO,human,human_photo_3
+Widow,EAR,imposter,fake_ear_10
+Widow,EYE,human,human_pupil_3
+Widow,EYE,imposter,fake_white_4
+Widow,HANDS,human,human_hands_3
+Widow,TEETH,human,human_tooth_3
+Wifefema,ARMPIT,imposter,armpit_1_hairy_0; armpit_1_hairy_1; armpit_1_hairy_2; armpit_1_hairy_3; armpit_1_hairy_4; armpit_1_hairy_5; armpit_1_hairy_fungal_0; armpit_1_hairy_fungal_1; armpit_1_hairy_fungal_2; armpit_1_hairy_fungal_3; armpit_1_hairy_fungal_4; armpit_1_hairy_fungal_5
+Wifefema,AURAPHOTO,human,human_photo_23
+Wifefema,EAR,imposter,fake_ear_3
+Wifefema,EYE,human,human_white_7; human_pupil_23; human_white_33
+Wifefema,HANDS,human,human_hands_23
+Wifefema,TEETH,human,human_tooth_22
+WolfHound,ARMPIT,human,armpit_4_clean_fungal_0; armpit_4_clean_fungal_1; armpit_4_clean_fungal_2; armpit_4_clean_fungal_3; armpit_4_clean_fungal_4; armpit_4_clean_fungal_5
+WolfHound,ARMPIT,imposter,armpit_4_hairy_0; armpit_4_hairy_1; armpit_4_hairy_2; armpit_4_hairy_3; armpit_4_hairy_4; armpit_4_hairy_5
+WolfHound,AURAPHOTO,human,human_photo_6; human_photo_13
+WolfHound,EAR,imposter,fake_ear_15
+WolfHound,EYE,human,human_white_6; human_pupil_6
+WolfHound,HANDS,human,human_hands_6
+WolfHound,TEETH,human,human_tooth_6; human_tooth_40
