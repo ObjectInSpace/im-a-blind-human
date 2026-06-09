@@ -26,6 +26,11 @@ namespace NoImNotAHumanAccess.World
         private const string GameAsm = "Assembly-CSharp.dll";
         private const string PhoneNs = "_Code.Infrastructure.CloseUps.Views.Phone";
 
+        // The phone delegates all EventSystem focus work to the single focus authority (UguiFocus): Tick() asks it to
+        // keep a dial button selected (restricted to PhoneButtonView), and PressFocused() reads the focused control from
+        // it. This is why PhoneMenu no longer resolves/holds the EventSystem itself — there is one place that does.
+        private readonly UguiFocus _focus;
+
         // The pin board lives in TWO namespaces: the controller is under the _NINAH__ variant, the view under the
         // plain one (the game's own inconsistent split — verified from the decompile).
         private const string PinControllerNs = "_Code.Infrastructure._NINAH__CloseUps.Views.Phone.Pins";
@@ -45,66 +50,28 @@ namespace NoImNotAHumanAccess.World
         private IntPtr _pinControllerClass; // PhonePinController (holds the _pins array)
         private IntPtr _pinViewClass;       // PhonePinView (_numberText + PhoneSubscriber)
         private IntPtr _getPinSubscriber;   // PhonePinView.get_PhoneSubscriber
-        private IntPtr _getCurrentEventSystem; // EventSystem.get_current (static)
-        private IntPtr _getCurrentSelected;    // EventSystem.get_currentSelectedGameObject
-        private IntPtr _setSelected;           // EventSystem.SetSelectedGameObject(GameObject)
-        private IntPtr _selectableClass;       // UnityEngine.UI.Selectable (for the interactable check)
-        private IntPtr _getInteractable;       // Selectable.get_interactable
 
-        public PhoneMenu(ISpeechOutput speech) => _speech = speech;
+        public PhoneMenu(ISpeechOutput speech, UguiFocus focus)
+        {
+            _speech = speech;
+            _focus = focus;
+        }
+
+        /// <summary>The <c>PhoneButtonView</c> class ptr — the dial-button component <see cref="Tick"/> restricts focus
+        /// to (passed to <see cref="UguiFocus.EnsureSelection"/>). Zero until resolved.</summary>
+        private IntPtr ButtonClass { get { EnsureResolved(); return _buttonClass; } }
 
         /// <summary>
         /// Per-frame upkeep while the phone is the active context: make sure a USABLE dial button holds EventSystem
         /// focus. After a call, the phone disables its buttons; when you leave and return, focus can be left on a
-        /// button that's no longer interactable (or on nothing), which wedges the arrow keys. If the current selection
-        /// isn't an active, interactable phone button, we re-seed focus onto the first one that is. No-op when a good
-        /// button is already focused, or when ALL buttons are disabled (a call is genuinely in progress).
+        /// button that's no longer interactable (or on nothing), which wedges the arrow keys. We delegate to the single
+        /// focus authority, restricting candidates to <c>PhoneButtonView</c> so it can only ever land on a dial key
+        /// (never some other Selectable that happens to be active). UguiFocus already self-heals — re-asserting the
+        /// selection the moment the game clears it and skipping disabled buttons — so this is the same recovery the rest
+        /// of the menus get, with the phone-specific candidate filter applied. No-op when ALL buttons are disabled (a
+        /// call is genuinely in progress): the restricted candidate set is empty, so nothing is selected.
         /// </summary>
-        public void Tick()
-        {
-            try
-            {
-                EnsureResolved();
-                if (_buttonClass == IntPtr.Zero || _setSelected == IntPtr.Zero) return;
-
-                IntPtr es = Il2CppRaw.InvokeStaticObjectGetter(_getCurrentEventSystem);
-                if (es == IntPtr.Zero) return;
-
-                IntPtr selectedGo = Il2CppRaw.InvokeObjectGetter(es, _getCurrentSelected);
-                if (selectedGo != IntPtr.Zero && IsUsableButtonGo(selectedGo)) return; // already on a good button
-
-                // Find the first active + interactable phone button and focus it.
-                IntPtr view = ResolveView();
-                if (view == IntPtr.Zero) return;
-                IntPtr arr = Il2CppRaw.ReadObjectField(view, _viewClass, "_phoneButtonViews");
-                foreach (IntPtr btn in Il2CppRaw.ReadObjectArray(arr))
-                {
-                    if (btn == IntPtr.Zero) continue;
-                    IntPtr go = Il2CppRaw.GetComponentGameObject(btn);
-                    if (go == IntPtr.Zero || !IsUsableButtonGo(go)) continue;
-                    Il2CppRaw.SetSelectedGameObject(es, _setSelected, go);
-                    MelonLogger.Msg("[PhoneMenu] re-seeded dial-pad focus (was lost/disabled).");
-                    return;
-                }
-            }
-            catch (Exception e)
-            {
-                MelonLogger.Warning($"[PhoneMenu] Tick threw: {e.Message}");
-            }
-        }
-
-        /// <summary>A GameObject that is active in hierarchy AND carries an interactable PhoneButtonView Selectable.</summary>
-        private bool IsUsableButtonGo(IntPtr go)
-        {
-            if (go == IntPtr.Zero || !Il2CppRaw.GetGameObjectActiveInHierarchy(go)) return false;
-            if (Il2CppRaw.GetComponentRaw(go, _buttonClass) == IntPtr.Zero) return false;
-            if (_selectableClass != IntPtr.Zero && _getInteractable != IntPtr.Zero)
-            {
-                IntPtr sel = Il2CppRaw.GetComponentRaw(go, _selectableClass);
-                if (sel != IntPtr.Zero && !Il2CppRaw.InvokeBoolGetter(sel, _getInteractable)) return false;
-            }
-            return true;
-        }
+        public void Tick() => _focus.EnsureSelection(ButtonClass);
 
         /// <summary>True while the phone close-up is up (its view is found AND active). Used by the input context to
         /// route Enter (press focused button) and F9 (read contacts) here only when the dial pad is on screen.</summary>
@@ -137,9 +104,7 @@ namespace NoImNotAHumanAccess.World
                 EnsureResolved();
                 if (_buttonClass == IntPtr.Zero) return;
 
-                IntPtr es = Il2CppRaw.InvokeStaticObjectGetter(_getCurrentEventSystem);
-                if (es == IntPtr.Zero) return;
-                IntPtr selectedGo = Il2CppRaw.InvokeObjectGetter(es, _getCurrentSelected);
+                IntPtr selectedGo = _focus.CurrentSelected();
                 if (selectedGo == IntPtr.Zero) return;
 
                 // The focused object is the button's GameObject; get the PhoneButtonView component on it.
@@ -269,27 +234,12 @@ namespace NoImNotAHumanAccess.World
                 if (_pinViewClass != IntPtr.Zero)
                     _getPinSubscriber = Il2CppRaw.GetMethod(_pinViewClass, "get_PhoneSubscriber", 0);
 
-                // EventSystem (for PressFocused + Tick focus re-seed): read/set the focused phone button off
-                // EventSystem.current.
-                IntPtr esClass = Il2CppRaw.GetClass("UnityEngine.UI.dll", "UnityEngine.EventSystems", "EventSystem");
-                if (esClass == IntPtr.Zero)
-                    esClass = Il2CppRaw.GetClass("UnityEngine.UIModule.dll", "UnityEngine.EventSystems", "EventSystem");
-                if (esClass != IntPtr.Zero)
-                {
-                    _getCurrentEventSystem = Il2CppRaw.GetMethod(esClass, "get_current", 0);
-                    _getCurrentSelected = Il2CppRaw.GetMethod(esClass, "get_currentSelectedGameObject", 0);
-                    _setSelected = Il2CppRaw.GetMethod(esClass, "SetSelectedGameObject", 1);
-                }
-
-                // Selectable.interactable — to skip disabled buttons when re-seeding focus.
-                _selectableClass = Il2CppRaw.GetClass("UnityEngine.UI.dll", "UnityEngine.UI", "Selectable");
-                if (_selectableClass != IntPtr.Zero)
-                    _getInteractable = Il2CppRaw.GetMethod(_selectableClass, "get_interactable", 0);
+                // EventSystem focus is owned by UguiFocus now — PhoneMenu no longer resolves it here.
 
                 MelonLogger.Msg($"[PhoneMenu] resolved: view={_viewClass != IntPtr.Zero} button={_buttonClass != IntPtr.Zero} " +
                                 $"onDown={_onPointerDown != IntPtr.Zero} onUp={_onPointerUp != IntPtr.Zero} " +
                                 $"pinController={_pinControllerClass != IntPtr.Zero} pinView={_pinViewClass != IntPtr.Zero} " +
-                                $"getPinSub={_getPinSubscriber != IntPtr.Zero} eventSystem={_getCurrentEventSystem != IntPtr.Zero}");
+                                $"getPinSub={_getPinSubscriber != IntPtr.Zero}");
             }
             catch (Exception e)
             {

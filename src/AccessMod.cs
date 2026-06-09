@@ -160,10 +160,16 @@ namespace NoImNotAHumanAccess
                 // Routed via the Radio input context.
                 _radioMenu = new RadioMenu(_speech);
 
+                // uGUI focus keeper: the single focus authority. Arrows are dead in native menus until a Selectable is
+                // focused; this keeps one focused (re-asserting it when the game clears it) so native nav + MenuNarrator
+                // work. Constructed before PhoneMenu because the phone delegates its dial-pad focus to it.
+                _uguiFocus = new UguiFocus();
+
                 // Phone close-up: the dial pad is pointer/controller-only in the base game, so the number keys (and
                 // # / *) are mapped onto the matching dial-pad buttons, dialing each digit (tone + screen + visual) via
-                // the game's own button press path. Routed via the Phone input context.
-                _phoneMenu = new PhoneMenu(_speech);
+                // the game's own button press path. Focus is delegated to UguiFocus (restricted to dial buttons).
+                // Routed via the Phone input context.
+                _phoneMenu = new PhoneMenu(_speech, _uguiFocus);
 
                 // Gacha "watch cartoon" play button (main-menu collections): pointer-only in the base game, so Enter
                 // activates it when it's on screen. Routed inside the MainMenu input context.
@@ -179,10 +185,6 @@ namespace NoImNotAHumanAccess
 
                 // Classifies the context for per-list selection routing (main menu / 2D photo / fridge / radio / 3D).
                 _inputContext = new InputContext(_twoDProbe);
-
-                // uGUI focus keeper: arrows are dead in the menus (main menu / settings) until something is selected.
-                // While in a menu context, this ensures a control is always focused so native nav + MenuNarrator work.
-                _uguiFocus = new UguiFocus();
 
                 // JAWS arrow relay: stops JAWS swallowing the arrow keys so the game's OWN navigation receives them
                 // in menus/dialogue (NVDA already passes them; JAWS does not). Pure relay — does not interpret arrows.
@@ -237,6 +239,15 @@ namespace NoImNotAHumanAccess
             // Selectables — so it can't compete with the mod's own arrow stepping there.
             // EXCEPTION: in the Phone context, PhoneMenu.Tick owns focus (it knows the dial buttons specifically and
             // recovers focus after a call disables/re-enables them), so we don't also run the generic keeper there.
+            // The phone restricts focus to its dial buttons (PhoneMenu.Tick delegates to UguiFocus with that filter);
+            // every other context uses the unrestricted keeper. UguiFocus self-heals — it re-asserts the selection the
+            // moment a menu owner clears it — so this single call covers MainMenu, Settings, popups, AND the pause menu.
+            //
+            // Why pause needs the self-heal (F8 ground truth, 2026-06-08): while paused the game is ALREADY on the UI
+            // action map and it's enabled (scheme='Keyboard And Mouse' currentActionMap='UI' mapEnabled=True). The input
+            // map/scheme was never the problem. The bug was that the pause menu NULLS currentSelectedGameObject every
+            // frame (its ResetFocus path), leaving no selection for Navigate/Submit to act on — dead arrows + Enter. The
+            // keeper restoring the selection each frame is the whole fix; no input-state meddling.
             if (ctx == InputContextKind.Phone)
                 _phoneMenu?.Tick();
             else
@@ -245,6 +256,19 @@ namespace NoImNotAHumanAccess
             // Clear the fridge selection once we leave the fridge, so re-opening it starts fresh (no stale highlight).
             if (ctx != InputContextKind.Fridge)
                 _fridgeMenu?.Reset();
+
+            // SAFETY NET for the forced-focus leak: when nothing is actually engaged, drop any lingering forced
+            // IsTargeted that Tick's engaged-latch may have missed (a close-up that opened+closed between frames, or an
+            // alt-tab that broke frame timing). Without this a stale phone/radio target stacked onto the next interaction
+            // (the "phone fires with the radio" bug). We run it in:
+            //   • ThreeD / None — back in the world or idle, the normal place a stale target hurts.
+            //   • RoomPhoto    — a 2D photo overlays the 3D scene; if a stale 3D target lingers under it, the GAME'S OWN
+            //     Space (pressed while looking at the photo) can engage that 3D object un-leaveably. The reconcile is
+            //     a no-op unless something IS engaged, and an open photo engages nothing, so clearing here is safe and
+            //     removes the lingering target the photo-Space bug rode on.
+            // (Not in Fridge/Radio/Phone/Pause/MainMenu — those legitimately have something engaged or are menus.)
+            if (ctx == InputContextKind.ThreeD || ctx == InputContextKind.None || ctx == InputContextKind.RoomPhoto)
+                _actionMenu?.ReconcileWhenFreeRoam();
 
             // Radio: tuning is HELD (per-frame sweep), unlike the edge-based selection below. Held Left/Right arrows drive
             // RotateKnob every frame, and Tick narrates closeness while tuning. Band toggle (Up/Down) is an edge action

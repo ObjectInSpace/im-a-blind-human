@@ -32,10 +32,23 @@ namespace NoImNotAHumanAccess.World
 
         private readonly System.Collections.Generic.HashSet<IntPtr> _prevActive = new(); // active selectables last tick
         private bool _havePrev;
-        private IntPtr _lastSelected; // throttle re-selecting the same control every frame
+        private IntPtr _lastSelected;        // the control we last set (for new-panel detection + log de-dupe)
+        private IntPtr _lastLoggedSelection; // de-dupe the focus log so per-frame restores of a held selection stay quiet
 
-        /// <summary>Keep keyboard focus sensible in menus. Call each tick while in a menu context.</summary>
-        public void EnsureSelection()
+        /// <summary>Keep keyboard focus sensible in menus. Call each tick while in a menu context.
+        /// <para>The invariant (learned from the pause-menu bug, 2026-06-08): a native uGUI menu needs a VALID Selectable
+        /// to be <c>EventSystem.currentSelectedGameObject</c> at all times, or arrows (Navigate) and Enter (Submit) have
+        /// nothing to act on. The game enables the UI action map itself; our only job is to keep a selection alive. Menu
+        /// owners routinely NULL the selection each frame (the pause menu's ResetFocus path; the phone disabling its
+        /// buttons after a call), so we RE-ASSERT it the same frame it's cleared — unconditionally, no flag needed. The
+        /// only throttle left is on the LOG, not the selection (we re-select silently while holding a cleared selection
+        /// in place; we only log when the target actually changes), so this is cheap to run every tick in every context.
+        /// It's a no-op in the mod-driven contexts (RoomPhoto/Fridge/Radio) where there are no active uGUI Selectables to
+        /// land on, so it can't compete with the mod's own arrow stepping there.</para></summary>
+        /// <param name="restrictToComponentClass">When non-zero, only Selectables whose GameObject carries this component
+        /// are eligible (used by the phone, which must land on a <c>PhoneButtonView</c> dial key, never another control).
+        /// Zero (the default) considers all active+interactable Selectables — the right behavior for ordinary menus.</param>
+        public void EnsureSelection(IntPtr restrictToComponentClass = default)
         {
             try
             {
@@ -44,7 +57,7 @@ namespace NoImNotAHumanAccess.World
                 if (es == IntPtr.Zero) return;
 
                 // Snapshot the active+interactable selectables (in array order) this tick.
-                var active = ActiveSelectables();
+                var active = ActiveSelectables(restrictToComponentClass);
 
                 // The controls that are NEWLY active vs last tick = the panel that just opened. Its FIRST control (in
                 // array order) is where focus should land. This is panel-agnostic and correct even when the main-menu
@@ -91,13 +104,25 @@ namespace NoImNotAHumanAccess.World
                     return;
                 }
 
-                if (target == IntPtr.Zero || target == _lastSelected) return;
+                if (target == IntPtr.Zero) return;
+                // We ALWAYS re-assert when the current selection is invalid (the owner cleared it / it went
+                // non-interactable) — that's the self-heal that keeps arrows + Enter alive. The "same target as last
+                // frame" case is exactly the per-frame restore of a selection the game keeps nulling, so we must NOT
+                // skip it. We do skip a redundant set only when the selection is ALREADY valid and unchanged (handled by
+                // the early return above), so the SetSelectedGameObject below is never wasted on an already-correct state.
                 Il2CppRaw.SetSelectedGameObject(es, _setSelected, target);
+                bool restoredSame = target == _lastSelected; // re-asserting the same control the game cleared
                 _lastSelected = target;
                 string what = newFirst != IntPtr.Zero ? "new panel's first control"
                             : usedMenuDefault ? "menu's designated first control (New Game)"
+                            : restoredSame ? "re-asserted cleared selection"
                             : "first control";
-                MelonLogger.Msg($"[UguiFocus] focus → {what} (active={active.Count}).");
+                // Log only when the target actually changes, so the per-frame restore of a held selection stays quiet.
+                if (target != _lastLoggedSelection)
+                {
+                    MelonLogger.Msg($"[UguiFocus] focus → {what} (active={active.Count}).");
+                    _lastLoggedSelection = target;
+                }
             }
             catch (Exception e)
             {
@@ -105,8 +130,29 @@ namespace NoImNotAHumanAccess.World
             }
         }
 
-        /// <summary>Active + interactable Selectable GameObjects, in <c>allSelectablesArray</c> order.</summary>
-        private System.Collections.Generic.List<IntPtr> ActiveSelectables()
+        /// <summary>The GameObject currently focused on <c>EventSystem.current</c>, or <see cref="IntPtr.Zero"/> if none
+        /// (or the EventSystem is unavailable). Lets callers that own a specialized control (the phone's Enter→press)
+        /// read the focused control through the single focus authority instead of re-resolving the EventSystem.</summary>
+        public IntPtr CurrentSelected()
+        {
+            try
+            {
+                EnsureResolved();
+                IntPtr es = Il2CppRaw.InvokeStaticObjectGetter(_getCurrentES);
+                if (es == IntPtr.Zero) return IntPtr.Zero;
+                return Il2CppRaw.InvokeObjectGetter(es, _getCurrentSelected);
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[UguiFocus] CurrentSelected threw: {e.Message}");
+                return IntPtr.Zero;
+            }
+        }
+
+        /// <summary>Active + interactable Selectable GameObjects, in <c>allSelectablesArray</c> order. When
+        /// <paramref name="restrictToComponentClass"/> is non-zero, only those whose GameObject carries that component
+        /// are returned (the phone's dial-button restriction).</summary>
+        private System.Collections.Generic.List<IntPtr> ActiveSelectables(IntPtr restrictToComponentClass)
         {
             var list = new System.Collections.Generic.List<IntPtr>();
             if (_selectableClass == IntPtr.Zero || _getAllArray == IntPtr.Zero) return list;
@@ -118,6 +164,8 @@ namespace NoImNotAHumanAccess.World
                 IntPtr go = Il2CppRaw.InvokeObjectGetter(sel, _getGameObject);
                 if (go == IntPtr.Zero) continue;
                 if (!Il2CppRaw.GetGameObjectActiveInHierarchy(go)) continue;
+                if (restrictToComponentClass != IntPtr.Zero &&
+                    Il2CppRaw.GetComponentRaw(go, restrictToComponentClass) == IntPtr.Zero) continue;
                 list.Add(go);
             }
             return list;
