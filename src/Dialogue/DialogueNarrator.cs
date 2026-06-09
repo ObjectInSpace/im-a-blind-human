@@ -79,10 +79,11 @@ namespace NoImNotAHumanAccess.Dialogue
                 if (string.IsNullOrWhiteSpace(text)) return;
 
                 // Leak detector: an unsubstituted "{0}"/"{1}"/… means a line reached us BEFORE its runtime values
-                // (phone number, day count, name) were spliced in — the Yarn RawText bug we fixed for RunLine. Other
-                // sinks (intro/ending narration, the TV "other game" text, string popups) read text we don't substitute,
-                // so if any still carries a placeholder it shows up here. We still SPEAK the line (better than silence),
-                // but log it loudly so the offending sink is identifiable in testing. Not an error into the game.
+                // (phone number, day count, conflicting-guest name) were spliced in. The Yarn RunLine path expands these
+                // from LocalizedLine.Substitutions (see DialoguePatches.ExpandSubstitutions), so a leak here now points at
+                // a DIFFERENT sink — intro/ending narration, the TV "other game" text, or a string popup — that carries a
+                // placeholder we don't substitute. We still SPEAK the line (better than silence), but log it loudly so the
+                // offending sink is identifiable in testing. Not an error into the game.
                 if (HasUnsubstitutedPlaceholder(text))
                     MelonLogger.Warning($"[DialogueNarrator] line still has a substitution placeholder (speaking anyway): \"{text}\"");
 

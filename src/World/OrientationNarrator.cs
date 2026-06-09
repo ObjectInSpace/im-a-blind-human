@@ -26,28 +26,60 @@ namespace NoImNotAHumanAccess.World
     ///   path <see cref="GameStateAccess"/> uses; controllers aren't MonoBehaviours so FindObjectOfType can't reach them).
     ///
     /// Bearing is coarse (ahead / behind / to your left / to your right) + near/far, matching sparse rooms (1–2 things)
-    /// where a blind player needs "which way to turn", not survey-grade precision. Never throws.
+    /// where a blind player needs "which way to turn", not survey-grade precision.
+    ///
+    /// Also appends any CORPSES present (via <see cref="CorpseNarrator"/>) — dead characters are de-buttoned, so the
+    /// hover/stepper narration never speaks them, yet a blind player still wants to know a body is in the room and
+    /// whether it was a human or a visitor. Corpses are reported even when there are no interactables. Never throws.
     /// </summary>
     public sealed class OrientationNarrator
     {
         private const string GameAsm = "Assembly-CSharp.dll";
 
         private readonly ISpeechOutput _speech;
+        private readonly CorpseNarrator _corpses;
 
         // Lazily-resolved handles.
         private bool _resolved;
         private IntPtr _viewProviderClass, _getViews;       // ActionableObjectsViewProvider + get_ActionableObjectViews
         private IntPtr _playerService, _getPosition, _getLookDirection;
 
-        public OrientationNarrator(ISpeechOutput speech) => _speech = speech;
+        public OrientationNarrator(ISpeechOutput speech, CorpseNarrator corpses)
+        {
+            _speech = speech;
+            _corpses = corpses;
+        }
 
-        /// <summary>Speak the currently-selectable interactables with bearings, interrupting so a repeat re-reads.</summary>
-        public void Announce()
+        /// <summary>
+        /// Speak the orientation readout, interrupting so a repeat re-reads. In a 2D room photo
+        /// (<paramref name="corpsesOnly"/>) the 3D interactable bearings are meaningless, so we speak ONLY the corpses
+        /// present (and say so if there are none). Otherwise we speak the selectable interactables with bearings, plus
+        /// any corpses.
+        /// </summary>
+        public void Announce(bool corpsesOnly = false)
         {
             try
             {
-                string? text = Describe();
-                _speech.Speak(text ?? "Nothing to interact with right now.", interrupt: true);
+                string? corpses = _corpses.Describe();
+
+                if (corpsesOnly)
+                {
+                    _speech.Speak(corpses ?? "No corpses here.", interrupt: true);
+                    return;
+                }
+
+                // Corpses are appended even when there's nothing to interact with — a body in the room is worth saying
+                // on its own. Only "nothing to interact with" when BOTH are empty.
+                string? interactables = DescribeInteractables();
+                string text =
+                    (interactables, corpses) switch
+                    {
+                        (not null, not null) => $"{interactables} {corpses}",
+                        (not null, null) => interactables!,
+                        (null, not null) => corpses!,
+                        _ => "Nothing to interact with right now.",
+                    };
+                _speech.Speak(text, interrupt: true);
             }
             catch (Exception e)
             {
@@ -55,7 +87,7 @@ namespace NoImNotAHumanAccess.World
             }
         }
 
-        private string? Describe()
+        private string? DescribeInteractables()
         {
             EnsureResolved();
 

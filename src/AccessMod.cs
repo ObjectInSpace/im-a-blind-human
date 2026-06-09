@@ -7,7 +7,7 @@ using NoImNotAHumanAccess.Speech;
 using NoImNotAHumanAccess.World;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(NoImNotAHumanAccess.AccessMod), "I'm a Blind Human", "0.8.1", "objectinspace")]
+[assembly: MelonInfo(typeof(NoImNotAHumanAccess.AccessMod), "I'm a Blind Human", "0.8.2", "objectinspace")]
 [assembly: MelonGame("Trioskaz", "NoImNotAHuman")]
 
 namespace NoImNotAHumanAccess
@@ -26,6 +26,7 @@ namespace NoImNotAHumanAccess
         private HudNarrator? _hudNarrator;
         private StatusNarrator? _statusNarrator;
         private OrientationNarrator? _orientationNarrator;
+        private CorpseNarrator? _corpseNarrator;
         private ActionMenu? _actionMenu;
         private FridgeMenu? _fridgeMenu;
         private RadioMenu? _radioMenu;
@@ -142,8 +143,14 @@ namespace NoImNotAHumanAccess
                 // Status key (F9): on-demand readout of day/phase/energy/items via the Zenject-resolved controllers.
                 _statusNarrator = new StatusNarrator(_speech);
 
-                // Orientation key (F10): "what's around me" — currently-selectable interactables with bearings.
-                _orientationNarrator = new OrientationNarrator(_speech);
+                // Corpses: names the dead characters in the scene (+ whether each was a human or a visitor). Bodies are
+                // de-buttoned, so the hover/stepper narration never speaks them — a blind player needs telling they're
+                // there. Folded into the F10 orientation readout below.
+                _corpseNarrator = new CorpseNarrator();
+
+                // Orientation key (F10): "what's around me" — currently-selectable interactables with bearings, plus any
+                // corpses present (read off the scene's CharacterRoomObjectViews in a death pose).
+                _orientationNarrator = new OrientationNarrator(_speech, _corpseNarrator);
 
                 // Action menu (3D scene): Up/Down select an interactable; Enter activates it through the game's own
                 // targeted-entry path (focus IsTargeted, then Act()/Interact()), so the game owns the interaction and
@@ -391,7 +398,9 @@ namespace NoImNotAHumanAccess
 
             if (Input.GetKeyDown(OrientationKey))
             {
-                _orientationNarrator?.Announce();
+                // In a 2D room photo the player wants ONLY the corpse info — the 3D interactable bearings are
+                // meaningless there. Elsewhere (3D room) F10 reads interactables, and corpses too if any are present.
+                _orientationNarrator?.Announce(corpsesOnly: ctx == InputContextKind.RoomPhoto);
             }
 
 

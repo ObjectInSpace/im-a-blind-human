@@ -269,6 +269,20 @@ namespace NoImNotAHumanAccess.Interop
             return strPtr == IntPtr.Zero ? null : IL2CPP.Il2CppStringToManaged(strPtr);
         }
 
+        /// <summary>Read a <c>string[]</c>-typed instance field by name (e.g. Yarn <c>LocalizedLine.Substitutions</c>),
+        /// marshaling each element to managed. Empty array if the object/class/field is missing or the field is null.</summary>
+        public static string[] ReadStringArrayField(IntPtr objPtr, IntPtr klass, string fieldName)
+        {
+            IntPtr arrayPtr = ReadObjectField(objPtr, klass, fieldName);
+            if (arrayPtr == IntPtr.Zero) return Array.Empty<string>();
+            IntPtr[] elems = ReadObjectArray(arrayPtr);
+            if (elems.Length == 0) return Array.Empty<string>();
+            var result = new string[elems.Length];
+            for (int i = 0; i < elems.Length; i++)
+                result[i] = elems[i] == IntPtr.Zero ? string.Empty : (IL2CPP.Il2CppStringToManaged(elems[i]) ?? string.Empty);
+            return result;
+        }
+
         /// <summary>Invoke a parameterless getter on an object pointer, returning a managed string (or null).</summary>
         public static unsafe string? InvokeStringGetter(IntPtr objPtr, IntPtr method)
         {

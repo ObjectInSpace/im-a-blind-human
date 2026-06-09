@@ -50,4 +50,14 @@
     <Reference Include="Assembly-CSharp"><HintPath>$(Il2CppAsm)\Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
   </ItemGroup>
 
+  <!--
+    Auto-deploy the built mod into the game's Mods folder after every build. Without this the build only
+    produced bin/Release/NoImNotAHumanAccess.dll and the game kept running an older copy — fixes appeared to
+    "not work" because they were never deployed. Skips silently if the game dir isn't present (e.g. CI).
+  -->
+  <Target Name="DeployToGameMods" AfterTargets="Build" Condition="Exists('$(GameDir)\Mods')">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GameDir)\Mods" OverwriteReadOnlyFiles="true" />
+    <Message Importance="high" Text="Deployed $(TargetFileName) -> $(GameDir)\Mods" />
+  </Target>
+
 </Project>

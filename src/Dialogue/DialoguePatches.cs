@@ -70,8 +70,6 @@ namespace NoImNotAHumanAccess.Dialogue
         // Cached raw-IL2CPP handles for reading LocalizedLine (resolved lazily on first dialogue line).
         private static IntPtr _localizedLineClass;
         private static IntPtr _getCharacterName;
-        private static IntPtr _getText;           // LocalizedLine.get_Text -> MarkupParseResult (substitutions applied)
-        private static IntPtr _markupResultGetText; // MarkupParseResult.get_Text -> the final, substituted string
         private static bool _llResolved;
 
         /// <summary>
@@ -258,20 +256,26 @@ namespace NoImNotAHumanAccess.Dialogue
 
                 EnsureLocalizedLineResolved();
 
-                // Prefer the SUBSTITUTED text: LocalizedLine.Text is a MarkupParseResult whose .Text has the line's
-                // {0}/{1} placeholders already replaced with the run-time substitution values (e.g. the player's
-                // randomly-generated phone number). RawText still holds the literal "{0}", so reading it made the
-                // screen reader say "{0}" wherever a substitution appears (e.g. the neighbour-in-the-kitchen line).
-                // Fall back to RawText only if the substituted path yields nothing.
-                string? text = null;
-                if (_getText != IntPtr.Zero && _markupResultGetText != IntPtr.Zero)
+                // The line text is LocalizedLine.RawText, which still holds the literal "{0}"/"{1}" placeholders for any
+                // runtime substitution (the player's randomly-generated phone number, a conflicting guest's name). Yarn
+                // carries those values in LocalizedLine.Substitutions; expand them ourselves (the same {i}->Substitutions[i]
+                // replacement Yarn's Dialogue.ExpandSubstitutions does). The earlier attempt to read the pre-substituted
+                // text via LocalizedLine.Text.Text never worked — MarkupParseResult.Text is a FIELD, not a get_Text
+                // property, so that handle resolved to zero and every line silently fell back to the raw "{0}" string.
+                string? text = _localizedLineClass != IntPtr.Zero
+                    ? Il2CppRaw.ReadStringField(linePtr, _localizedLineClass, "RawText")
+                    : null;
+                if (!string.IsNullOrEmpty(text) && _localizedLineClass != IntPtr.Zero)
                 {
-                    IntPtr markup = Il2CppRaw.InvokeObjectGetter(linePtr, _getText);
-                    if (markup != IntPtr.Zero)
-                        text = Il2CppRaw.InvokeStringGetter(markup, _markupResultGetText);
+                    string[] subs = Il2CppRaw.ReadStringArrayField(linePtr, _localizedLineClass, "Substitutions");
+                    // Diagnostic (temporary): for any line carrying a "{", log the raw text + the substitution values we
+                    // read, so we can confirm whether LocalizedLine.Substitutions actually holds them at RunLine time. If
+                    // subs=[] here for the "{0}" lines, the value comes from a Yarn function/command, not a substitution,
+                    // and we'll need a different source. Remove once the phone-number / kick-out lines verify.
+                    if (text!.IndexOf('{') >= 0)
+                        MelonLogger.Msg($"[DialoguePatches] placeholder line: raw=\"{text}\" subs=[{string.Join(" | ", subs)}] (count={subs.Length}).");
+                    text = ExpandSubstitutions(text!, subs);
                 }
-                if (string.IsNullOrEmpty(text) && _localizedLineClass != IntPtr.Zero)
-                    text = Il2CppRaw.ReadStringField(linePtr, _localizedLineClass, "RawText");
 
                 string? speaker = _getCharacterName != IntPtr.Zero
                     ? Il2CppRaw.InvokeStringGetter(linePtr, _getCharacterName)
@@ -291,16 +295,23 @@ namespace NoImNotAHumanAccess.Dialogue
             _llResolved = true;
             _localizedLineClass = Il2CppRaw.GetClass(YarnAsmFile, YarnRuntimeNs, LocalizedLineName);
             _getCharacterName = Il2CppRaw.GetMethod(_localizedLineClass, "get_CharacterName", 0);
-            _getText = Il2CppRaw.GetMethod(_localizedLineClass, "get_Text", 0);
-            // MarkupParseResult lives in the core YarnSpinner image (Yarn.Markup); its get_Text yields the substituted
-            // string. As an IL2CPP ref-type it returns an object pointer we can read get_Text on. The image name is the
-            // ORIGINAL assembly filename, matching how the LocalizedLine class above is resolved.
-            IntPtr markupClass = Il2CppRaw.GetClass("YarnSpinner.dll", "Yarn.Markup", "MarkupParseResult");
-            _markupResultGetText = Il2CppRaw.GetMethod(markupClass, "get_Text", 0);
             // Diagnostic: confirm the handles resolved (zero here = wrong image/ns/name → silent empty reads).
             MelonLogger.Msg($"[DialoguePatches] LocalizedLine resolved: class={_localizedLineClass != IntPtr.Zero} " +
-                            $"get_CharacterName={_getCharacterName != IntPtr.Zero} get_Text={_getText != IntPtr.Zero} " +
-                            $"markupClass={markupClass != IntPtr.Zero} markupGetText={_markupResultGetText != IntPtr.Zero}");
+                            $"get_CharacterName={_getCharacterName != IntPtr.Zero}");
+        }
+
+        /// <summary>
+        /// Replace each <c>{i}</c> placeholder in <paramref name="text"/> with <paramref name="substitutions"/>[i] — the
+        /// same expansion Yarn's <c>Dialogue.ExpandSubstitutions</c> performs, which the game's line path leaves undone in
+        /// <c>RawText</c> (so the screen reader otherwise says "{0}" for phone numbers, conflicting-guest names, etc.).
+        /// No-op when there are no substitutions; an out-of-range <c>{i}</c> is left as-is rather than throwing.
+        /// </summary>
+        private static string ExpandSubstitutions(string text, string[] substitutions)
+        {
+            if (substitutions.Length == 0 || text.IndexOf('{') < 0) return text;
+            for (int i = 0; i < substitutions.Length; i++)
+                text = text.Replace("{" + i + "}", substitutions[i] ?? string.Empty);
+            return text;
         }
 
         // ---------------- Intro/ending narration: CustomYarnReader.GetNodeContent(string) ----------------
