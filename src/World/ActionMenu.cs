@@ -58,6 +58,13 @@ namespace NoImNotAHumanAccess.World
         // Zenject-free via FindObjectsByType(base) (Unity matches subclasses) and merge them into the same list.
         private IntPtr _interactableClass;  // _Code.Infrastructure.AInteractableObject (abstract base)
         private IntPtr _interactablesProviderClass; // _Code.Infrastructure.InteractablesViewProvider
+        // The cat is a ROAMING, time-gated interactable: its Interact() no-ops when the cat isn't physically present
+        // (it only appears in certain rooms / times of day). It still passes the generic validity filter, so Enter on it
+        // was a silent no-op. We additionally gate the cat entry on a live CatInstance (the actual cat GameObject) being
+        // active in the scene — readable Zenject-free, unlike CatController.IsCatActive (private setter, not on the
+        // ICatController interface). _catInteractableClass identifies the cat among the interactables.
+        private IntPtr _catInteractableClass; // _Code.Infrastructure.CatInteractable
+        private IntPtr _catInstanceClass;     // _Code.…CatInstance (the live cat GameObject; absent ⇒ cat not present)
         private IntPtr _raycastTargetBaseClass, _getRaycastIsLocked;
         // Focus plumbing: set the selected object's raycast target IsTargeted so the game's Act()/Interact() registers it
         // as the current interaction (see GoToSelected). _setIsTargeted is set_IsTargeted(bool) on the ARaycastTarget base.
@@ -365,6 +372,33 @@ namespace NoImNotAHumanAccess.World
         }
 
         /// <summary>
+        /// SAFETY-NET reconcile, called when the input context returns to free-roam (no close-up / dialog overlay). The
+        /// engaged-latch in <see cref="Tick"/> can be MISSED: a close-up that opens and closes between two frames, or an
+        /// alt-tab that interrupts frame timing, means we may never observe the engaged→not-engaged edge, so a forced
+        /// <c>IsTargeted</c> lingers forever — the phone/radio "stacking" the user reported (it worsened with alt-tab).
+        /// Here we don't rely on the latch: if we still hold a forced focus but NOTHING is actually engaged right now,
+        /// the interaction is long over, so clear every target unconditionally and reset. No-op when nothing is forced
+        /// or something is genuinely engaged. Cheap fail-open reads; never throws.
+        /// </summary>
+        public void ReconcileWhenFreeRoam()
+        {
+            if (_focusedView == IntPtr.Zero) return;
+            try
+            {
+                if (IsInWindow() || IsAnyCloseUpActive() || IsAnyEngaged()) return; // still engaged — leave it to Tick
+                ClearAllTargets(IntPtr.Zero);
+                _focusedView = IntPtr.Zero;
+                _focusSeenEngaged = false;
+                MelonLogger.Msg("[ActionMenu] free-roam reconcile cleared a lingering forced target (latch was missed).");
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[ActionMenu] free-roam reconcile threw: {e.Message}");
+                _focusedView = IntPtr.Zero; _focusSeenEngaged = false;
+            }
+        }
+
+        /// <summary>
         /// Whether the player is currently ENGAGED in an interaction — any interactable has <c>IsLooking=true</c> (e.g.
         /// looking through the peephole). In that state the 3D action keys must do NOTHING: you're "inside" something and
         /// must leave it ('q') first; otherwise PgUp/PgDn/Backspace fall through and mislead. Inactive-inclusive scan;
@@ -519,22 +553,44 @@ namespace NoImNotAHumanAccess.World
 
         /// <summary>
         /// Clear <c>IsTargeted</c> on every interactable's raycast target except <paramref name="except"/>'s, enforcing
-        /// the single-focus invariant so the game's Interact (Space) acts on exactly one object. Iterates the provider's
-        /// view array; reads each view's <c>_raycastTarget</c> and sets it false. Never throws.
+        /// the single-focus invariant so the game's Interact (Space) acts on exactly one object. There are TWO separate
+        /// interaction systems and BOTH must be swept: the door/window <c>ActionableObjectsViewProvider</c> AND the
+        /// <c>InteractablesViewProvider</c> (phone/radio/cat/hatch/…). Sweeping only the first left a forced phone/radio
+        /// <c>IsTargeted</c> set when focus moved to another interactable — so the phone fired alongside the radio, and
+        /// later a stray Space hit every still-targeted object (the close-up "stacking" bug). Each system reads the field
+        /// off its OWN owner class (<c>_viewClass</c> vs <c>_interactableClass</c>). Never throws.
         /// </summary>
         private void ClearAllTargets(IntPtr except)
         {
             if (_setIsTargeted == IntPtr.Zero) return;
             try
             {
+                // Door/window views.
                 IntPtr provider = Il2CppRaw.FindObjectIncludingInactive(_viewProviderClass);
-                if (provider == IntPtr.Zero) return;
-                IntPtr[] views = Il2CppRaw.ReadObjectArray(Il2CppRaw.InvokeObjectGetter(provider, _getViews));
-                foreach (IntPtr v in views)
+                if (provider != IntPtr.Zero)
                 {
-                    if (v == IntPtr.Zero || v == except) continue;
-                    IntPtr rt = Il2CppRaw.ReadObjectField(v, _viewClass, "_raycastTarget");
-                    if (rt != IntPtr.Zero) Il2CppRaw.InvokeVoidWithBool(rt, _setIsTargeted, false);
+                    IntPtr[] views = Il2CppRaw.ReadObjectArray(Il2CppRaw.InvokeObjectGetter(provider, _getViews));
+                    foreach (IntPtr v in views)
+                    {
+                        if (v == IntPtr.Zero || v == except) continue;
+                        IntPtr rt = Il2CppRaw.ReadObjectField(v, _viewClass, "_raycastTarget");
+                        if (rt != IntPtr.Zero) Il2CppRaw.InvokeVoidWithBool(rt, _setIsTargeted, false);
+                    }
+                }
+
+                // The SECOND system (phone/radio/cat/hatch/…). Same field name, different owner class.
+                if (_interactableClass != IntPtr.Zero && _interactablesProviderClass != IntPtr.Zero)
+                {
+                    IntPtr ip = Il2CppRaw.FindObjectIncludingInactive(_interactablesProviderClass);
+                    if (ip != IntPtr.Zero)
+                    {
+                        foreach (IntPtr o in EnumerateProviderInteractables(ip))
+                        {
+                            if (o == IntPtr.Zero || o == except) continue;
+                            IntPtr rt = Il2CppRaw.ReadObjectField(o, _interactableClass, "_raycastTarget");
+                            if (rt != IntPtr.Zero) Il2CppRaw.InvokeVoidWithBool(rt, _setIsTargeted, false);
+                        }
+                    }
                 }
             }
             catch (Exception e)
@@ -676,10 +732,51 @@ namespace NoImNotAHumanAccess.World
             bool soft = InvokeConcreteBool(o, "get_SoftConditions", fallback: false);
 
             bool valid = active && isEnabled && lockCount == 0 && raycast != IntPtr.Zero && !raycastLocked && hard && soft;
+
+            // CAT presence gate: the cat passes every generic check above even when it isn't physically in the room, but
+            // its Interact() no-ops unless the cat is actually present — so Enter on it was a silent no-op. Additionally
+            // require a live CatInstance in the scene before listing the cat, so it only appears when petting it will do
+            // something. (Other interactables are unaffected — this only narrows the one object whose class is CatInteractable.)
+            if (valid && _catInteractableClass != IntPtr.Zero && IsCat(o) && !IsCatPresent())
+            {
+                MelonLogger.Msg($"[ActionMenu]   avail '{name}': gated out — no active CatInstance in scene (cat not present).");
+                return false;
+            }
+
             MelonLogger.Msg($"[ActionMenu]   avail '{name}': active={active} _isEnabled={isEnabled} " +
                             $"_lockCount={lockCount} raycast={raycast != IntPtr.Zero} raycastLocked={raycastLocked} " +
                             $"hard={hard} soft={soft} valid={valid}.");
             return valid;
+        }
+
+        /// <summary>True if <paramref name="o"/>'s runtime class is <c>CatInteractable</c> (matched by class pointer, so
+        /// only the cat triggers the presence gate, not other interactables).</summary>
+        private bool IsCat(IntPtr o)
+        {
+            if (o == IntPtr.Zero || _catInteractableClass == IntPtr.Zero) return false;
+            return IL2CPP.il2cpp_object_get_class(o) == _catInteractableClass;
+        }
+
+        /// <summary>
+        /// Whether the live cat GameObject (<c>CatInstance</c>) is present and active in the scene. The cat roams by
+        /// room/time of day; when it isn't here there's no active CatInstance, and the cat's Interact() does nothing.
+        /// Read Zenject-free via inactive-inclusive find + active-in-hierarchy (CatController.IsCatActive is unusable —
+        /// private setter, off-interface, Zenject-only). FAILS OPEN: if the class can't be resolved we return true so a
+        /// resolve glitch never permanently hides the cat. Never throws.
+        /// </summary>
+        private bool IsCatPresent()
+        {
+            try
+            {
+                if (_catInstanceClass == IntPtr.Zero) return true; // can't tell ⇒ don't hide (fail open)
+                IntPtr inst = Il2CppRaw.FindObjectIncludingInactive(_catInstanceClass);
+                return inst != IntPtr.Zero && Il2CppRaw.GetComponentGameObjectActive(inst);
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[ActionMenu] IsCatPresent threw: {e.Message}; treating cat as present.");
+                return true; // fail open
+            }
         }
 
         private bool IsRaycastTargetLocked(IntPtr raycast)
@@ -775,6 +872,14 @@ namespace NoImNotAHumanAccess.World
                 }
 
                 _interactablesProviderClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure", "InteractablesViewProvider");
+
+                // Cat presence gate: CatInteractable (the interactable) lives in _Code.Infrastructure; the live cat
+                // GameObject CatInstance lives in _Code.Infrastructure._NINAH__Cat. The cat is only interactable when an
+                // active CatInstance is in the scene (it roams by room/time of day), so we gate the cat entry on that —
+                // CatController.IsCatActive isn't usable (private setter, not on the ICatController interface, Zenject-only).
+                _catInteractableClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure", "CatInteractable");
+                _catInstanceClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure._NINAH__Cat", "CatInstance");
+
                 _raycastTargetBaseClass = Il2CppRaw.GetClass(GameAsm, "_Scripts.Raycast", "ARaycastTarget");
                 if (_raycastTargetBaseClass != IntPtr.Zero)
                 {
