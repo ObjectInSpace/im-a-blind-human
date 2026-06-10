@@ -120,5 +120,28 @@ namespace NoImNotAHumanAccess.Dialogue
                 MelonLogger.Warning($"[DialogueNarrator] OnLine threw: {e.Message}");
             }
         }
+
+        /// <summary>
+        /// Re-speak the most recent subtitle/dialogue line (bound to a hotkey). Speaks the cleaned line text as it
+        /// was last narrated — without the one-shot inspection-test prefix, which is consumed on first read and isn't
+        /// part of the line itself. Says nothing (a short "no line yet" cue) when nothing has been spoken this session.
+        /// Interrupts like a normal line so a deliberate repeat cuts off whatever is currently being read.
+        /// </summary>
+        public void RepeatLast()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(_lastSpoken))
+                {
+                    _speech.Speak("No line to repeat.", interrupt: true);
+                    return;
+                }
+                _speech.Speak(_lastSpoken, interrupt: true);
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[DialogueNarrator] RepeatLast threw: {e.Message}");
+            }
+        }
     }
 }

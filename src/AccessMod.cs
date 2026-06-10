@@ -54,6 +54,10 @@ namespace NoImNotAHumanAccess
         // docs/input-and-keyboard.md + memory project-nimnah-arrows-for-stepping-feasibility.
         private const KeyCode ControlsKey = KeyCode.F7;
         private const KeyCode RepeatKey = KeyCode.F8;
+        // Backtick/grave (` , left of the 1 key) = re-speak the most recent subtitle/dialogue line. Unbound by the
+        // game (not in the PlayerInputActions set above) and outside the F7–F11 cluster, so it's free everywhere; a
+        // deliberate repeat is useful in any context, so it's checked unconditionally (not behind the ctx guards).
+        private const KeyCode RepeatLineKey = KeyCode.BackQuote;
         private const KeyCode StatusKey = KeyCode.F9;
         private const KeyCode OrientationKey = KeyCode.F10;
         // F11 = toggle the JAWS arrow relay. OFF BY DEFAULT — NVDA users already have working arrows + speech
@@ -221,6 +225,13 @@ namespace NoImNotAHumanAccess
             if (Input.GetKeyDown(ControlsKey))
             {
                 _controlsNarrator?.Repeat();
+            }
+
+            // Backtick (`) = re-speak the most recent subtitle/dialogue line. Context-independent: a deliberate repeat
+            // is useful anywhere (mid-conversation, a popup you missed, narration), and the key collides with nothing.
+            if (Input.GetKeyDown(RepeatLineKey))
+            {
+                _dialogueNarrator?.RepeatLast();
             }
 
             if (Input.GetKeyDown(RepeatKey))
