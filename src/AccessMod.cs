@@ -1,13 +1,12 @@
 using System;
 using MelonLoader;
 using NoImNotAHumanAccess.Dialogue;
-using NoImNotAHumanAccess.InputShim;
 using NoImNotAHumanAccess.Menus;
 using NoImNotAHumanAccess.Speech;
 using NoImNotAHumanAccess.World;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(NoImNotAHumanAccess.AccessMod), "I'm a Blind Human", "0.8.2", "objectinspace")]
+[assembly: MelonInfo(typeof(NoImNotAHumanAccess.AccessMod), "I'm a Blind Human", "0.9.0", "objectinspace")]
 [assembly: MelonGame("Trioskaz", "NoImNotAHuman")]
 
 namespace NoImNotAHumanAccess
@@ -40,7 +39,6 @@ namespace NoImNotAHumanAccess
         private CloseUpNarrator? _closeUpNarrator;
         private ControlsNarrator? _controlsNarrator;
         private SignNarrator? _signNarrator;
-        private JawsArrowShim? _jawsArrowShim;
 
         // F7 = repeat the current context's control row ("what can I do here"); F8 = manual repeat/test trigger;
         // F9 = status readout (day/phase/energy/items); F10 = "where am I" orientation. The game binds NO F-key.
@@ -50,22 +48,16 @@ namespace NoImNotAHumanAccess
         // are IDLE in the four contexts the mod drives (RoomPhoto/Fridge/Radio/ThreeD) — game code never polls raw arrow
         // keys (grep-confirmed). So the mod claims arrows + Enter in EXACTLY those four contexts and NEVER in MainMenu/
         // Pause/dialogue (where the game's own Navigate uses them); the ctx guards in OnUpdate enforce that. The F-keys
-        // (F7–F11) are bound by nothing. Full action→key+gamepad map + the arrow-safety reasoning:
+        // (F7–F10) are bound by nothing. Full action→key+gamepad map + the arrow-safety reasoning:
         // docs/input-and-keyboard.md + memory project-nimnah-arrows-for-stepping-feasibility.
         private const KeyCode ControlsKey = KeyCode.F7;
         private const KeyCode RepeatKey = KeyCode.F8;
         // Backtick/grave (` , left of the 1 key) = re-speak the most recent subtitle/dialogue line. Unbound by the
-        // game (not in the PlayerInputActions set above) and outside the F7–F11 cluster, so it's free everywhere; a
+        // game (not in the PlayerInputActions set above) and outside the F7–F10 cluster, so it's free everywhere; a
         // deliberate repeat is useful in any context, so it's checked unconditionally (not behind the ctx guards).
         private const KeyCode RepeatLineKey = KeyCode.BackQuote;
         private const KeyCode StatusKey = KeyCode.F9;
         private const KeyCode OrientationKey = KeyCode.F10;
-        // F11 = toggle the JAWS arrow relay. OFF BY DEFAULT — NVDA users already have working arrows + speech
-        // interrupt, so the hook is never installed for them. A JAWS user presses F11 to turn the arrows ON: the relay
-        // makes them navigate menus/dialogue, at the cost that JAWS can't interrupt its own speech (Ctrl / fast
-        // next-arrow) while on, because the relay must re-inject the keys (Unity only reads raw input). F11 again fully
-        // removes the hook and restores JAWS's normal interrupt. See jaws/README.md.
-        private const KeyCode ArrowShimToggleKey = KeyCode.F11;
 
         // ARROW-KEY STEPPING (user 2026-06-03, replacing the old PageUp/PageDown/Backspace scheme). The rip proved this
         // safe: game code NEVER polls raw arrow keys — arrows reach the game ONLY via the Input System `Navigate` action
@@ -103,13 +95,14 @@ namespace NoImNotAHumanAccess
             LoggerInstance.Msg("Initializing native speech channel...");
             try
             {
-                // Unity AssistiveSupport — the proven channel for NVDA/Narrator/JAWS. (A self-raised UIA-notification
-                // channel was tried to give JAWS interrupt via NotificationProcessing_MostRecent, but it reached NO
-                // screen reader: this app's window UIA provider belongs to Unity's native engine, and a standalone
-                // provider we raise from isn't the one the reader connects to. Unity exposes no priority-aware
-                // announcement and no borrowable provider, so there is no cheap interrupt path. Interrupt now belongs
-                // to the deferred AccessibilityHierarchy work — see memory project-nimnah-native-accessibility-hierarchy.)
-                _speech = new NativeAnnouncer();
+                // UnityAccessibilityLib (UniversalSpeech) — speaks to NVDA/JAWS/etc. DIRECTLY, with SAPI fallback.
+                // Replaced NativeAnnouncer (Unity AssistiveSupport): that routed through SendAnnouncementNotification,
+                // a low-priority UIA notification the reader services on a slow poll — measured 0 ms on our side but
+                // multi-second to reach the reader. UniversalSpeech is immediate and supports real interrupt (Stop +
+                // Announce). The in-engine fix (focus via AccessibilityHierarchy) is impossible here: the game's IL2CPP
+                // build stripped AccessibilityNode/Hierarchy out of GameAssembly.dll entirely (see project memory).
+                // Requires UniversalSpeech.dll (64-bit) in the game root — the build deploys it.
+                _speech = new UalAnnouncer();
                 LoggerInstance.Msg($"Speech channel: {_speech.Name}, available={_speech.IsAvailable}.");
                 _menuNarrator = new MenuNarrator(_speech);
 
@@ -196,12 +189,6 @@ namespace NoImNotAHumanAccess
 
                 // Classifies the context for per-list selection routing (main menu / 2D photo / fridge / radio / 3D).
                 _inputContext = new InputContext(_twoDProbe);
-
-                // JAWS arrow relay: stops JAWS swallowing the arrow keys so the game's OWN navigation receives them
-                // in menus/dialogue (NVDA already passes them; JAWS does not). Pure relay — does not interpret arrows.
-                // OFF by default: NVDA users already have working arrows + speech interrupt and need nothing here, so
-                // the hook isn't even installed until a JAWS user opts in with F11 (accepting the interrupt tradeoff).
-                _jawsArrowShim = new JawsArrowShim();
             }
             catch (Exception e)
             {
@@ -413,25 +400,6 @@ namespace NoImNotAHumanAccess
                 // meaningless there. Elsewhere (3D room) F10 reads interactables, and corpses too if any are present.
                 _orientationNarrator?.Announce(corpsesOnly: ctx == InputContextKind.RoomPhoto);
             }
-
-
-            if (Input.GetKeyDown(ArrowShimToggleKey) && _jawsArrowShim != null)
-            {
-                bool on = !_jawsArrowShim.Enabled;
-                _jawsArrowShim.SetEnabled(on);
-                LoggerInstance.Msg($"[F11] arrow relay {(on ? "ON" : "OFF")}.");
-                // Off by default (NVDA users need nothing). A JAWS user turns it ON to make the arrows navigate,
-                // accepting that JAWS can't interrupt its own speech while on (the relay re-injects keys, which
-                // desyncs JAWS's keyboard processing; Unity only reads raw input). Spell the tradeoff out by ear.
-                Speak(on
-                    ? "Arrow keys on for JAWS. Screen reader interrupt is limited while this is on."
-                    : "Arrow keys off. Screen reader interrupt restored.");
-            }
-        }
-
-        public override void OnDeinitializeMelon()
-        {
-            _jawsArrowShim?.Dispose();
         }
 
         private void Speak(string text)

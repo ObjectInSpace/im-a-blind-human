@@ -39,6 +39,8 @@
     <Reference Include="UnityEngine.CoreModule"><HintPath>$(Il2CppAsm)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.AccessibilityModule"><HintPath>$(Il2CppAsm)\UnityEngine.AccessibilityModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.InputLegacyModule"><HintPath>$(Il2CppAsm)\UnityEngine.InputLegacyModule.dll</HintPath><Private>false</Private></Reference>
+    <!-- New Input System: the game reads Interact through it, so we inject a synthetic Space via QueueStateEvent. -->
+    <Reference Include="Unity.InputSystem"><HintPath>$(Il2CppAsm)\Unity.InputSystem.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.UIModule"><HintPath>$(Il2CppAsm)\UnityEngine.UIModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.UI"><HintPath>$(Il2CppAsm)\UnityEngine.UI.dll</HintPath><Private>false</Private></Reference>
 
@@ -50,6 +52,13 @@
     <Reference Include="Assembly-CSharp"><HintPath>$(Il2CppAsm)\Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Copy-local so UnityAccessibilityLib.dll lands in bin/ and the deploy target can ship it into Mods/ next to
+         us — MelonLoader resolves it from there. Without this, a library PackageReference isn't copied to output and
+         SpeechManager would throw FileNotFoundException at load. -->
+    <PackageReference Include="UnityAccessibilityLib" Version="2.0.0" Private="true" />
+  </ItemGroup>
+
   <!--
     Auto-deploy the built mod into the game's Mods folder after every build. Without this the build only
     produced bin/Release/NoImNotAHumanAccess.dll and the game kept running an older copy — fixes appeared to
@@ -57,7 +66,37 @@
   -->
   <Target Name="DeployToGameMods" AfterTargets="Build" Condition="Exists('$(GameDir)\Mods')">
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GameDir)\Mods" OverwriteReadOnlyFiles="true" />
-    <Message Importance="high" Text="Deployed $(TargetFileName) -> $(GameDir)\Mods" />
+    <Message Importance="high" Text="Deployed $(TargetFileName) -&gt; $(GameDir)\Mods" />
+
+    <!-- The managed UnityAccessibilityLib.dll (NuGet) must sit in Mods next to us or MelonLoader can't resolve it.
+         A library PackageReference is NOT copied to the output dir, so we pull it straight from the resolved
+         reference set (@(ReferenceCopyLocalPaths) / @(ReferencePathWithRefAssemblies)) by filename — robust against
+         the NuGet cache location. Fails the build loudly if it can't be found, rather than silently shipping a mod
+         that throws FileNotFoundException at load. -->
+    <ItemGroup>
+      <UalManagedDll Include="@(ReferenceCopyLocalPaths);@(ReferencePathWithRefAssemblies);@(ReferencePath)"
+                     Condition="'%(Filename)' == 'UnityAccessibilityLib'" />
+    </ItemGroup>
+    <Error Text="Could not locate UnityAccessibilityLib.dll among resolved references; cannot deploy it to Mods."
+           Condition="'@(UalManagedDll)' == ''" />
+    <Copy SourceFiles="@(UalManagedDll)" DestinationFolder="$(GameDir)\Mods" OverwriteReadOnlyFiles="true" />
+    <Message Importance="high" Text="Deployed UnityAccessibilityLib.dll (@(UalManagedDll)) -&gt; $(GameDir)\Mods" />
+
+    <!-- The native UniversalSpeech x64 DLLs must sit in the GAME ROOT (next to the exe), not Mods — UniversalSpeech
+         is P/Invoked by bare name, and it in turn dlopens its screen-reader client DLLs (nvdaControllerClient.dll for
+         NVDA, ZDSRAPI.dll for ZhengDu) from the same directory, so the WHOLE SET must be co-located or NVDA output
+         silently degrades to SAPI. JAWS 10+ is reached via in-proc FSAPI (no client DLL needed). The 64-bit build is
+         from http://vrac.quentinc.net/UniversalSpeech.zip (bin/64/) — NOT on NuGet or GitHub releases, so it's
+         vendored in libs/. Guarded so the build still succeeds before it's placed, but warns loudly. -->
+    <ItemGroup>
+      <NativeSpeechDll Include="$(MSBuildProjectDirectory)\libs\*.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(NativeSpeechDll)" DestinationFolder="$(GameDir)" OverwriteReadOnlyFiles="true"
+          Condition="'@(NativeSpeechDll)' != ''" />
+    <Message Importance="high" Text="Deployed native speech DLLs (@(NativeSpeechDll->'%(Filename)%(Extension)')) -&gt; $(GameDir)"
+             Condition="'@(NativeSpeechDll)' != ''" />
+    <Warning Text="libs\*.dll NOT FOUND — speech will be silent/SAPI-only. Place the x64 UniversalSpeech.dll + nvdaControllerClient.dll (from http://vrac.quentinc.net/UniversalSpeech.zip, bin/64) in libs\."
+             Condition="'@(NativeSpeechDll)' == ''" />
   </Target>
 
 </Project>

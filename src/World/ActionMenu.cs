@@ -87,6 +87,19 @@ namespace NoImNotAHumanAccess.World
         // engaged" as a leave AFTER this, so it can't clear our focus during the open ramp (before the flag flips true).
         private bool _focusSeenEngaged;
 
+        // UNIFIED ACTIVATION STATE (walk → aim → synthesize the game's interact key). Used for EVERY 3D object so the
+        // game opens/closes each interaction through its own input flow — the native back-out then always works, which is
+        // what avoids the cold-invoke side-door softlocks. Started by GoToSelected, driven each frame by UpdateActivation.
+        private IntPtr _activateObj;        // the object we're walking to + activating (zero = none)
+        private int _activateFramesLeft;    // frames remaining in the walk-then-press window (timeout guard)
+        private bool _interactPressed;      // one-shot: synthesize the interact key once we're in range, not per-frame
+        private int _inRangeSettleFrames;   // frames to keep aiming after arrival before pressing, so the game's raycast locks the object first
+        private int _interactReleaseIn;     // >0 ⇒ frames until we release the held injected Space (set by PressInteractKey)
+        // Player-service plumbing for the walk (resolved Zenject-free like OrientationNarrator).
+        private IntPtr _playerService, _psMoveXZ, _psGetPosition;
+        private const float InteractRangeM = 2.0f;   // how close we must get before the interact key takes
+        private const float WalkSpeed = 3.0f;        // MoveXZ speed
+
         public ActionMenu(ISpeechOutput speech) { _speech = speech; }
 
         /// <summary>
@@ -121,16 +134,18 @@ namespace NoImNotAHumanAccess.World
         }
 
         /// <summary>
-        /// Activate (Enter) the SELECTED interactable through the GAME'S OWN targeted-entry path — the path the game uses
-        /// for EVERYTHING (doors, blinds, curtains, peephole, AND the radio/phone/cat interactables). Both interaction
-        /// systems (<c>AActionableObjectView</c> and <c>AInteractableObject</c>) carry a raycast target + an update pump
-        /// and open only while their target is FOCUSED (<c>IsTargeted</c>). So we (1) FOCUS the object's raycast target
-        /// — single-focus, clearing the others — exactly as the game's own ray would when you look at it, then (2) aim
-        /// the camera at it so the game's state agrees, then (3) invoke its action (<c>Act()</c> for a view,
-        /// <c>Interact()</c> for an interactable). Because the open now happens WHILE the object is the registered
-        /// current target, the game owns the interaction and its OWN back-out ('q') can close it — which the previous
-        /// cold-<c>Act()</c> (no IsTargeted) could not, the blind softlock. The mod still drives it all (no WASD/Space).
-        /// Safe to call when nothing's selected (announces).
+        /// Activate (Enter) the SELECTED interactable by reproducing the GAME'S OWN interaction flow: walk to it, aim at
+        /// it, then inject the game's real interact key (Space) through the Input System. The mod NO LONGER cold-invokes
+        /// <c>Act()</c>/<c>Interact()</c> — those entered the interaction through a side door the game's own leave ('q')
+        /// couldn't always unwind (the blind/window softlocks). Driving the real interact key means the game opens AND
+        /// closes everything through its own state machine, so its native back-out always works — fewer softlocks by
+        /// construction. The flow (kicked off here, completed in <see cref="UpdateActivation"/> over the next frames):
+        ///   1. <c>MoveXZ</c> the player toward the object (harmless if already close; required when far — e.g. the cat,
+        ///      which has no standing-pos auto-walk and whose interaction needs you physically in range).
+        ///   2. Once within range, aim so the game's raycaster locks the object, settle a few frames, then inject a Space
+        ///      press (held briefly so the game's own update consumes the edge — see <see cref="PressInteractKey"/>).
+        /// Focus (<c>IsTargeted</c>) is still set so the object is the registered target while the key fires; the focus
+        /// reconcile clears it after a native leave. Safe to call when nothing's selected (announces).
         /// </summary>
         public void GoToSelected()
         {
@@ -161,53 +176,39 @@ namespace NoImNotAHumanAccess.World
                     return;
                 }
 
-                // (1) FOCUS the object's raycast target — IsTargeted=true on it, false on all others. This is the gate the
-                // game's action reads; setting it ourselves makes the upcoming Act()/Interact() register as the CURRENT
-                // targeted interaction (so the game's own back-out can later close it). ownerClass differs per system.
+                // UNIFIED ACTIVATION — walk → aim → synthesize the game's own interact key, for EVERY 3D object (doors,
+                // blinds, curtains, peephole, fridge, radio, phone, cat, …). We deliberately DON'T cold-invoke Act()/
+                // Interact() anymore: those entered the interaction through a side door the game's own leave ('q') couldn't
+                // always unwind (the blind/window softlocks). Pressing the game's REAL interact key instead means the game
+                // opens AND closes everything through its own state machine, so its native back-out always works — fewer
+                // softlocks by construction (user's call). The flow, all driven from Tick (UpdateActivation):
+                //   1. MoveXZ the player toward the object (harmless if already close; required when far — e.g. the cat,
+                //      which has no standing-pos auto-walk. Views DO auto-walk to their standing pos when the native key
+                //      fires, but walking first does no harm and gets non-view objects in range).
+                //   2. Once within range, aim at it (so the game's raycaster locks it / shows its hint), settle a few
+                //      frames, then synthesize a Space press — the game's Interact action (bound to Space/E/LMB).
+                // Focus is still set so the object is the registered target while the key fires; reconcile clears it after.
                 IntPtr ownerClass = _selectedIsInteractable ? _interactableClass : _viewClass;
                 FocusTarget(_selected, ownerClass);
                 _focusedView = _selected; // remember what WE forced focus on, so Tick can clear it after a native leave
 
-                // (2) AIM the camera at it so the game's own raycaster/state agrees with the focus we forced (keeps the
-                // target from flickering off the next frame). Best-effort; the forced IsTargeted above is the real gate.
-                AimCameraAt(_selected);
-
-                // (3) INVOKE the action while targeted.
-                //  • INTERACTABLES (radio/phone/cat/…): Interact() is `public abstract` on AInteractableObject, so calling
-                //    it on the BASE throws EntryPointNotFound ("abstract method"). Bind to the CONCRETE override via the
-                //    object's runtime class (il2cpp_object_get_class) — this was the old "Interact threw", not a softlock.
-                //  • VIEWS (doors/blinds/curtains/peephole): the private Act() toggle resolved on the view base.
-                if (_selectedIsInteractable)
+                if (_playerService != IntPtr.Zero && _psMoveXZ != IntPtr.Zero)
                 {
-                    IntPtr concrete = IL2CPP.il2cpp_object_get_class(_selected);
-                    IntPtr interact = concrete != IntPtr.Zero ? Il2CppRaw.GetMethod(concrete, "Interact", 0) : IntPtr.Zero;
-                    if (interact == IntPtr.Zero)
-                    {
-                        MelonLogger.Warning($"[ActionMenu] '{name}': couldn't resolve concrete Interact().");
-                        _speech.Speak($"Can't use {name}.", interrupt: true);
-                        ClearAllTargets(IntPtr.Zero); // unfocus — we're not entering after all
-                        _focusedView = IntPtr.Zero;
-                        return;
-                    }
-                    _speech.Speak($"Using {name}.", interrupt: true);
-                    bool ran = Il2CppRaw.TryInvokeVoid(_selected, interact, out string? err);
-                    if (ran) MelonLogger.Msg($"[ActionMenu] activated interactable '{name}' via concrete Interact() (targeted).");
-                    else MelonLogger.Warning($"[ActionMenu] interactable '{name}' Interact() threw:\n{err}");
-                    return;
+                    Vector3 targetPos = Il2CppRaw.GetComponentWorldPosition(_selected);
+                    Il2CppRaw.InvokeWithVector3Float(_playerService, _psMoveXZ, targetPos, WalkSpeed);
+                    MelonLogger.Msg($"[ActionMenu] '{name}': walking to {targetPos} via MoveXZ, will synthesize interact when in range.");
+                }
+                else
+                {
+                    // No walk available — still aim + press from the current spot (works for already-close objects).
+                    MelonLogger.Warning("[ActionMenu] player service / MoveXZ unresolved — aiming + pressing from current position.");
                 }
 
-                if (_act != IntPtr.Zero)
-                {
-                    _speech.Speak($"Using {name}.", interrupt: true);
-                    bool ok = Il2CppRaw.InvokeVoid(_selected, _act);
-                    MelonLogger.Msg($"[ActionMenu] activated view '{name}' via Act() (targeted, threw={!ok}).");
-                    return;
-                }
-
-                // No Act() resolved (shouldn't happen for a view) — leave it focused + aimed and hand off to the game's
-                // own Space as a last resort.
-                _speech.Speak($"Facing {name}. Press space to use it.", interrupt: true);
-                MelonLogger.Msg($"[ActionMenu] aim-only '{name}' — no Act() resolved.");
+                _activateObj = _selected;
+                _activateFramesLeft = 240; // ~4s window to reach + engage, then give up
+                _interactPressed = false;
+                _inRangeSettleFrames = 0;
+                _speech.Speak($"Using {name}.", interrupt: true);
             }
             catch (Exception e)
             {
@@ -347,6 +348,17 @@ namespace NoImNotAHumanAccess.World
         /// </summary>
         public void Tick()
         {
+            // Release the held injected Space a few frames after the press (runs independently of the activation window,
+            // since the menu may already have opened and ended activation). Keeps the press an edge the game can consume.
+            if (_interactReleaseIn > 0)
+            {
+                _interactReleaseIn--;
+                if (_interactReleaseIn == 0)
+                    ReleaseInteractKey();
+            }
+
+            UpdateActivation();
+
             if (_focusedView == IntPtr.Zero) return; // nothing we forced focus on to reconcile
             try
             {
@@ -395,6 +407,103 @@ namespace NoImNotAHumanAccess.World
             {
                 MelonLogger.Warning($"[ActionMenu] free-roam reconcile threw: {e.Message}");
                 _focusedView = IntPtr.Zero; _focusSeenEngaged = false;
+            }
+        }
+
+        // Per-frame driver for the unified walk → aim → inject-interact activation (any 3D object). Watches the distance
+        // after GoToSelected kicked off the walk; once in range it aims, settles a few frames so the game's raycast locks
+        // the object, then injects ONE interact keypress (Space). Stops on engage (something opened) or timeout. The game
+        // then owns the interaction, so its native 'q'/back-out closes it — no cold-invoke side door.
+        private void UpdateActivation()
+        {
+            if (_activateFramesLeft <= 0 || _activateObj == IntPtr.Zero) return;
+
+            // Something engaged (a window/close-up/look opened) → the interact landed; we're done.
+            if (IsInWindow() || IsAnyCloseUpActive() || IsAnyEngaged())
+            {
+                EndActivation();
+                return;
+            }
+
+            Vector3 playerPos = _playerService != IntPtr.Zero && _psGetPosition != IntPtr.Zero
+                ? Il2CppRaw.InvokeVector3Getter(_playerService, _psGetPosition) : Vector3.zero;
+            Vector3 objPos = Il2CppRaw.GetComponentWorldPosition(_activateObj);
+            float dx = playerPos.x - objPos.x, dz = playerPos.z - objPos.z;
+            float dist2 = dx * dx + dz * dz;
+            bool inRange = dist2 <= (InteractRangeM * InteractRangeM);
+
+            if (inRange && !_interactPressed)
+            {
+                // Aim each frame so the game's raycaster locks the object (and shows its hint). Settle a few frames before
+                // injecting so the raycast registers the new aim, else the synthetic key fires before the object is the
+                // game's target and is wasted.
+                AimCameraAt(_activateObj);
+                FocusTarget(_activateObj, _selectedIsInteractable ? _interactableClass : _viewClass);
+                _inRangeSettleFrames++;
+                if (_inRangeSettleFrames >= 4)
+                {
+                    PressInteractKey();
+                    _interactPressed = true;
+                    MelonLogger.Msg("[ActionMenu] in range, aimed + settled, injected interact (Space).");
+                }
+            }
+
+            _activateFramesLeft--;
+            if (_activateFramesLeft == 0)
+            {
+                MelonLogger.Msg("[ActionMenu] activation timed out before engaging.");
+                EndActivation();
+            }
+        }
+
+        // Clears the unified activation state.
+        private void EndActivation()
+        {
+            _activateFramesLeft = 0;
+            _activateObj = IntPtr.Zero;
+            _interactPressed = false;
+            _inRangeSettleFrames = 0;
+        }
+
+        // Inject Space DOWN (held). We deliberately DON'T release in the same call: an immediate release + a second
+        // InputSystem.Update() consumes the press edge before the GAME'S own update reads it (InteractTriggered would be
+        // true only in the gap between our two Updates — the game saw nothing). So we queue the press and let the game's
+        // normal update consume the edge over the next frame(s), then release later via ReleaseInteractKey. We also don't
+        // force an InputSystem.Update() here — the game pumps the Input System itself each frame; queuing is enough.
+        private void PressInteractKey()
+        {
+            try
+            {
+                var kb = UnityEngine.InputSystem.Keyboard.current;
+                if (kb == null)
+                {
+                    MelonLogger.Warning("[ActionMenu] PressInteractKey: Keyboard.current is null — can't inject interact.");
+                    return;
+                }
+                var down = new UnityEngine.InputSystem.LowLevel.KeyboardState();
+                down.Set(UnityEngine.InputSystem.Key.Space, true);
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(kb, down, -1.0);
+                _interactReleaseIn = 3; // release ~3 frames later so the game's update sees the held press as an edge
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[ActionMenu] PressInteractKey threw: {e.Message}");
+            }
+        }
+
+        // Release the injected Space (empty keyboard state). Called from Tick a few frames after the press.
+        private void ReleaseInteractKey()
+        {
+            try
+            {
+                var kb = UnityEngine.InputSystem.Keyboard.current;
+                if (kb == null) return;
+                var up = new UnityEngine.InputSystem.LowLevel.KeyboardState();
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(kb, up, -1.0);
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[ActionMenu] ReleaseInteractKey threw: {e.Message}");
             }
         }
 
@@ -879,6 +988,15 @@ namespace NoImNotAHumanAccess.World
                 // CatController.IsCatActive isn't usable (private setter, not on the ICatController interface, Zenject-only).
                 _catInteractableClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure", "CatInteractable");
                 _catInstanceClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure._NINAH__Cat", "CatInstance");
+
+                // Player service for walking to the cat (the cat has no standing-pos auto-walk, so the mod walks it).
+                _playerService = ZenjectResolver.Resolve("_Code.Infrastructure.Player", "IPlayerService");
+                if (_playerService != IntPtr.Zero)
+                {
+                    IntPtr psClass = IL2CPP.il2cpp_object_get_class(_playerService);
+                    _psMoveXZ = Il2CppRaw.GetMethod(psClass, "MoveXZ", 2);
+                    _psGetPosition = Il2CppRaw.GetMethod(psClass, "get_Position", 0);
+                }
 
                 _raycastTargetBaseClass = Il2CppRaw.GetClass(GameAsm, "_Scripts.Raycast", "ARaycastTarget");
                 if (_raycastTargetBaseClass != IntPtr.Zero)
