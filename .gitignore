@@ -5,3 +5,13 @@ artifacts/
 .vs/
 *.lscache
 decompiled/
+tools/visitor-image-describer/.venv/
+tools/visitor-image-describer/work/
+
+# Build/staging + python cache artifacts
+release/stage/
+__pycache__/
+*.pyc
+
+# Build output: packaged release zips (regenerable via release/pack.ps1)
+release/*.zip

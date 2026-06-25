@@ -181,19 +181,62 @@ namespace NoImNotAHumanAccess.World
         }
 
         /// <summary>
-        /// Build the description for this (sign, variant). Armpit and ear first try a TRAIT read from the shown sprite's
-        /// asset name (<see cref="TraitFromSpriteName"/>); on a miss, and for all other signs, fall back to the neutral
-        /// round-robin prompt pool. <paramref name="characterPtr"/> is needed only for the sprite-name read.
+        /// Build the description for this (sign, variant). The generated catalog is keyed by the exact sprite or eye
+        /// composite shown by the game. If no catalog entry matches, preserve the former name-derived armpit/ear
+        /// behavior and finally fall back to a neutral prompt rather than inventing a trait.
         /// </summary>
         private string NextDescription(IntPtr characterPtr, int sign, bool isImposter)
         {
+            string? signature = ShownSignSpriteSignature(characterPtr, sign, isImposter);
+            if (SignDescriptionCatalog.TryGet(sign, isImposter, signature, out string catalogDescription))
+                return catalogDescription;
+
             if (sign == SignArmpit || sign == SignEar)
             {
-                string? spriteName = ShownSignSpriteName(characterPtr, sign, isImposter);
-                string trait = TraitFromSpriteName(sign, spriteName);
+                string trait = TraitFromSpriteName(sign, signature);
                 if (trait.Length > 0) return trait;
             }
             return NextPrompt(sign, isImposter);
+        }
+
+        /// <summary>The catalog signature of the exact image shown. Eye images are a white/iris two-sprite composite;
+        /// direct signs use one Sprite; animated signs use their final fully revealed frame.</summary>
+        private string? ShownSignSpriteSignature(IntPtr characterPtr, int sign, bool isImposter)
+        {
+            if (characterPtr == IntPtr.Zero) return null;
+            if (_characterSoDataClass == IntPtr.Zero)
+                _characterSoDataClass = Il2CppRaw.GetClass(GameAsm, CharactersNs, "CharacterSOData");
+            IntPtr cls = _characterSoDataClass;
+            if (cls == IntPtr.Zero) return null;
+
+            string suffix = isImposter ? "Imposter" : "Human";
+            if (sign == SignHands)
+                return DirectSpriteName(characterPtr, cls, $"_handsSprite{suffix}");
+            if (sign == SignTeeth)
+                return DirectSpriteName(characterPtr, cls, $"_teethSprite{suffix}");
+            if (sign == SignAuraPhoto)
+                return DirectSpriteName(characterPtr, cls, isImposter ? "_photoImposter" : "_photoHuman");
+            if (sign == SignEye)
+            {
+                IntPtr eye = Il2CppRaw.ReadObjectField(characterPtr, cls, $"_eyeSprite{suffix}");
+                if (eye == IntPtr.Zero) return null;
+                IntPtr eyeClass = Il2CppRaw.GetClass(GameAsm, CharactersNs, "CharacterEyeData");
+                if (eyeClass == IntPtr.Zero) eyeClass = IL2CPP.il2cpp_object_get_class(eye);
+                string? white = DirectSpriteName(eye, eyeClass, "_white");
+                string? iris = DirectSpriteName(eye, eyeClass, "_iris");
+                if (string.IsNullOrEmpty(white)) return iris;
+                if (string.IsNullOrEmpty(iris)) return white;
+                return $"{white}|{iris}";
+            }
+            if (sign == SignArmpit || sign == SignEar)
+                return ShownSignSpriteName(characterPtr, sign, isImposter);
+            return null;
+        }
+
+        private static string? DirectSpriteName(IntPtr owner, IntPtr ownerClass, string field)
+        {
+            IntPtr sprite = Il2CppRaw.ReadObjectField(owner, ownerClass, field);
+            return sprite == IntPtr.Zero ? null : Il2CppRaw.GetUnityObjectName(sprite);
         }
 
         /// <summary>Pick the next neutral prompt from the round-robin pool for this (sign, variant), advancing the cursor.</summary>

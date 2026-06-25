@@ -1,0 +1,17 @@
+[project]
+name = "image-tools"
+version = "0.1.0"
+description = "Offline image description tools backed by a local Ollama vision model"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["Pillow>=10"]
+
+[project.scripts]
+image-tools = "image_tools.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/image_tools"]
