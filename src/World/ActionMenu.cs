@@ -65,6 +65,7 @@ namespace NoImNotAHumanAccess.World
         // ICatController interface). _catInteractableClass identifies the cat among the interactables.
         private IntPtr _catInteractableClass; // _Code.Infrastructure.CatInteractable
         private IntPtr _catInstanceClass;     // _Code.…CatInstance (the live cat GameObject; absent ⇒ cat not present)
+        private IntPtr _windowBoardsClass;    // _Code.Infrastructure.WindowBoardsInteractable (board-up prompts, found by scene scan)
         private IntPtr _raycastTargetBaseClass, _getRaycastIsLocked;
         // Focus plumbing: set the selected object's raycast target IsTargeted so the game's Act()/Interact() registers it
         // as the current interaction (see GoToSelected). _setIsTargeted is set_IsTargeted(bool) on the ARaycastTarget base.
@@ -802,6 +803,12 @@ namespace NoImNotAHumanAccess.World
                         continue;
                     }
 
+                    // Board-up prompts share their window's GameObject name ("Blinds 1", "Curtains", …), so without a
+                    // prefix they're indistinguishable from the normal blinds/curtains entries. Prefix with "Board up" so
+                    // they read as "Board up Blinds 1" etc. — keeps the per-window distinction, names the actual action.
+                    if (_windowBoardsClass != IntPtr.Zero && IL2CPP.il2cpp_object_get_class(o) == _windowBoardsClass)
+                        name = "Board up " + name;
+
                     Vector3 pos = Il2CppRaw.GetComponentWorldPosition(o);
                     entries.Add(new Entry(o, name, Bearing(camPos, pos), isInteractable: true));
                     added++;
@@ -825,6 +832,17 @@ namespace NoImNotAHumanAccess.World
             yield return ReadProviderField(provider, "<Mushroom>k__BackingField");
             yield return ReadProviderField(provider, "<TheHole>k__BackingField");
             yield return ReadProviderField(provider, "<Cat>k__BackingField");
+
+            // Window board-up prompts (day 13: nail boards over each window). The provider's WindowBoards array reads
+            // back with NULL elements even on board-up day (the references aren't populated there), so instead we find
+            // the live board interactables directly in the scene by type. They're AInteractableObjects like the rest, so
+            // the generic validity filter gates them — a board only appears when it's actually active (board-up day, that
+            // window not yet boarded), which is exactly "prefer when present".
+            if (_windowBoardsClass == IntPtr.Zero)
+                _windowBoardsClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure", "WindowBoardsInteractable");
+            if (_windowBoardsClass != IntPtr.Zero)
+                foreach (IntPtr board in Il2CppRaw.FindObjectsByType(_windowBoardsClass, includeInactive: false))
+                    yield return board;
         }
 
         private IntPtr ReadProviderField(IntPtr provider, string fieldName) =>
