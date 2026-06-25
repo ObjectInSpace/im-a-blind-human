@@ -40,10 +40,16 @@ def generate(catalog_path: Path, output_path: Path) -> tuple[int, int]:
             excluded += 1
             continue
 
-        # side="other" means the sprite is shown regardless of the character's true nature (e.g. armpit_6, the only
-        # armpit Firefighter/Intruder have). The runtime always reads the human OR imposter field per _isImposter, never
-        # an "other" side, so emit such records under BOTH sides so the lookup matches whichever the runtime computes.
-        sides = ["human", "imposter"] if side == "other" else [side]
+        # SIDE-AGNOSTIC KEYING. A given sprite IMAGE always means the same thing — "human_hands_39" shows the same hand
+        # whether the game reads it on the human or imposter side. The runtime reads the human OR imposter field per the
+        # character's _isImposter, but RANDOMIZED characters can appear as either nature across playthroughs, so the same
+        # sprite is reachable on BOTH sides. The describer labeled each record with the side it happened to come from,
+        # which left 120 misses where the runtime read a sprite on the side the catalog hadn't keyed it under (confirmed
+        # by the full in-game signature dump). Since the description is purely observational and side-independent, emit
+        # EVERY record under both sides. The key is the sprite signature alone; "side" in the key is now redundant but
+        # kept for the runtime key format. (Collisions where the same sprite got two different descriptions are handled
+        # by the keep-first rule below.)
+        sides = ["human", "imposter"]
 
         description = verbose_description
 
