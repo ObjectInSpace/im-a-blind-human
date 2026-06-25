@@ -36,6 +36,17 @@ namespace NoImNotAHumanAccess.World
         private IntPtr _getDay, _getTimeOfDay, _getDayActions, _getMaxDayActions; // on IDayNightController
         private IntPtr _countMethod;                                              // IConsumablesController.Count(EConsumable)
 
+        // Calendar: read the current day's HOLIDAY NAME so the status speaks the actual calendar, not just "Day N".
+        // CalendarInteractable is a MonoBehaviour (ZoomInteractable -> AInteractableObject), so it's findable directly
+        // (no Zenject). Its _holidayName is a LocalizeStringEvent the game keeps set to the current day's holiday (set in
+        // RefreshPage on load). We resolve that to text the same way ControlDescriber resolves its LocalizeStringEvents.
+        // NOTE: the day-of-MONTH number shown on the calendar is baked into the paper-sheet sprite art, not readable
+        // data, so we pair the holiday with the Day index (the only readable date value) rather than a real month-date.
+        private IntPtr _calendarClass, _localizeStringEventClass, _getLocalizedString;
+        private IntPtr _tmpTextClass, _tmpGetText;       // fallback: read the text the holiday LSE actually drives
+        private IntPtr _localizedStringClass, _lsGetLocalizedString; // resolve the raw per-day LocalizedString directly
+        private bool _calendarResolveAttempted;
+
         /// <summary>True once the day/night controller is resolved and its accessors bound. (Consumables are optional —
         /// the day/time/energy line still speaks if only the consumables controller fails to resolve.)</summary>
         public bool IsReady => _dayNight != IntPtr.Zero;
@@ -58,7 +69,14 @@ namespace NoImNotAHumanAccess.World
                 int actions = Il2CppRaw.InvokeInt32Getter(_dayNight, _getDayActions);
                 int maxActions = Il2CppRaw.InvokeInt32Getter(_dayNight, _getMaxDayActions);
 
-                if (day >= 0) sb.Append($"Day {day}");
+                if (day >= 0)
+                {
+                    sb.Append($"Day {day}");
+                    // Append the calendar's holiday name for today, when it resolves (e.g. "Day 1, Halloween").
+                    string? holiday = DescribeHoliday(day);
+                    if (!string.IsNullOrWhiteSpace(holiday))
+                        sb.Append($", {holiday}");
+                }
                 if (tod >= 0)
                 {
                     if (sb.Length > 0) sb.Append(", ");
@@ -109,6 +127,98 @@ namespace NoImNotAHumanAccess.World
             (6, "cat food", "cat food"), (7, "summons", "summons"), (8, "kombucha", "kombuchas"),
             (9, "photo", "photos"),
         };
+
+        /// <summary>Resolve the calendar's holiday name for the current day to spoken text, or null if it can't be read
+        /// (the status then just says "Day N"). The CalendarInteractable keeps its _holidayName LocalizeStringEvent set
+        /// to the current day; we resolve it via GetLocalizedString(), mirroring ControlDescriber. Never throws.</summary>
+        private string? DescribeHoliday(int day)
+        {
+            try
+            {
+                EnsureCalendarResolved();
+                IntPtr calendar = _calendarClass != IntPtr.Zero ? Il2CppRaw.FindObjectIncludingInactive(_calendarClass) : IntPtr.Zero;
+                if (calendar == IntPtr.Zero) return null;
+
+                // PRIMARY: read the per-day LocalizedString straight from the calendar's _calendarDays[day] and resolve
+                // it. This is authoritative for the current day regardless of whether the player has opened the calendar
+                // (the _holidayName LSE only reflects the page once it's been shown). _calendarDays is a CalendarListData[]
+                // whose HolidayName property is backed by <HolidayName>k__BackingField (a LocalizedString).
+                if (_lsGetLocalizedString != IntPtr.Zero)
+                {
+                    IntPtr daysArray = Il2CppRaw.ReadObjectField(calendar, _calendarClass, "_calendarDays");
+                    IntPtr[] days = daysArray != IntPtr.Zero ? Il2CppRaw.ReadObjectArray(daysArray) : Array.Empty<IntPtr>();
+                    if (day >= 0 && day < days.Length && days[day] != IntPtr.Zero)
+                    {
+                        IntPtr listDataClass = IL2CPP.il2cpp_object_get_class(days[day]);
+                        IntPtr holiday = Il2CppRaw.ReadObjectField(days[day], listDataClass, "<HolidayName>k__BackingField");
+                        if (holiday != IntPtr.Zero)
+                        {
+                            string? text = Il2CppRaw.InvokeStringGetter(holiday, _lsGetLocalizedString);
+                            if (!string.IsNullOrWhiteSpace(text)) return text!.Trim();
+                        }
+                    }
+                }
+
+                // FALLBACK 1: the _holidayName LocalizeStringEvent's resolved string (works only after the page is shown).
+                IntPtr holidayLse = Il2CppRaw.ReadObjectField(calendar, _calendarClass, "_holidayName");
+                if (holidayLse != IntPtr.Zero)
+                {
+                    if (_getLocalizedString != IntPtr.Zero)
+                    {
+                        string? viaApi = Il2CppRaw.InvokeStringGetter(holidayLse, _getLocalizedString);
+                        if (!string.IsNullOrWhiteSpace(viaApi)) return viaApi!.Trim();
+                    }
+                    // FALLBACK 2: the TMP text the LSE drives on its own GameObject.
+                    if (_tmpTextClass != IntPtr.Zero && _tmpGetText != IntPtr.Zero)
+                    {
+                        IntPtr go = Il2CppRaw.GetComponentGameObject(holidayLse);
+                        if (go != IntPtr.Zero)
+                        {
+                            IntPtr tmp = Il2CppRaw.GetComponentRaw(go, _tmpTextClass);
+                            string? viaTmp = Il2CppRaw.InvokeStringGetter(tmp, _tmpGetText);
+                            if (!string.IsNullOrWhiteSpace(viaTmp)) return viaTmp!.Trim();
+                        }
+                    }
+                }
+                return null;
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[GameStateAccess] DescribeHoliday threw: {e.Message}");
+                return null;
+            }
+        }
+
+        private void EnsureCalendarResolved()
+        {
+            if (_calendarResolveAttempted) return;
+            _calendarResolveAttempted = true;
+            try
+            {
+                _calendarClass = Il2CppRaw.GetClass("Assembly-CSharp.dll", "_Code.Infrastructure._NINAH__InteractableObjects.Objects", "CalendarInteractable");
+
+                // Raw LocalizedString.GetLocalizedString() — the authoritative per-day resolver (the primary path).
+                _localizedStringClass = Il2CppRaw.GetClass("Unity.Localization.dll", "UnityEngine.Localization", "LocalizedString");
+                if (_localizedStringClass != IntPtr.Zero)
+                    _lsGetLocalizedString = Il2CppRaw.GetMethod(_localizedStringClass, "GetLocalizedString", 0);
+
+                // LocalizeStringEvent + TMP — fallbacks (only valid once the calendar page has been shown).
+                _localizeStringEventClass = Il2CppRaw.GetClass("Unity.Localization.dll", "UnityEngine.Localization.Components", "LocalizeStringEvent");
+                if (_localizeStringEventClass != IntPtr.Zero)
+                    _getLocalizedString = Il2CppRaw.GetMethod(_localizeStringEventClass, "GetLocalizedString", 0);
+                _tmpTextClass = Il2CppRaw.GetClass("Unity.TextMeshPro.dll", "TMPro", "TMP_Text");
+                if (_tmpTextClass != IntPtr.Zero)
+                    _tmpGetText = Il2CppRaw.GetMethod(_tmpTextClass, "get_text", 0);
+
+                MelonLogger.Msg($"[GameStateAccess] calendar resolved: class={_calendarClass != IntPtr.Zero} " +
+                                $"lsGetLoc={_lsGetLocalizedString != IntPtr.Zero} lseGetLoc={_getLocalizedString != IntPtr.Zero} " +
+                                $"tmp={_tmpGetText != IntPtr.Zero}");
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[GameStateAccess] EnsureCalendarResolved threw: {e.Message}");
+            }
+        }
 
         private void EnsureResolved()
         {
