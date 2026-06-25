@@ -212,6 +212,14 @@ namespace NoImNotAHumanAccess.World
                 if (b == IntPtr.Zero) continue;
                 if (!Il2CppRaw.GetComponentGameObjectActive(b)) continue; // only THIS photo's objects
                 if (_getIsActive != IntPtr.Zero && !Il2CppRaw.InvokeBoolGetter(b, _getIsActive)) continue; // choosable now
+
+                // Skip buttons with no readable name. The hover narrator (RoomViewNarrator) stays silent on a blank name,
+                // so a blank-named button shows up as a confusing silent stop when arrowing (reported around corpses /
+                // crowded rooms — extra person buttons that carry no usable GameObject name). Filtering them here keeps
+                // arrows landing only on objects that actually announce themselves. Name resolved exactly as the hover
+                // path does (the button's GameObject name), so this matches what would have been spoken.
+                if (string.IsNullOrWhiteSpace(NameOf(b))) continue;
+
                 Vector3 world = Il2CppRaw.GetComponentWorldPosition(b);
                 Vector3 screen = camera != IntPtr.Zero ? Il2CppRaw.WorldToScreenPoint(camera, world) : world;
                 list.Add((b, screen.x));
@@ -271,6 +279,15 @@ namespace NoImNotAHumanAccess.World
         }
 
         private static string Humanize(string? raw) => MenuStepUtil.Humanize(raw);
+
+        /// <summary>The humanized name a button would announce on hover, resolved exactly as <see cref="RoomViewNarrator"/>
+        /// does: the button's GameObject name (falling back to the component name). Used to drop blank-named buttons from
+        /// the steppable set so arrows never land on a silent stop.</summary>
+        private static string NameOf(IntPtr button)
+        {
+            IntPtr go = Il2CppRaw.GetComponentGameObject(button);
+            return Humanize(Il2CppRaw.GetUnityObjectName(go != IntPtr.Zero ? go : button));
+        }
 
         private void EnsureResolved()
         {
