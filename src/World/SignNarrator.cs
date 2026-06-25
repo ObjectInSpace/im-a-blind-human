@@ -63,6 +63,12 @@ namespace NoImNotAHumanAccess.World
         private bool _dialogResolved;
         private bool _dialogWasActive;
 
+        // Eye-movement read (rapid-eye-movement tell): CharacterEyeData carries the iris animation params the image
+        // catalog can't see. Resolved lazily; getters bound on first use. See EyeMovementClause.
+        private IntPtr _eyeDataClass;
+        private IntPtr _getDistanceMultiplier, _getMinMoveDuration, _getMaxMoveDuration;
+        private bool _eyeDataResolved;
+
         // Round-robin cursor per (sign, variant) pool, so repeated reveals of the same image cycle the pool's entries.
         private readonly Dictionary<string, int> _poolCursor = new();
 
@@ -187,6 +193,26 @@ namespace NoImNotAHumanAccess.World
         /// </summary>
         private string NextDescription(IntPtr characterPtr, int sign, bool isImposter)
         {
+            string baseDesc = BaseDescription(characterPtr, sign, isImposter);
+
+            // RAPID EYE MOVEMENT is a motion tell the still-image catalog can't see, so we add it at runtime from the
+            // live CharacterEyeData. Append it to the eye sign's description (when the eyes are darting); composes with
+            // the static text, e.g. "The eyes are bloodshot. The eyes are darting rapidly." A miss returns empty and
+            // leaves baseDesc untouched, so it's never worse than today.
+            if (sign == SignEye)
+            {
+                string movement = EyeMovementClause(characterPtr, isImposter);
+                if (movement.Length > 0)
+                    baseDesc = baseDesc.Length > 0 ? $"{baseDesc} {movement}" : movement;
+            }
+            return baseDesc;
+        }
+
+        /// <summary>The catalog / name-trait / neutral-prompt description for this sign, before any runtime augmentation
+        /// (e.g. eye movement). The generated catalog is keyed by the exact sprite or eye composite shown by the game;
+        /// if no entry matches, preserve the name-derived armpit/ear behavior and finally fall back to a neutral prompt.</summary>
+        private string BaseDescription(IntPtr characterPtr, int sign, bool isImposter)
+        {
             string? signature = ShownSignSpriteSignature(characterPtr, sign, isImposter);
             if (SignDescriptionCatalog.TryGet(sign, isImposter, signature, out string catalogDescription))
                 return catalogDescription;
@@ -237,6 +263,62 @@ namespace NoImNotAHumanAccess.World
         {
             IntPtr sprite = Il2CppRaw.ReadObjectField(owner, ownerClass, field);
             return sprite == IntPtr.Zero ? null : Il2CppRaw.GetUnityObjectName(sprite);
+        }
+
+        // RAPID-EYE-MOVEMENT thresholds. The eye always animates the iris; the tell is darting = big travel done fast.
+        // CharacterEyeData._distanceMultiplier is [0,1] (iris travel amplitude, 1 = full ±150x/±100y); the move durations
+        // are [0.1,5]s. So "rapid" = high distance AND short average duration. These values are derived from the field
+        // ranges; exact per-character params aren't recoverable offline (the asset export is stubbed), so tune in-game if needed.
+        private const float RapidEyeMinDistance = 0.6f;
+        private const float RapidEyeMaxAvgDuration = 1.0f;
+
+        /// <summary>
+        /// A movement clause for the eye sign when the guest's eyes are darting rapidly, or empty otherwise. Reads the
+        /// live <c>CharacterEyeData</c> the game would animate (the human/imposter side selects WHICH data is displayed,
+        /// never narrated as a verdict) and judges rapid = high travel amplitude + short average move duration. The
+        /// image catalog can't see motion, so this is the only source of the REM tell. Never throws; a miss returns empty.
+        /// </summary>
+        private string EyeMovementClause(IntPtr characterPtr, bool isImposter)
+        {
+            try
+            {
+                if (characterPtr == IntPtr.Zero) return string.Empty;
+                if (_characterSoDataClass == IntPtr.Zero)
+                    _characterSoDataClass = Il2CppRaw.GetClass(GameAsm, CharactersNs, "CharacterSOData");
+                if (_characterSoDataClass == IntPtr.Zero) return string.Empty;
+
+                string suffix = isImposter ? "Imposter" : "Human";
+                IntPtr eye = Il2CppRaw.ReadObjectField(characterPtr, _characterSoDataClass, $"_eyeSprite{suffix}");
+                if (eye == IntPtr.Zero) return string.Empty;
+
+                EnsureEyeDataResolved(eye);
+                if (_getDistanceMultiplier == IntPtr.Zero || _getMinMoveDuration == IntPtr.Zero || _getMaxMoveDuration == IntPtr.Zero)
+                    return string.Empty;
+
+                float distance = Il2CppRaw.InvokeFloatGetter(eye, _getDistanceMultiplier);
+                float minDur = Il2CppRaw.InvokeFloatGetter(eye, _getMinMoveDuration);
+                float maxDur = Il2CppRaw.InvokeFloatGetter(eye, _getMaxMoveDuration);
+                float avgDur = (minDur + maxDur) * 0.5f;
+                bool rapid = distance >= RapidEyeMinDistance && avgDur > 0f && avgDur <= RapidEyeMaxAvgDuration;
+                return rapid ? "The eyes are darting rapidly." : string.Empty;
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[SignNarrator] EyeMovementClause threw: {e.Message}");
+                return string.Empty;
+            }
+        }
+
+        private void EnsureEyeDataResolved(IntPtr eyeInstance)
+        {
+            if (_eyeDataResolved) return;
+            _eyeDataResolved = true;
+            _eyeDataClass = Il2CppRaw.GetClass(GameAsm, CharactersNs, "CharacterEyeData");
+            if (_eyeDataClass == IntPtr.Zero) _eyeDataClass = IL2CPP.il2cpp_object_get_class(eyeInstance);
+            if (_eyeDataClass == IntPtr.Zero) return;
+            _getDistanceMultiplier = Il2CppRaw.GetMethod(_eyeDataClass, "get_DistanceMultiplier", 0);
+            _getMinMoveDuration = Il2CppRaw.GetMethod(_eyeDataClass, "get_MinMoveDuration", 0);
+            _getMaxMoveDuration = Il2CppRaw.GetMethod(_eyeDataClass, "get_MaxMoveDuration", 0);
         }
 
         /// <summary>Pick the next neutral prompt from the round-robin pool for this (sign, variant), advancing the cursor.</summary>
