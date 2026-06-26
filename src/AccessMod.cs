@@ -6,7 +6,7 @@ using NoImNotAHumanAccess.Speech;
 using NoImNotAHumanAccess.World;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(NoImNotAHumanAccess.AccessMod), "I'm a Blind Human", "0.9.0", "objectinspace")]
+[assembly: MelonInfo(typeof(NoImNotAHumanAccess.AccessMod), "I'm a Blind Human", "0.95.0", "objectinspace")]
 [assembly: MelonGame("Trioskaz", "NoImNotAHuman")]
 
 namespace NoImNotAHumanAccess
