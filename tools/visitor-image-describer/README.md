@@ -39,15 +39,23 @@ uv run image-tools describe `
   --manifest "work\manifest.json" `
   --json "work\descriptions.json" `
   --csv "work\descriptions.csv" `
-  --model "qwen3-vl:4b-instruct" `
-  --num-gpu 0 `
+  --model "qwen3-vl:8b-instruct" `
+  --num-gpu 99 `
   --num-ctx 4096 `
-  --num-batch 64
+  --num-batch 64 `
+  --concurrency 2
 ```
 
-`--num-gpu 0` avoids CUDA-runner compatibility failures. The 4,096-token context is required by some large animation
-frames; `--num-batch 64` limits CPU working memory. The catalog is checkpointed after every image and preserves cached
-entries across interruption or prompt/source changes.
+`--num-gpu 99` runs fully on the GPU (the 8B is ~5.3 GB and fits the RTX 3050's 8 GB VRAM; this is ~5x faster than the
+old `--num-gpu 0` CPU path — the CUDA-failure worry that motivated CPU-only is outdated). The 4,096-token context is
+required by some large animation frames; `--num-batch 64` bounds working memory. Each image makes ONE model call
+(colour + features in one prompt), so the image is vision-encoded once. The catalog is checkpointed after every image
+and preserves cached entries across interruption or prompt/source changes.
+
+`--concurrency 2` keeps 2 model requests in flight so the GPU server can batch them (~18% faster in testing). It needs
+the Ollama **server** started with `OLLAMA_NUM_PARALLEL=2` (a user env var; restart the server after setting it) and
+enough free VRAM for the extra KV-cache — on the 8 GB 3050, 2 is the practical ceiling. Without the matching server
+setting, the requests just serialize (no harm, no gain). `--concurrency 1` (default) is plain sequential.
 
 Use `--per-sign 2` for a balanced 12-image pilot or `--limit 20` for the first 20 tasks. The CSV is intended for
 human validation; generated entries have `status=candidate`.

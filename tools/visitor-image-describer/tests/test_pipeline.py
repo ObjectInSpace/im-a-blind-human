@@ -225,6 +225,28 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual([], results[0]["validation_issues"])
             self.assertTrue((root / "out.csv").is_file())
 
+    def test_concurrency_describes_every_task_and_checkpoints_safely(self):
+        # Concurrency must produce a result for every task and leave a complete, valid on-disk checkpoint (all writes
+        # happen on the main thread, so the file is never half-written by a worker).
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            image = root / "image.png"
+            Image.new("RGB", (10, 10), "white").save(image)
+            tasks = [{
+                "id": f"teeth-{i}", "sign": "TEETH", "side": "human", "characters": ["A"],
+                "sprites": [f"tooth-{i}"], "sources": [str(image)], "prepared_image": str(image),
+                "source_hash": f"h{i}", "warnings": [],
+            } for i in range(7)]
+            manifest = root / "manifest.json"
+            manifest.write_text(json.dumps(tasks))
+            out_json = root / "out.json"
+            results = describe_manifest(manifest, out_json, root / "out.csv", _Client(), concurrency=3)
+            self.assertEqual(7, len(results))
+            self.assertTrue(all(r["description"] == "The teeth are yellow; the gums are bleeding." for r in results))
+            # On-disk checkpoint is complete and valid JSON with every task.
+            on_disk = json.loads(out_json.read_text())
+            self.assertEqual({f"teeth-{i}" for i in range(7)}, {r["id"] for r in on_disk})
+
     def test_checkpoint_preserves_unvisited_cached_entries_on_failure(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

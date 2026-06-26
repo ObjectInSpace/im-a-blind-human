@@ -8,6 +8,7 @@ import json
 import re
 import shutil
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable
@@ -549,6 +550,7 @@ def describe_manifest(
     client: OllamaClient,
     limit: int | None = None,
     per_sign: int | None = None,
+    concurrency: int = 1,
 ) -> list[dict[str, object]]:
     tasks = json.loads(manifest.read_text(encoding="utf-8"))
     if per_sign is not None:
@@ -566,11 +568,12 @@ def describe_manifest(
     task_ids = {task["id"] for task in tasks}
     remaining_existing = {item_id: item for item_id, item in existing.items() if item_id in task_ids}
 
+    # Partition into already-cached (reuse) and to-run (call the model). The model call is the slow part; cache hits are
+    # free, so only the to-run set is what concurrency helps.
     results: list[dict[str, object]] = []
-    processed = 0
+    to_run: list[dict[str, object]] = []
     for task in tasks:
-        prompt = _prompt(task["sign"])
-        prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
+        prompt_hash = hashlib.sha256(_prompt(task["sign"]).encode("utf-8")).hexdigest()
         prior = remaining_existing.get(task["id"])
         if (
             prior
@@ -581,46 +584,69 @@ def describe_manifest(
             remaining_existing.pop(task["id"], None)
             results.append(prior)
             continue
-        if limit is not None and processed >= limit:
-            continue
+        to_run.append(task)
+    if limit is not None:
+        to_run = to_run[:limit]
 
-        # ONE combined model call per image (colour + features), so the image is vision-encoded once. The colour and
-        # feature label sets don't overlap, so the single reply parses into both. Armpit/ear take their features from
-        # the sprite name (the model misreads them), so their prompt has only the COLOUR part — still one call.
-        model_out = ""
-        if SIGN_APPEARANCE.get(task["sign"]):
-            model_out = client.describe(task["prepared_image"], _combined_prompt(task["sign"]))
-        appearance = _parse_appearance(task["sign"], model_out)
-
-        # ARMPIT HAIR: a second appearance clause stated both ways, from the sprite name (authoritative — the model
-        # mislabels smooth pits as hairy).
-        name_appearance = _hair_phrase(task["sprites"]) if task["sign"] == "ARMPIT" else ""
-
-        # PRESENT-ONLY FEATURES: armpit/ear from the sprite name (ground truth); other signs from the same combined reply.
-        if task["sign"] in _NAME_TELLS:
-            traits = _name_traits(task["sign"], task["sprites"])
-        else:
-            traits = _parse_traits(task["sign"], model_out)
-        description = _render_description(task["sign"], appearance, traits, name_appearance)
-        model_output = model_out or f"(from sprite name: {';'.join(task['sprites'])})"
-        result = {
-            **task,
-            "appearance": appearance,
-            "traits": traits,
-            "model_output": model_output,
-            "description": description,
-            "model": client.model,
-            "prompt_hash": prompt_hash,
-            "status": "candidate",
-            "validation_issues": _trait_issues(task["sign"], appearance, traits) + _issues(description),
-        }
-        remaining_existing.pop(task["id"], None)
-        results.append(result)
-        processed += 1
+    def checkpoint() -> None:
         _write_results(results + list(remaining_existing.values()), output_json, output_csv)
 
-    _write_results(results + list(remaining_existing.values()), output_json, output_csv)
+    if concurrency <= 1:
+        # Sequential: model call then checkpoint, one image at a time (the original, simplest path).
+        for task in to_run:
+            results.append(_describe_one(task, client))
+            remaining_existing.pop(task["id"], None)
+            checkpoint()
+    else:
+        # Concurrent: a bounded pool issues several model calls in flight (the GPU server batches them), but ALL writes
+        # stay on this thread — we checkpoint as each result lands, so the on-disk file is never written by two threads
+        # and stays resumable. A failed image raises here and aborts the run with the completed images checkpointed.
+        with ThreadPoolExecutor(max_workers=concurrency) as pool:
+            futures = {pool.submit(_describe_one, task, client): task for task in to_run}
+            for future in as_completed(futures):
+                results.append(future.result())
+                remaining_existing.pop(futures[future]["id"], None)
+                checkpoint()
+
+    checkpoint()
     return results
+
+
+def _describe_one(task: dict[str, object], client: OllamaClient) -> dict[str, object]:
+    """Describe ONE image: the pure per-task work (model call + parse + build the record), with no I/O. Safe to run on a
+    worker thread — the caller owns all checkpoint writes."""
+    prompt_hash = hashlib.sha256(_prompt(task["sign"]).encode("utf-8")).hexdigest()
+
+    # ONE combined model call per image (colour + features), so the image is vision-encoded once. The colour and
+    # feature label sets don't overlap, so the single reply parses into both. Armpit/ear take their features from the
+    # sprite name (the model misreads them), so their prompt has only the COLOUR part — still one call.
+    model_out = ""
+    if SIGN_APPEARANCE.get(task["sign"]):
+        model_out = client.describe(task["prepared_image"], _combined_prompt(task["sign"]))
+    appearance = _parse_appearance(task["sign"], model_out)
+
+    # ARMPIT HAIR: a second appearance clause stated both ways, from the sprite name (authoritative — the model
+    # mislabels smooth pits as hairy).
+    name_appearance = _hair_phrase(task["sprites"]) if task["sign"] == "ARMPIT" else ""
+
+    # PRESENT-ONLY FEATURES: armpit/ear from the sprite name (ground truth); other signs from the same combined reply.
+    if task["sign"] in _NAME_TELLS:
+        traits = _name_traits(task["sign"], task["sprites"])
+    else:
+        traits = _parse_traits(task["sign"], model_out)
+    description = _render_description(task["sign"], appearance, traits, name_appearance)
+    model_output = model_out or f"(from sprite name: {';'.join(task['sprites'])})"
+    return {
+        **task,
+        "appearance": appearance,
+        "traits": traits,
+        "model_output": model_output,
+        "description": description,
+        "model": client.model,
+        "prompt_hash": prompt_hash,
+        "status": "candidate",
+        "validation_issues": _trait_issues(task["sign"], appearance, traits) + _issues(description),
+    }
 
 
 def _write_results(results: list[dict[str, object]], output_json: Path, output_csv: Path) -> None:

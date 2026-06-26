@@ -34,6 +34,11 @@ def _parser() -> argparse.ArgumentParser:
     describe.add_argument("--num-predict", type=int, default=128, help="Maximum generated tokens per image")
     describe.add_argument("--limit", type=int)
     describe.add_argument("--per-sign", type=int, help="Process at most this many images from each sign category")
+    describe.add_argument(
+        "--concurrency", type=int, default=1,
+        help="Number of model requests in flight at once. >1 lets the Ollama server batch calls (needs its "
+             "OLLAMA_NUM_PARALLEL set to match, and enough free VRAM). Default 1 (sequential).",
+    )
     return parser
 
 
@@ -54,7 +59,9 @@ def main(argv: list[str] | None = None) -> int:
             think=args.think,
             num_predict=args.num_predict,
         )
-        results = describe_manifest(args.manifest, args.json, args.csv, client, args.limit, args.per_sign)
+        results = describe_manifest(
+            args.manifest, args.json, args.csv, client, args.limit, args.per_sign, args.concurrency
+        )
         print(f"Catalog contains {len(results)} descriptions in {args.json} and {args.csv}")
         return 0
     return 2
