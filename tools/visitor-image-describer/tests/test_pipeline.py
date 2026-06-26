@@ -9,7 +9,9 @@ from PIL import Image
 
 from image_tools.pipeline import (
     _appearance_prompt,
+    _coherent_traits,
     _issues,
+    _name_traits,
     _parse_appearance,
     _parse_traits,
     _prompt,
@@ -90,6 +92,34 @@ class PipelineTests(unittest.TestCase):
         # If the model hedges and names several, the first DECLARED label wins (sclera-red before sclera-clear).
         self.assertEqual("sclera-red", _parse_appearance("EYE-WHITE", "sclera-clear but also sclera-red"))
 
+    def test_armpit_ear_tells_come_from_the_sprite_name(self):
+        # The sprite filename is ground truth for armpit/ear (the vision model misreads hair/insects).
+        self.assertEqual(["hair-absent"], _name_traits("ARMPIT", ["armpit_1_clean_5"]))
+        self.assertEqual(["hair-present", "fungal-growth"], _name_traits("ARMPIT", ["armpit_2_hairy_fungal_5"]))
+        self.assertEqual(["insect"], _name_traits("EAR", ["fake_ear_cockroach_19"]))
+        self.assertEqual(["burned"], _name_traits("EAR", ["fake_ear_burnt"]))
+        # A sign whose tells are NOT name-encoded returns nothing (caller keeps the model's tells).
+        self.assertEqual([], _name_traits("TEETH", ["human_tooth_1"]))
+
+    def test_teeth_bright_white_dropped_when_appearance_is_a_dark_shade(self):
+        # The model fires "bright white" on nearly every tooth; it can't coexist with a stained/yellow/grey appearance.
+        self.assertEqual([], _coherent_traits("TEETH", "teeth-stained", ["white-teeth"]))
+        self.assertEqual(["bleeding-gums"], _coherent_traits("TEETH", "teeth-yellow", ["white-teeth", "bleeding-gums"]))
+        # On an off-white baseline the bright-white tell is coherent and kept.
+        self.assertEqual(["white-teeth"], _coherent_traits("TEETH", "teeth-offwhite", ["white-teeth"]))
+
+    def test_offwhite_baseline_suppressed_when_bright_white_tell_fires(self):
+        # "ordinary off-white" + "strikingly bright white" is redundant; the tell supersedes the neutral baseline.
+        self.assertEqual(
+            "The teeth are strikingly bright white.",
+            _render_description("TEETH", "teeth-offwhite", ["white-teeth"]),
+        )
+        # But the off-white baseline still stands alone when no bright-white tell fires.
+        self.assertEqual(
+            "The teeth are an ordinary off-white.",
+            _render_description("TEETH", "teeth-offwhite", []),
+        )
+
     def test_prepare_uses_last_animation_frame_and_composites_eye(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
@@ -153,8 +183,9 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual("candidate", results[0]["status"])
             self.assertEqual("teeth-offwhite", results[0]["appearance"])
             self.assertEqual(["white-teeth", "bleeding-gums"], results[0]["traits"])
+            # off-white baseline is suppressed because the bright-white tell fired (it supersedes the neutral shade).
             self.assertEqual(
-                "The teeth are an ordinary off-white; the teeth are strikingly bright white; the gums are visibly bleeding.",
+                "The teeth are strikingly bright white; the gums are visibly bleeding.",
                 results[0]["description"],
             )
             self.assertEqual([], results[0]["validation_issues"])

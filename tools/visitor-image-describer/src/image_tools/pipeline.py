@@ -373,11 +373,57 @@ def _parse_traits(sign: str, model_output: str) -> list[str]:
     return found
 
 
+# Armpit and ear tells are encoded in the SPRITE NAME by the game (clean/hairy/fungal/redness, cockroach/burnt/injury),
+# which is ground truth — the vision model misreads them (it called hairless "clean" armpits hairy). So for these signs
+# we take the tells from the FILENAME, not the model. Each entry: substring in the name -> tell label. Order within a
+# sign doesn't matter (all matching tells are added); hair-absent is only added when no "hairy" appears (see below).
+_NAME_TELLS = {
+    "ARMPIT": {
+        "hairy": "hair-present",
+        "fungal": "fungal-growth",
+        "redness": "irritated-skin",
+        "wet": "wet",
+    },
+    "EAR": {
+        "cockroach": "insect",
+        "injury": "injured",
+        "burnt": "burned",
+    },
+}
+
+
+def _name_traits(sign: str, sprites: list[str]) -> list[str]:
+    """Tells derived from the sprite filename for armpit/ear (authoritative; the vision model misreads these). Returns
+    [] for signs not in _NAME_TELLS so the caller keeps using the model's tells."""
+    table = _NAME_TELLS.get(sign)
+    if not table:
+        return []
+    name = " ".join(sprites).casefold()
+    found = [label for key, label in table.items() if key in name]
+    # Armpit hair is binary: "hairy" in the name => hair-present, otherwise the clean/clear side => hair-absent.
+    if sign == "ARMPIT" and "hair-present" not in found:
+        found.insert(0, "hair-absent")
+    return found
+
+
+def _coherent_traits(sign: str, appearance: str | None, traits: list[str]) -> list[str]:
+    """Drop tells that contradict the appearance pick, so the readout never says two opposite things. The vision model
+    (both 4B and 8B) calls almost every tooth 'strikingly bright white', so that tell is kept only when the appearance
+    baseline did NOT already judge the teeth a non-white shade — 'stained and discoloured; strikingly bright white' is
+    incoherent. Appearance is the more reliable signal for teeth colour, so it wins the conflict."""
+    if sign == "TEETH" and "white-teeth" in traits and appearance in {"teeth-yellow", "teeth-stained", "teeth-grey"}:
+        return [t for t in traits if t != "white-teeth"]
+    return traits
+
+
 def _render_description(sign: str, appearance: str | None, traits: list[str]) -> str:
     """Compose the spoken description: the appearance clause first (always present when resolved), then any tell
     clauses. Guarantees a concrete description — there is no empty/placeholder outcome when appearance resolves."""
     clauses: list[str] = []
-    appearance_phrase = APPEARANCE_PHRASES.get(sign, {}).get(appearance or "")
+    # The "strikingly bright white" TELL supersedes the neutral off-white baseline (don't say "ordinary off-white;
+    # strikingly bright white"); the tell clause alone carries the teeth colour in that case.
+    suppress_appearance = sign == "TEETH" and appearance == "teeth-offwhite" and "white-teeth" in traits
+    appearance_phrase = "" if suppress_appearance else APPEARANCE_PHRASES.get(sign, {}).get(appearance or "")
     if appearance_phrase:
         clauses.append(appearance_phrase)
     clauses.extend(phrase for trait in traits if (phrase := TRAIT_PHRASES.get(sign, {}).get(trait)))
@@ -454,15 +500,23 @@ def describe_manifest(
         if limit is not None and processed >= limit:
             continue
 
-        # Two calls per image: the always-answerable APPEARANCE pick (so the readout never falls back to a placeholder),
-        # then the additive TELLS. A sign with no appearance group (none currently) skips the first call.
+        # APPEARANCE: always-answerable colour/condition pick from the model (so the readout never falls back).
         appearance_output = ""
         appearance = None
         if SIGN_APPEARANCE.get(task["sign"]):
             appearance_output = client.describe(task["prepared_image"], _appearance_prompt(task["sign"]))
             appearance = _parse_appearance(task["sign"], appearance_output)
-        tell_output = client.describe(task["prepared_image"], _tell_prompt(task["sign"]))
-        traits = _parse_traits(task["sign"], tell_output)
+
+        # TELLS: for armpit/ear the sprite NAME is ground truth (the model misreads hair/insects), so derive from the
+        # filename and skip the tell call entirely. For the other signs, ask the model, then drop tells that contradict
+        # the appearance (e.g. the chronically over-fired teeth "bright white" against a stained-teeth appearance).
+        name_traits = _name_traits(task["sign"], task["sprites"])
+        if name_traits or task["sign"] in _NAME_TELLS:
+            traits = name_traits
+            tell_output = f"(from sprite name: {';'.join(task['sprites'])})"
+        else:
+            tell_output = client.describe(task["prepared_image"], _tell_prompt(task["sign"]))
+            traits = _coherent_traits(task["sign"], appearance, _parse_traits(task["sign"], tell_output))
         description = _render_description(task["sign"], appearance, traits)
         model_output = f"appearance: {appearance_output} | tells: {tell_output}"
         result = {
