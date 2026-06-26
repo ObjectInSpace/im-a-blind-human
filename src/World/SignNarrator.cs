@@ -29,13 +29,16 @@ namespace NoImNotAHumanAccess.World
     ///  • F9 REPEAT: the most recent test's description is kept so the player can re-hear it (AccessMod's F9 in a
     ///    conversation). It resets to "untested" when the conversation ends (the DialogView goes inactive).
     ///
-    /// <b>Status — partial trait text.</b> Armpit and ear traits are read from the SHOWN sprite's asset name at runtime
-    /// (the game's sprite names encode them: armpit <c>clean</c>/<c>hairy</c>/<c>redness</c>/<c>fungal</c>/<c>iodine</c>;
-    /// ear <c>cockroach</c>/<c>injury</c>/<c>burnt</c>). Teeth / eyes / hands / aura-photo carry no trait in their names
-    /// (just numeric IDs), so those stay NEUTRAL prompts — describing them faithfully would need looking at the pixels,
-    /// which we don't do here. When a sprite/field is missing we fall back to the neutral prompt — a miss must never
-    /// invent a tell. The human/imposter bool only selects WHICH sprite field to read; the words are traits, never a
-    /// verdict. Never throws.
+    /// <b>Status — full trait text from a generated catalog.</b> Every sign's description comes from
+    /// <see cref="SignDescriptionCatalog"/>, generated offline by the visitor-image-describer tool (a local vision model
+    /// describes each prepared sprite; armpit/ear hair + incidental features come from the sprite name, which is more
+    /// reliable than the model there). The runtime computes the SHOWN sprite signature and looks it up: direct signs by
+    /// the sprite, eyes by the white alone (<c>0w|&lt;white&gt;</c>, its sclera colour). Descriptions are neutral and
+    /// both-ways (e.g. "the whites of the eyes are white" or "...are red"; "the teeth are yellow"), never a verdict —
+    /// they describe what's there and mention a notable feature only when present, never its absence. On a catalog miss
+    /// we fall back to a bare neutral prompt ("Examine their eyes.") — a miss must never invent a tell. The
+    /// human/imposter bool only selects WHICH sprite field to read. Rapid eye movement is added live (the catalog can't
+    /// see motion). Never throws.
     /// </summary>
     public sealed class SignNarrator
     {
@@ -139,12 +142,12 @@ namespace NoImNotAHumanAccess.World
                             // "Hit" = the runtime produces a real trait description, NOT the bare neutral prompt. We ask
                             // the ACTUAL resolution (BaseDescription) the same way the game does, instead of re-checking
                             // only the composite catalog — that earlier check reported every eye as a MISS because eyes
-                            // are described via the bloodshot-by-white COMPONENT lookup, and a not-bloodshot eye correctly
-                            // has no entry at all. A row is a real miss only when a signed sign falls through to the
-                            // neutral prompt; an all-clear eye (neutral by design) is logged as "clear", not a miss.
+                            // are described via the sclera-by-white COMPONENT lookup, not the composite key. A row is a
+                            // real miss only when a signed sign falls through to the neutral prompt; an eye with no
+                            // catalog entry is logged as "clear" (a tolerated gap, not a hard miss) rather than MISS.
                             string desc = BaseDescription(c, sign, imp);
                             bool neutral = IsNeutralPrompt(sign, desc);
-                            bool clearByDesign = sign == SignEye && neutral; // not-bloodshot eye: no entry is correct
+                            bool clearByDesign = sign == SignEye && neutral; // eye with no entry: tolerated, not a hard miss
                             bool hit = !neutral;
                             total++;
                             if (neutral && !clearByDesign) misses++;
@@ -274,8 +277,8 @@ namespace NoImNotAHumanAccess.World
 
             // RAPID EYE MOVEMENT is a motion tell the still-image catalog can't see, so we add it at runtime from the
             // live CharacterEyeData. Append it to the eye sign's description (when the eyes are darting); composes with
-            // the static text, e.g. "The eyes are bloodshot. The eyes are darting rapidly." A miss returns empty and
-            // leaves baseDesc untouched, so it's never worse than today.
+            // the static text, e.g. "The whites of the eyes are red. The eyes are darting rapidly." A miss returns empty
+            // and leaves baseDesc untouched, so it's never worse than today.
             if (sign == SignEye)
             {
                 string movement = EyeMovementClause(characterPtr, isImposter);
@@ -294,14 +297,16 @@ namespace NoImNotAHumanAccess.World
             if (SignDescriptionCatalog.TryGet(sign, isImposter, signature, out string catalogDescription))
                 return catalogDescription;
 
-            // EYE bloodshot lookup by the WHITE sprite alone. The game pairs a white + a pupil independently, so the
-            // whole-composite catalog can't enumerate every pairing — but the only static eye tell (bloodshot) lives on
-            // the white. So when the composite lookup misses, look the white up by itself ("0w|<white>"). The pupil
-            // carries no tell; rapid eye movement is added separately from the live animation params.
+            // EYE lookup by the WHITE sprite alone. The game pairs a white + a pupil independently, so the whole-
+            // composite catalog can't enumerate every pairing — but the eye's static appearance (its sclera colour:
+            // white / pink / red) lives on the white. So we key each white by itself ("0w|<white>") and the catalog now
+            // gives EVERY white a description (not just bloodshot ones), so a clean sclera reads "the whites of the eyes
+            // are white" instead of falling back to the neutral prompt. The pupil carries no tell; rapid eye movement is
+            // added separately from the live animation params.
             if (sign == SignEye && !string.IsNullOrEmpty(signature))
             {
-                string bloodshot = EyeBloodshotFromWhite(signature!);
-                if (bloodshot.Length > 0) return bloodshot;
+                string sclera = EyeScleraFromWhite(signature!);
+                if (sclera.Length > 0) return sclera;
             }
 
             if (sign == SignArmpit || sign == SignEar)
@@ -312,10 +317,11 @@ namespace NoImNotAHumanAccess.World
             return NextPrompt(sign, isImposter);
         }
 
-        /// <summary>Look up the bloodshot description for an eye by its WHITE sprite alone (the signature is "white|iris"
-        /// or a single sprite; we take the non-pupil part). Returns empty if the white has no entry (not bloodshot →
-        /// caller uses the neutral prompt).</summary>
-        private string EyeBloodshotFromWhite(string signature)
+        /// <summary>Look up the sclera-appearance description for an eye by its WHITE sprite alone (the signature is
+        /// "white|iris" or a single sprite; we take the non-pupil part). Every white has an entry now (its colour:
+        /// white/pink/red), so this normally returns a description; empty only on a genuine catalog miss → caller uses
+        /// the neutral prompt.</summary>
+        private string EyeScleraFromWhite(string signature)
         {
             string? white = null;
             foreach (string p in signature.Split('|'))
