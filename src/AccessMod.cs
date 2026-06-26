@@ -180,7 +180,7 @@ namespace NoImNotAHumanAccess
                 _cartoonButton = new CartoonButton(_speech);
 
                 // 2D diagnostic (F8): dump the live room-photo UIButton set, to design the 2D object-stepping menu.
-                _twoDProbe = new TwoDProbe(_speech);
+                _twoDProbe = new TwoDProbe(_speech, _roomViewNarrator);
 
                 // Input-mode gate: the game's OWN world-vs-UI signal (InputHandling._inUiCounter). Load-bearing — the
                 // destructive 3D activate (Backspace → Act()) fires ONLY when this says world-roam, so a context
@@ -223,10 +223,19 @@ namespace NoImNotAHumanAccess
 
             if (Input.GetKeyDown(RepeatKey))
             {
-                _twoDProbe?.Dump();                 // F8: dump the live room-photo UIButton set (2D-menu design diagnostic)
-                _twoDProbe?.ProbeAllCloseUps("F8");  // + which close-up view is active NOW (press while the fridge is open)
-                _inputContext?.DumpSignals();       // + dump raw context-signal find-state (markers/provider/popup)
-                _inputModeGate?.Dump();             // + dump the game's own world-vs-UI signal (InputHandling._inUiCounter)
+                // Ctrl+F8: one-shot dump of EVERY character's live runtime sign signature + catalog-hit (sign-catalog
+                // reconciliation; read the log offline). Plain F8: the 2D/context diagnostics.
+                if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                {
+                    _signNarrator?.DumpAllSignatures();
+                }
+                else
+                {
+                    _twoDProbe?.Dump();                 // F8: dump the live room-photo UIButton set (2D-menu design diagnostic)
+                    _twoDProbe?.ProbeAllCloseUps("F8");  // + which close-up view is active NOW (press while the fridge is open)
+                    _inputContext?.DumpSignals();       // + dump raw context-signal find-state (markers/provider/popup)
+                    _inputModeGate?.Dump();             // + dump the game's own world-vs-UI signal (InputHandling._inUiCounter)
+                }
             }
 
             // The active context routes the mod's keys (Up/Down select, Enter activate, Left/Right radio-tune) per list,

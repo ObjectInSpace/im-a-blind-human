@@ -35,6 +35,7 @@ namespace NoImNotAHumanAccess.World
         private const string GameAsm = "Assembly-CSharp.dll";
 
         private readonly ISpeechOutput _speech;
+        private readonly RoomViewNarrator _roomView; // to narrate the stepped object directly + mute its hover hook
         private bool _resolved;
         private IntPtr _uiButtonClass, _getIsActive, _click;
         private IntPtr _rayCasterClass, _getInstance;  // UIRayCaster + static get_Instance
@@ -42,7 +43,11 @@ namespace NoImNotAHumanAccess.World
 
         private IntPtr _selected; // last-warped button, to keep selection across rebuilds
 
-        public TwoDProbe(ISpeechOutput speech) => _speech = speech;
+        public TwoDProbe(ISpeechOutput speech, RoomViewNarrator roomView)
+        {
+            _speech = speech;
+            _roomView = roomView;
+        }
 
         /// <summary>Step to the next (or previous) highlightable object: warp the mouse onto it so the game hovers it.</summary>
         public void Step(bool backwards)
@@ -63,14 +68,20 @@ namespace NoImNotAHumanAccess.World
                 IntPtr btn = buttons[idx];
                 _selected = btn;
 
-                string name = Humanize(Il2CppRaw.GetUnityObjectName(btn));
+                string? goName = Il2CppRaw.GetUnityObjectName(Il2CppRaw.GetComponentGameObject(btn));
+                string name = Humanize(string.IsNullOrWhiteSpace(goName) ? Il2CppRaw.GetUnityObjectName(btn) : goName);
                 Vector3 world = Il2CppRaw.GetComponentWorldPosition(btn);
                 Vector3 screen = camera != IntPtr.Zero ? Il2CppRaw.WorldToScreenPoint(camera, world) : Vector3.zero;
-                bool warped = Il2CppRaw.WarpMouse(new Vector2(screen.x, screen.y));
 
-                // Do NOT speak the name here: warping the cursor onto the button fires the game's UIButton.OnHover,
-                // which RoomViewNarrator already narrates. Speaking here too caused the object to be announced TWICE.
-                // The hover hook is the single source of truth (it matches what's actually highlighted).
+                // Narrate the SELECTED button ourselves, and mute the game's hover hook for a beat. We used to rely on
+                // the warp's UIButton.OnHover to narrate, but when two photo hotspots OVERLAP (e.g. Fridge and Big
+                // Lebowski sit at nearly the same screen point) the raycaster hovers whichever is on top — so the hover
+                // fired for the WRONG button (or, being the same as last time, de-duped to SILENCE, the "third reads
+                // blank" bug). Speaking from _selected makes the readout match exactly what Activate will click.
+                _roomView.SuppressHoverBriefly();
+                bool warped = Il2CppRaw.WarpMouse(new Vector2(screen.x, screen.y));
+                _speech.Speak(name, interrupt: true);
+
                 MelonLogger.Msg($"[TwoDProbe] step {idx + 1}/{buttons.Count} '{name}' " +
                                 $"screen=({screen.x:F0},{screen.y:F0}) warped={warped}.");
             }
@@ -212,14 +223,11 @@ namespace NoImNotAHumanAccess.World
                 if (b == IntPtr.Zero) continue;
                 if (!Il2CppRaw.GetComponentGameObjectActive(b)) continue; // only THIS photo's objects
                 if (_getIsActive != IntPtr.Zero && !Il2CppRaw.InvokeBoolGetter(b, _getIsActive)) continue; // choosable now
-
-                // Skip buttons with no readable name. The hover narrator (RoomViewNarrator) stays silent on a blank name,
-                // so a blank-named button shows up as a confusing silent stop when arrowing (reported around corpses /
-                // crowded rooms — extra person buttons that carry no usable GameObject name). Filtering them here keeps
-                // arrows landing only on objects that actually announce themselves. Name resolved exactly as the hover
-                // path does (the button's GameObject name), so this matches what would have been spoken.
-                if (string.IsNullOrWhiteSpace(NameOf(b))) continue;
-
+                // Skip a button with NO speakable name. RoomViewNarrator (the hover narration) stays silent when both the
+                // GameObject and the UIButton component name are blank, so a button in that state would be a counted but
+                // SILENT step — landing on it announces nothing and throws off the "n of m" stepping. Drop it here so the
+                // step count and the spoken hovers stay in sync. (Mirrors RoomViewNarrator's name resolution exactly.)
+                if (!HasSpeakableName(b)) continue;
                 Vector3 world = Il2CppRaw.GetComponentWorldPosition(b);
                 Vector3 screen = camera != IntPtr.Zero ? Il2CppRaw.WorldToScreenPoint(camera, world) : world;
                 list.Add((b, screen.x));
@@ -264,9 +272,10 @@ namespace NoImNotAHumanAccess.World
                     if (b == IntPtr.Zero) continue;
                     if (!Il2CppRaw.GetComponentGameObjectActive(b)) continue;
                     string name = Humanize(Il2CppRaw.GetUnityObjectName(b));
+                    bool speakable = HasSpeakableName(b);   // false → the stepper now skips it (would be a silent step)
                     Vector3 world = Il2CppRaw.GetComponentWorldPosition(b);
                     Vector3 screen = cam != IntPtr.Zero ? Il2CppRaw.WorldToScreenPoint(cam, world) : Vector3.zero;
-                    MelonLogger.Msg($"[TwoDProbe]   active '{name}' world=({world.x:F1},{world.y:F1},{world.z:F1}) " +
+                    MelonLogger.Msg($"[TwoDProbe]   active '{name}' speakable={speakable} world=({world.x:F1},{world.y:F1},{world.z:F1}) " +
                                     $"screen=({screen.x:F0},{screen.y:F0})");
                     shown++;
                 }
@@ -280,13 +289,17 @@ namespace NoImNotAHumanAccess.World
 
         private static string Humanize(string? raw) => MenuStepUtil.Humanize(raw);
 
-        /// <summary>The humanized name a button would announce on hover, resolved exactly as <see cref="RoomViewNarrator"/>
-        /// does: the button's GameObject name (falling back to the component name). Used to drop blank-named buttons from
-        /// the steppable set so arrows never land on a silent stop.</summary>
-        private static string NameOf(IntPtr button)
+        /// <summary>
+        /// Whether a button has a name a blind player would actually hear when they land on it. Mirrors
+        /// <see cref="RoomViewNarrator"/>'s resolution: the button's GameObject name first, then the UIButton
+        /// component's own name. True if EITHER is non-blank. (Uses the raw names, not <see cref="Humanize"/> —
+        /// Humanize substitutes the literal "object" for an empty input, which would mask a genuinely-blank button.)
+        /// </summary>
+        private static bool HasSpeakableName(IntPtr button)
         {
             IntPtr go = Il2CppRaw.GetComponentGameObject(button);
-            return Humanize(Il2CppRaw.GetUnityObjectName(go != IntPtr.Zero ? go : button));
+            if (!string.IsNullOrWhiteSpace(Il2CppRaw.GetUnityObjectName(go))) return true;
+            return !string.IsNullOrWhiteSpace(Il2CppRaw.GetUnityObjectName(button));
         }
 
         private void EnsureResolved()
