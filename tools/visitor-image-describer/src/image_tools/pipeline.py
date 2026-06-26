@@ -424,10 +424,28 @@ def _tell_prompt(sign: str) -> str:
     )
 
 
+def _combined_prompt(sign: str) -> str:
+    """ONE prompt that asks for both the colour label and any visible-feature labels, so the image is vision-encoded
+    ONCE per image instead of twice (a separate appearance call + tell call). The appearance and tell label sets don't
+    overlap, so the single reply is fed to both _parse_appearance and _parse_traits unchanged. Two labelled lines keep
+    the reply easy to read; we don't rely on the line split for parsing."""
+    subject = _PROMPT_SUBJECT.get(sign, sign.lower())
+    colours = SIGN_APPEARANCE.get(sign, ())
+    features = SIGN_TRAITS.get(sign, ())
+    hint = _APPEARANCE_HINT.get(sign, "")
+    hint = (" " + hint) if hint else ""
+    lines = [f"Inspect {subject}."]
+    if colours:
+        lines.append(f"COLOUR: pick the ONE label that best matches its colour: {', '.join(colours)}.{hint}")
+    if features:
+        lines.append(f"FEATURES: list every label clearly visible, or 'none': {', '.join(features)}, none.")
+    return " ".join(lines)
+
+
 def _prompt(sign: str) -> str:
-    """Single string used for the prompt-hash cache key; covers the sub-prompts the sign uses (appearance and tells) so
-    a change to either forces regeneration. (Armpit hair is name-derived, not a model call, so it isn't here.)"""
-    return _appearance_prompt(sign) + " || " + _tell_prompt(sign)
+    """Single string used for the prompt-hash cache key. Now the one combined prompt; a change to it forces
+    regeneration. (Armpit hair is name-derived, not a model call, so it isn't here.)"""
+    return _combined_prompt(sign)
 
 
 def _parse_appearance(sign: str, model_output: str) -> str | None:
@@ -566,28 +584,25 @@ def describe_manifest(
         if limit is not None and processed >= limit:
             continue
 
-        # APPEARANCE: always-answerable colour/condition pick from the model (so the readout never falls back).
-        appearance_output = ""
-        appearance = None
+        # ONE combined model call per image (colour + features), so the image is vision-encoded once. The colour and
+        # feature label sets don't overlap, so the single reply parses into both. Armpit/ear take their features from
+        # the sprite name (the model misreads them), so their prompt has only the COLOUR part — still one call.
+        model_out = ""
         if SIGN_APPEARANCE.get(task["sign"]):
-            appearance_output = client.describe(task["prepared_image"], _appearance_prompt(task["sign"]))
-            appearance = _parse_appearance(task["sign"], appearance_output)
+            model_out = client.describe(task["prepared_image"], _combined_prompt(task["sign"]))
+        appearance = _parse_appearance(task["sign"], model_out)
 
         # ARMPIT HAIR: a second appearance clause stated both ways, from the sprite name (authoritative — the model
         # mislabels smooth pits as hairy).
         name_appearance = _hair_phrase(task["sprites"]) if task["sign"] == "ARMPIT" else ""
 
-        # PRESENT-ONLY FEATURES: for armpit/ear the sprite NAME is ground truth for incidental features (fungal/insect/
-        # burn/injury — the model misses burn and over-calls hair), so derive from the filename and skip the tell call.
-        # Others: ask the model.
+        # PRESENT-ONLY FEATURES: armpit/ear from the sprite name (ground truth); other signs from the same combined reply.
         if task["sign"] in _NAME_TELLS:
             traits = _name_traits(task["sign"], task["sprites"])
-            tell_output = f"(from sprite name: {';'.join(task['sprites'])})"
         else:
-            tell_output = client.describe(task["prepared_image"], _tell_prompt(task["sign"]))
-            traits = _parse_traits(task["sign"], tell_output)
+            traits = _parse_traits(task["sign"], model_out)
         description = _render_description(task["sign"], appearance, traits, name_appearance)
-        model_output = f"appearance: {appearance_output} | tells: {tell_output}"
+        model_output = model_out or f"(from sprite name: {';'.join(task['sprites'])})"
         result = {
             **task,
             "appearance": appearance,

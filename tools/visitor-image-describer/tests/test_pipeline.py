@@ -8,7 +8,7 @@ from pathlib import Path
 from PIL import Image
 
 from image_tools.pipeline import (
-    _appearance_prompt,
+    _combined_prompt,
     _hair_phrase,
     _issues,
     _name_traits,
@@ -16,40 +16,33 @@ from image_tools.pipeline import (
     _parse_traits,
     _prompt,
     _render_description,
-    _tell_prompt,
     build_manifest,
     describe_manifest,
 )
 
 
-def _is_appearance(prompt: str) -> bool:
-    """The appearance sub-prompt asks for the ONE colour label; the tell sub-prompt asks for every visible label."""
-    return "Pick the ONE label" in prompt
-
-
 class _Client:
     model = "test-model"
 
-    def describe(self, _path, prompt):
-        # Two calls per image: appearance (pick-one) then tells. Answer each in kind.
-        return "teeth-yellow" if _is_appearance(prompt) else "bleeding-gums"
+    def describe(self, _path, _prompt):
+        # ONE combined call per image now: the reply carries both a colour label and a feature label.
+        return "teeth-yellow; bleeding-gums"
 
 
 class _FailingClient:
-    """Interrupts the run after the FIRST task fully completes. Each task makes two calls (appearance + tell), so the
-    first task uses calls 1-2 and the second task's appearance call (call 3) raises — leaving the first task
-    checkpointed alongside any cached entry."""
+    """Interrupts the run on the SECOND describe call. Each task makes ONE combined call now, so the first task uses
+    call 1 and the second task's call (call 2) raises — leaving the first task checkpointed alongside any cached entry."""
 
     model = "test-model"
 
     def __init__(self):
         self.calls = 0
 
-    def describe(self, _path, prompt):
+    def describe(self, _path, _prompt):
         self.calls += 1
-        if self.calls == 3:
+        if self.calls == 2:
             raise RuntimeError("interrupted")
-        return "teeth-yellow" if _is_appearance(prompt) else "bleeding-gums"
+        return "teeth-yellow; bleeding-gums"
 
 
 class PipelineTests(unittest.TestCase):
@@ -65,9 +58,13 @@ class PipelineTests(unittest.TestCase):
         self.assertIn("fungal-growth", _prompt("ARMPIT"))
         self.assertIn("insect", _prompt("EAR"))
 
-    def test_appearance_prompt_offers_the_colour_labels(self):
-        self.assertIn("sclera-white", _appearance_prompt("EYE-WHITE"))
-        self.assertIn("teeth-yellow", _appearance_prompt("TEETH"))
+    def test_combined_prompt_offers_both_colour_and_feature_labels(self):
+        teeth = _combined_prompt("TEETH")
+        self.assertIn("sclera-white", _combined_prompt("EYE-WHITE"))
+        self.assertIn("teeth-yellow", teeth)   # colour part
+        self.assertIn("bleeding-gums", teeth)   # feature part
+        self.assertIn("COLOUR", teeth)
+        self.assertIn("FEATURES", teeth)
 
     def test_appearance_and_tells_compose_into_one_description(self):
         appearance = _parse_appearance("TEETH", "teeth-yellow")
