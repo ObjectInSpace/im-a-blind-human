@@ -92,6 +92,83 @@ namespace NoImNotAHumanAccess.World
         }
 
         /// <summary>
+        /// DIAGNOSTIC (Ctrl+F8): dump the LIVE runtime sign signature for EVERY character × all six signs × human/imposter,
+        /// each tagged with whether the catalog currently matches it. This is the ground truth for reconciling the catalog
+        /// (built from a sprite rip) against the names the game actually reads at runtime — run once, read the log offline,
+        /// fix the keys. Iterates all characters via ResourceMother.CharactersData (ICharactersSODataProvider). One-shot.
+        /// </summary>
+        public void DumpAllSignatures()
+        {
+            try
+            {
+                // CharacterSOData are ScriptableObject ASSETS (not scene objects), so a scene FindObjectsByType misses
+                // them. Reach the full roster via the Zenject-resolved ICharactersSODataProvider.CharactersData instead.
+                IntPtr provider = ZenjectResolver.Resolve("_Code.Infrastructure", "ICharactersSODataProvider");
+                if (provider == IntPtr.Zero)
+                {
+                    MelonLogger.Warning("[SignDump] ICharactersSODataProvider unresolved.");
+                    return;
+                }
+                IntPtr getCharsData = Il2CppRaw.GetMethod(IL2CPP.il2cpp_object_get_class(provider), "get_CharactersData", 0);
+                IntPtr arr = getCharsData != IntPtr.Zero ? Il2CppRaw.InvokeObjectGetter(provider, getCharsData) : IntPtr.Zero;
+                IntPtr[] chars = arr != IntPtr.Zero ? Il2CppRaw.ReadObjectArray(arr) : Array.Empty<IntPtr>();
+                if (chars.Length == 0)
+                {
+                    MelonLogger.Warning("[SignDump] CharactersData empty / unreadable.");
+                    return;
+                }
+                if (_characterSoDataClass == IntPtr.Zero)
+                    _characterSoDataClass = Il2CppRaw.GetClass(GameAsm, CharactersNs, "CharacterSOData");
+
+                MelonLogger.Msg($"[SignDump] BEGIN — {chars.Length} characters. Format: char|type|sign|side|signature|catalogHit");
+                int[] signs = { SignEye, SignHands, SignTeeth, SignAuraPhoto, SignArmpit, SignEar };
+                int misses = 0, total = 0;
+                foreach (IntPtr c in chars)
+                {
+                    if (c == IntPtr.Zero) continue;
+                    string cname = Il2CppRaw.GetUnityObjectName(c) ?? "<noname>";
+                    int ctype = _characterSoDataClass != IntPtr.Zero
+                        ? Il2CppRaw.ReadInt32Field(c, _characterSoDataClass, "_characterType", fallback: -1) : -1;
+                    foreach (int sign in signs)
+                    {
+                        foreach (bool imp in new[] { false, true })
+                        {
+                            string? sig = ShownSignSpriteSignature(c, sign, imp);
+                            if (string.IsNullOrEmpty(sig)) continue; // null sig = that side/sign not applicable here
+
+                            // "Hit" = the runtime produces a real trait description, NOT the bare neutral prompt. We ask
+                            // the ACTUAL resolution (BaseDescription) the same way the game does, instead of re-checking
+                            // only the composite catalog — that earlier check reported every eye as a MISS because eyes
+                            // are described via the bloodshot-by-white COMPONENT lookup, and a not-bloodshot eye correctly
+                            // has no entry at all. A row is a real miss only when a signed sign falls through to the
+                            // neutral prompt; an all-clear eye (neutral by design) is logged as "clear", not a miss.
+                            string desc = BaseDescription(c, sign, imp);
+                            bool neutral = IsNeutralPrompt(sign, desc);
+                            bool clearByDesign = sign == SignEye && neutral; // not-bloodshot eye: no entry is correct
+                            bool hit = !neutral;
+                            total++;
+                            if (neutral && !clearByDesign) misses++;
+                            string state = hit ? "hit" : (clearByDesign ? "clear" : "MISS");
+                            MelonLogger.Msg($"[SignDump] {cname}|{ctype}|{sign}|{(imp ? "imp" : "hum")}|{sig}|{state}");
+                        }
+                    }
+
+                    // EYE-MOVEMENT distribution: log the raw CharacterEyeData animation params per side so we can set the
+                    // "rapid" threshold from real data (and confirm whether imposter-side values genuinely run higher).
+                    foreach (bool imp in new[] { false, true })
+                        LogEyeMovement(cname, imp, c);
+                }
+                MelonLogger.Msg($"[SignDump] END — {total} signed (sign,side) checked, {misses} fall through to the neutral " +
+                                "prompt (real gaps). 'clear' rows = all-clear eyes (no entry by design), not misses.");
+                _speech.Speak($"Sign dump complete. {misses} misses. See log.", interrupt: true);
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[SignDump] DumpAllSignatures threw: {e.Message}");
+            }
+        }
+
+        /// <summary>
         /// A sign was revealed. <paramref name="characterPtr"/> is the guest's <c>CharacterSOData</c>;
         /// <paramref name="sign"/> is the <c>ECharacterSign</c> as its underlying int. Picks the matching trait
         /// description and hands it to the dialogue narrator to fold into the guest's next line (so it isn't swallowed),
@@ -217,12 +294,33 @@ namespace NoImNotAHumanAccess.World
             if (SignDescriptionCatalog.TryGet(sign, isImposter, signature, out string catalogDescription))
                 return catalogDescription;
 
+            // EYE bloodshot lookup by the WHITE sprite alone. The game pairs a white + a pupil independently, so the
+            // whole-composite catalog can't enumerate every pairing — but the only static eye tell (bloodshot) lives on
+            // the white. So when the composite lookup misses, look the white up by itself ("0w|<white>"). The pupil
+            // carries no tell; rapid eye movement is added separately from the live animation params.
+            if (sign == SignEye && !string.IsNullOrEmpty(signature))
+            {
+                string bloodshot = EyeBloodshotFromWhite(signature!);
+                if (bloodshot.Length > 0) return bloodshot;
+            }
+
             if (sign == SignArmpit || sign == SignEar)
             {
                 string trait = TraitFromSpriteName(sign, signature);
                 if (trait.Length > 0) return trait;
             }
             return NextPrompt(sign, isImposter);
+        }
+
+        /// <summary>Look up the bloodshot description for an eye by its WHITE sprite alone (the signature is "white|iris"
+        /// or a single sprite; we take the non-pupil part). Returns empty if the white has no entry (not bloodshot →
+        /// caller uses the neutral prompt).</summary>
+        private string EyeBloodshotFromWhite(string signature)
+        {
+            string? white = null;
+            foreach (string p in signature.Split('|'))
+                if (p.IndexOf("pupil", StringComparison.OrdinalIgnoreCase) < 0) { white = p; break; }
+            return SignDescriptionCatalog.TryGetEyeComponent("0w", white, out string wd) ? wd : string.Empty;
         }
 
         /// <summary>The catalog signature of the exact image shown. Eye images are a white/iris two-sprite composite;
@@ -250,6 +348,9 @@ namespace NoImNotAHumanAccess.World
                 if (eyeClass == IntPtr.Zero) eyeClass = IL2CPP.il2cpp_object_get_class(eye);
                 string? white = DirectSpriteName(eye, eyeClass, "_white");
                 string? iris = DirectSpriteName(eye, eyeClass, "_iris");
+                // Some characters (e.g. Blind) have no iris — the _iris sprite is literally named "void". Treat that as
+                // no-iris so the signature keys on the white alone (which IS described), not the unmatchable "white|void".
+                if (string.Equals(iris, "void", StringComparison.OrdinalIgnoreCase)) iris = null;
                 if (string.IsNullOrEmpty(white)) return iris;
                 if (string.IsNullOrEmpty(iris)) return white;
                 return $"{white}|{iris}";
@@ -265,12 +366,14 @@ namespace NoImNotAHumanAccess.World
             return sprite == IntPtr.Zero ? null : Il2CppRaw.GetUnityObjectName(sprite);
         }
 
-        // RAPID-EYE-MOVEMENT thresholds. The eye always animates the iris; the tell is darting = big travel done fast.
-        // CharacterEyeData._distanceMultiplier is [0,1] (iris travel amplitude, 1 = full ±150x/±100y); the move durations
-        // are [0.1,5]s. So "rapid" = high distance AND short average duration. These values are derived from the field
-        // ranges; exact per-character params aren't recoverable offline (the asset export is stubbed), so tune in-game if needed.
-        private const float RapidEyeMinDistance = 0.6f;
-        private const float RapidEyeMaxAvgDuration = 1.0f;
+        // RAPID-EYE-MOVEMENT threshold, calibrated from the live values across all 72 characters (Ctrl+F8 dump).
+        // The discriminator is DURATION, not distance: _distanceMultiplier is 0.5 for ~all characters (not a tell), while
+        // the per-move duration varies. The default is avg ~0.75s; a coherent FAST cluster sits at avg ~0.30–0.49s
+        // (Experienced, Nervous, Jacob, Sexy, Alt, Fairytaller, …) — eyes that complete a dart in about a third of a
+        // second, which a sighted player reads as the rapid eye movement the in-game TV broadcast flags. There's a clean
+        // gap between that cluster (≤0.49) and the ~0.65 default, so the cut is avg ≤ 0.50s. (Distance is no longer
+        // gated — it doesn't vary meaningfully.) The TV tells the player to watch for this, so we describe it for them.
+        private const float RapidEyeMaxAvgDuration = 0.50f;
 
         /// <summary>
         /// A movement clause for the eye sign when the guest's eyes are darting rapidly, or empty otherwise. Reads the
@@ -278,6 +381,28 @@ namespace NoImNotAHumanAccess.World
         /// never narrated as a verdict) and judges rapid = high travel amplitude + short average move duration. The
         /// image catalog can't see motion, so this is the only source of the REM tell. Never throws; a miss returns empty.
         /// </summary>
+        /// <summary>DIAGNOSTIC: log a character's raw eye-movement params for one side, so the bulk dump captures the
+        /// full distance/duration distribution. Used to calibrate the "rapid" threshold from real values.</summary>
+        private void LogEyeMovement(string cname, bool isImposter, IntPtr characterPtr)
+        {
+            try
+            {
+                if (_characterSoDataClass == IntPtr.Zero)
+                    _characterSoDataClass = Il2CppRaw.GetClass(GameAsm, CharactersNs, "CharacterSOData");
+                IntPtr eye = _characterSoDataClass != IntPtr.Zero
+                    ? Il2CppRaw.ReadObjectField(characterPtr, _characterSoDataClass, isImposter ? "_eyeSpriteImposter" : "_eyeSpriteHuman")
+                    : IntPtr.Zero;
+                if (eye == IntPtr.Zero) return;
+                EnsureEyeDataResolved(eye);
+                if (_getDistanceMultiplier == IntPtr.Zero) return;
+                float distance = Il2CppRaw.InvokeFloatGetter(eye, _getDistanceMultiplier);
+                float minDur = Il2CppRaw.InvokeFloatGetter(eye, _getMinMoveDuration);
+                float maxDur = Il2CppRaw.InvokeFloatGetter(eye, _getMaxMoveDuration);
+                MelonLogger.Msg($"[EyeMove] {cname}|{(isImposter ? "imp" : "hum")}|dist={distance:F3}|min={minDur:F3}|max={maxDur:F3}");
+            }
+            catch { /* diagnostic only */ }
+        }
+
         private string EyeMovementClause(IntPtr characterPtr, bool isImposter)
         {
             try
@@ -295,11 +420,10 @@ namespace NoImNotAHumanAccess.World
                 if (_getDistanceMultiplier == IntPtr.Zero || _getMinMoveDuration == IntPtr.Zero || _getMaxMoveDuration == IntPtr.Zero)
                     return string.Empty;
 
-                float distance = Il2CppRaw.InvokeFloatGetter(eye, _getDistanceMultiplier);
                 float minDur = Il2CppRaw.InvokeFloatGetter(eye, _getMinMoveDuration);
                 float maxDur = Il2CppRaw.InvokeFloatGetter(eye, _getMaxMoveDuration);
                 float avgDur = (minDur + maxDur) * 0.5f;
-                bool rapid = distance >= RapidEyeMinDistance && avgDur > 0f && avgDur <= RapidEyeMaxAvgDuration;
+                bool rapid = avgDur > 0f && avgDur <= RapidEyeMaxAvgDuration;
                 return rapid ? "The eyes are darting rapidly." : string.Empty;
             }
             catch (Exception e)
@@ -319,6 +443,17 @@ namespace NoImNotAHumanAccess.World
             _getDistanceMultiplier = Il2CppRaw.GetMethod(_eyeDataClass, "get_DistanceMultiplier", 0);
             _getMinMoveDuration = Il2CppRaw.GetMethod(_eyeDataClass, "get_MinMoveDuration", 0);
             _getMaxMoveDuration = Il2CppRaw.GetMethod(_eyeDataClass, "get_MaxMoveDuration", 0);
+        }
+
+        /// <summary>True if <paramref name="description"/> is one of this sign's NEUTRAL fallback prompts (the
+        /// "Examine their …" placeholders), i.e. the resolution produced no real trait. Used by the diagnostic dump to
+        /// classify a row as a real miss vs a described/all-clear sign. An empty description also counts as neutral.</summary>
+        private static bool IsNeutralPrompt(int sign, string description)
+        {
+            if (string.IsNullOrEmpty(description)) return true;
+            foreach (string prompt in DescriptionPool(sign, false))
+                if (string.Equals(prompt, description, StringComparison.Ordinal)) return true;
+            return false;
         }
 
         /// <summary>Pick the next neutral prompt from the round-robin pool for this (sign, variant), advancing the cursor.</summary>

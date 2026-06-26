@@ -60,10 +60,14 @@ class GenerateCatalogTests(unittest.TestCase):
             included, excluded = generate(catalog, output)
             generated = output.read_text(encoding="utf-8")
 
-        self.assertEqual(2, included)
+        # Each record is emitted under BOTH sides (a sprite image means the same thing whichever field the runtime
+        # reads it from, and randomized characters can appear as either nature), so 2 records -> 4 entries.
+        self.assertEqual(4, included)
         self.assertEqual(0, excluded)
         self.assertIn('1|0|same_name"', generated)
+        self.assertIn('1|1|same_name"', generated)
         self.assertIn('1|0|same_name (2)"', generated)
+        self.assertIn('1|1|same_name (2)"', generated)
 
 
 if __name__ == "__main__":

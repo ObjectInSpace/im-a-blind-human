@@ -9,6 +9,11 @@ from pathlib import Path
 
 SIGN_IDS = {"EYE": 0, "HANDS": 1, "TEETH": 2, "AURAPHOTO": 3, "ARMPIT": 4, "EAR": 5}
 
+# Eyes are keyed by their WHITE sprite alone (the only static eye tell is bloodshot, which lives on the white; the
+# pupil carries no tell and rapid movement is read live at runtime). Side-agnostic key namespace "0w|<white-sprite>".
+# An empty description (not bloodshot) gets no entry.
+EYE_COMPONENT_PREFIX = {"EYE-WHITE": "0w"}
+
 
 def normalize_sprite(name: str) -> str:
     return name.strip().casefold()
@@ -25,10 +30,29 @@ def generate(catalog_path: Path, output_path: Path) -> tuple[int, int]:
 
     for record in records:
         sign_name = str(record.get("sign", "")).upper()
-        sign = SIGN_IDS.get(sign_name)
         side = str(record.get("side", "")).lower()
         verbose_description = str(record.get("description", "")).strip()
         sprites = [normalize_sprite(str(sprite)) for sprite in record.get("sprites", [])]
+
+        # EYE COMPONENT records (per-white / per-pupil). Side-agnostic single key in the 0w/0p namespace. An empty
+        # description = an all-clear component (white with no bloodshot/injury, or normal pupil); skip it so the runtime
+        # composes only the non-empty clauses. A component with a real description is keyed by its single sprite.
+        if sign_name in EYE_COMPONENT_PREFIX:
+            if record.get("status") == "rejected" or record.get("validation_issues") or not sprites:
+                excluded += 1
+                continue
+            if not verbose_description:
+                # all-clear component — intentionally no entry; runtime treats a lookup miss as "nothing from this part".
+                continue
+            key = f"{EYE_COMPONENT_PREFIX[sign_name]}|{sprites[0]}"
+            previous = entries.get(key)
+            if previous is not None and previous != verbose_description:
+                print(f"  note: eye-component key {key} has two descriptions; keeping first.")
+                continue
+            entries[key] = verbose_description
+            continue
+
+        sign = SIGN_IDS.get(sign_name)
         if (
             sign is None
             or side not in {"human", "imposter", "other"}
@@ -99,6 +123,15 @@ def generate(catalog_path: Path, output_path: Path) -> tuple[int, int]:
             "                sprites[i] = sprites[i].Trim().ToLowerInvariant();",
             "            string key = $\"{sign}|{(isImposter ? 1 : 0)}|{string.Join(\"|\", sprites)}\";",
             "            return Entries.TryGetValue(key, out description!);",
+            "        }",
+            "",
+            "        /// <summary>Look up a single eye COMPONENT description: the white (kind=\"0w\") or the pupil",
+            "        /// (kind=\"0p\") sprite, side-agnostic. Returns empty when there's no entry (an all-clear component).</summary>",
+            "        internal static bool TryGetEyeComponent(string kind, string? sprite, out string description)",
+            "        {",
+            "            description = string.Empty;",
+            "            if (string.IsNullOrWhiteSpace(sprite)) return false;",
+            "            return Entries.TryGetValue($\"{kind}|{sprite!.Trim().ToLowerInvariant()}\", out description!);",
             "        }",
             "    }",
             "}",
