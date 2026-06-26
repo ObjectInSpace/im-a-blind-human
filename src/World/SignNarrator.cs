@@ -185,6 +185,15 @@ namespace NoImNotAHumanAccess.World
                 LastSignWasImposter = isImposter;
 
                 string text = NextDescription(characterPtr, sign, isImposter);
+
+                // Diagnostic so the eye-movement (and any sign) readout is traceable from the log without Ctrl+F8.
+                // For the eye, also dump the live move-duration values vs the rapid threshold, so we can see WHY the
+                // "darting rapidly" clause did or didn't fire for this guest.
+                if (sign == SignEye)
+                    MelonLogger.Msg($"[SignNarrator] EYE shown imp={isImposter} eyeMove=({EyeMoveDebug(characterPtr, isImposter)}) -> \"{text}\"");
+                else
+                    MelonLogger.Msg($"[SignNarrator] sign={sign} imp={isImposter} -> \"{text}\"");
+
                 if (text.Length == 0) return;
 
                 LastTestDescription = text;            // for F9 repeat in this conversation
@@ -407,6 +416,28 @@ namespace NoImNotAHumanAccess.World
                 MelonLogger.Msg($"[EyeMove] {cname}|{(isImposter ? "imp" : "hum")}|dist={distance:F3}|min={minDur:F3}|max={maxDur:F3}");
             }
             catch { /* diagnostic only */ }
+        }
+
+        /// <summary>A compact "min/max/avg vs threshold, rapid=?" string for the eye-movement read, for the OnSignShown
+        /// diagnostic. Returns the live values so we can see why the darting clause fired or not. Never throws.</summary>
+        private string EyeMoveDebug(IntPtr characterPtr, bool isImposter)
+        {
+            try
+            {
+                if (_characterSoDataClass == IntPtr.Zero)
+                    _characterSoDataClass = Il2CppRaw.GetClass(GameAsm, CharactersNs, "CharacterSOData");
+                if (_characterSoDataClass == IntPtr.Zero) return "no-sodata";
+                IntPtr eye = Il2CppRaw.ReadObjectField(characterPtr, _characterSoDataClass, isImposter ? "_eyeSpriteImposter" : "_eyeSpriteHuman");
+                if (eye == IntPtr.Zero) return "no-eyedata";
+                EnsureEyeDataResolved(eye);
+                if (_getMinMoveDuration == IntPtr.Zero || _getMaxMoveDuration == IntPtr.Zero) return "no-getters";
+                float minDur = Il2CppRaw.InvokeFloatGetter(eye, _getMinMoveDuration);
+                float maxDur = Il2CppRaw.InvokeFloatGetter(eye, _getMaxMoveDuration);
+                float avg = (minDur + maxDur) * 0.5f;
+                bool rapid = avg > 0f && avg <= RapidEyeMaxAvgDuration;
+                return $"min={minDur:F2} max={maxDur:F2} avg={avg:F2} thresh={RapidEyeMaxAvgDuration:F2} rapid={rapid}";
+            }
+            catch { return "threw"; }
         }
 
         private string EyeMovementClause(IntPtr characterPtr, bool isImposter)

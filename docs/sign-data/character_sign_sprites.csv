@@ -554,3 +554,8 @@ WolfHound,EAR,imposter,fake_ear_15
 WolfHound,EYE,human,human_white_6; human_pupil_6
 WolfHound,HANDS,human,human_hands_6
 WolfHound,TEETH,human,human_tooth_6; human_tooth_40
+Player,HANDS,human,mainchar_human_hands
+Player,HANDS,imposter,mainchar_fake_hands
+Player,AURAPHOTO,imposter,mainchar_fake_photo
+Sirin,HANDS,human,other_hands_1
+Raskolnikov,HANDS,imposter,other_hands_6
