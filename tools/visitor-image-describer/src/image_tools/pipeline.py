@@ -45,12 +45,11 @@ SUBJECTIVE_WORDS = (
 # Appearance is a single mutually-exclusive pick (the model returns exactly one of these). Order = priority when the
 # model hedges and returns several; the FIRST listed that the model emits wins.
 SIGN_APPEARANCE = {
-    # EYE-WHITE describes the SCLERA (the white around the iris): is it clear/white, pink-tinged, or red/bloodshot.
-    "EYE-WHITE": ("sclera-red", "sclera-pink", "sclera-clear"),
+    # EYE-WHITE describes the SCLERA (the white around the iris): white, pink, or red. Stated neutrally both ways.
+    "EYE-WHITE": ("sclera-red", "sclera-pink", "sclera-white"),
     "HANDS": ("skin-pale", "skin-tan", "skin-dark", "skin-flushed", "skin-grey"),
-    # NOTE: no plain "white" here — strikingly bright-white teeth are the gameplay TELL (white-teeth), kept in the tell
-    # group so it isn't double-rated. The appearance baseline covers only the natural shades.
-    "TEETH": ("teeth-offwhite", "teeth-yellow", "teeth-stained", "teeth-grey"),
+    # Teeth COLOUR is just an appearance, described neutrally both ways (white is a shade, not an emphasised tell).
+    "TEETH": ("teeth-white", "teeth-offwhite", "teeth-yellow", "teeth-stained", "teeth-grey"),
     "AURAPHOTO": ("photo-dark", "photo-bright", "photo-muted"),
     "ARMPIT": ("skin-pale", "skin-tan", "skin-dark", "skin-flushed", "skin-grey"),
     "EAR": ("ear-pale", "ear-tan", "ear-dark", "ear-flushed", "ear-grey"),
@@ -58,89 +57,94 @@ SIGN_APPEARANCE = {
 
 APPEARANCE_PHRASES = {
     "EYE-WHITE": {
-        "sclera-red": "the whites of the eyes are red and bloodshot",
-        "sclera-pink": "the whites of the eyes are faintly pink",
-        "sclera-clear": "the whites of the eyes are clear and white",
+        "sclera-red": "the whites of the eyes are red",
+        "sclera-pink": "the whites of the eyes are pink",
+        "sclera-white": "the whites of the eyes are white",
     },
     "HANDS": {
         "skin-pale": "the skin of the hands is pale",
         "skin-tan": "the skin of the hands is tan",
         "skin-dark": "the skin of the hands is dark",
-        "skin-flushed": "the skin of the hands is flushed red",
-        "skin-grey": "the skin of the hands is greyish",
+        "skin-flushed": "the skin of the hands is red",
+        "skin-grey": "the skin of the hands is grey",
     },
     "TEETH": {
-        "teeth-offwhite": "the teeth are an ordinary off-white",
-        "teeth-yellow": "the teeth are yellowed",
-        "teeth-stained": "the teeth are stained and discoloured",
-        "teeth-grey": "the teeth are greyish",
+        "teeth-white": "the teeth are white",
+        "teeth-offwhite": "the teeth are off-white",
+        "teeth-yellow": "the teeth are yellow",
+        "teeth-stained": "the teeth are stained",
+        "teeth-grey": "the teeth are grey",
     },
     "AURAPHOTO": {
-        "photo-dark": "the aura photo is mostly dark",
-        "photo-bright": "the aura photo is brightly lit",
-        "photo-muted": "the aura photo is muted and washed out",
+        "photo-dark": "the aura photo is dark",
+        "photo-bright": "the aura photo is bright",
+        "photo-muted": "the aura photo is muted",
     },
     "ARMPIT": {
         "skin-pale": "the armpit skin is pale",
         "skin-tan": "the armpit skin is tan",
         "skin-dark": "the armpit skin is dark",
-        "skin-flushed": "the armpit skin is flushed red",
-        "skin-grey": "the armpit skin is greyish",
+        "skin-flushed": "the armpit skin is red",
+        "skin-grey": "the armpit skin is grey",
     },
     "EAR": {
         "ear-pale": "the ear is pale",
         "ear-tan": "the ear is tan",
         "ear-dark": "the ear is dark",
-        "ear-flushed": "the ear is flushed red",
-        "ear-grey": "the ear is greyish",
+        "ear-flushed": "the ear is red",
+        "ear-grey": "the ear is grey",
     },
 }
 
-# TELLS — additive findings layered after the appearance clause. No "none": absence of a tell simply means no tell
-# clause is added (the appearance clause still stands alone).
+# A SECOND appearance dimension for the armpit: its HAIR state, stated neutrally BOTH ways (every armpit is smooth or
+# hairy and the player judges it, so we always say which). The MODEL is trusted first — it answers a smooth/hairy
+# question — and the sprite NAME ("hairy" substring) is only a BACKUP when the model gives no usable hair answer.
+ARMPIT_HAIR_LABELS = ("hairy", "smooth")
+ARMPIT_HAIR_PHRASE = {"hairy": "the armpit is hairy", "smooth": "the armpit is smooth"}
+
+# TELLS — additive findings stated only when PRESENT (no absence). These are incidental features, not the colour/
+# condition baseline. Phrased plainly, without emphasis ("the gums are bleeding", not "visibly bleeding").
 SIGN_TRAITS = {
-    "EYE-WHITE": (),  # the only static white tell (bloodshot) is now carried by the sclera-red appearance label
-    "HANDS": ("dirty-nails", "irritated-skin", "unusual-fingers", "injured", "foreign-object"),
-    "TEETH": ("white-teeth", "bleeding-gums", "damaged-teeth", "gaps", "foreign-object"),
+    "EYE-WHITE": (),  # the eye's only static appearance (sclera colour) is the appearance pick; no separate tells
+    # Skin redness/irritation is something to look for, but it's already carried by the skin-flushed ("red") appearance
+    # pick, stated neutrally both ways — so it isn't a separate tell here (that would double-state the redness).
+    "HANDS": ("dirty-nails", "unusual-fingers", "injured", "foreign-object"),
+    "TEETH": ("bleeding-gums", "damaged-teeth", "gaps", "foreign-object"),  # colour moved to appearance
     "AURAPHOTO": ("black-patches", "blurred", "colored-glow", "extra-silhouettes"),
-    "ARMPIT": ("hair-present", "irritated-skin", "fungal-growth", "wet", "injured"),
+    "ARMPIT": ("fungal-growth", "wet", "injured"),  # hair -> NAME_APPEARANCE; redness is the skin-flushed appearance
     "EAR": ("insect", "injured", "burned", "discharge", "foreign-object"),
 }
 
 TRAIT_PHRASES = {
     "HANDS": {
-        "dirty-nails": "dirt is visible under the fingernails",
-        "irritated-skin": "the hand skin is visibly red or irritated",
-        "unusual-fingers": "the fingers have an unusual visible count or shape",
-        "injured": "the hands have a visible injury",
-        "foreign-object": "a foreign object is visible on the hands",
+        "dirty-nails": "there is dirt under the fingernails",
+        "unusual-fingers": "the fingers have an unusual count or shape",
+        "injured": "there is an injury on the hands",
+        "foreign-object": "there is a foreign object on the hands",
     },
     "TEETH": {
-        "white-teeth": "the teeth are strikingly bright white",
-        "bleeding-gums": "the gums are visibly bleeding",
-        "damaged-teeth": "one or more teeth are visibly damaged",
-        "gaps": "visible gaps separate some teeth",
-        "foreign-object": "a foreign object is visible among the teeth",
+        "bleeding-gums": "the gums are bleeding",
+        "damaged-teeth": "one or more teeth are damaged",
+        "gaps": "there are gaps between some teeth",
+        "foreign-object": "there is a foreign object among the teeth",
     },
     "AURAPHOTO": {
-        "black-patches": "black patches are visible in the aura photo",
-        "blurred": "the aura photo is visibly blurred",
-        "colored-glow": "a colored glow is visible around the figure",
-        "extra-silhouettes": "additional silhouettes are visible in the photo",
+        "black-patches": "there are black patches in the photo",
+        "blurred": "the photo is blurred",
+        "colored-glow": "there is a coloured glow around the figure",
+        "extra-silhouettes": "there are extra silhouettes in the photo",
     },
     "ARMPIT": {
-        "hair-present": "hair is visible in the armpit",
-        "irritated-skin": "the armpit skin is visibly red or irritated",
-        "fungal-growth": "fungal-looking growth is visible on the armpit skin",
-        "wet": "visible moisture is present in the armpit",
-        "injured": "the armpit has a visible injury",
+        "fungal-growth": "there is a fungal growth on the skin",
+        "wet": "the skin is moist",
+        "injured": "there is an injury on the armpit",
     },
     "EAR": {
-        "insect": "an insect is visible inside the ear",
-        "injured": "the ear has a visible injury",
-        "burned": "the ear is visibly burned or charred",
-        "discharge": "visible discharge is present in the ear",
-        "foreign-object": "a foreign object is visible inside the ear",
+        "insect": "there is an insect inside the ear",
+        "injured": "there is an injury on the ear",
+        "burned": "the ear is burned",
+        "discharge": "there is discharge in the ear",
+        "foreign-object": "there is a foreign object inside the ear",
     },
 }
 
@@ -319,10 +323,12 @@ _PROMPT_SUBJECT = {
     "AURAPHOTO": "the aura photo",
 }
 
-# Optional extra guidance appended to the appearance prompt, where the pick-one could otherwise collide with a tell.
+# Optional extra guidance appended to the appearance prompt.
 _APPEARANCE_HINT = {
-    # Reserve "strikingly bright/unnatural white" for the tell question; here pick the natural shade only.
-    "TEETH": "If the teeth look ordinary, pick teeth-offwhite; only the colour matters here, not brightness.",
+    # Redness/irritation is something the player looks for, and it's carried by the "red" skin pick — so cue it.
+    "HANDS": "If the skin looks red or irritated, pick skin-flushed.",
+    "ARMPIT": "If the skin looks red or irritated, pick skin-flushed.",
+    "EAR": "If the ear looks red or irritated, pick ear-flushed.",
 }
 
 
@@ -346,9 +352,12 @@ def _tell_prompt(sign: str) -> str:
 
 
 def _prompt(sign: str) -> str:
-    """Back-compat single string used for the prompt-hash cache key; covers both sub-prompts so a change to either
-    forces regeneration."""
-    return _appearance_prompt(sign) + " || " + _tell_prompt(sign)
+    """Single string used for the prompt-hash cache key; covers every sub-prompt the sign uses (appearance, the armpit
+    hair question, and tells) so a change to any of them forces regeneration."""
+    parts = [_appearance_prompt(sign), _tell_prompt(sign)]
+    if sign == "ARMPIT":
+        parts.append(_hair_prompt())
+    return " || ".join(parts)
 
 
 def _parse_appearance(sign: str, model_output: str) -> str | None:
@@ -372,15 +381,13 @@ def _parse_traits(sign: str, model_output: str) -> list[str]:
     return found
 
 
-# Armpit and ear tells are encoded in the SPRITE NAME by the game (clean/hairy/fungal/redness, cockroach/burnt/injury),
-# which is ground truth — the vision model misreads them (it called hairless "clean" armpits hairy). So for these signs
-# we take the tells from the FILENAME, not the model. Each entry: substring in the name -> tell label. Order within a
-# sign doesn't matter (every matching tell is added). Only PRESENT features are listed; absence is never stated.
+# Some armpit/ear features are encoded in the SPRITE NAME by the game (fungal/wet, cockroach/burnt/injury), which is
+# ground truth — the vision model misreads them. So for these signs we take the present-only features from the FILENAME,
+# not the model. Each entry: substring in the name -> tell label. Order within a sign doesn't matter (every matching
+# tell is added). Only PRESENT features are listed; absence is never stated.
 _NAME_TELLS = {
     "ARMPIT": {
-        "hairy": "hair-present",
         "fungal": "fungal-growth",
-        "redness": "irritated-skin",
         "wet": "wet",
     },
     "EAR": {
@@ -392,37 +399,41 @@ _NAME_TELLS = {
 
 
 def _name_traits(sign: str, sprites: list[str]) -> list[str]:
-    """Tells derived from the sprite filename for armpit/ear (authoritative; the vision model misreads these). Returns
-    [] for signs not in _NAME_TELLS so the caller keeps using the model's tells."""
+    """Present-only tells derived from the sprite filename for armpit/ear (authoritative; the vision model misreads
+    these). Returns [] for signs not in _NAME_TELLS so the caller keeps using the model's tells."""
     table = _NAME_TELLS.get(sign)
     if not table:
         return []
     name = " ".join(sprites).casefold()
-    # Only ever ASSERT a feature that's present. Absence is never stated — a clean/clear armpit simply gets no hair
-    # clause (the skin-tone appearance describes it), rather than "no hair is visible".
     return [label for key, label in table.items() if key in name]
 
 
-def _coherent_traits(sign: str, appearance: str | None, traits: list[str]) -> list[str]:
-    """Drop tells that contradict the appearance pick, so the readout never says two opposite things. The vision model
-    (both 4B and 8B) calls almost every tooth 'strikingly bright white', so that tell is kept only when the appearance
-    baseline did NOT already judge the teeth a non-white shade — 'stained and discoloured; strikingly bright white' is
-    incoherent. Appearance is the more reliable signal for teeth colour, so it wins the conflict."""
-    if sign == "TEETH" and "white-teeth" in traits and appearance in {"teeth-yellow", "teeth-stained", "teeth-grey"}:
-        return [t for t in traits if t != "white-teeth"]
-    return traits
+def _hair_prompt() -> str:
+    """The armpit hair question (its own one-pick call). Model-first; the filename is only a backup."""
+    return f"Look at the armpit. Is it hairy or smooth? Reply with one word only: {', '.join(ARMPIT_HAIR_LABELS)}."
 
 
-def _render_description(sign: str, appearance: str | None, traits: list[str]) -> str:
-    """Compose the spoken description: the appearance clause first (always present when resolved), then any tell
-    clauses. Guarantees a concrete description — there is no empty/placeholder outcome when appearance resolves."""
+def _hair_phrase(model_output: str, sprites: list[str]) -> str:
+    """The armpit hair clause, stated both ways. Trust the MODEL'S read first; fall back to the sprite name ('hairy'
+    substring => hairy, else smooth) only when the model didn't clearly answer."""
+    lowered = model_output.casefold()
+    for label in ARMPIT_HAIR_LABELS:
+        if re.search(rf"\b{label}\b", lowered):
+            return ARMPIT_HAIR_PHRASE[label]
+    # Model gave nothing usable — back up with the filename, which encodes hair as "hairy" vs the clean/clear default.
+    name = " ".join(sprites).casefold()
+    return ARMPIT_HAIR_PHRASE["hairy" if "hairy" in name else "smooth"]
+
+
+def _render_description(sign: str, appearance: str | None, traits: list[str], name_appearance: str = "") -> str:
+    """Compose the spoken description: the colour/condition appearance first, then any name-derived appearance clause
+    (e.g. smooth/hairy), then the present-only tell clauses. Always concrete — no empty/placeholder outcome."""
     clauses: list[str] = []
-    # The "strikingly bright white" TELL supersedes the neutral off-white baseline (don't say "ordinary off-white;
-    # strikingly bright white"); the tell clause alone carries the teeth colour in that case.
-    suppress_appearance = sign == "TEETH" and appearance == "teeth-offwhite" and "white-teeth" in traits
-    appearance_phrase = "" if suppress_appearance else APPEARANCE_PHRASES.get(sign, {}).get(appearance or "")
+    appearance_phrase = APPEARANCE_PHRASES.get(sign, {}).get(appearance or "")
     if appearance_phrase:
         clauses.append(appearance_phrase)
+    if name_appearance:
+        clauses.append(name_appearance)
     clauses.extend(phrase for trait in traits if (phrase := TRAIT_PHRASES.get(sign, {}).get(trait)))
     if not clauses:
         return ""
@@ -502,18 +513,24 @@ def describe_manifest(
             appearance_output = client.describe(task["prepared_image"], _appearance_prompt(task["sign"]))
             appearance = _parse_appearance(task["sign"], appearance_output)
 
-        # TELLS: for armpit/ear the sprite NAME is ground truth (the model misreads hair/insects), so derive from the
-        # filename and skip the tell call entirely. For the other signs, ask the model, then drop tells that contradict
-        # the appearance (e.g. the chronically over-fired teeth "bright white" against a stained-teeth appearance).
-        name_traits = _name_traits(task["sign"], task["sprites"])
-        if name_traits or task["sign"] in _NAME_TELLS:
-            traits = name_traits
+        # ARMPIT HAIR: a second appearance clause stated both ways. Trust the model's smooth/hairy read first; the
+        # sprite name backs it up only when the model didn't answer.
+        name_appearance = ""
+        hair_output = ""
+        if task["sign"] == "ARMPIT":
+            hair_output = client.describe(task["prepared_image"], _hair_prompt())
+            name_appearance = _hair_phrase(hair_output, task["sprites"])
+
+        # PRESENT-ONLY FEATURES: for armpit/ear the sprite NAME is ground truth for incidental features (fungal/insect/
+        # burn/injury — the model misreads these), so derive from the filename and skip the tell call. Others: ask model.
+        if task["sign"] in _NAME_TELLS:
+            traits = _name_traits(task["sign"], task["sprites"])
             tell_output = f"(from sprite name: {';'.join(task['sprites'])})"
         else:
             tell_output = client.describe(task["prepared_image"], _tell_prompt(task["sign"]))
-            traits = _coherent_traits(task["sign"], appearance, _parse_traits(task["sign"], tell_output))
-        description = _render_description(task["sign"], appearance, traits)
-        model_output = f"appearance: {appearance_output} | tells: {tell_output}"
+            traits = _parse_traits(task["sign"], tell_output)
+        description = _render_description(task["sign"], appearance, traits, name_appearance)
+        model_output = f"appearance: {appearance_output} | hair: {hair_output} | tells: {tell_output}"
         result = {
             **task,
             "appearance": appearance,
