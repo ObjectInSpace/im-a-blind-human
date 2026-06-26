@@ -103,7 +103,7 @@ SIGN_TRAITS = {
     "HANDS": ("dirty-nails", "irritated-skin", "unusual-fingers", "injured", "foreign-object"),
     "TEETH": ("white-teeth", "bleeding-gums", "damaged-teeth", "gaps", "foreign-object"),
     "AURAPHOTO": ("black-patches", "blurred", "colored-glow", "extra-silhouettes"),
-    "ARMPIT": ("hair-present", "hair-absent", "irritated-skin", "fungal-growth", "wet", "injured"),
+    "ARMPIT": ("hair-present", "irritated-skin", "fungal-growth", "wet", "injured"),
     "EAR": ("insect", "injured", "burned", "discharge", "foreign-object"),
 }
 
@@ -130,7 +130,6 @@ TRAIT_PHRASES = {
     },
     "ARMPIT": {
         "hair-present": "hair is visible in the armpit",
-        "hair-absent": "no hair is visible in the armpit",
         "irritated-skin": "the armpit skin is visibly red or irritated",
         "fungal-growth": "fungal-looking growth is visible on the armpit skin",
         "wet": "visible moisture is present in the armpit",
@@ -376,7 +375,7 @@ def _parse_traits(sign: str, model_output: str) -> list[str]:
 # Armpit and ear tells are encoded in the SPRITE NAME by the game (clean/hairy/fungal/redness, cockroach/burnt/injury),
 # which is ground truth — the vision model misreads them (it called hairless "clean" armpits hairy). So for these signs
 # we take the tells from the FILENAME, not the model. Each entry: substring in the name -> tell label. Order within a
-# sign doesn't matter (all matching tells are added); hair-absent is only added when no "hairy" appears (see below).
+# sign doesn't matter (every matching tell is added). Only PRESENT features are listed; absence is never stated.
 _NAME_TELLS = {
     "ARMPIT": {
         "hairy": "hair-present",
@@ -399,11 +398,9 @@ def _name_traits(sign: str, sprites: list[str]) -> list[str]:
     if not table:
         return []
     name = " ".join(sprites).casefold()
-    found = [label for key, label in table.items() if key in name]
-    # Armpit hair is binary: "hairy" in the name => hair-present, otherwise the clean/clear side => hair-absent.
-    if sign == "ARMPIT" and "hair-present" not in found:
-        found.insert(0, "hair-absent")
-    return found
+    # Only ever ASSERT a feature that's present. Absence is never stated — a clean/clear armpit simply gets no hair
+    # clause (the skin-tone appearance describes it), rather than "no hair is visible".
+    return [label for key, label in table.items() if key in name]
 
 
 def _coherent_traits(sign: str, appearance: str | None, traits: list[str]) -> list[str]:
@@ -438,8 +435,6 @@ def _trait_issues(sign: str, appearance: str | None, traits: list[str]) -> list[
     # (which is the exact failure mode we're removing). Flag it for review so it's never silently empty.
     if SIGN_APPEARANCE.get(sign) and appearance is None:
         issues.append("No appearance label resolved")
-    if sign == "ARMPIT" and "hair-present" in traits and "hair-absent" in traits:
-        issues.append("Conflicting armpit hair labels")
     return issues
 
 

@@ -94,7 +94,8 @@ class PipelineTests(unittest.TestCase):
 
     def test_armpit_ear_tells_come_from_the_sprite_name(self):
         # The sprite filename is ground truth for armpit/ear (the vision model misreads hair/insects).
-        self.assertEqual(["hair-absent"], _name_traits("ARMPIT", ["armpit_1_clean_5"]))
+        # Only PRESENT features are listed — a clean armpit yields no hair clause (absence is never stated).
+        self.assertEqual([], _name_traits("ARMPIT", ["armpit_1_clean_5"]))
         self.assertEqual(["hair-present", "fungal-growth"], _name_traits("ARMPIT", ["armpit_2_hairy_fungal_5"]))
         self.assertEqual(["insect"], _name_traits("EAR", ["fake_ear_cockroach_19"]))
         self.assertEqual(["burned"], _name_traits("EAR", ["fake_ear_burnt"]))
