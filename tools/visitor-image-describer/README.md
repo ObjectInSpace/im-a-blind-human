@@ -19,9 +19,17 @@ armpit animations use the final listed frame.
 uv run image-tools prepare `
   --mapping "..\..\docs\sign-data\character_sign_sprites.csv" `
   --textures "D:\Root\AssetRipper\NINAH\ExportedProject\ExportedProject\Assets\Texture2D" `
+  --sprites  "D:\Root\AssetRipper\NINAH\ExportedProject\ExportedProject\Assets\Sprite" `
   --prepared-dir "work\prepared" `
   --output "work\manifest.json"
 ```
+
+`--sprites` (the sliced Sprite asset dir) enables best-frame cropping for the ANIMATED signs (armpit, and the few
+animated ears like the cockroach). Those sprites are exported as one combined sheet texture plus a `Sprite/<base>_<n>.asset`
+per frame carrying that frame's `m_Rect` into the sheet. Without `--sprites` the whole tiled sheet is flattened (the
+feature becomes a few pixels in a contact sheet); with it, prepare crops the single frame where the feature is most
+present — the game plays the frames as a loop, so a transient feature (the cockroach crawls in then out) is caught
+mid-loop rather than lost on an empty last frame. Eye/hands/teeth/aura-photo are static single images and are unaffected.
 
 Classify each image into a controlled set of visible traits and generate descriptions from fixed factual templates.
 The command writes after every image and resumes from matching model/source/prompt entries.

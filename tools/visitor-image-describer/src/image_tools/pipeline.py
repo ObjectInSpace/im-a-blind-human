@@ -12,12 +12,12 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable
 
-from PIL import Image
+from PIL import Image, ImageChops, ImageStat
 
 from .ollama import OllamaClient
 
 FORBIDDEN_WORDS = ("human", "imposter", "visitor", "safe", "dangerous")
-PREPARATION_VERSION = "2-minimum-384"
+PREPARATION_VERSION = "3-anim-bestframe"
 SUBJECTIVE_WORDS = (
     "abnormal",
     "attractive",
@@ -239,7 +239,67 @@ def _composite(paths: list[Path]) -> Image.Image:
     return _flatten(canvas)
 
 
-def build_manifest(mapping_csv: Path, texture_dir: Path, prepared_dir: Path, output: Path) -> list[Task]:
+# Armpit/ear sprites are ANIMATIONS: AssetRipper exports one combined sheet texture (Texture2D/<base>.png) plus a sliced
+# sprite per frame (Sprite/<base>_<n>.asset) carrying that frame's m_Rect into the sheet. Flattening the whole sheet fed
+# the model a tiled contact sheet (the feature became a few pixels), so we instead crop the single best frame. "Best" =
+# the frame where the feature is most present: the game plays the frames as a LOOP, so for a TRANSIENT feature (the
+# cockroach crawls in then out) the last frame can be empty — we pick the frame that differs most from the loop's plain
+# baseline (frame 0). For a STATIC feature (fungal/redness, present every frame) any late frame scores high; all fine.
+
+# Match the `m_Rect:` block specifically: an optional serializedVersion line, then x/y/width/height on consecutive
+# lines. NOT re.DOTALL — `.` must not cross newlines, or it slides past the real values into a later empty textureRect.
+_RECT_RE = re.compile(
+    r"m_Rect:\s*\n(?:\s*serializedVersion:.*\n)?\s*x:\s*([\d.eE+-]+)\s*\n\s*y:\s*([\d.eE+-]+)\s*\n"
+    r"\s*width:\s*([\d.eE+-]+)\s*\n\s*height:\s*([\d.eE+-]+)"
+)
+
+
+def _read_sprite_rect(asset_path: Path) -> tuple[int, int, int, int] | None:
+    """The m_Rect (x, y, width, height) of a sliced Sprite asset, or None if absent/degenerate. Unity rects are
+    bottom-left origin."""
+    match = _RECT_RE.search(asset_path.read_text(encoding="utf-8", errors="replace"))
+    if not match:
+        return None
+    x, y, w, h = (int(float(g)) for g in match.groups())
+    return (x, y, w, h) if w > 0 and h > 0 else None  # a zero-size rect is unusable
+
+
+def _animation_frames(sprite_dir: Path, base: str) -> list[Path]:
+    """The per-frame sprite assets <base>_0.asset … in numeric order; [] if this isn't a sliced animation. The suffix
+    must be PURELY numeric — `armpit_1_clean_*` must not also pick up `armpit_1_clean_redness_*` (a different sprite)."""
+    pattern = re.compile(rf"^{re.escape(base)}_(\d+)\.asset$")
+    numbered = []
+    for path in sprite_dir.glob(f"{base}_*.asset"):
+        m = pattern.match(path.name)
+        if m:
+            numbered.append((int(m.group(1)), path))
+    return [path for _, path in sorted(numbered)]
+
+
+def _best_animation_frame(sheet: Image.Image, sprite_dir: Path, base: str) -> Image.Image | None:
+    """Crop every animation frame from the sheet and return the one where the feature is most present (max difference
+    from the loop's plain baseline frame). None if the sprite isn't a sliced animation (caller uses the whole texture)."""
+    frame_assets = _animation_frames(sprite_dir, base)
+    crops: list[Image.Image] = []
+    sheet_h, sheet_w = sheet.height, sheet.width
+    for asset in frame_assets:
+        rect = _read_sprite_rect(asset)
+        if rect is None:
+            continue  # skip a frame with missing/degenerate slice data; the others still give a good still
+        x, y, w, h = rect
+        if x < 0 or y < 0 or x + w > sheet_w or y + h > sheet_h:
+            continue  # rect outside the sheet — ignore rather than crop garbage
+        crops.append(sheet.crop((x, sheet_h - (y + h), x + w, sheet_h - y)))  # Y-flip to PIL top-left origin
+    if len(crops) < 2:
+        return None  # not enough frames to choose from — caller uses the whole texture
+    baseline = crops[0].convert("RGB")
+    scores = [sum(ImageStat.Stat(ImageChops.difference(c.convert("RGB"), baseline)).mean) for c in crops]
+    return crops[max(range(len(crops)), key=lambda i: scores[i])]
+
+
+def build_manifest(
+    mapping_csv: Path, texture_dir: Path, prepared_dir: Path, output: Path, sprite_dir: Path | None = None
+) -> list[Task]:
     prepared_dir.mkdir(parents=True, exist_ok=True)
     grouped: dict[tuple[str, str, tuple[str, ...]], set[str]] = defaultdict(set)
 
@@ -288,7 +348,19 @@ def build_manifest(mapping_csv: Path, texture_dir: Path, prepared_dir: Path, out
 
         task_id = _safe_id(f"{sign}_{side}_{'_'.join(sprites)}")
         prepared = prepared_dir / f"{task_id}.png"
-        if len(resolved) == 1:
+
+        # Armpit/ear: the resolved texture is an animation SHEET. Crop the single best (most-feature-present) frame using
+        # the sliced Sprite assets, instead of flattening the whole tiled sheet. Falls back to the whole texture when the
+        # sprite isn't a sliced animation (a static single-frame ear) or the slice data is missing.
+        anim_frame: Image.Image | None = None
+        if sign in {"ARMPIT", "EAR"} and sprite_dir is not None and len(resolved) == 1:
+            base = re.sub(r"_\d+$", "", re.sub(r"\s*\(\d+\)$", "", sprites[0]))
+            with Image.open(resolved[0]) as sheet:
+                anim_frame = _best_animation_frame(sheet.convert("RGBA"), sprite_dir, base)
+
+        if anim_frame is not None:
+            _flatten(anim_frame).save(prepared)
+        elif len(resolved) == 1:
             with Image.open(resolved[0]) as image:
                 _flatten(image).save(prepared)
         else:

@@ -160,6 +160,37 @@ class PipelineTests(unittest.TestCase):
             self.assertTrue(Path(eye.prepared_image).is_file())
             self.assertNotIn("Font SDF", eye.characters)
 
+    def test_best_animation_frame_picks_the_most_feature_present_frame(self):
+        # Animated armpit/ear sprites are one sheet + a sliced Sprite asset per frame (m_Rect into the sheet). We crop
+        # the frame that differs most from the plain baseline frame 0 — so a transient feature (a cockroach that crawls
+        # in then out) is caught mid-loop, not lost on an empty last frame.
+        from image_tools.pipeline import _best_animation_frame
+
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            sprite_dir = root / "sprites"
+            sprite_dir.mkdir()
+            # A 4-frame sheet, each cell 8x8 side by side: frame0 plain, frame2 has a bright "feature" block, others dim.
+            sheet = Image.new("RGB", (32, 8), (10, 10, 10))
+            for i, fill in enumerate([(10, 10, 10), (40, 40, 40), (250, 250, 250), (20, 20, 20)]):
+                sheet.paste(Image.new("RGB", (8, 8), fill), (i * 8, 0))
+            # Unity rects are bottom-left origin; here height==frame height so y is 0 for every cell.
+            for i in range(4):
+                (sprite_dir / f"anim_{i}.asset").write_text(
+                    f"  m_Rect:\n    serializedVersion: 2\n    x: {i * 8}\n    y: 0\n    width: 8\n    height: 8\n",
+                    encoding="utf-8",
+                )
+            best = _best_animation_frame(sheet.convert("RGBA"), sprite_dir, "anim")
+            assert best is not None
+            # Frame 2 (the bright cell) is the most different from frame 0 -> it's chosen.
+            self.assertEqual((250, 250, 250), best.convert("RGB").getpixel((4, 4)))
+
+        # A base with fewer than two sliced frames returns None (caller uses the whole texture).
+        with tempfile.TemporaryDirectory() as temp:
+            empty = Path(temp) / "sprites"
+            empty.mkdir()
+            self.assertIsNone(_best_animation_frame(Image.new("RGBA", (8, 8)), empty, "nope"))
+
     def test_prepare_fails_when_a_mapped_texture_is_missing(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

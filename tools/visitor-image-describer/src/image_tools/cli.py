@@ -16,6 +16,7 @@ def _parser() -> argparse.ArgumentParser:
     prepare = sub.add_parser("prepare", help="Build a prepared-image manifest from the recovered sign mapping")
     prepare.add_argument("--mapping", type=Path, required=True)
     prepare.add_argument("--textures", type=Path, required=True)
+    prepare.add_argument("--sprites", type=Path, help="Sliced Sprite asset dir; enables best-frame crop for animations")
     prepare.add_argument("--prepared-dir", type=Path, required=True)
     prepare.add_argument("--output", type=Path, required=True)
 
@@ -39,7 +40,7 @@ def _parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     if args.command == "prepare":
-        tasks = build_manifest(args.mapping, args.textures, args.prepared_dir, args.output)
+        tasks = build_manifest(args.mapping, args.textures, args.prepared_dir, args.output, args.sprites)
         print(f"Prepared {len(tasks)} description tasks in {args.output}")
         return 0
     if args.command == "describe":
