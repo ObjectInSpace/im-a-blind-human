@@ -97,24 +97,23 @@ class PipelineTests(unittest.TestCase):
         # If the model hedges and names several, the first DECLARED label wins (sclera-red before sclera-white).
         self.assertEqual("sclera-red", _parse_appearance("EYE-WHITE", "sclera-white but also sclera-red"))
 
-    def test_armpit_hair_trusts_the_model_then_falls_back_to_the_name(self):
-        # Hair is part of the armpit's appearance, stated neutrally both ways. The MODEL's read wins...
-        self.assertEqual("the armpit is hairy", _hair_phrase("hairy", ["armpit_1_clean_5"]))
-        self.assertEqual("the armpit is smooth", _hair_phrase("smooth", ["armpit_2_hairy_fungal_5"]))
-        # ...and the sprite name is only a backup when the model gives no usable answer.
-        self.assertEqual("the armpit is smooth", _hair_phrase("(no idea)", ["armpit_1_clean_5"]))
-        self.assertEqual("the armpit is hairy", _hair_phrase("", ["armpit_2_hairy_fungal_5"]))
+    def test_armpit_hair_is_stated_both_ways_from_the_sprite_name(self):
+        # Hair is part of the armpit's appearance, stated neutrally both ways, from the sprite name (authoritative —
+        # the model mislabels smooth pits as hairy).
+        self.assertEqual("the armpit is smooth", _hair_phrase(["armpit_1_clean_5"]))
+        self.assertEqual("the armpit is smooth", _hair_phrase(["armpit_3_clear_5"]))
+        self.assertEqual("the armpit is hairy", _hair_phrase(["armpit_2_hairy_fungal_5"]))
         # Composed: skin tone, then hair, then any present-only feature.
         self.assertEqual(
             "The armpit skin is pale; the armpit is smooth.",
-            _render_description("ARMPIT", "skin-pale", [], _hair_phrase("smooth", ["armpit_1_clean_5"])),
+            _render_description("ARMPIT", "skin-pale", [], _hair_phrase(["armpit_1_clean_5"])),
         )
         self.assertEqual(
             "The armpit skin is red; the armpit is hairy; there is a fungal growth on the skin.",
             _render_description(
                 "ARMPIT", "skin-flushed",
                 _name_traits("ARMPIT", ["armpit_2_hairy_fungal_5"]),
-                _hair_phrase("hairy", ["armpit_2_hairy_fungal_5"]),
+                _hair_phrase(["armpit_2_hairy_fungal_5"]),
             ),
         )
 

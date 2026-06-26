@@ -97,9 +97,10 @@ APPEARANCE_PHRASES = {
 }
 
 # A SECOND appearance dimension for the armpit: its HAIR state, stated neutrally BOTH ways (every armpit is smooth or
-# hairy and the player judges it, so we always say which). The MODEL is trusted first — it answers a smooth/hairy
-# question — and the sprite NAME ("hairy" substring) is only a BACKUP when the model gives no usable hair answer.
-ARMPIT_HAIR_LABELS = ("hairy", "smooth")
+# hairy and the player judges it, so we always say which). Taken from the sprite NAME, which is AUTHORITATIVE here:
+# probing the 8B on the clean single-frame crops showed it confidently calls SMOOTH armpits "hairy" (a false positive),
+# so the model isn't trustworthy for hair even though it reads insect/fungal fine. The name ("hairy" vs the clean/clear
+# default) is always correct.
 ARMPIT_HAIR_PHRASE = {"hairy": "the armpit is hairy", "smooth": "the armpit is smooth"}
 
 # TELLS — additive findings stated only when PRESENT (no absence). These are incidental features, not the colour/
@@ -424,12 +425,9 @@ def _tell_prompt(sign: str) -> str:
 
 
 def _prompt(sign: str) -> str:
-    """Single string used for the prompt-hash cache key; covers every sub-prompt the sign uses (appearance, the armpit
-    hair question, and tells) so a change to any of them forces regeneration."""
-    parts = [_appearance_prompt(sign), _tell_prompt(sign)]
-    if sign == "ARMPIT":
-        parts.append(_hair_prompt())
-    return " || ".join(parts)
+    """Single string used for the prompt-hash cache key; covers the sub-prompts the sign uses (appearance and tells) so
+    a change to either forces regeneration. (Armpit hair is name-derived, not a model call, so it isn't here.)"""
+    return _appearance_prompt(sign) + " || " + _tell_prompt(sign)
 
 
 def _parse_appearance(sign: str, model_output: str) -> str | None:
@@ -480,19 +478,9 @@ def _name_traits(sign: str, sprites: list[str]) -> list[str]:
     return [label for key, label in table.items() if key in name]
 
 
-def _hair_prompt() -> str:
-    """The armpit hair question (its own one-pick call). Model-first; the filename is only a backup."""
-    return f"Look at the armpit. Is it hairy or smooth? Reply with one word only: {', '.join(ARMPIT_HAIR_LABELS)}."
-
-
-def _hair_phrase(model_output: str, sprites: list[str]) -> str:
-    """The armpit hair clause, stated both ways. Trust the MODEL'S read first; fall back to the sprite name ('hairy'
-    substring => hairy, else smooth) only when the model didn't clearly answer."""
-    lowered = model_output.casefold()
-    for label in ARMPIT_HAIR_LABELS:
-        if re.search(rf"\b{label}\b", lowered):
-            return ARMPIT_HAIR_PHRASE[label]
-    # Model gave nothing usable — back up with the filename, which encodes hair as "hairy" vs the clean/clear default.
+def _hair_phrase(sprites: list[str]) -> str:
+    """The armpit hair clause, stated both ways, from the sprite name: 'hairy' substring => hairy, else (clean/clear)
+    => smooth. The name is authoritative — the model mislabels smooth pits as hairy."""
     name = " ".join(sprites).casefold()
     return ARMPIT_HAIR_PHRASE["hairy" if "hairy" in name else "smooth"]
 
@@ -585,16 +573,13 @@ def describe_manifest(
             appearance_output = client.describe(task["prepared_image"], _appearance_prompt(task["sign"]))
             appearance = _parse_appearance(task["sign"], appearance_output)
 
-        # ARMPIT HAIR: a second appearance clause stated both ways. Trust the model's smooth/hairy read first; the
-        # sprite name backs it up only when the model didn't answer.
-        name_appearance = ""
-        hair_output = ""
-        if task["sign"] == "ARMPIT":
-            hair_output = client.describe(task["prepared_image"], _hair_prompt())
-            name_appearance = _hair_phrase(hair_output, task["sprites"])
+        # ARMPIT HAIR: a second appearance clause stated both ways, from the sprite name (authoritative — the model
+        # mislabels smooth pits as hairy).
+        name_appearance = _hair_phrase(task["sprites"]) if task["sign"] == "ARMPIT" else ""
 
         # PRESENT-ONLY FEATURES: for armpit/ear the sprite NAME is ground truth for incidental features (fungal/insect/
-        # burn/injury — the model misreads these), so derive from the filename and skip the tell call. Others: ask model.
+        # burn/injury — the model misses burn and over-calls hair), so derive from the filename and skip the tell call.
+        # Others: ask the model.
         if task["sign"] in _NAME_TELLS:
             traits = _name_traits(task["sign"], task["sprites"])
             tell_output = f"(from sprite name: {';'.join(task['sprites'])})"
@@ -602,7 +587,7 @@ def describe_manifest(
             tell_output = client.describe(task["prepared_image"], _tell_prompt(task["sign"]))
             traits = _parse_traits(task["sign"], tell_output)
         description = _render_description(task["sign"], appearance, traits, name_appearance)
-        model_output = f"appearance: {appearance_output} | hair: {hair_output} | tells: {tell_output}"
+        model_output = f"appearance: {appearance_output} | tells: {tell_output}"
         result = {
             **task,
             "appearance": appearance,
