@@ -33,45 +33,100 @@ SUBJECTIVE_WORDS = (
     "unclean",
     "unkempt",
 )
+# Every readout must DESCRIBE THE ACTUAL IMAGE, for every sign and every variant — never fall back to a placeholder
+# ("examine the …") and never substitute a judgement ("none of the listed signs is visible" is a verdict, not a
+# description). So each sign has TWO label groups:
+#   • APPEARANCE — a PICK-ONE baseline that is ALWAYS answerable (the dominant colour/condition of the body part).
+#     This guarantees a concrete clause for a perfectly clean image, so there is no empty description and no fallback.
+#   • TELLS — zero-or-more additive findings (the gameplay signs). Layered on top of the appearance clause when present.
+# The rendered description is "<appearance>[; <tell>; <tell>].". No "none" label exists any more: an image with no tell
+# still renders its appearance. (Rapid eye movement remains a runtime-only motion tell, added by the mod, not here.)
+
+# Appearance is a single mutually-exclusive pick (the model returns exactly one of these). Order = priority when the
+# model hedges and returns several; the FIRST listed that the model emits wins.
+SIGN_APPEARANCE = {
+    # EYE-WHITE describes the SCLERA (the white around the iris): is it clear/white, pink-tinged, or red/bloodshot.
+    "EYE-WHITE": ("sclera-red", "sclera-pink", "sclera-clear"),
+    "HANDS": ("skin-pale", "skin-tan", "skin-dark", "skin-flushed", "skin-grey"),
+    # NOTE: no plain "white" here — strikingly bright-white teeth are the gameplay TELL (white-teeth), kept in the tell
+    # group so it isn't double-rated. The appearance baseline covers only the natural shades.
+    "TEETH": ("teeth-offwhite", "teeth-yellow", "teeth-stained", "teeth-grey"),
+    "AURAPHOTO": ("photo-dark", "photo-bright", "photo-muted"),
+    "ARMPIT": ("skin-pale", "skin-tan", "skin-dark", "skin-flushed", "skin-grey"),
+    "EAR": ("ear-pale", "ear-tan", "ear-dark", "ear-flushed", "ear-grey"),
+}
+
+APPEARANCE_PHRASES = {
+    "EYE-WHITE": {
+        "sclera-red": "the whites of the eyes are red and bloodshot",
+        "sclera-pink": "the whites of the eyes are faintly pink",
+        "sclera-clear": "the whites of the eyes are clear and white",
+    },
+    "HANDS": {
+        "skin-pale": "the skin of the hands is pale",
+        "skin-tan": "the skin of the hands is tan",
+        "skin-dark": "the skin of the hands is dark",
+        "skin-flushed": "the skin of the hands is flushed red",
+        "skin-grey": "the skin of the hands is greyish",
+    },
+    "TEETH": {
+        "teeth-offwhite": "the teeth are an ordinary off-white",
+        "teeth-yellow": "the teeth are yellowed",
+        "teeth-stained": "the teeth are stained and discoloured",
+        "teeth-grey": "the teeth are greyish",
+    },
+    "AURAPHOTO": {
+        "photo-dark": "the aura photo is mostly dark",
+        "photo-bright": "the aura photo is brightly lit",
+        "photo-muted": "the aura photo is muted and washed out",
+    },
+    "ARMPIT": {
+        "skin-pale": "the armpit skin is pale",
+        "skin-tan": "the armpit skin is tan",
+        "skin-dark": "the armpit skin is dark",
+        "skin-flushed": "the armpit skin is flushed red",
+        "skin-grey": "the armpit skin is greyish",
+    },
+    "EAR": {
+        "ear-pale": "the ear is pale",
+        "ear-tan": "the ear is tan",
+        "ear-dark": "the ear is dark",
+        "ear-flushed": "the ear is flushed red",
+        "ear-grey": "the ear is greyish",
+    },
+}
+
+# TELLS — additive findings layered after the appearance clause. No "none": absence of a tell simply means no tell
+# clause is added (the appearance clause still stands alone).
 SIGN_TRAITS = {
-    "EYE": ("bloodshot", "pupil-unusual", "injured", "foreign-object", "none"),
-    "HANDS": ("dirty-nails", "irritated-skin", "unusual-fingers", "injured", "foreign-object", "none"),
-    "TEETH": ("white-teeth", "bleeding-gums", "damaged-teeth", "gaps", "foreign-object", "none"),
-    "AURAPHOTO": ("black-patches", "blurred", "colored-glow", "extra-silhouettes", "none"),
-    "ARMPIT": ("hair-present", "hair-absent", "irritated-skin", "fungal-growth", "wet", "injured", "none"),
-    "EAR": ("insect", "injured", "burned", "discharge", "foreign-object", "none"),
+    "EYE-WHITE": (),  # the only static white tell (bloodshot) is now carried by the sclera-red appearance label
+    "HANDS": ("dirty-nails", "irritated-skin", "unusual-fingers", "injured", "foreign-object"),
+    "TEETH": ("white-teeth", "bleeding-gums", "damaged-teeth", "gaps", "foreign-object"),
+    "AURAPHOTO": ("black-patches", "blurred", "colored-glow", "extra-silhouettes"),
+    "ARMPIT": ("hair-present", "hair-absent", "irritated-skin", "fungal-growth", "wet", "injured"),
+    "EAR": ("insect", "injured", "burned", "discharge", "foreign-object"),
 }
 
 TRAIT_PHRASES = {
-    "EYE": {
-        "bloodshot": "the eyes are bloodshot",
-        "pupil-unusual": "the pupils have a visibly unusual position or shape",
-        "injured": "the eye area has a visible injury",
-        "foreign-object": "a foreign object is visible in the eye",
-        "none": "none of the listed static eye signs is visible",
-    },
     "HANDS": {
         "dirty-nails": "dirt is visible under the fingernails",
         "irritated-skin": "the hand skin is visibly red or irritated",
         "unusual-fingers": "the fingers have an unusual visible count or shape",
         "injured": "the hands have a visible injury",
         "foreign-object": "a foreign object is visible on the hands",
-        "none": "none of the listed hand signs is visible",
     },
     "TEETH": {
-        "white-teeth": "the teeth are bright white",
+        "white-teeth": "the teeth are strikingly bright white",
         "bleeding-gums": "the gums are visibly bleeding",
         "damaged-teeth": "one or more teeth are visibly damaged",
         "gaps": "visible gaps separate some teeth",
         "foreign-object": "a foreign object is visible among the teeth",
-        "none": "none of the listed tooth or gum signs is visible",
     },
     "AURAPHOTO": {
         "black-patches": "black patches are visible in the aura photo",
         "blurred": "the aura photo is visibly blurred",
         "colored-glow": "a colored glow is visible around the figure",
         "extra-silhouettes": "additional silhouettes are visible in the photo",
-        "none": "none of the listed aura-photo signs is visible",
     },
     "ARMPIT": {
         "hair-present": "hair is visible in the armpit",
@@ -80,7 +135,6 @@ TRAIT_PHRASES = {
         "fungal-growth": "fungal-looking growth is visible on the armpit skin",
         "wet": "visible moisture is present in the armpit",
         "injured": "the armpit has a visible injury",
-        "none": "none of the listed armpit signs is visible",
     },
     "EAR": {
         "insect": "an insect is visible inside the ear",
@@ -88,7 +142,6 @@ TRAIT_PHRASES = {
         "burned": "the ear is visibly burned or charred",
         "discharge": "visible discharge is present in the ear",
         "foreign-object": "a foreign object is visible inside the ear",
-        "none": "none of the listed ear signs is visible",
     },
 }
 
@@ -199,7 +252,17 @@ def build_manifest(mapping_csv: Path, texture_dir: Path, prepared_dir: Path, out
             if not sprites:
                 continue
             if sign == "EYE":
-                grouped[(sign, side, tuple(sprites))].add(row["character"])
+                # The only static eye tell is bloodshot, which lives on the WHITE (sclera) — confirmed: a white's
+                # bloodshot verdict is stable across every pupil it's paired with, and the game freely mixes whites and
+                # pupils (e.g. fake_white + human_pupil for Widow/CultistOne/Intruder/Tourist). So we KEY each eye by its
+                # white sprite. But the player sees the WHOLE composited eye, so the judged IMAGE composites the white
+                # with ONE neutral reference pupil (the pupil doesn't affect redness; a single human pupil renders a
+                # natural-looking complete eye for any white). Keyed by the white alone (sprites[0]).
+                EYE_REF_PUPIL = "human_pupil_50"
+                for sprite in sprites:
+                    if "pupil" in sprite.lower():
+                        continue
+                    grouped[("EYE-WHITE", side, (sprite, EYE_REF_PUPIL))].add(row["character"])
             else:
                 for sprite in sprites:
                     grouped[(sign, side, (sprite,))].add(row["character"])
@@ -252,9 +315,52 @@ def build_manifest(mapping_csv: Path, texture_dir: Path, prepared_dir: Path, out
     return tasks
 
 
+_PROMPT_SUBJECT = {
+    "EYE-WHITE": "the whites of the eyes (the sclera, the area around the iris)",
+    "AURAPHOTO": "the aura photo",
+}
+
+# Optional extra guidance appended to the appearance prompt, where the pick-one could otherwise collide with a tell.
+_APPEARANCE_HINT = {
+    # Reserve "strikingly bright/unnatural white" for the tell question; here pick the natural shade only.
+    "TEETH": "If the teeth look ordinary, pick teeth-offwhite; only the colour matters here, not brightness.",
+}
+
+
+def _appearance_prompt(sign: str) -> str:
+    """Ask the model for the ONE dominant appearance label — always answerable, so the readout never falls back."""
+    labels = SIGN_APPEARANCE.get(sign, ())
+    subject = _PROMPT_SUBJECT.get(sign, sign.lower())
+    hint = _APPEARANCE_HINT.get(sign, "")
+    hint = (" " + hint) if hint else ""
+    return f"Look at {subject}. Pick the ONE label that best matches its colour. Reply with one label only: {', '.join(labels)}.{hint}"
+
+
+def _tell_prompt(sign: str) -> str:
+    """Ask for any of the additive findings (zero or more). Empty reply = no finding (the appearance clause stands)."""
+    labels = SIGN_TRAITS.get(sign, ())
+    subject = _PROMPT_SUBJECT.get(sign, sign.lower())
+    return (
+        f"Inspect {subject}. Reply with every label that is clearly visible, or 'none' if none apply. "
+        f"Labels: {', '.join(labels)}, none."
+    )
+
+
 def _prompt(sign: str) -> str:
-    labels = SIGN_TRAITS.get(sign, ("none",))
-    return f"Inspect only the {sign.lower()}. Reply with labels only: {', '.join(labels)}."
+    """Back-compat single string used for the prompt-hash cache key; covers both sub-prompts so a change to either
+    forces regeneration."""
+    return _appearance_prompt(sign) + " || " + _tell_prompt(sign)
+
+
+def _parse_appearance(sign: str, model_output: str) -> str | None:
+    """The single best appearance label (pick-one). Priority order is the declared label order, so if the model hedges
+    and returns several, the first DECLARED label it mentions wins. None only if the model returned nothing usable."""
+    lowered = model_output.casefold()
+    for label in SIGN_APPEARANCE.get(sign, ()):
+        pattern = r"\b" + r"[-_\s]+".join(re.escape(part) for part in label.split("-")) + r"\b"
+        if re.search(pattern, lowered):
+            return label
+    return None
 
 
 def _parse_traits(sign: str, model_output: str) -> list[str]:
@@ -267,20 +373,25 @@ def _parse_traits(sign: str, model_output: str) -> list[str]:
     return found
 
 
-def _render_traits(sign: str, traits: list[str]) -> str:
-    phrases = TRAIT_PHRASES.get(sign, {})
-    selected = [phrases[trait] for trait in traits if trait in phrases]
-    if not selected:
+def _render_description(sign: str, appearance: str | None, traits: list[str]) -> str:
+    """Compose the spoken description: the appearance clause first (always present when resolved), then any tell
+    clauses. Guarantees a concrete description — there is no empty/placeholder outcome when appearance resolves."""
+    clauses: list[str] = []
+    appearance_phrase = APPEARANCE_PHRASES.get(sign, {}).get(appearance or "")
+    if appearance_phrase:
+        clauses.append(appearance_phrase)
+    clauses.extend(phrase for trait in traits if (phrase := TRAIT_PHRASES.get(sign, {}).get(trait)))
+    if not clauses:
         return ""
-    return "; ".join(selected).capitalize() + "."
+    return "; ".join(clauses).capitalize() + "."
 
 
-def _trait_issues(sign: str, traits: list[str]) -> list[str]:
+def _trait_issues(sign: str, appearance: str | None, traits: list[str]) -> list[str]:
     issues: list[str] = []
-    if not traits:
-        issues.append("No recognized trait label")
-    if "none" in traits and len(traits) > 1:
-        issues.append("The none label conflicts with visible trait labels")
+    # The appearance label is the always-present baseline; without it the readout has no description to fall back on
+    # (which is the exact failure mode we're removing). Flag it for review so it's never silently empty.
+    if SIGN_APPEARANCE.get(sign) and appearance is None:
+        issues.append("No appearance label resolved")
     if sign == "ARMPIT" and "hair-present" in traits and "hair-absent" in traits:
         issues.append("Conflicting armpit hair labels")
     return issues
@@ -343,18 +454,27 @@ def describe_manifest(
         if limit is not None and processed >= limit:
             continue
 
-        model_output = client.describe(task["prepared_image"], prompt)
-        traits = _parse_traits(task["sign"], model_output)
-        description = _render_traits(task["sign"], traits)
+        # Two calls per image: the always-answerable APPEARANCE pick (so the readout never falls back to a placeholder),
+        # then the additive TELLS. A sign with no appearance group (none currently) skips the first call.
+        appearance_output = ""
+        appearance = None
+        if SIGN_APPEARANCE.get(task["sign"]):
+            appearance_output = client.describe(task["prepared_image"], _appearance_prompt(task["sign"]))
+            appearance = _parse_appearance(task["sign"], appearance_output)
+        tell_output = client.describe(task["prepared_image"], _tell_prompt(task["sign"]))
+        traits = _parse_traits(task["sign"], tell_output)
+        description = _render_description(task["sign"], appearance, traits)
+        model_output = f"appearance: {appearance_output} | tells: {tell_output}"
         result = {
             **task,
+            "appearance": appearance,
             "traits": traits,
             "model_output": model_output,
             "description": description,
             "model": client.model,
             "prompt_hash": prompt_hash,
             "status": "candidate",
-            "validation_issues": _trait_issues(task["sign"], traits) + _issues(description),
+            "validation_issues": _trait_issues(task["sign"], appearance, traits) + _issues(description),
         }
         remaining_existing.pop(task["id"], None)
         results.append(result)
@@ -369,7 +489,7 @@ def _write_results(results: list[dict[str, object]], output_json: Path, output_c
     output_json.parent.mkdir(parents=True, exist_ok=True)
     output_csv.parent.mkdir(parents=True, exist_ok=True)
     output_json.write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
-    fields = ["id", "sign", "side", "characters", "sprites", "traits", "model_output", "description", "status", "validation_issues", "prepared_image", "source_hash", "model", "prompt_hash"]
+    fields = ["id", "sign", "side", "characters", "sprites", "appearance", "traits", "model_output", "description", "status", "validation_issues", "prepared_image", "source_hash", "model", "prompt_hash"]
     with output_csv.open("w", encoding="utf-8-sig", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fields, extrasaction="ignore")
         writer.writeheader()

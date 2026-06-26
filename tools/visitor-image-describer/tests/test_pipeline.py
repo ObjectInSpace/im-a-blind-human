@@ -7,27 +7,47 @@ from pathlib import Path
 
 from PIL import Image
 
-from image_tools.pipeline import _issues, _parse_traits, _prompt, _render_traits, build_manifest, describe_manifest
+from image_tools.pipeline import (
+    _appearance_prompt,
+    _issues,
+    _parse_appearance,
+    _parse_traits,
+    _prompt,
+    _render_description,
+    _tell_prompt,
+    build_manifest,
+    describe_manifest,
+)
+
+
+def _is_appearance(prompt: str) -> bool:
+    """The appearance sub-prompt asks for the ONE colour label; the tell sub-prompt asks for every visible label."""
+    return "Pick the ONE label" in prompt
 
 
 class _Client:
     model = "test-model"
 
-    def describe(self, _path, _prompt):
-        return "white-teeth, bleeding-gums"
+    def describe(self, _path, prompt):
+        # Two calls per image: appearance (pick-one) then tells. Answer each in kind.
+        return "teeth-offwhite" if _is_appearance(prompt) else "white-teeth, bleeding-gums"
 
 
 class _FailingClient:
+    """Interrupts the run after the FIRST task fully completes. Each task makes two calls (appearance + tell), so the
+    first task uses calls 1-2 and the second task's appearance call (call 3) raises — leaving the first task
+    checkpointed alongside any cached entry."""
+
     model = "test-model"
 
     def __init__(self):
         self.calls = 0
 
-    def describe(self, _path, _prompt):
+    def describe(self, _path, prompt):
         self.calls += 1
-        if self.calls == 2:
+        if self.calls == 3:
             raise RuntimeError("interrupted")
-        return "white-teeth"
+        return "teeth-offwhite" if _is_appearance(prompt) else "white-teeth"
 
 
 class PipelineTests(unittest.TestCase):
@@ -37,24 +57,53 @@ class PipelineTests(unittest.TestCase):
         self.assertIn("Contains subjective word: healthy", issues)
 
     def test_prompts_define_evidence_for_each_sign(self):
-        self.assertIn("bloodshot", _prompt("EYE"))
         self.assertIn("dirty-nails", _prompt("HANDS"))
         self.assertIn("bleeding-gums", _prompt("TEETH"))
         self.assertIn("black-patches", _prompt("AURAPHOTO"))
         self.assertIn("fungal-growth", _prompt("ARMPIT"))
         self.assertIn("insect", _prompt("EAR"))
 
-    def test_traits_render_to_fixed_objective_description(self):
-        traits = _parse_traits("TEETH", "WHITE_TEETH, bleeding gums")
-        self.assertEqual(["white-teeth", "bleeding-gums"], traits)
-        self.assertEqual("The teeth are bright white; the gums are visibly bleeding.", _render_traits("TEETH", traits))
+    def test_appearance_prompt_offers_the_colour_labels(self):
+        self.assertIn("sclera-clear", _appearance_prompt("EYE-WHITE"))
+        self.assertIn("teeth-yellow", _appearance_prompt("TEETH"))
+
+    def test_appearance_and_tells_compose_into_one_description(self):
+        appearance = _parse_appearance("TEETH", "teeth-yellow")
+        traits = _parse_traits("TEETH", "bleeding-gums")
+        self.assertEqual("teeth-yellow", appearance)
+        self.assertEqual(["bleeding-gums"], traits)
+        self.assertEqual(
+            "The teeth are yellowed; the gums are visibly bleeding.",
+            _render_description("TEETH", appearance, traits),
+        )
+
+    def test_clean_image_still_describes_appearance(self):
+        # The whole point of the rewrite: a clean image (no tell) still renders a concrete description, never empty.
+        appearance = _parse_appearance("EYE-WHITE", "sclera-clear")
+        self.assertEqual("sclera-clear", appearance)
+        self.assertEqual(
+            "The whites of the eyes are clear and white.",
+            _render_description("EYE-WHITE", appearance, []),
+        )
+
+    def test_appearance_pick_one_respects_priority_order(self):
+        # If the model hedges and names several, the first DECLARED label wins (sclera-red before sclera-clear).
+        self.assertEqual("sclera-red", _parse_appearance("EYE-WHITE", "sclera-clear but also sclera-red"))
 
     def test_prepare_uses_last_animation_frame_and_composites_eye(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             textures = root / "textures"
             textures.mkdir()
-            for name, color in (("armpit_0", "red"), ("armpit_1", "blue"), ("white", "white"), ("pupil", "black")):
+            # An EYE row is keyed by its WHITE alone, composited with a fixed reference pupil (human_pupil_50), so the
+            # reference pupil must resolve as a texture; the row's own pupil sprite is dropped.
+            for name, color in (
+                ("armpit_0", "red"),
+                ("armpit_1", "blue"),
+                ("white", "white"),
+                ("pupil", "black"),
+                ("human_pupil_50", "black"),
+            ):
                 Image.new("RGBA", (10, 10), color).save(textures / f"{name}.png")
             mapping = root / "mapping.csv"
             with mapping.open("w", newline="", encoding="utf-8") as handle:
@@ -66,9 +115,10 @@ class PipelineTests(unittest.TestCase):
             tasks = build_manifest(mapping, textures, root / "prepared", root / "manifest.json")
             self.assertEqual(2, len(tasks))
             armpit = next(task for task in tasks if task.sign == "ARMPIT")
-            eye = next(task for task in tasks if task.sign == "EYE")
+            # The EYE row groups under EYE-WHITE: the white plus the fixed reference pupil, with the row's own pupil dropped.
+            eye = next(task for task in tasks if task.sign == "EYE-WHITE")
             self.assertEqual(["armpit_1"], armpit.sprites)
-            self.assertEqual(["white", "pupil"], eye.sprites)
+            self.assertEqual(["white", "human_pupil_50"], eye.sprites)
             self.assertTrue(Path(eye.prepared_image).is_file())
             self.assertNotIn("Font SDF", eye.characters)
 
@@ -101,7 +151,12 @@ class PipelineTests(unittest.TestCase):
             }]))
             results = describe_manifest(manifest, root / "out.json", root / "out.csv", _Client())
             self.assertEqual("candidate", results[0]["status"])
+            self.assertEqual("teeth-offwhite", results[0]["appearance"])
             self.assertEqual(["white-teeth", "bleeding-gums"], results[0]["traits"])
+            self.assertEqual(
+                "The teeth are an ordinary off-white; the teeth are strikingly bright white; the gums are visibly bleeding.",
+                results[0]["description"],
+            )
             self.assertEqual([], results[0]["validation_issues"])
             self.assertTrue((root / "out.csv").is_file())
 
