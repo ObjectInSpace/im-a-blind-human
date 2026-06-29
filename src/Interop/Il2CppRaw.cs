@@ -139,6 +139,27 @@ namespace NoImNotAHumanAccess.Interop
             return exc != IntPtr.Zero ? IntPtr.Zero : result;
         }
 
+        /// <summary>
+        /// <see cref="GetComponentInChildren"/> given a raw GameObject pointer (not a managed wrapper), via
+        /// <c>GameObject.GetComponentInChildren(Type, bool)</c>. Returns the component pointer or zero.
+        /// </summary>
+        public static unsafe IntPtr GetComponentInChildrenRaw(IntPtr goPtr, IntPtr componentClass, bool includeInactive = true)
+        {
+            if (goPtr == IntPtr.Zero || componentClass == IntPtr.Zero) return IntPtr.Zero;
+            IntPtr goClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "GameObject");
+            IntPtr method = GetMethod(goClass, "GetComponentInChildren", 2);
+            IntPtr typeObj = TypeObject(componentClass);
+            if (method == IntPtr.Zero || typeObj == IntPtr.Zero) return IntPtr.Zero;
+
+            bool inc = includeInactive;
+            void** args = stackalloc void*[2];
+            args[0] = (void*)typeObj;
+            args[1] = &inc;
+            IntPtr exc = IntPtr.Zero;
+            IntPtr result = IL2CPP.il2cpp_runtime_invoke(method, goPtr, args, ref exc);
+            return exc != IntPtr.Zero ? IntPtr.Zero : result;
+        }
+
         /// <summary>Overload-friendly pointer accessor for any interop object passed as a base reference.</summary>
         private static IntPtr Ptr(GameObject go)
         {
@@ -545,16 +566,53 @@ namespace NoImNotAHumanAccess.Interop
             return result;
         }
 
+        /// <summary>
+        /// Resolve a <c>UnityEngine.Localization.LocalizedString</c> pointer to its current-language display string via
+        /// <c>GetLocalizedString()</c>. Null/empty if the pointer is zero or the resolver doesn't bind. The class +
+        /// getter are cached by the underlying <see cref="GetClass"/>/<see cref="GetMethod"/>, so callers needn't hold
+        /// their own handles. This is the one place the localization resolver lives — prefer it over reading raw
+        /// GameObject names so text follows the player's chosen language.
+        /// </summary>
+        public static string? ResolveLocalizedString(IntPtr localizedStringPtr)
+        {
+            if (localizedStringPtr == IntPtr.Zero) return null;
+            IntPtr lsClass = GetClass("Unity.Localization.dll", "UnityEngine.Localization", "LocalizedString");
+            if (lsClass == IntPtr.Zero) return null;
+            IntPtr getter = GetMethod(lsClass, "GetLocalizedString", 0);
+            if (getter == IntPtr.Zero) return null;
+            string? text = InvokeStringGetter(localizedStringPtr, getter);
+            return string.IsNullOrWhiteSpace(text) ? null : text;
+        }
+
+        /// <summary>
+        /// Convenience: read a <c>LocalizedString</c>-typed FIELD off an object and resolve it (combines
+        /// <see cref="ReadObjectField"/> + <see cref="ResolveLocalizedString"/>). Null if the field is missing/zero or
+        /// doesn't resolve. <paramref name="objClass"/> is the class declaring the field.
+        /// </summary>
+        public static string? ResolveLocalizedStringField(IntPtr objPtr, IntPtr objClass, string fieldName)
+        {
+            IntPtr ls = ReadObjectField(objPtr, objClass, fieldName);
+            return ResolveLocalizedString(ls);
+        }
+
         /// <summary>Read the displayed text of a TMP_Text-typed instance FIELD (e.g. a view's <c>_name</c> /
         /// <c>_narrativeDescription</c> RTLTextMeshPro field): read the field object, then invoke <c>TMP_Text.get_text</c>
         /// on it (RTLTextMeshPro derives from TMP_Text, so the getter binds). Null if anything is missing.</summary>
         public static string? ReadTmpFieldText(IntPtr objPtr, IntPtr objClass, string fieldName)
         {
             IntPtr tmp = ReadObjectField(objPtr, objClass, fieldName);
-            if (tmp == IntPtr.Zero) return null;
+            return ReadTmpComponentText(tmp);
+        }
+
+        /// <summary>Read the displayed text of a TMP_Text-derived component given its pointer directly (e.g. one found
+        /// via <see cref="GetComponentInChildren"/>): invoke <c>TMP_Text.get_text</c> on it. Null if anything is
+        /// missing. Use when the TMP is a child component, not a named field on the instance.</summary>
+        public static string? ReadTmpComponentText(IntPtr tmpPtr)
+        {
+            if (tmpPtr == IntPtr.Zero) return null;
             IntPtr tmpClass = GetClass("Unity.TextMeshPro.dll", "TMPro", "TMP_Text");
             IntPtr getText = GetMethod(tmpClass, "get_text", 0);
-            return InvokeStringGetter(tmp, getText);
+            return InvokeStringGetter(tmpPtr, getText);
         }
 
         /// <summary>Whether a Component's owning GameObject is active in the hierarchy

@@ -13,8 +13,8 @@ namespace NoImNotAHumanAccess.World
     /// <c>DiContainer.Resolve(System.Type)</c> — the generic <c>Resolve&lt;T&gt;</c> won't JIT in this interop build
     /// (the same open-generic wall that breaks <c>GetComponents&lt;T&gt;</c>).
     ///
-    /// Returns zero (and logs) on any miss; callers degrade gracefully. Used by both <see cref="GameStateAccess"/>
-    /// (status key) and <see cref="OrientationNarrator"/> (player pose), so the resolve lives here once.
+    /// Returns zero (and logs) on any miss; callers degrade gracefully. Used by <see cref="GameStateAccess"/>
+    /// (status key) and <see cref="ActionMenu"/> (player service, to walk to the cat), so the resolve lives here once.
     /// </summary>
     public static class ZenjectResolver
     {

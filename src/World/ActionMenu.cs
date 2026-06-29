@@ -72,6 +72,13 @@ namespace NoImNotAHumanAccess.World
         private IntPtr _setIsTargeted;  // ARaycastTarget.set_IsTargeted(bool)
         private IntPtr _playerControllerClass;                      // _Code.Player.PlayerController (holds cameraTarget + RealCamera)
 
+        // Localized label resolution: the spoken label should be the game's player-facing, LOCALIZED subject — the
+        // RaycastTargetHint._subjectLocalizationKey (a LocalizedString) — not the raw English GameObject name (e.g. the
+        // hatch is just "Hatch" in the scene, with the real prompt in the localization tables). Both interactable
+        // systems hold the hint at _raycastTarget; we read its subject key and resolve it via GetLocalizedString(),
+        // mirroring GameStateAccess's per-day holiday resolution. Falls back to the humanized name when unavailable.
+        private IntPtr _raycastHintClass;        // _Code.Raycast.RaycastTargetHint (holds _subjectLocalizationKey)
+
         // Current selection, keyed by the view pointer so it survives list rebuilds (positions/availability shift).
         private IntPtr _selected;
         // Whether the current selection is an AInteractableObject (radio/phone/cat/…) vs a door/window view — they
@@ -94,12 +101,21 @@ namespace NoImNotAHumanAccess.World
         private IntPtr _activateObj;        // the object we're walking to + activating (zero = none)
         private int _activateFramesLeft;    // frames remaining in the walk-then-press window (timeout guard)
         private bool _interactPressed;      // one-shot: synthesize the interact key once we're in range, not per-frame
-        private int _inRangeSettleFrames;   // frames to keep aiming after arrival before pressing, so the game's raycast locks the object first
-        private int _interactReleaseIn;     // >0 ⇒ frames until we release the held injected Space (set by PressInteractKey)
-        // Player-service plumbing for the walk (resolved Zenject-free like OrientationNarrator).
+        // TIMING IS WALL-CLOCK, NOT FRAME-COUNTED. The injected interact (Space) used to settle/hold for a fixed number
+        // of FRAMES, which is a different DURATION at different framerates — so plugging in a higher-refresh monitor made
+        // the held press too short for the game's interact to read, and the player had to press Enter twice. Seconds are
+        // refresh-rate-independent, so the same hold lands at 60 Hz, 144 Hz, etc. (user-reported regression, 2026-06-29.)
+        private float _inRangeSettleUntil;  // realtimeSinceStartup until which we keep aiming before pressing (0 = not arrived)
+        private float _interactReleaseAt;   // >0 ⇒ realtimeSinceStartup at which to release the held injected Space
+        // Player-service plumbing for the walk (resolved via ZenjectResolver, like GameStateAccess).
         private IntPtr _playerService, _psMoveXZ, _psGetPosition;
         private const float InteractRangeM = 2.0f;   // how close we must get before the interact key takes
         private const float WalkSpeed = 3.0f;        // MoveXZ speed
+        // Injected-interact timing in SECONDS (framerate-independent — see the activation-state fields). Settle ≈ 4
+        // frames at 60 Hz; hold ≈ 3 frames at 60 Hz, but now generous enough that the game samples the edge even at high
+        // refresh rates. Holding a touch longer is harmless (it's a single discrete interact press).
+        private const float InRangeSettleSeconds = 0.07f; // keep aiming this long after arrival so the raycast locks on
+        private const float InteractHoldSeconds = 0.06f;  // how long to hold the injected Space before releasing
 
         public ActionMenu(ISpeechOutput speech) { _speech = speech; }
 
@@ -206,9 +222,9 @@ namespace NoImNotAHumanAccess.World
                 }
 
                 _activateObj = _selected;
-                _activateFramesLeft = 240; // ~4s window to reach + engage, then give up
+                _activateFramesLeft = 240; // ~4s window to reach + engage, then give up (frame-count is fine for a coarse timeout)
                 _interactPressed = false;
-                _inRangeSettleFrames = 0;
+                _inRangeSettleUntil = 0f;
                 _speech.Speak($"Using {name}.", interrupt: true);
             }
             catch (Exception e)
@@ -349,13 +365,13 @@ namespace NoImNotAHumanAccess.World
         /// </summary>
         public void Tick()
         {
-            // Release the held injected Space a few frames after the press (runs independently of the activation window,
-            // since the menu may already have opened and ended activation). Keeps the press an edge the game can consume.
-            if (_interactReleaseIn > 0)
+            // Release the held injected Space once the wall-clock hold elapses (runs independently of the activation
+            // window, since the menu may already have opened and ended activation). Keeps the press an edge the game can
+            // consume, with a hold duration that's the same at any framerate.
+            if (_interactReleaseAt > 0f && Time.realtimeSinceStartup >= _interactReleaseAt)
             {
-                _interactReleaseIn--;
-                if (_interactReleaseIn == 0)
-                    ReleaseInteractKey();
+                _interactReleaseAt = 0f;
+                ReleaseInteractKey();
             }
 
             UpdateActivation();
@@ -435,13 +451,15 @@ namespace NoImNotAHumanAccess.World
 
             if (inRange && !_interactPressed)
             {
-                // Aim each frame so the game's raycaster locks the object (and shows its hint). Settle a few frames before
-                // injecting so the raycast registers the new aim, else the synthetic key fires before the object is the
-                // game's target and is wasted.
+                // Aim each frame so the game's raycaster locks the object (and shows its hint). Settle for a short
+                // WALL-CLOCK window before injecting so the raycast registers the new aim, else the synthetic key fires
+                // before the object is the game's target and is wasted. Time-based so it's the same at any framerate.
                 AimCameraAt(_activateObj);
                 FocusTarget(_activateObj, _selectedIsInteractable ? _interactableClass : _viewClass);
-                _inRangeSettleFrames++;
-                if (_inRangeSettleFrames >= 4)
+                float now = Time.realtimeSinceStartup;
+                if (_inRangeSettleUntil <= 0f)
+                    _inRangeSettleUntil = now + InRangeSettleSeconds; // first in-range frame: start the settle timer
+                else if (now >= _inRangeSettleUntil)
                 {
                     PressInteractKey();
                     _interactPressed = true;
@@ -463,7 +481,7 @@ namespace NoImNotAHumanAccess.World
             _activateFramesLeft = 0;
             _activateObj = IntPtr.Zero;
             _interactPressed = false;
-            _inRangeSettleFrames = 0;
+            _inRangeSettleUntil = 0f;
         }
 
         // Inject Space DOWN (held). We deliberately DON'T release in the same call: an immediate release + a second
@@ -484,7 +502,9 @@ namespace NoImNotAHumanAccess.World
                 var down = new UnityEngine.InputSystem.LowLevel.KeyboardState();
                 down.Set(UnityEngine.InputSystem.Key.Space, true);
                 UnityEngine.InputSystem.InputSystem.QueueStateEvent(kb, down, -1.0);
-                _interactReleaseIn = 3; // release ~3 frames later so the game's update sees the held press as an edge
+                // Release after a WALL-CLOCK hold so the game's update sees the held press as an edge regardless of
+                // framerate. (Frame-counted holds were too short on high-refresh monitors → the double-press bug.)
+                _interactReleaseAt = Time.realtimeSinceStartup + InteractHoldSeconds;
             }
             catch (Exception e)
             {
@@ -796,18 +816,26 @@ namespace NoImNotAHumanAccess.World
                     foreach (Entry e in entries) if (e.View == o) { dup = true; break; }
                     if (dup) continue;
 
-                    string name = HumanizeName(Il2CppRaw.GetUnityObjectName(o));
-                    if (!IsInteractableValidNow(o, name))
+                    // Prefer the game's LOCALIZED subject over the raw GameObject name. The interactables (hatch/cat/
+                    // save/…) are named generically/in English in the scene — the hatch GO is just "Hatch" — so the
+                    // humanized name doesn't localize. The localized subject is the player-facing prompt; humanized name
+                    // is the fallback. Validity is logged off the humanized name (stable, language-independent).
+                    string rawName = HumanizeName(Il2CppRaw.GetUnityObjectName(o));
+                    if (!IsInteractableValidNow(o, rawName))
                     {
                         gated++;
                         continue;
                     }
-
                     // Board-up prompts share their window's GameObject name ("Blinds 1", "Curtains", …), so without a
                     // prefix they're indistinguishable from the normal blinds/curtains entries. Prefix with "Board up" so
                     // they read as "Board up Blinds 1" etc. — keeps the per-window distinction, names the actual action.
-                    if (_windowBoardsClass != IntPtr.Zero && IL2CPP.il2cpp_object_get_class(o) == _windowBoardsClass)
-                        name = "Board up " + name;
+                    // These keep the HUMANIZED name (the prefix is built around it; the localized subject would double
+                    // the "board up"); every other interactable prefers the localized subject.
+                    bool isWindowBoard = _windowBoardsClass != IntPtr.Zero
+                        && IL2CPP.il2cpp_object_get_class(o) == _windowBoardsClass;
+                    string name = isWindowBoard
+                        ? "Board up " + rawName
+                        : BestLabel(o, _interactableClass, Il2CppRaw.GetUnityObjectName(o));
 
                     Vector3 pos = Il2CppRaw.GetComponentWorldPosition(o);
                     entries.Add(new Entry(o, name, Bearing(camPos, pos), isInteractable: true));
@@ -964,6 +992,41 @@ namespace NoImNotAHumanAccess.World
 
         private static string HumanizeName(string? raw) => MenuStepUtil.Humanize(raw);
 
+        /// <summary>
+        /// The label to speak for an interactable: the game's LOCALIZED subject when it resolves, else the humanized
+        /// GameObject name. The localized subject is the player-facing prompt noun (already language-correct), which the
+        /// raw GameObject name is not — most visibly for the hatch ("Hatch" in the scene, localized elsewhere).
+        /// <paramref name="ownerClass"/> is the class declaring <c>_raycastTarget</c> (the view base for an actionable
+        /// view, or AInteractableObject for the second system). Never throws.
+        /// </summary>
+        private string BestLabel(IntPtr obj, IntPtr ownerClass, string? rawName)
+        {
+            string? localized = LocalizedSubject(obj, ownerClass);
+            return !string.IsNullOrWhiteSpace(localized) ? localized!.Trim() : HumanizeName(rawName);
+        }
+
+        /// <summary>
+        /// Resolve the localized subject string off an interactable's raycast hint: read its <c>_raycastTarget</c>
+        /// (a <c>RaycastTargetHint</c>), then that hint's <c>_subjectLocalizationKey</c> (a <c>LocalizedString</c>), and
+        /// invoke <c>GetLocalizedString()</c>. Null if any link is missing or the resolver didn't bind — callers fall
+        /// back to the humanized name. Mirrors GameStateAccess's per-day holiday resolution.
+        /// </summary>
+        private string? LocalizedSubject(IntPtr obj, IntPtr ownerClass)
+        {
+            if (obj == IntPtr.Zero || ownerClass == IntPtr.Zero || _raycastHintClass == IntPtr.Zero) return null;
+            try
+            {
+                IntPtr hint = Il2CppRaw.ReadObjectField(obj, ownerClass, "_raycastTarget");
+                if (hint == IntPtr.Zero) return null;
+                return Il2CppRaw.ResolveLocalizedStringField(hint, _raycastHintClass, "_subjectLocalizationKey");
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[ActionMenu] LocalizedSubject threw: {e.Message}");
+                return null;
+            }
+        }
+
         private void EnsureResolved()
         {
             if (_resolved) return;
@@ -1025,6 +1088,10 @@ namespace NoImNotAHumanAccess.World
                     // on the base is fine because il2cpp dispatches the property setter virtually on the instance.
                     _setIsTargeted = Il2CppRaw.GetMethod(_raycastTargetBaseClass, "set_IsTargeted", 1);
                 }
+
+                // Localized-label resolution (see field comment): RaycastTargetHint holds the subject LocalizedString,
+                // resolved via the shared Il2CppRaw.ResolveLocalizedString.
+                _raycastHintClass = Il2CppRaw.GetClass(GameAsm, "_Code.Raycast", "RaycastTargetHint");
 
                 // GAME-FAITHFUL ENTRY: the game opens EVERY interaction (doors, blinds, curtains, peephole, AND the
                 // radio/phone/cat interactables) by focusing the object's raycast target (IsTargeted=true) and then

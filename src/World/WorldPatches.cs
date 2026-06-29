@@ -48,35 +48,54 @@ namespace NoImNotAHumanAccess.World
         private const string ConsumableViewFullName =
             "Il2Cpp_Code.Infrastructure._NINAH__CloseUps.Views.Consumables.ConsumableCloseUpView";
         private const string SetupConsumableMethod = "SetupConsumable";
+        // Mushroomlist (Book of Smiles pages, read in the bedroom): no named text field — the page text is a child
+        // TMP we find via the view's GameObject. We hook Show() (arity 0) and read the text once the view is live.
+        private const string MushroomlistViewFullName =
+            "Il2Cpp_Code.Infrastructure._NINAH__CloseUps.Views.Mushroomlist.MushroomlistCloseUpView";
+        private const string ShowMethod = "Show";
+        private const string HideMethod = "Hide";
 
         // Inspection sign (teeth/eyes/armpit/aura-photo/hands/ear): DialogView.ShowSign(CharacterSOData, ECharacterSign)
         // is the real (non-mock) reveal sink; it carries the guest's resolved data (→ IsImposter) and the sign enum.
         private const string DialogViewFullName = "Il2Cpp_Code.DialogSystem.DialogView";
         private const string ShowSignMethod = "ShowSign";
 
+        // Popup windows: PopupWindow.Show(string title, PopupButtonData[] buttons) — title arrives resolved. The notable
+        // case is the "ending unlocked" popup whose title (the ending you received) never read. Credits: TitlesLoadText
+        // loads its text into a TMP on Start(); we read it after.
+        private const string PopupWindowFullName = "Il2Cpp_Code.Utils.UI.Popup.PopupWindow";
+        private const string PopupShowMethod = "Show";
+        private const string TitlesLoadTextFullName = "Il2Cpp_Code.Menues.Titles.TitlesLoadText";
+        private const string StartMethod = "Start";
+
         private static HudNarrator? _narrator;
         private static RoomViewNarrator? _roomView;
         private static CloseUpNarrator? _closeUp;
         private static ControlsNarrator? _controls;
         private static SignNarrator? _sign;
+        private static PopupNarrator? _popup;
 
         /// <summary>
         /// Resolve and apply the world-HUD hooks. Safe to call once at init; each hook logs and is skipped on
         /// failure rather than throwing (a missing hook degrades to "less speech", not a crashed mod).
         /// </summary>
         public static void Apply(HarmonyLib.Harmony harmony, HudNarrator narrator, RoomViewNarrator roomView,
-            CloseUpNarrator closeUp, ControlsNarrator controls, SignNarrator sign)
+            CloseUpNarrator closeUp, ControlsNarrator controls, SignNarrator sign, PopupNarrator popup)
         {
             _narrator = narrator;
             _roomView = roomView;
             _closeUp = closeUp;
             _controls = controls;
             _sign = sign;
+            _popup = popup;
             PatchShowHint(harmony);
             PatchHideHint(harmony);
             PatchUIButtonHover(harmony);
             PatchFridgePointerEntered(harmony);
             PatchConsumableSetup(harmony);
+            PatchPopupShow(harmony);
+            PatchCreditsStart(harmony);
+            PatchMushroomlistShow(harmony);
             PatchSetupControlsView(harmony);
             PatchShowSign(harmony);
         }
@@ -289,6 +308,70 @@ namespace NoImNotAHumanAccess.World
             }
         }
 
+        private static void PatchMushroomlistShow(HarmonyLib.Harmony harmony)
+        {
+            try
+            {
+                MethodInfo? show = ResolveMethodByArity(GameAsmName, MushroomlistViewFullName, ShowMethod, 0);
+                if (show == null)
+                {
+                    MelonLogger.Warning(
+                        $"[WorldPatches] Could not resolve {MushroomlistViewFullName}.{ShowMethod}; " +
+                        "mushroomlist readout disabled.");
+                    return;
+                }
+                harmony.Patch(show, postfix: PostfixOf(nameof(MushroomlistShowPostfix)));
+                MelonLogger.Msg($"[WorldPatches] Patched {MushroomlistViewFullName}.{ShowMethod}.");
+
+                // Hide() clears the "open" flag so F9 stops repeating once the player backs out. Optional: if it can't
+                // be resolved the readout still works, F9-repeat just lingers until the next close-up opens.
+                MethodInfo? hide = ResolveMethodByArity(GameAsmName, MushroomlistViewFullName, HideMethod, 0);
+                if (hide != null)
+                {
+                    harmony.Patch(hide, postfix: PostfixOf(nameof(MushroomlistHidePostfix)));
+                    MelonLogger.Msg($"[WorldPatches] Patched {MushroomlistViewFullName}.{HideMethod}.");
+                }
+                else
+                {
+                    MelonLogger.Warning(
+                        $"[WorldPatches] Could not resolve {MushroomlistViewFullName}.{HideMethod}; " +
+                        "F9-repeat will linger past close.");
+                }
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Error($"[WorldPatches] PatchMushroomlistShow failed: {e}");
+            }
+        }
+
+        /// <summary>Postfix on the mushroomlist view opening. <paramref name="__instance"/> is the view (a Component);
+        /// the narrator walks its GameObject subtree to the page TMP and reads it.</summary>
+        private static void MushroomlistShowPostfix(Il2CppObjectBase __instance)
+        {
+            try
+            {
+                if (__instance == null) return;
+                _closeUp?.OnMushroomlistShown(Il2CppRaw.Ptr(__instance));
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[WorldPatches] MushroomlistShowPostfix threw: {e.Message}");
+            }
+        }
+
+        /// <summary>Postfix on the mushroomlist view closing — drop the F9-repeat "open" flag.</summary>
+        private static void MushroomlistHidePostfix()
+        {
+            try
+            {
+                _closeUp?.OnMushroomlistHidden();
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[WorldPatches] MushroomlistHidePostfix threw: {e.Message}");
+            }
+        }
+
         // ---------------- Inspection sign: DialogView.ShowSign(CharacterSOData, ECharacterSign) ----------------
 
         private static void PatchShowSign(HarmonyLib.Harmony harmony)
@@ -329,6 +412,82 @@ namespace NoImNotAHumanAccess.World
             catch (Exception e)
             {
                 MelonLogger.Warning($"[WorldPatches] ShowSignPostfix threw: {e.Message}");
+            }
+        }
+
+        // ---------------- Popup title + buttons: PopupWindow.Show(string, PopupButtonData[]) ----------------
+
+        private static void PatchPopupShow(HarmonyLib.Harmony harmony)
+        {
+            try
+            {
+                // Show(string title, PopupButtonData[] buttons) — arity 2. We declare only the string on the postfix;
+                // the array is taken positionally as an interop object (see PopupShowPostfix).
+                MethodInfo? target = ResolveMethodByArity(GameAsmName, PopupWindowFullName, PopupShowMethod, 2);
+                if (target == null)
+                {
+                    MelonLogger.Warning(
+                        $"[WorldPatches] Could not resolve {PopupWindowFullName}.{PopupShowMethod}; popup readout disabled.");
+                    return;
+                }
+                harmony.Patch(target, postfix: PostfixOf(nameof(PopupShowPostfix)));
+                MelonLogger.Msg($"[WorldPatches] Patched {PopupWindowFullName}.{PopupShowMethod}.");
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Error($"[WorldPatches] PatchPopupShow failed: {e}");
+            }
+        }
+
+        /// <summary>Postfix on a popup opening. <paramref name="title"/> is the resolved title string (name matches the
+        /// original so Harmony injects it); <paramref name="buttons"/> is the <c>PopupButtonData[]</c> arg, taken as an
+        /// interop object so we can read the labels off its pointer.</summary>
+        private static void PopupShowPostfix(string title, Il2CppObjectBase buttons)
+        {
+            try
+            {
+                _popup?.OnPopupShown(title, buttons == null ? IntPtr.Zero : Il2CppRaw.Ptr(buttons));
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[WorldPatches] PopupShowPostfix threw: {e.Message}");
+            }
+        }
+
+        // ---------------- Credits: TitlesLoadText.Start() loads the credits text into its TMP ----------------
+
+        private static void PatchCreditsStart(HarmonyLib.Harmony harmony)
+        {
+            try
+            {
+                MethodInfo? target = ResolveMethodByArity(GameAsmName, TitlesLoadTextFullName, StartMethod, 0);
+                if (target == null)
+                {
+                    MelonLogger.Warning(
+                        $"[WorldPatches] Could not resolve {TitlesLoadTextFullName}.{StartMethod}; credits readout disabled.");
+                    return;
+                }
+                harmony.Patch(target, postfix: PostfixOf(nameof(CreditsStartPostfix)));
+                MelonLogger.Msg($"[WorldPatches] Patched {TitlesLoadTextFullName}.{StartMethod}.");
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Error($"[WorldPatches] PatchCreditsStart failed: {e}");
+            }
+        }
+
+        /// <summary>Postfix on the credits view's Start (its text is loaded into <c>_text</c> by now).
+        /// <paramref name="__instance"/> is the <c>TitlesLoadText</c>; the narrator reads + speaks its TMP.</summary>
+        private static void CreditsStartPostfix(Il2CppObjectBase __instance)
+        {
+            try
+            {
+                if (__instance == null) return;
+                _popup?.OnCreditsShown(Il2CppRaw.Ptr(__instance));
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[WorldPatches] CreditsStartPostfix threw: {e.Message}");
             }
         }
 

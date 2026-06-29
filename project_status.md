@@ -44,6 +44,37 @@ by live active state, `_isLocked`, raycast-target lock state, and concrete `CanS
 save/mushroom/hole/cat come from `InteractablesViewProvider` in canonical provider field order, not
 `FindObjectsByType(AInteractableObject)`, and are gated by live active state, `_isEnabled`, `_lockCount`, `_raycastTarget`,
 raycast-target lock state, and concrete `HardConditions` + `SoftConditions`.
+- **Localized labels for provider interactables — ADDED 2026-06-29.** The spoken label for the second-system
+  interactables (hatch/cat/save/mushroom/hole/…) now prefers the game's LOCALIZED subject over the raw GameObject name.
+  Cause: the hatch GO is named just "Hatch" in the scene (both house + basement), so `HumanizeName` read the English
+  name, not the localized prompt. Fix: `ActionMenu.LocalizedSubject` reads `_raycastTarget` (RaycastTargetHint) →
+  `_subjectLocalizationKey` (LocalizedString) → `GetLocalizedString()` (mirrors GameStateAccess's holiday resolver);
+  `BestLabel` uses it, falling back to the humanized name. Applied ONLY to the second loop — door/window VIEWS keep
+  `HumanizeName` (room-name distinction + door reordering), and window-board prompts keep the humanized name (the
+  "Board up" prefix is built around it). UNVERIFIED in-game.
+- **Localization sweep (prefer game text over English) — 2026-06-29.** User principle: speak the game's LOCALIZED strings
+  wherever they exist, since the player may be in another language. Added shared `Il2CppRaw.ResolveLocalizedString` /
+  `ResolveLocalizedStringField` (invoke `LocalizedString.GetLocalizedString()`), then routed through it:
+  (1) Consumables — new `ConsumableNames.Localized` reads the `ConsumableCloseUpView._localizationsList`
+  (ConsumableLocalizationSOData.Name), used by BOTH the F9 status readout and the fridge stepper; English table is the
+  fallback. (2) Corpse character names (`CorpseNarrator`) — resolve `CharacterSOData._nameLocalizationKey`, falling back
+  to the ECharacterType English table. NON-localizable (no source): the 2D room-photo highlight (`RoomViewNarrator`) —
+  its UIButtons have only image+action, no name field, so the humanized GameObject name stays. Mod's own connective
+  words (Day/energy/…) left English for now (separate mod string-table effort). UNVERIFIED — verify in a non-English
+  locale. (Note: the F10 orientation localization done this day was REMOVED below along with all of F10.)
+- **Popup titles + credits readout — 2026-06-29.** User: credits + the title of the ending you receive don't read. The
+  ending BODY narration already works (DialoguePatches' `CustomYarnReader.GetNodeContent` hook). The title appears on a
+  separate "unlocked" POPUP, not the cutscene. New `src/World/PopupNarrator.cs` + two WorldPatches hooks:
+  (1) `PopupWindow.Show(string title, PopupButtonData[])` — reads the resolved title + button labels, covering ALL
+  popups (speaks "title. Options: a, b."). (2) `TitlesLoadText.Start()` (ns `_Code.Menues.Titles`) — reads its `_text`
+  TMP, the end credits. Wired through `WorldPatches.Apply` (new param) + AccessMod. UNVERIFIED. Risk: if the credits
+  text loads async inside Start(), `_text` may be empty at the postfix (silent, safe) → would need a later hook point.
+- **F10 orientation REMOVED, corpses folded onto F9 — 2026-06-29.** User judged the F10 "where things are" readout
+  (interactables + bearings) not useful/reliable, so `OrientationNarrator.cs` was DELETED, the F10 key + handler removed.
+  The corpse readout (the part worth keeping) now appends to the F9 status: `StatusNarrator` takes a `CorpseNarrator`
+  and speaks `GameStateAccess.Describe()` + `CorpseNarrator.Describe()`. So F9 = day/phase/energy/consumables + any
+  corpses present, in every non-special context (conversation→sign-repeat, mushroomlist→verses, phone→contacts still
+  take precedence). Build green.
 - Build: `dotnet build NoImNotAHumanAccess.csproj -c Release` green on 2026-06-04 (existing unused-field warnings only).
 - Deploy: copied `bin\Release\NoImNotAHumanAccess.dll` to the game `Mods` folder on 2026-06-04. The repo has no
   `scripts\Deploy-Mod.ps1`, so deployment was manual.
@@ -128,10 +159,17 @@ close-up with highlightable objects. Three systems needed, re-prioritized:
     OnFridgeItem. (2) ConsumableCloseUpView (single-item confirm) — postfix on `SetupConsumable(EConsumable)`, then read
     the view's `_name`/`_gameplayDescription`/`_narrativeDescription` RTLTextMeshPro fields off __instance (new
     Il2CppRaw.ReadTmpFieldText). Speaks "name. gameplay-description." (prefers gameplay over narrative; narrative only
-    if no gameplay). Mushroomlist/Radio/Phone = own UIs, no highlight grid → out of scope. CONFIRM in-game: log
-    `[WorldPatches] Patched ...FridgeCloseUpView.OnPointerEntered` + `...ConsumableCloseUpView.SetupConsumable` at init;
-    open the fridge, hover items → hear "name. description."; open a consumable confirm → hear it. If patched but
-    silent → method name/arity off, or the TMP field names differ (consumable). UNVERIFIED until tested.
+    if no gameplay). (3) MushroomlistCloseUpView (Book of Smiles pages, read in the bedroom) — **ADDED 2026-06-29**,
+    postfix on `Show()` (arity 0); the view has NO named text field, so the page text is a single child
+    `TextMeshProUGUI` found via `GetComponentInChildrenRaw(TMP_Text)` off the view's GameObject and read with new
+    `Il2CppRaw.ReadTmpComponentText`. Speaks the whole (runtime-localized) page text on open, and **F9 repeats the
+    verses** while the view is open (CloseUpNarrator tracks open-state via Show/Hide postfixes; AccessMod's F9 routes to
+    RepeatMushroomlist before the phone/status branches). Radio/Phone still = own UIs, out
+    of scope. CONFIRM in-game: log `[WorldPatches] Patched ...FridgeCloseUpView.OnPointerEntered` +
+    `...ConsumableCloseUpView.SetupConsumable` + `...MushroomlistCloseUpView.Show` at init; open the fridge, hover items
+    → hear "name. description."; open a consumable confirm → hear it; open the mushroomlist in the bedroom → hear the
+    Book of Smiles verses. If patched but silent → method name/arity off, or the TMP field names differ (consumable), or
+    the mushroomlist child TMP isn't live yet at Show() (move read to a later hook). UNVERIFIED until tested.
 - **SYS-C — describe the view.** List the objects in the active close-up; descriptions already authored (narrative +
   gameplay), so likely NO image descriptions needed for v1.
 - **SYS-A — lead the player to world objects (nav steering).** The original F10 idea; needs P0 (player pose) + a

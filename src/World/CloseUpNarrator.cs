@@ -13,13 +13,16 @@ namespace NoImNotAHumanAccess.World
     /// descriptions, so this speaks "name. description." A blind player hears what each item is and what it does as
     /// they move the highlight / open the confirm.
     ///
-    /// Only two close-ups have a highlight-with-description surface (the others are different UIs):
+    /// Three close-ups carry readable text (the others are pure photos):
     /// - <b>Fridge</b> (multi-item grid): hooked via <c>FridgeCloseUpView.OnPointerEntered(name, narrativeDescription,
     ///   gameplayDescription, EConsumable)</c> in <see cref="WorldPatches"/> — the strings arrive ALREADY RESOLVED,
     ///   so we just compose + speak (<see cref="OnFridgeItem"/>).
     /// - <b>Consumable</b> (single-item confirm): hooked via <c>ConsumableCloseUpView.SetupConsumable(EConsumable)</c>;
     ///   that method populates the view's <c>_name</c>/<c>_narrativeDescription</c>/<c>_gameplayDescription</c>
     ///   RTLTextMeshPro fields, which we read off the view pointer after it runs (<see cref="OnConsumableSetup"/>).
+    /// - <b>Mushroomlist</b> (the Book of Smiles pages, read in the bedroom): hooked via
+    ///   <c>MushroomlistCloseUpView.Show()</c>; the page text is a single child <c>TextMeshProUGUI</c> (no named field),
+    ///   so we find it in the view's subtree and read it (<see cref="OnMushroomlistShown"/>).
     ///
     /// Composition: "name. gameplay description." We prefer the GAMEPLAY description (what it does — e.g. "restores
     /// energy") over the narrative flavor; narrative is appended only when there's no gameplay text. Markup is cleaned
@@ -35,6 +38,15 @@ namespace NoImNotAHumanAccess.World
         private string _lastSpoken = string.Empty;
 
         private IntPtr _consumableViewClass; // resolved lazily for reading the consumable view's TMP fields
+        private IntPtr _tmpTextClass;        // resolved lazily for the mushroomlist's child page TMP
+
+        // Mushroomlist state, so F9 can repeat the verses while the close-up is open. Set on Show(), cleared on Hide().
+        private string _mushroomlistText = string.Empty;
+        private bool _mushroomlistOpen;
+
+        /// <summary>True while the mushroomlist (Book of Smiles) close-up is open, so the F9 handler can route a repeat
+        /// of the verses to <see cref="RepeatMushroomlist"/> instead of the status readout.</summary>
+        public bool MushroomlistOpen => _mushroomlistOpen;
 
         public CloseUpNarrator(ISpeechOutput speech) => _speech = speech;
 
@@ -65,6 +77,45 @@ namespace NoImNotAHumanAccess.World
             {
                 MelonLogger.Warning($"[CloseUpNarrator] OnConsumableSetup threw: {e.Message}");
             }
+        }
+
+        /// <summary>Mushroomlist (the Book of Smiles pages the Mushroom Eater gives you, read in the bedroom) opened.
+        /// Unlike the fridge/consumable views there are no named TMP fields — the page text is a single
+        /// <c>TextMeshProUGUI</c> on a child of the view, localized at runtime. Find it in the view's subtree and speak
+        /// its whole text. The view's <c>Show()</c> just ran, so the GameObject is live.</summary>
+        public void OnMushroomlistShown(IntPtr viewPtr)
+        {
+            try
+            {
+                if (viewPtr == IntPtr.Zero) return;
+                IntPtr goPtr = Il2CppRaw.GetComponentGameObject(viewPtr);
+                if (goPtr == IntPtr.Zero) return;
+                if (_tmpTextClass == IntPtr.Zero)
+                    _tmpTextClass = Il2CppRaw.GetClass("Unity.TextMeshPro.dll", "TMPro", "TMP_Text");
+
+                IntPtr tmp = Il2CppRaw.GetComponentInChildrenRaw(goPtr, _tmpTextClass, includeInactive: true);
+                string? text = Il2CppRaw.ReadTmpComponentText(tmp);
+                _mushroomlistText = Clean(text);
+                _mushroomlistOpen = true;
+                Announce(text, null, null);
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[CloseUpNarrator] OnMushroomlistShown threw: {e.Message}");
+            }
+        }
+
+        /// <summary>Mushroomlist closed: drop the "open" flag so F9 stops repeating the verses. The text is kept (cheap)
+        /// but unreachable until the view re-opens.</summary>
+        public void OnMushroomlistHidden() => _mushroomlistOpen = false;
+
+        /// <summary>Speak the mushroomlist verses again (F9 while the close-up is open). No-op if there's nothing to
+        /// repeat. Bypasses the de-dupe so the same text speaks every press.</summary>
+        public void RepeatMushroomlist()
+        {
+            if (_mushroomlistText.Length == 0) return;
+            _lastSpoken = _mushroomlistText;
+            _speech.Speak(_mushroomlistText, interrupt: true);
         }
 
         private void Announce(string? name, string? gameplay, string? narrative)

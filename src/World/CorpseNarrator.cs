@@ -106,10 +106,15 @@ namespace NoImNotAHumanAccess.World
             }
         }
 
-        /// <summary>The character's name from <c>CharacterSOData._characterType</c>, mapped via the embedded
-        /// ECharacterType table. Falls back to the data object's humanized Unity name, then "Someone".</summary>
+        /// <summary>The character's display name. Prefers the game's LOCALIZED name
+        /// (<c>CharacterSOData._nameLocalizationKey</c>) so the readout follows the player's language; falls back to the
+        /// embedded <c>ECharacterType</c> table (English codenames), then the data object's humanized Unity name, then
+        /// "Someone".</summary>
         private string CharacterName(IntPtr data)
         {
+            string? localized = Il2CppRaw.ResolveLocalizedStringField(data, _characterSoDataClass, "_nameLocalizationKey");
+            if (!string.IsNullOrWhiteSpace(localized)) return localized!.Trim();
+
             int type = Il2CppRaw.ReadInt32Field(data, _characterSoDataClass, "_characterType", fallback: -1);
             if (type >= 0 && type < CharacterTypeNames.Length) return CharacterTypeNames[type];
 

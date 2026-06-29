@@ -113,7 +113,13 @@ namespace NoImNotAHumanAccess.World
             foreach (var (value, singular, plural) in Consumables)
             {
                 int count = Il2CppRaw.InvokeInt32MethodWithEnum(_consumables, _countMethod, value, fallback: 0);
-                if (count > 0) held.Add($"{count} {(count == 1 ? singular : plural)}");
+                if (count <= 0) continue;
+                // Prefer the game's LOCALIZED name; fall back to the English singular/plural when it can't be read. The
+                // localized name has no separate plural form, so we don't pluralize it (e.g. "8 beer") — correct-enough
+                // across languages, where English plural rules wouldn't apply anyway.
+                string english = count == 1 ? singular : plural;
+                string name = ConsumableNames.Localized(value, english);
+                held.Add($"{count} {name}");
             }
             return held.Count == 0 ? string.Empty : "Consumables: " + string.Join(", ", held) + ".";
         }

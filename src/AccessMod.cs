@@ -23,8 +23,8 @@ namespace NoImNotAHumanAccess
         private MenuNarrator? _menuNarrator;
         private DialogueNarrator? _dialogueNarrator;
         private HudNarrator? _hudNarrator;
+        private PopupNarrator? _popupNarrator;
         private StatusNarrator? _statusNarrator;
-        private OrientationNarrator? _orientationNarrator;
         private CorpseNarrator? _corpseNarrator;
         private ActionMenu? _actionMenu;
         private FridgeMenu? _fridgeMenu;
@@ -41,7 +41,7 @@ namespace NoImNotAHumanAccess
         private SignNarrator? _signNarrator;
 
         // F7 = repeat the current context's control row ("what can I do here"); F8 = manual repeat/test trigger;
-        // F9 = status readout (day/phase/energy/items); F10 = "where am I" orientation. The game binds NO F-key.
+        // F9 = status readout (day/phase/energy/items, plus any corpses present). The game binds NO F-key.
         // The game's COMPLETE keyboard binding set (read from PlayerInputActions.asset via the 2026-06-03 asset rip):
         //   space escape w a s d q e f shift leftCtrl enter upArrow downArrow leftArrow rightArrow
         // The arrows + enter ARE in that set, but ONLY via the Input System UI-map `Navigate`/`Submit` actions, which
@@ -57,7 +57,6 @@ namespace NoImNotAHumanAccess
         // deliberate repeat is useful in any context, so it's checked unconditionally (not behind the ctx guards).
         private const KeyCode RepeatLineKey = KeyCode.BackQuote;
         private const KeyCode StatusKey = KeyCode.F9;
-        private const KeyCode OrientationKey = KeyCode.F10;
 
         // ARROW-KEY STEPPING (user 2026-06-03, replacing the old PageUp/PageDown/Backspace scheme). The rip proved this
         // safe: game code NEVER polls raw arrow keys — arrows reach the game ONLY via the Input System `Navigate` action
@@ -134,20 +133,23 @@ namespace NoImNotAHumanAccess
                 // highlight (UIButton.OnHover), the object close-ups, the context control-row swap, and the inspection
                 // signs. (The post-shot human/visitor announcement was removed — the game's sound effect conveys it.)
                 _hudNarrator = new HudNarrator(_speech);
-                WorldPatches.Apply(HarmonyInstance, _hudNarrator, _roomViewNarrator, _closeUpNarrator, _controlsNarrator,
-                    _signNarrator);
 
-                // Status key (F9): on-demand readout of day/phase/energy/items via the Zenject-resolved controllers.
-                _statusNarrator = new StatusNarrator(_speech);
+                // Popups + credits: reads the popup-window title (notably the "ending unlocked" popup, whose ending name
+                // was silent) + its button labels, and the end-credits text. Created before WorldPatches so its hooks
+                // can drive it.
+                _popupNarrator = new PopupNarrator(_speech);
+
+                WorldPatches.Apply(HarmonyInstance, _hudNarrator, _roomViewNarrator, _closeUpNarrator, _controlsNarrator,
+                    _signNarrator, _popupNarrator);
 
                 // Corpses: names the dead characters in the scene (+ whether each was a human or a visitor). Bodies are
                 // de-buttoned, so the hover/stepper narration never speaks them — a blind player needs telling they're
-                // there. Folded into the F10 orientation readout below.
+                // there. Folded into the F9 status readout (the old F10 "where things are" orientation was removed).
                 _corpseNarrator = new CorpseNarrator();
 
-                // Orientation key (F10): "what's around me" — currently-selectable interactables with bearings, plus any
-                // corpses present (read off the scene's CharacterRoomObjectViews in a death pose).
-                _orientationNarrator = new OrientationNarrator(_speech, _corpseNarrator);
+                // Status key (F9): on-demand readout of day/phase/energy/items via the Zenject-resolved controllers,
+                // plus any corpses present.
+                _statusNarrator = new StatusNarrator(_speech, _corpseNarrator);
 
                 // Action menu (3D scene): Up/Down select an interactable; Enter activates it through the game's own
                 // targeted-entry path (focus IsTargeted, then Act()/Interact()), so the game owns the interaction and
@@ -390,24 +392,20 @@ namespace NoImNotAHumanAccess
                 _actionMenu?.Leave();
 
             // F9 = the contextual readout. In a conversation it repeats the latest inspection-test result (or "untested"
-            // if none yet) — the trait you examined, so you can re-hear it before deciding. In the phone close-up it
-            // reads the player's known phone numbers. Otherwise it's the day/phase/energy/consumables status. Same key,
+            // if none yet) — the trait you examined, so you can re-hear it before deciding. With the mushroomlist (Book
+            // of Smiles) open it re-reads the verses. In the phone close-up it reads the player's known phone numbers.
+            // Otherwise it's the day/phase/energy/consumables status, plus any corpses present in the scene. Same key,
             // same "tell me what matters here" intent.
             if (Input.GetKeyDown(StatusKey))
             {
                 if (_signNarrator != null && _signNarrator.InConversation)
                     _signNarrator.RepeatLastTest();
+                else if (_closeUpNarrator != null && _closeUpNarrator.MushroomlistOpen)
+                    _closeUpNarrator.RepeatMushroomlist();
                 else if (ctx == InputContextKind.Phone)
                     _phoneMenu?.ReadContacts();
                 else
                     _statusNarrator?.Announce();
-            }
-
-            if (Input.GetKeyDown(OrientationKey))
-            {
-                // In a 2D room photo the player wants ONLY the corpse info — the 3D interactable bearings are
-                // meaningless there. Elsewhere (3D room) F10 reads interactables, and corpses too if any are present.
-                _orientationNarrator?.Announce(corpsesOnly: ctx == InputContextKind.RoomPhoto);
             }
         }
 

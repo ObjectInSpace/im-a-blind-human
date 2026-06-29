@@ -121,9 +121,12 @@ namespace NoImNotAHumanAccess.World
         /// <summary>Reset the selection when the fridge closes, so re-opening starts fresh.</summary>
         public void Reset() => _selectedType = -1;
 
-        /// <summary>Spoken name for an <c>EConsumable</c> value (the fridge's ItemType). Falls back to "item N" for an
-        /// unmapped value so stepping is never silent. Bobeer = the beer; names chosen to read naturally aloud.</summary>
-        private static string DrinkName(int itemType) => itemType switch
+        /// <summary>Spoken name for an <c>EConsumable</c> value (the fridge's ItemType). Prefers the game's LOCALIZED
+        /// name (so the readout follows the player's language); the English switch is the fallback when it can't be
+        /// resolved. Falls back to "item N" for an unmapped value so stepping is never silent. Bobeer = the beer.</summary>
+        private static string DrinkName(int itemType) => ConsumableNames.Localized(itemType, EnglishDrinkName(itemType));
+
+        private static string EnglishDrinkName(int itemType) => itemType switch
         {
             0 => "beer",            // Bobeer
             1 => "cigarettes",      // Cigarette
