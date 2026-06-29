@@ -65,6 +65,10 @@ namespace NoImNotAHumanAccess.World
         // ICatController interface). _catInteractableClass identifies the cat among the interactables.
         private IntPtr _catInteractableClass; // _Code.Infrastructure.CatInteractable
         private IntPtr _catInstanceClass;     // _Code.…CatInstance (the live cat GameObject; absent ⇒ cat not present)
+        private IntPtr _catController, _getIsCatActive; // ICatController + get_IsCatActive — the game's OWN "cat is
+                                                        // interactable now" gate (false at night). Authoritative; the
+                                                        // CatInstance-presence check was wrong (the cat roams to night
+                                                        // positions but stays present), so the cat showed at night.
         private IntPtr _windowBoardsClass;    // _Code.Infrastructure.WindowBoardsInteractable (board-up prompts, found by scene scan)
         private IntPtr _raycastTargetBaseClass, _getRaycastIsLocked;
         // Focus plumbing: set the selected object's raycast target IsTargeted so the game's Act()/Interact() registers it
@@ -888,13 +892,13 @@ namespace NoImNotAHumanAccess.World
 
             bool valid = active && isEnabled && lockCount == 0 && raycast != IntPtr.Zero && !raycastLocked && hard && soft;
 
-            // CAT presence gate: the cat passes every generic check above even when it isn't physically in the room, but
-            // its Interact() no-ops unless the cat is actually present — so Enter on it was a silent no-op. Additionally
-            // require a live CatInstance in the scene before listing the cat, so it only appears when petting it will do
-            // something. (Other interactables are unaffected — this only narrows the one object whose class is CatInteractable.)
-            if (valid && _catInteractableClass != IntPtr.Zero && IsCat(o) && !IsCatPresent())
+            // CAT availability gate: the cat passes every generic check above even when it isn't interactable (notably at
+            // NIGHT — its Interact() no-ops then), so Enter on it was a silent no-op. Gate it on the game's own
+            // CatController.IsCatActive (authoritative; false at night). (Other interactables are unaffected — this only
+            // narrows the one object whose class is CatInteractable.)
+            if (valid && _catInteractableClass != IntPtr.Zero && IsCat(o) && !IsCatAvailable())
             {
-                MelonLogger.Msg($"[ActionMenu]   avail '{name}': gated out — no active CatInstance in scene (cat not present).");
+                MelonLogger.Msg($"[ActionMenu]   avail '{name}': gated out — cat not active now (IsCatActive false / night).");
                 return false;
             }
 
@@ -913,23 +917,27 @@ namespace NoImNotAHumanAccess.World
         }
 
         /// <summary>
-        /// Whether the live cat GameObject (<c>CatInstance</c>) is present and active in the scene. The cat roams by
-        /// room/time of day; when it isn't here there's no active CatInstance, and the cat's Interact() does nothing.
-        /// Read Zenject-free via inactive-inclusive find + active-in-hierarchy (CatController.IsCatActive is unusable —
-        /// private setter, off-interface, Zenject-only). FAILS OPEN: if the class can't be resolved we return true so a
-        /// resolve glitch never permanently hides the cat. Never throws.
+        /// Whether the cat is interactable right now, per the game's own <c>CatController.IsCatActive</c> (false at
+        /// night, when the cat's Interact() no-ops). This is the authoritative gate. FALLBACK when the controller/getter
+        /// didn't resolve: the live <c>CatInstance</c> being present and active — weaker (the cat stays in the scene at
+        /// night, just repositioned), but better than nothing. FAILS OPEN overall: if neither signal is available we
+        /// return true so a resolve glitch never permanently hides the cat. Never throws.
         /// </summary>
-        private bool IsCatPresent()
+        private bool IsCatAvailable()
         {
             try
             {
+                if (_catController != IntPtr.Zero && _getIsCatActive != IntPtr.Zero)
+                    return Il2CppRaw.InvokeBoolGetter(_catController, _getIsCatActive);
+
+                // Fallback: CatInstance presence (only when IsCatActive is unavailable).
                 if (_catInstanceClass == IntPtr.Zero) return true; // can't tell ⇒ don't hide (fail open)
                 IntPtr inst = Il2CppRaw.FindObjectIncludingInactive(_catInstanceClass);
                 return inst != IntPtr.Zero && Il2CppRaw.GetComponentGameObjectActive(inst);
             }
             catch (Exception e)
             {
-                MelonLogger.Warning($"[ActionMenu] IsCatPresent threw: {e.Message}; treating cat as present.");
+                MelonLogger.Warning($"[ActionMenu] IsCatAvailable threw: {e.Message}; treating cat as available.");
                 return true; // fail open
             }
         }
@@ -1063,12 +1071,16 @@ namespace NoImNotAHumanAccess.World
 
                 _interactablesProviderClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure", "InteractablesViewProvider");
 
-                // Cat presence gate: CatInteractable (the interactable) lives in _Code.Infrastructure; the live cat
-                // GameObject CatInstance lives in _Code.Infrastructure._NINAH__Cat. The cat is only interactable when an
-                // active CatInstance is in the scene (it roams by room/time of day), so we gate the cat entry on that —
-                // CatController.IsCatActive isn't usable (private setter, not on the ICatController interface, Zenject-only).
+                // Cat availability gate: the cat roams by time of day, and at NIGHT it isn't interactable (Enter no-ops),
+                // but the live CatInstance STAYS in the scene at night (it just moves to a night position) — so the old
+                // "CatInstance present?" gate let the cat show at night. The authoritative signal is the game's own
+                // CatController.IsCatActive (false at night). Its SETTER is private, but the GETTER is public, so we
+                // resolve ICatController via Zenject and invoke get_IsCatActive on the concrete instance.
                 _catInteractableClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure", "CatInteractable");
                 _catInstanceClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure._NINAH__Cat", "CatInstance");
+                _catController = ZenjectResolver.Resolve("_Code.Infrastructure._NINAH__Cat", "ICatController");
+                if (_catController != IntPtr.Zero)
+                    _getIsCatActive = Il2CppRaw.GetMethod(IL2CPP.il2cpp_object_get_class(_catController), "get_IsCatActive", 0);
 
                 // Player service for walking to the cat (the cat has no standing-pos auto-walk, so the mod walks it).
                 _playerService = ZenjectResolver.Resolve("_Code.Infrastructure.Player", "IPlayerService");
