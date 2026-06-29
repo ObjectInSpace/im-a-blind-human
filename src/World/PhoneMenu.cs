@@ -53,7 +53,7 @@ namespace NoImNotAHumanAccess.World
         // Each pin's contact name is localized: PhonePinView._nameText is a LocalizeStringEvent. Prefer its
         // GetLocalizedString() over the hardcoded English SubscriberName table so the readout follows the player's
         // language (same as the consumable/corpse/mushroomlist fixes).
-        private IntPtr _lseClass, _lseGetLocalizedString; // UnityEngine.Localization.Components.LocalizeStringEvent
+        private IntPtr _lseClass; // UnityEngine.Localization.Components.LocalizeStringEvent (resolve via StringReference)
 
         public PhoneMenu(ISpeechOutput speech, UguiFocus focus)
         {
@@ -200,12 +200,14 @@ namespace NoImNotAHumanAccess.World
         {
             try
             {
-                if (_lseGetLocalizedString != IntPtr.Zero)
+                if (_lseClass != IntPtr.Zero)
                 {
                     IntPtr lse = Il2CppRaw.ReadObjectField(pin, _pinViewClass, "_nameText");
                     if (lse != IntPtr.Zero)
                     {
-                        string? localized = Il2CppRaw.InvokeStringGetter(lse, _lseGetLocalizedString);
+                        // Resolve via the event's StringReference LocalizedString (component GetLocalizedString()
+                        // doesn't bind in this build — same fix as the mushroomlist).
+                        string? localized = Il2CppRaw.ResolveLocalizeStringEvent(lse, _lseClass);
                         if (!string.IsNullOrWhiteSpace(localized)) return localized!.Trim();
                     }
                 }
@@ -264,15 +266,13 @@ namespace NoImNotAHumanAccess.World
                     _getPinSubscriber = Il2CppRaw.GetMethod(_pinViewClass, "get_PhoneSubscriber", 0);
 
                 _lseClass = Il2CppRaw.GetClass("Unity.Localization.dll", "UnityEngine.Localization.Components", "LocalizeStringEvent");
-                if (_lseClass != IntPtr.Zero)
-                    _lseGetLocalizedString = Il2CppRaw.GetMethod(_lseClass, "GetLocalizedString", 0);
 
                 // EventSystem focus is owned by UguiFocus now — PhoneMenu no longer resolves it here.
 
                 MelonLogger.Msg($"[PhoneMenu] resolved: view={_viewClass != IntPtr.Zero} button={_buttonClass != IntPtr.Zero} " +
                                 $"onDown={_onPointerDown != IntPtr.Zero} onUp={_onPointerUp != IntPtr.Zero} " +
                                 $"pinController={_pinControllerClass != IntPtr.Zero} pinView={_pinViewClass != IntPtr.Zero} " +
-                                $"getPinSub={_getPinSubscriber != IntPtr.Zero} lseGetLoc={_lseGetLocalizedString != IntPtr.Zero}");
+                                $"getPinSub={_getPinSubscriber != IntPtr.Zero} lseClass={_lseClass != IntPtr.Zero}");
             }
             catch (Exception e)
             {

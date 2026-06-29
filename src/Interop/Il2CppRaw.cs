@@ -595,6 +595,27 @@ namespace NoImNotAHumanAccess.Interop
             return ResolveLocalizedString(ls);
         }
 
+        /// <summary>
+        /// Resolve the localized text driven by a <c>LocalizeStringEvent</c> COMPONENT. The component's own
+        /// <c>GetLocalizedString()</c> isn't reliably bindable in this build, so we read its <c>StringReference</c> (a
+        /// <c>LocalizedString</c>) and resolve THAT via the proven <see cref="ResolveLocalizedString"/>. Tries the
+        /// <c>get_StringReference</c> property getter first, then the serialized <c>m_StringReference</c> field. Null on
+        /// any miss. <paramref name="lseClass"/> is the resolved <c>LocalizeStringEvent</c> class.
+        /// </summary>
+        public static string? ResolveLocalizeStringEvent(IntPtr lsePtr, IntPtr lseClass)
+        {
+            if (lsePtr == IntPtr.Zero || lseClass == IntPtr.Zero) return null;
+
+            IntPtr stringRef = IntPtr.Zero;
+            IntPtr getRef = GetMethod(lseClass, "get_StringReference", 0);
+            if (getRef != IntPtr.Zero)
+                stringRef = InvokeObjectGetter(lsePtr, getRef);
+            if (stringRef == IntPtr.Zero)
+                stringRef = ReadObjectField(lsePtr, lseClass, "m_StringReference");
+
+            return ResolveLocalizedString(stringRef);
+        }
+
         /// <summary>Read the displayed text of a TMP_Text-typed instance FIELD (e.g. a view's <c>_name</c> /
         /// <c>_narrativeDescription</c> RTLTextMeshPro field): read the field object, then invoke <c>TMP_Text.get_text</c>
         /// on it (RTLTextMeshPro derives from TMP_Text, so the getter binds). Null if anything is missing.</summary>

@@ -39,7 +39,7 @@ namespace NoImNotAHumanAccess.World
 
         private IntPtr _consumableViewClass; // resolved lazily for reading the consumable view's TMP fields
         private IntPtr _tmpTextClass;        // resolved lazily for the mushroomlist's child page TMP
-        private IntPtr _localizeStringEventClass, _lseGetLocalizedString; // mushroomlist localization (see OnMushroomlistShown)
+        private IntPtr _localizeStringEventClass; // mushroomlist localization (see OnMushroomlistShown)
 
         // Mushroomlist state, so F9 can repeat the verses while the close-up is open. Set on Show(), cleared on Hide().
         private string _mushroomlistText = string.Empty;
@@ -94,16 +94,17 @@ namespace NoImNotAHumanAccess.World
                 if (goPtr == IntPtr.Zero) return;
                 EnsureMushroomlistResolved();
 
-                // Prefer the LOCALIZED string from the LocalizeStringEvent in the view's subtree.
+                // Prefer the LOCALIZED string driven by the LocalizeStringEvent in the view's subtree. We resolve it via
+                // its StringReference LocalizedString (the component's own GetLocalizedString() doesn't bind here).
                 string? text = null;
                 bool viaLse = false;
                 IntPtr lse = IntPtr.Zero;
-                if (_localizeStringEventClass != IntPtr.Zero && _lseGetLocalizedString != IntPtr.Zero)
+                if (_localizeStringEventClass != IntPtr.Zero)
                 {
                     lse = Il2CppRaw.GetComponentInChildrenRaw(goPtr, _localizeStringEventClass, includeInactive: true);
                     if (lse != IntPtr.Zero)
                     {
-                        text = Il2CppRaw.InvokeStringGetter(lse, _lseGetLocalizedString);
+                        text = Il2CppRaw.ResolveLocalizeStringEvent(lse, _localizeStringEventClass);
                         viaLse = !string.IsNullOrWhiteSpace(text);
                     }
                 }
@@ -118,8 +119,7 @@ namespace NoImNotAHumanAccess.World
                 string preview = (text ?? "").Replace("\n", " ");
                 if (preview.Length > 60) preview = preview.Substring(0, 60);
                 MelonLogger.Msg($"[CloseUpNarrator] mushroomlist: lseClass={_localizeStringEventClass != IntPtr.Zero} " +
-                                $"lseGetter={_lseGetLocalizedString != IntPtr.Zero} lseFound={lse != IntPtr.Zero} " +
-                                $"viaLse={viaLse} text='{preview}'.");
+                                $"lseFound={lse != IntPtr.Zero} viaLse={viaLse} text='{preview}'.");
 
                 _mushroomlistText = Clean(text);
                 _mushroomlistOpen = true;
@@ -136,11 +136,7 @@ namespace NoImNotAHumanAccess.World
             if (_tmpTextClass == IntPtr.Zero)
                 _tmpTextClass = Il2CppRaw.GetClass("Unity.TextMeshPro.dll", "TMPro", "TMP_Text");
             if (_localizeStringEventClass == IntPtr.Zero)
-            {
                 _localizeStringEventClass = Il2CppRaw.GetClass("Unity.Localization.dll", "UnityEngine.Localization.Components", "LocalizeStringEvent");
-                if (_localizeStringEventClass != IntPtr.Zero)
-                    _lseGetLocalizedString = Il2CppRaw.GetMethod(_localizeStringEventClass, "GetLocalizedString", 0);
-            }
         }
 
         /// <summary>Mushroomlist closed: drop the "open" flag so F9 stops repeating the verses. The text is kept (cheap)
