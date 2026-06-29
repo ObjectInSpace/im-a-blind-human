@@ -421,13 +421,19 @@ namespace NoImNotAHumanAccess.World
         {
             try
             {
-                // Show(string title, PopupButtonData[] buttons) — arity 2. We declare only the string on the postfix;
-                // the array is taken positionally as an interop object (see PopupShowPostfix).
-                MethodInfo? target = ResolveMethodByArity(GameAsmName, PopupWindowFullName, PopupShowMethod, 2);
+                // Show(string title, PopupButtonData[] buttons). Resolving by arity alone is AMBIGUOUS at runtime (the
+                // IL2CPP type exposes two 2-arg Show methods), so pick the overload whose FIRST param is String (the
+                // title) — that's the one we want; the array is taken positionally as an interop object on the postfix.
+                Type? popupType = ResolveType(GameAsmName, PopupWindowFullName);
+                MethodInfo? target = popupType?
+                    .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
+                    .FirstOrDefault(m => m.Name == PopupShowMethod
+                        && m.GetParameters().Length == 2
+                        && m.GetParameters()[0].ParameterType == typeof(string));
                 if (target == null)
                 {
                     MelonLogger.Warning(
-                        $"[WorldPatches] Could not resolve {PopupWindowFullName}.{PopupShowMethod}; popup readout disabled.");
+                        $"[WorldPatches] Could not resolve {PopupWindowFullName}.{PopupShowMethod}(string, ...); popup readout disabled.");
                     return;
                 }
                 harmony.Patch(target, postfix: PostfixOf(nameof(PopupShowPostfix)));

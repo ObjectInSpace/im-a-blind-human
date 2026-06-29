@@ -96,11 +96,16 @@ namespace NoImNotAHumanAccess.World
 
                 // Prefer the LOCALIZED string from the LocalizeStringEvent in the view's subtree.
                 string? text = null;
+                bool viaLse = false;
+                IntPtr lse = IntPtr.Zero;
                 if (_localizeStringEventClass != IntPtr.Zero && _lseGetLocalizedString != IntPtr.Zero)
                 {
-                    IntPtr lse = Il2CppRaw.GetComponentInChildrenRaw(goPtr, _localizeStringEventClass, includeInactive: true);
+                    lse = Il2CppRaw.GetComponentInChildrenRaw(goPtr, _localizeStringEventClass, includeInactive: true);
                     if (lse != IntPtr.Zero)
+                    {
                         text = Il2CppRaw.InvokeStringGetter(lse, _lseGetLocalizedString);
+                        viaLse = !string.IsNullOrWhiteSpace(text);
+                    }
                 }
 
                 // Fallback: the raw TMP text (baked source language) if the localize event didn't resolve.
@@ -109,6 +114,12 @@ namespace NoImNotAHumanAccess.World
                     IntPtr tmp = Il2CppRaw.GetComponentInChildrenRaw(goPtr, _tmpTextClass, includeInactive: true);
                     text = Il2CppRaw.ReadTmpComponentText(tmp);
                 }
+
+                string preview = (text ?? "").Replace("\n", " ");
+                if (preview.Length > 60) preview = preview.Substring(0, 60);
+                MelonLogger.Msg($"[CloseUpNarrator] mushroomlist: lseClass={_localizeStringEventClass != IntPtr.Zero} " +
+                                $"lseGetter={_lseGetLocalizedString != IntPtr.Zero} lseFound={lse != IntPtr.Zero} " +
+                                $"viaLse={viaLse} text='{preview}'.");
 
                 _mushroomlistText = Clean(text);
                 _mushroomlistOpen = true;

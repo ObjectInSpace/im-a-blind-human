@@ -896,10 +896,12 @@ namespace NoImNotAHumanAccess.World
             // NIGHT — its Interact() no-ops then), so Enter on it was a silent no-op. Gate it on the game's own
             // CatController.IsCatActive (authoritative; false at night). (Other interactables are unaffected — this only
             // narrows the one object whose class is CatInteractable.)
-            if (valid && _catInteractableClass != IntPtr.Zero && IsCat(o) && !IsCatAvailable())
+            if (valid && _catInteractableClass != IntPtr.Zero && IsCat(o))
             {
-                MelonLogger.Msg($"[ActionMenu]   avail '{name}': gated out — cat not active now (IsCatActive false / night).");
-                return false;
+                bool catAvail = IsCatAvailable();
+                MelonLogger.Msg($"[ActionMenu]   avail '{name}': IS CAT — catController={_catController != IntPtr.Zero} " +
+                                $"getIsCatActive={_getIsCatActive != IntPtr.Zero} catAvailable={catAvail}.");
+                if (!catAvail) return false;
             }
 
             MelonLogger.Msg($"[ActionMenu]   avail '{name}': active={active} _isEnabled={isEnabled} " +
