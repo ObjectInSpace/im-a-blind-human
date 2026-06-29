@@ -48,8 +48,12 @@ namespace NoImNotAHumanAccess.World
         private IntPtr _onPointerDown;    // PhoneButtonView.OnPointerDown(PointerEventData)
         private IntPtr _onPointerUp;      // PhoneButtonView.OnPointerUp(PointerEventData)
         private IntPtr _pinControllerClass; // PhonePinController (holds the _pins array)
-        private IntPtr _pinViewClass;       // PhonePinView (_numberText + PhoneSubscriber)
+        private IntPtr _pinViewClass;       // PhonePinView (_numberText + _nameText + PhoneSubscriber)
         private IntPtr _getPinSubscriber;   // PhonePinView.get_PhoneSubscriber
+        // Each pin's contact name is localized: PhonePinView._nameText is a LocalizeStringEvent. Prefer its
+        // GetLocalizedString() over the hardcoded English SubscriberName table so the readout follows the player's
+        // language (same as the consumable/corpse/mushroomlist fixes).
+        private IntPtr _lseClass, _lseGetLocalizedString; // UnityEngine.Localization.Components.LocalizeStringEvent
 
         public PhoneMenu(ISpeechOutput speech, UguiFocus focus)
         {
@@ -156,7 +160,7 @@ namespace NoImNotAHumanAccess.World
                     int sub = _getPinSubscriber != IntPtr.Zero
                         ? Il2CppRaw.InvokeInt32Getter(pin, _getPinSubscriber, 0)
                         : 0;
-                    lines.Add($"{SubscriberName(sub)}, {SpellNumber(number!)}.");
+                    lines.Add($"{ContactName(pin, sub)}, {SpellNumber(number!)}.");
                 }
 
                 if (lines.Count == 0)
@@ -189,8 +193,33 @@ namespace NoImNotAHumanAccess.World
             return sb.ToString();
         }
 
-        /// <summary>Spoken name for an <c>EPhoneSubscriber</c> value (enum order from the decompile). Falls back to a
-        /// generic label so a contact is never silent if the game adds a subscriber we haven't named.</summary>
+        /// <summary>Spoken contact name for a pin: prefer the game's LOCALIZED name (the pin's <c>_nameText</c>
+        /// LocalizeStringEvent) so it follows the player's language; fall back to the English <see cref="SubscriberName"/>
+        /// table when it can't be resolved.</summary>
+        private string ContactName(IntPtr pin, int subscriber)
+        {
+            try
+            {
+                if (_lseGetLocalizedString != IntPtr.Zero)
+                {
+                    IntPtr lse = Il2CppRaw.ReadObjectField(pin, _pinViewClass, "_nameText");
+                    if (lse != IntPtr.Zero)
+                    {
+                        string? localized = Il2CppRaw.InvokeStringGetter(lse, _lseGetLocalizedString);
+                        if (!string.IsNullOrWhiteSpace(localized)) return localized!.Trim();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[PhoneMenu] ContactName threw: {e.Message}");
+            }
+            return SubscriberName(subscriber);
+        }
+
+        /// <summary>Spoken name for an <c>EPhoneSubscriber</c> value (enum order from the decompile). The English
+        /// FALLBACK for <see cref="ContactName"/> when the localized name can't be read. Falls back to a generic label
+        /// so a contact is never silent if the game adds a subscriber we haven't named.</summary>
         private static string SubscriberName(int subscriber) => subscriber switch
         {
             1 => "Forrest",
@@ -234,12 +263,16 @@ namespace NoImNotAHumanAccess.World
                 if (_pinViewClass != IntPtr.Zero)
                     _getPinSubscriber = Il2CppRaw.GetMethod(_pinViewClass, "get_PhoneSubscriber", 0);
 
+                _lseClass = Il2CppRaw.GetClass("Unity.Localization.dll", "UnityEngine.Localization.Components", "LocalizeStringEvent");
+                if (_lseClass != IntPtr.Zero)
+                    _lseGetLocalizedString = Il2CppRaw.GetMethod(_lseClass, "GetLocalizedString", 0);
+
                 // EventSystem focus is owned by UguiFocus now — PhoneMenu no longer resolves it here.
 
                 MelonLogger.Msg($"[PhoneMenu] resolved: view={_viewClass != IntPtr.Zero} button={_buttonClass != IntPtr.Zero} " +
                                 $"onDown={_onPointerDown != IntPtr.Zero} onUp={_onPointerUp != IntPtr.Zero} " +
                                 $"pinController={_pinControllerClass != IntPtr.Zero} pinView={_pinViewClass != IntPtr.Zero} " +
-                                $"getPinSub={_getPinSubscriber != IntPtr.Zero}");
+                                $"getPinSub={_getPinSubscriber != IntPtr.Zero} lseGetLoc={_lseGetLocalizedString != IntPtr.Zero}");
             }
             catch (Exception e)
             {
