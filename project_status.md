@@ -160,11 +160,13 @@ close-up with highlightable objects. Three systems needed, re-prioritized:
     the view's `_name`/`_gameplayDescription`/`_narrativeDescription` RTLTextMeshPro fields off __instance (new
     Il2CppRaw.ReadTmpFieldText). Speaks "name. gameplay-description." (prefers gameplay over narrative; narrative only
     if no gameplay). (3) MushroomlistCloseUpView (Book of Smiles pages, read in the bedroom) — **ADDED 2026-06-29**,
-    postfix on `Show()` (arity 0); the view has NO named text field, so the page text is a single child
-    `TextMeshProUGUI` found via `GetComponentInChildrenRaw(TMP_Text)` off the view's GameObject and read with new
-    `Il2CppRaw.ReadTmpComponentText`. Speaks the whole (runtime-localized) page text on open, and **F9 repeats the
-    verses** while the view is open (CloseUpNarrator tracks open-state via Show/Hide postfixes; AccessMod's F9 routes to
-    RepeatMushroomlist before the phone/status branches). Radio/Phone still = own UIs, out
+    postfix on `Show()` (arity 0); the view has NO named text field, so the page text is on a child GameObject.
+    **Localization fix 2026-06-29:** reading the child TMP's raw `get_text` returned the BAKED SOURCE (Russian) string
+    (user: "reads but not localized"). The page GO has a `LocalizeStringEvent` (Unity.Localization) driving the localized
+    text alongside the RTLTextMeshPro; `OnMushroomlistShown` now finds the LocalizeStringEvent in the subtree and calls
+    `GetLocalizedString()`, falling back to the raw TMP only if absent. Speaks the whole page on open, and **F9 repeats
+    the verses** while the view is open (CloseUpNarrator tracks open-state via Show/Hide postfixes; AccessMod's F9 routes
+    to RepeatMushroomlist before the phone/status branches). Radio/Phone still = own UIs, out
     of scope. CONFIRM in-game: log `[WorldPatches] Patched ...FridgeCloseUpView.OnPointerEntered` +
     `...ConsumableCloseUpView.SetupConsumable` + `...MushroomlistCloseUpView.Show` at init; open the fridge, hover items
     → hear "name. description."; open a consumable confirm → hear it; open the mushroomlist in the bedroom → hear the

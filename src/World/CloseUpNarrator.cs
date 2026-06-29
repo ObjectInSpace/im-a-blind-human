@@ -39,6 +39,7 @@ namespace NoImNotAHumanAccess.World
 
         private IntPtr _consumableViewClass; // resolved lazily for reading the consumable view's TMP fields
         private IntPtr _tmpTextClass;        // resolved lazily for the mushroomlist's child page TMP
+        private IntPtr _localizeStringEventClass, _lseGetLocalizedString; // mushroomlist localization (see OnMushroomlistShown)
 
         // Mushroomlist state, so F9 can repeat the verses while the close-up is open. Set on Show(), cleared on Hide().
         private string _mushroomlistText = string.Empty;
@@ -80,9 +81,10 @@ namespace NoImNotAHumanAccess.World
         }
 
         /// <summary>Mushroomlist (the Book of Smiles pages the Mushroom Eater gives you, read in the bedroom) opened.
-        /// Unlike the fridge/consumable views there are no named TMP fields — the page text is a single
-        /// <c>TextMeshProUGUI</c> on a child of the view, localized at runtime. Find it in the view's subtree and speak
-        /// its whole text. The view's <c>Show()</c> just ran, so the GameObject is live.</summary>
+        /// The page text is on a child of the view. The TMP's raw text is the BAKED SOURCE-LANGUAGE string (Russian);
+        /// the localized text is driven by a <c>LocalizeStringEvent</c> on that same GameObject. So we prefer the
+        /// LocalizeStringEvent's <c>GetLocalizedString()</c> (the player's language) and only fall back to the raw TMP
+        /// text if no localize event is present. The view's <c>Show()</c> just ran, so the GameObject is live.</summary>
         public void OnMushroomlistShown(IntPtr viewPtr)
         {
             try
@@ -90,11 +92,24 @@ namespace NoImNotAHumanAccess.World
                 if (viewPtr == IntPtr.Zero) return;
                 IntPtr goPtr = Il2CppRaw.GetComponentGameObject(viewPtr);
                 if (goPtr == IntPtr.Zero) return;
-                if (_tmpTextClass == IntPtr.Zero)
-                    _tmpTextClass = Il2CppRaw.GetClass("Unity.TextMeshPro.dll", "TMPro", "TMP_Text");
+                EnsureMushroomlistResolved();
 
-                IntPtr tmp = Il2CppRaw.GetComponentInChildrenRaw(goPtr, _tmpTextClass, includeInactive: true);
-                string? text = Il2CppRaw.ReadTmpComponentText(tmp);
+                // Prefer the LOCALIZED string from the LocalizeStringEvent in the view's subtree.
+                string? text = null;
+                if (_localizeStringEventClass != IntPtr.Zero && _lseGetLocalizedString != IntPtr.Zero)
+                {
+                    IntPtr lse = Il2CppRaw.GetComponentInChildrenRaw(goPtr, _localizeStringEventClass, includeInactive: true);
+                    if (lse != IntPtr.Zero)
+                        text = Il2CppRaw.InvokeStringGetter(lse, _lseGetLocalizedString);
+                }
+
+                // Fallback: the raw TMP text (baked source language) if the localize event didn't resolve.
+                if (string.IsNullOrWhiteSpace(text) && _tmpTextClass != IntPtr.Zero)
+                {
+                    IntPtr tmp = Il2CppRaw.GetComponentInChildrenRaw(goPtr, _tmpTextClass, includeInactive: true);
+                    text = Il2CppRaw.ReadTmpComponentText(tmp);
+                }
+
                 _mushroomlistText = Clean(text);
                 _mushroomlistOpen = true;
                 Announce(text, null, null);
@@ -102,6 +117,18 @@ namespace NoImNotAHumanAccess.World
             catch (Exception e)
             {
                 MelonLogger.Warning($"[CloseUpNarrator] OnMushroomlistShown threw: {e.Message}");
+            }
+        }
+
+        private void EnsureMushroomlistResolved()
+        {
+            if (_tmpTextClass == IntPtr.Zero)
+                _tmpTextClass = Il2CppRaw.GetClass("Unity.TextMeshPro.dll", "TMPro", "TMP_Text");
+            if (_localizeStringEventClass == IntPtr.Zero)
+            {
+                _localizeStringEventClass = Il2CppRaw.GetClass("Unity.Localization.dll", "UnityEngine.Localization.Components", "LocalizeStringEvent");
+                if (_localizeStringEventClass != IntPtr.Zero)
+                    _lseGetLocalizedString = Il2CppRaw.GetMethod(_localizeStringEventClass, "GetLocalizedString", 0);
             }
         }
 
