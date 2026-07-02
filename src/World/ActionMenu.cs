@@ -58,6 +58,19 @@ namespace NoImNotAHumanAccess.World
         // Zenject-free via FindObjectsByType(base) (Unity matches subclasses) and merge them into the same list.
         private IntPtr _interactableClass;  // _Code.Infrastructure.AInteractableObject (abstract base)
         private IntPtr _interactablesProviderClass; // _Code.Infrastructure.InteractablesViewProvider
+        // Trigger-zone system (walk-into triggers, not raycast prompts). We expose ONLY the PreDeathPortal — the
+        // basement's "jump into the hole" that triggers the death ending. Rather than physically walk the player into its
+        // small, low-Y collider (MoveXZ can't change height, so that never overlapped), we run the SAME action the
+        // trigger's OnEnterInner runs: ILocationsManager.GoToLocation(_location). _goToLocationClass reads the trigger's
+        // serialized _location; _locationsManager/_goToLocation invoke the manager.
+        private IntPtr _triggerProviderClass;    // _Code.Infrastructure.TriggerObjects.TriggerObjectsProvider
+        private IntPtr _goToLocationClass;       // TriggerObjectGoToLocation (holds the _location enum for the portal)
+        private IntPtr _locationsManager, _goToLocation; // ILocationsManager + GoToLocation(ELocation)
+        // StateObjects gates: the game's authoritative dig/rock progress. GetState(EStateObjectType)->int; Ground reaches
+        // its last index when the hole is fully dug, TunnelBlocker when the second hole's rocks clear. Used to gate the
+        // basement minor (DigComplete) and the jump portal (RocksCleared). _dialogInteractableClass identifies the minor.
+        private IntPtr _stateController, _getState;   // IStateObjectController + GetState(EStateObjectType)
+        private IntPtr _dialogInteractableClass;      // _Code.Infrastructure.DialogInteractable
         // The cat is a ROAMING, time-gated interactable: its Interact() no-ops when the cat isn't physically present
         // (it only appears in certain rooms / times of day). It still passes the generic validity filter, so Enter on it
         // was a silent no-op. We additionally gate the cat entry on a live CatInstance (the actual cat GameObject) being
@@ -87,6 +100,10 @@ namespace NoImNotAHumanAccess.World
         // Whether the current selection is an AInteractableObject (radio/phone/cat/…) vs a door/window view — they
         // engage differently (see Entry.IsInteractable), so GoToSelected branches on this.
         private bool _selectedIsInteractable;
+        // Whether the current selection is a TRIGGER ZONE (an ATriggerObject you walk INTO — the basement's "jump into
+        // the hole" death portal). Triggers have no prompt/interact key: activation is just walking the player into the
+        // volume, which fires the game's OnTriggerEnter. GoToSelected/UpdateActivation skip the aim + key-press for these.
+        private bool _selectedIsTrigger;
 
         // The view we last forced IsTargeted=true on in GoToSelected (zero = none). We set that flag OUT OF BAND (the
         // game normally sets it via its own ray), so the game's native leave ('q') closes the view WITHOUT clearing our
@@ -144,6 +161,7 @@ namespace NoImNotAHumanAccess.World
                 Entry sel = entries[idx];
                 _selected = sel.View;
                 _selectedIsInteractable = sel.IsInteractable;
+                _selectedIsTrigger = sel.IsTrigger;
                 _speech.Speak($"{sel.Name}, {idx + 1} of {entries.Count}.", interrupt: true);
                 MelonLogger.Msg($"[ActionMenu] selected {idx + 1}/{entries.Count}: '{sel.Name}' ({sel.Bearing}). Press the go key to walk there.");
             }
@@ -208,6 +226,18 @@ namespace NoImNotAHumanAccess.World
                 //   2. Once within range, aim at it (so the game's raycaster locks it / shows its hint), settle a few
                 //      frames, then synthesize a Space press — the game's Interact action (bound to Space/E/LMB).
                 // Focus is still set so the object is the registered target while the key fires; reconcile clears it after.
+                // TRIGGER ZONE (the "jump into the hole" death portal): it's a walk-into volume with NO prompt and no
+                // interact key. Walking the player in is unreliable — the collider is small (0.8u) and sits at a lower Y
+                // than the player, and MoveXZ only moves horizontally, so the player never overlapped it. Instead we run
+                // the portal's OWN action directly: TriggerObjectGoToLocation.OnEnterInner calls
+                // ILocationsManager.GoToLocation(_location), a public method — so we read the trigger's _location and
+                // invoke it ourselves. Same result (the death sequence), no geometry to fight. No walk/focus/activation.
+                if (_selectedIsTrigger)
+                {
+                    TriggerPortal(_selected, name);
+                    return;
+                }
+
                 IntPtr ownerClass = _selectedIsInteractable ? _interactableClass : _viewClass;
                 FocusTarget(_selected, ownerClass);
                 _focusedView = _selected; // remember what WE forced focus on, so Tick can clear it after a native leave
@@ -234,6 +264,37 @@ namespace NoImNotAHumanAccess.World
             {
                 MelonLogger.Warning($"[ActionMenu] GoToSelected threw: {e.Message}");
             }
+        }
+
+        /// <summary>
+        /// Fire a walk-into trigger portal by running its own action directly: read the
+        /// <c>TriggerObjectGoToLocation._location</c> off <paramref name="portal"/> and invoke
+        /// <c>ILocationsManager.GoToLocation(location)</c> — the same call the trigger's <c>OnEnterInner</c> makes. This
+        /// avoids physically walking into the collider (small + at a lower Y than the player, so MoveXZ never reached it).
+        /// Speaks + logs; never throws.
+        /// </summary>
+        private void TriggerPortal(IntPtr portal, string name)
+        {
+            if (_goToLocationClass == IntPtr.Zero || _locationsManager == IntPtr.Zero || _goToLocation == IntPtr.Zero)
+            {
+                MelonLogger.Warning($"[ActionMenu] TriggerPortal '{name}': locations manager / GoToLocation unresolved " +
+                                    $"(class={_goToLocationClass != IntPtr.Zero} mgr={_locationsManager != IntPtr.Zero} " +
+                                    $"method={_goToLocation != IntPtr.Zero}) — cannot fire.");
+                _speech.Speak("Can't do that right now.", interrupt: true);
+                return;
+            }
+
+            int location = Il2CppRaw.ReadInt32Field(portal, _goToLocationClass, "_location", fallback: -1);
+            if (location < 0)
+            {
+                MelonLogger.Warning($"[ActionMenu] TriggerPortal '{name}': couldn't read _location off the portal.");
+                _speech.Speak("Can't do that right now.", interrupt: true);
+                return;
+            }
+
+            bool ok = Il2CppRaw.InvokeVoidWithEnum(_locationsManager, _goToLocation, location); // UniTask ignored
+            MelonLogger.Msg($"[ActionMenu] TriggerPortal '{name}': GoToLocation({location}) invoked (threw={!ok}).");
+            _speech.Speak($"{name}.", interrupt: true);
         }
 
         /// <summary>
@@ -735,13 +796,19 @@ namespace NoImNotAHumanAccess.World
         private readonly struct Entry
         {
             public readonly IntPtr View;
+            // Owning GameObject of View, used to dedup two interactable components on one GameObject (the cat carries both
+            // a CatInteractable and a DialogInteractable). Zero when unknown/irrelevant (door/window views don't set it).
+            public readonly IntPtr GameObject;
             public readonly string Name;
             public readonly string Bearing;
             // True for the AInteractableObject system (radio/phone/cat/…) vs. a door/window AActionableObjectView — they
             // resolve their action method differently in GoToSelected (Interact() vs Act()).
             public readonly bool IsInteractable;
-            public Entry(IntPtr view, string name, string bearing, bool isInteractable)
-            { View = view; Name = name; Bearing = bearing; IsInteractable = isInteractable; }
+            // True for a TRIGGER ZONE (ATriggerObject) — activation is walk-into-it only, no aim/key press.
+            public readonly bool IsTrigger;
+            public Entry(IntPtr view, string name, string bearing, bool isInteractable, IntPtr gameObject = default,
+                bool isTrigger = false)
+            { View = view; Name = name; Bearing = bearing; IsInteractable = isInteractable; GameObject = gameObject; IsTrigger = isTrigger; }
         }
 
         /// <summary>
@@ -792,7 +859,89 @@ namespace NoImNotAHumanAccess.World
             // field order, not broad scene enumeration: some objects exist in the scene before the manager makes them
             // interactable, and the provider order is the game's canonical order.
             AppendInteractablesFromProvider(entries, camPos);
+
+            // Merge the walk-into TRIGGER destination(s) — currently just the basement's "jump into the hole" death
+            // portal. Triggers aren't raycast prompts (no hint even for sighted players — you just walk in), so they're
+            // absent from both provider systems above; we surface the one that matters as a walkable destination.
+            AppendTriggerDestinations(entries, camPos);
             return entries;
+        }
+
+        /// <summary>
+        /// Append the basement "jump into the hole" death portal as a walk-into destination. It's a
+        /// <c>TriggerObjectGoToLocation</c> (<c>TriggerObjectsProvider.PreDeathPortal</c>): no prompt, no interact key —
+        /// walking the player into its collider fires <c>OnTriggerEnter</c> and runs the death ending. Active-only, so it
+        /// only appears once the game has enabled it (a few days after the first hole is dug); never throws.
+        /// </summary>
+        private void AppendTriggerDestinations(List<Entry> entries, Vector3 camPos)
+        {
+            if (_triggerProviderClass == IntPtr.Zero) return;
+            try
+            {
+                IntPtr provider = Il2CppRaw.FindObjectIncludingInactive(_triggerProviderClass);
+                if (provider == IntPtr.Zero) return;
+
+                IntPtr portal = Il2CppRaw.ReadObjectField(provider, _triggerProviderClass, "<PreDeathPortal>k__BackingField");
+                if (portal == IntPtr.Zero) return;
+
+                // The portal's GameObject is active from the moment the basement scene loads — BEFORE the rocks blocking
+                // the second hole are cleared — so activeInHierarchy lists it far too early. The authoritative gate is the
+                // StateObjects system: EStateObjectType.TunnelBlocker is index 0 while the rocks are present and advances
+                // to its LAST state (1) when they clear. Gate the jump on that.
+                bool active = Il2CppRaw.GetComponentGameObjectActive(portal);
+                bool rocksCleared = RocksCleared();
+                MelonLogger.Msg($"[ActionMenu]   trigger 'PreDeathPortal': active={active} rocksCleared={rocksCleared} (walk-into death portal).");
+                if (!active || !rocksCleared) return;
+
+                // Dedup by GameObject, same invariant as the interactables.
+                IntPtr go = Il2CppRaw.GetComponentGameObject(portal);
+                foreach (Entry e in entries)
+                    if (e.View == portal || (go != IntPtr.Zero && e.GameObject == go)) return;
+
+                // The portal is a trigger, not a raycast prompt — it carries no localized subject to speak (the game
+                // shows nothing here either). Give it a clear, explicit spoken label so its purpose is unmistakable.
+                const string label = "jump into the hole";
+                Vector3 pos = Il2CppRaw.GetComponentWorldPosition(portal);
+                entries.Add(new Entry(portal, label, Bearing(camPos, pos), isInteractable: false, gameObject: go, isTrigger: true));
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[ActionMenu] AppendTriggerDestinations threw: {e.Message}");
+            }
+        }
+
+        // EStateObjectType values (from the decompiled enum) for the basement gates.
+        private const int StateGround = 1;         // hole-dig progress: 4 states (0..3); index 3 = fully dug
+        private const int StateGroundLastIndex = 3;
+        private const int StateTunnelBlocker = 12; // rocks over the second hole: 2 states (0..1); index 1 = cleared
+        private const int StateTunnelClearedIndex = 1;
+
+        /// <summary>True once the first hole is FULLY dug — the game's <c>EStateObjectType.Ground</c> state object has
+        /// reached its last index (3 of 0..3). This is the gate for the basement minor dialog. FAILS OPEN (returns true)
+        /// when the state controller/method is unresolved, so a resolve glitch can't permanently hide the minor.</summary>
+        private bool DigComplete() => StateAtLeast(StateGround, StateGroundLastIndex, failOpen: true);
+
+        /// <summary>True once the rocks blocking the second hole are cleared — <c>EStateObjectType.TunnelBlocker</c> has
+        /// advanced to its last index (1 of 0..1). Gate for the "jump into the hole" death portal. FAILS CLOSED (returns
+        /// false) when unresolved, so the instant-death jump is never wrongly offered.</summary>
+        private bool RocksCleared() => StateAtLeast(StateTunnelBlocker, StateTunnelClearedIndex, failOpen: false);
+
+        /// <summary>Read <c>IStateObjectController.GetState(type)</c> and test it reached <paramref name="minIndex"/>.
+        /// Returns <paramref name="failOpen"/> if the controller/method is unresolved or the call throws.</summary>
+        private bool StateAtLeast(int stateType, int minIndex, bool failOpen)
+        {
+            try
+            {
+                if (_stateController == IntPtr.Zero || _getState == IntPtr.Zero) return failOpen;
+                int cur = Il2CppRaw.InvokeInt32MethodWithEnum(_stateController, _getState, stateType, fallback: -1);
+                if (cur < 0) return failOpen; // couldn't read
+                return cur >= minIndex;
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Warning($"[ActionMenu] StateAtLeast(type={stateType}) threw: {e.Message}.");
+                return failOpen;
+            }
         }
 
         /// <summary>
@@ -815,8 +964,18 @@ namespace NoImNotAHumanAccess.World
                 foreach (IntPtr o in EnumerateProviderInteractables(provider))
                 {
                     if (o == IntPtr.Zero) continue;
+
+                    // Dedup by GAMEOBJECT, not by component pointer. A single GO can carry TWO interactable components:
+                    // the basement cat's GameObject holds both a CatInteractable (the <Cat> singleton) AND a
+                    // DialogInteractable (in Dialogs[]) — distinct pointers, same object. Pointer-only dedup let both
+                    // through, so the cat listed twice AND the dialog copy (not wired for stand-alone activation) crashed
+                    // the game on Enter. Enumeration order puts the canonical singletons before the arrays, so keeping the
+                    // FIRST entry per GameObject keeps the right one (CatInteractable, which also carries the day/night
+                    // gate) and drops the stray. Fail-open: a zero GO pointer skips the GO check (pointer dedup still runs).
+                    IntPtr go = Il2CppRaw.GetComponentGameObject(o);
                     bool dup = false;
-                    foreach (Entry e in entries) if (e.View == o) { dup = true; break; }
+                    foreach (Entry e in entries)
+                        if (e.View == o || (go != IntPtr.Zero && e.GameObject == go)) { dup = true; break; }
                     if (dup) continue;
 
                     // Prefer the game's LOCALIZED subject over the raw GameObject name. The interactables (hatch/cat/
@@ -841,7 +1000,7 @@ namespace NoImNotAHumanAccess.World
                         : BestLabel(o, _interactableClass, Il2CppRaw.GetUnityObjectName(o));
 
                     Vector3 pos = Il2CppRaw.GetComponentWorldPosition(o);
-                    entries.Add(new Entry(o, name, Bearing(camPos, pos), isInteractable: true));
+                    entries.Add(new Entry(o, name, Bearing(camPos, pos), isInteractable: true, gameObject: go));
                     added++;
                 }
                 MelonLogger.Msg($"[ActionMenu] merged {added} provider interactable(s); gated out {gated}.");
@@ -864,6 +1023,13 @@ namespace NoImNotAHumanAccess.World
             yield return ReadProviderField(provider, "<TheHole>k__BackingField");
             yield return ReadProviderField(provider, "<Cat>k__BackingField");
 
+            // The DialogInteractable "talk" prompts (the basement minor is one). These live in the provider's Dialogs[]
+            // array, which — unlike WindowBoards (whose serialized array reads back NULL at runtime, scanned by type
+            // below) — IS populated, so reading it off the provider preserves the game's canonical order. Each element
+            // still passes the generic IsInteractableValidNow gate, so a dialog only appears when its GameObject is active
+            // (e.g. the minor only once the hole is dug — the game controls that active-state).
+            foreach (IntPtr d in ReadProviderArray(provider, "<Dialogs>k__BackingField")) yield return d;
+
             // Window board-up prompts (day 13: nail boards over each window). The provider's WindowBoards array reads
             // back with NULL elements even on board-up day (the references aren't populated there), so instead we find
             // the live board interactables directly in the scene by type. They're AInteractableObjects like the rest, so
@@ -878,6 +1044,11 @@ namespace NoImNotAHumanAccess.World
 
         private IntPtr ReadProviderField(IntPtr provider, string fieldName) =>
             Il2CppRaw.ReadObjectField(provider, _interactablesProviderClass, fieldName);
+
+        /// <summary>Read an array-typed provider backing field and return its elements (empty on any miss). The field
+        /// holds an Il2Cpp array reference (pointer-sized), so it reads exactly like an object field, then unpacks.</summary>
+        private IntPtr[] ReadProviderArray(IntPtr provider, string fieldName) =>
+            Il2CppRaw.ReadObjectArray(ReadProviderField(provider, fieldName));
 
         private bool IsInteractableValidNow(IntPtr o, string name)
         {
@@ -903,6 +1074,16 @@ namespace NoImNotAHumanAccess.World
                 if (night) return false;
             }
 
+            // DIG gate: the basement minor's DialogInteractable is active + hard + soft the instant the basement loads,
+            // before you've dug — so it listed too early. The game's authoritative dig-progress lives in the StateObjects
+            // system: EStateObjectType.Ground advances 0→3 as you dig, reaching its LAST state (3) only when fully dug.
+            // Gate DialogInteractables on that. Only dialogs are affected; DigComplete fails OPEN if unreadable.
+            if (valid && IsDialog(o) && !DigComplete())
+            {
+                MelonLogger.Msg($"[ActionMenu]   avail '{name}': IS DIALOG — hole not fully dug (Ground state) ⇒ hidden.");
+                return false;
+            }
+
             MelonLogger.Msg($"[ActionMenu]   avail '{name}': active={active} _isEnabled={isEnabled} " +
                             $"_lockCount={lockCount} raycast={raycast != IntPtr.Zero} raycastLocked={raycastLocked} " +
                             $"hard={hard} soft={soft} valid={valid}.");
@@ -915,6 +1096,14 @@ namespace NoImNotAHumanAccess.World
         {
             if (o == IntPtr.Zero || _catInteractableClass == IntPtr.Zero) return false;
             return IL2CPP.il2cpp_object_get_class(o) == _catInteractableClass;
+        }
+
+        /// <summary>True if <paramref name="o"/>'s runtime class is <c>DialogInteractable</c> (the basement "talk"
+        /// entries, e.g. the minor). Class-pointer match, so only dialogs hit the dig gate.</summary>
+        private bool IsDialog(IntPtr o)
+        {
+            if (o == IntPtr.Zero || _dialogInteractableClass == IntPtr.Zero) return false;
+            return IL2CPP.il2cpp_object_get_class(o) == _dialogInteractableClass;
         }
 
         /// <summary>
@@ -1065,6 +1254,21 @@ namespace NoImNotAHumanAccess.World
                 }
 
                 _interactablesProviderClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure", "InteractablesViewProvider");
+                // Trigger-zone provider (walk-into triggers). Used only to surface PreDeathPortal (the "jump into the
+                // hole" death portal) — see AppendTriggerDestinations. Activation runs the portal's own action
+                // (ILocationsManager.GoToLocation) rather than walking, so we also resolve those here.
+                _triggerProviderClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure.TriggerObjects", "TriggerObjectsProvider");
+                _goToLocationClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure.TriggerObjects.Objects", "TriggerObjectGoToLocation");
+                _locationsManager = ZenjectResolver.Resolve("_Code.Infrastructure.Locations", "ILocationsManager");
+                if (_locationsManager != IntPtr.Zero)
+                    _goToLocation = Il2CppRaw.GetMethod(IL2CPP.il2cpp_object_get_class(_locationsManager), "GoToLocation", 1);
+
+                // StateObjects controller — the game's dig/rock progress, used to gate the minor (Ground fully dug) and
+                // the jump portal (TunnelBlocker rocks cleared). See DigComplete/RocksCleared.
+                _dialogInteractableClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure", "DialogInteractable");
+                _stateController = ZenjectResolver.Resolve("_Code.Infrastructure.StateObjects", "IStateObjectController");
+                if (_stateController != IntPtr.Zero)
+                    _getState = Il2CppRaw.GetMethod(IL2CPP.il2cpp_object_get_class(_stateController), "GetState", 1);
 
                 // Cat availability gate: the cat roams by time of day, and at NIGHT it isn't interactable (Enter no-ops),
                 // but the live CatInstance STAYS in the scene at night (it just moves to a night position) — so the old
