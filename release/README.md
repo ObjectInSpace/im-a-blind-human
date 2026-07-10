@@ -41,9 +41,8 @@ folder, and the three native DLLs from the zip root into the game root next to t
 | Arrow keys / Enter | Navigate menus, room photo, fridge, radio dial, phone pad |
 | ` (backtick) | Repeat the last spoken line |
 | F7 | Repeat the controls for the current context |
-| F9 | Status (day/phase/energy/items) — or, in a conversation, the last inspection result; on the phone, your known numbers |
-| F10 | "Where am I" — nearby interactables and any corpses present |
-| F8 | Diagnostic dump (for bug reports) |
+| F9 | Status (day/phase/energy/items, plus any corpses present) — or, in a conversation, the last inspection result; on the phone, your known numbers |
+| F8 | Repeat / diagnostic trigger (for bug reports) |
 
 ## Screen readers
 
