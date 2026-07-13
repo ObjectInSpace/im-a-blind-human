@@ -196,6 +196,20 @@ namespace NoImNotAHumanAccess.World
                     return;
                 }
 
+                // LIVENESS GUARD: _selected was captured by Cycle from a live provider list, but Enter can arrive many
+                // frames later (the player deliberates, or alt-tabs away and back). If the object was destroyed in that
+                // gap, every deref below (GetUnityObjectName, GetComponentWorldPosition, FocusTarget) would fault on a
+                // dead pointer — the no-log crash. Drop the stale selection and tell the player to reselect rather than
+                // dereference it. Triggers are exempt: TriggerPortal reads only serialized fields off a portal the
+                // provider re-hands us, and the death-portal object is stable once offered.
+                if (!_selectedIsTrigger && !Il2CppRaw.IsAlive(_selected))
+                {
+                    MelonLogger.Msg("[ActionMenu] selected object no longer alive on activate — cleared; asking to reselect.");
+                    _selected = IntPtr.Zero;
+                    _speech.Speak("That's no longer available. Use the up and down arrows to choose again.", interrupt: true);
+                    return;
+                }
+
                 string name = HumanizeName(Il2CppRaw.GetUnityObjectName(_selected));
 
                 // RE-ENTRANCY GUARD — the Blinds1→Blinds2 softlock. Opening a SECOND view while a FIRST is still open
@@ -498,6 +512,19 @@ namespace NoImNotAHumanAccess.World
         private void UpdateActivation()
         {
             if (_activateFramesLeft <= 0 || _activateObj == IntPtr.Zero) return;
+
+            // LIVENESS GUARD (the no-log crash): _activateObj is a raw pointer we hold across the multi-frame walk→aim→
+            // press window. If the game DESTROYS it in that window — a scene change, the object despawning, or an
+            // alt-tab-induced reload — dereferencing it below (GetComponentWorldPosition / AimCameraAt / FocusTarget)
+            // is an uncatchable native access violation, which is exactly the crash-with-no-log signature. Re-validate
+            // it's still a live Unity object each frame and abort the activation cleanly if not, instead of derefing a
+            // destroyed object. Cheap (one transform read); see Il2CppRaw.IsAlive.
+            if (!Il2CppRaw.IsAlive(_activateObj))
+            {
+                MelonLogger.Msg("[ActionMenu] activation target no longer alive (destroyed mid-activation) — aborting.");
+                EndActivation();
+                return;
+            }
 
             // Something engaged (a window/close-up/look opened) → the interact landed; we're done.
             if (IsInWindow() || IsAnyCloseUpActive() || IsAnyEngaged())

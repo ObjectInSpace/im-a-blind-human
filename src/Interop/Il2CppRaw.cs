@@ -654,6 +654,31 @@ namespace NoImNotAHumanAccess.Interop
             return InvokeBoolGetter(goPtr, m);
         }
 
+        /// <summary>
+        /// Whether a cached Component/GameObject pointer still refers to a LIVE Unity object (not one Unity has
+        /// destroyed). A destroyed <c>UnityEngine.Object</c> keeps its managed IL2CPP wrapper but zeroes its native
+        /// backing (<c>m_CachedPtr</c>), so its instance getters return null/zero WITHOUT crashing — but a raw
+        /// <c>il2cpp_runtime_invoke</c> that then chains onto that null native object (e.g. transform→position) is an
+        /// uncatchable access violation. Cross-frame cached pointers (an activation target, a forced-focus view) can be
+        /// destroyed between frames (scene change, despawn, an alt-tab-induced reload), so callers holding one across
+        /// frames MUST re-check this before dereferencing and drop the pointer when it goes false.
+        ///
+        /// The probe is <c>Component.get_transform()</c> (works for Components) with a <c>GameObject.get_transform()</c>
+        /// fallback (works for GameObjects): both return zero on a destroyed object and a real transform on a live one,
+        /// and neither crashes on the destroyed-but-wrapped state. NOTE: this cannot save you from a pointer to memory
+        /// that's already been freed AND reused — nothing in-process can — so the real guarantee comes from not holding
+        /// raw pointers across frames without re-validating; this is that re-validation. False on zero/failure.
+        /// </summary>
+        public static bool IsAlive(IntPtr objPtr)
+        {
+            if (objPtr == IntPtr.Zero) return false;
+            IntPtr compClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "Component");
+            IntPtr getTr = GetMethod(compClass, "get_transform", 0);
+            if (getTr != IntPtr.Zero && InvokeObjectGetter(objPtr, getTr) != IntPtr.Zero) return true;
+            // Not a Component (or transform read failed) — try treating it as a GameObject.
+            return GetGameObjectTransform(objPtr) != IntPtr.Zero;
+        }
+
         /// <summary>Read a UnityEngine.Object's <c>name</c> (via <c>get_name</c>) from an object pointer, raw.
         /// Null on failure. Works for any Component/GameObject pointer.</summary>
         public static string? GetUnityObjectName(IntPtr objPtr)
