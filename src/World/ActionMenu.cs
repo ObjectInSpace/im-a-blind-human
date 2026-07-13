@@ -258,7 +258,21 @@ namespace NoImNotAHumanAccess.World
 
                 if (_playerService != IntPtr.Zero && _psMoveXZ != IntPtr.Zero)
                 {
+                    // Destination for MoveXZ. The game's param is a "standingPosPosition" — a floor-level standing node;
+                    // its own callers pass curated nodes always at valid floor Y. We instead target the interactable's
+                    // OWN transform, whose Y is arbitrary (a kombucha bottle on a table, a save object off the floor —
+                    // logged targets like (1.88, 0.86, -9.37) vs doors at Y≈0.08). MoveXZ is a HORIZONTAL move, so the
+                    // destination Y must be the player's current floor Y, NEVER the object's — passing the object's Y
+                    // risks the game lerping the player off the floor (a reserve save was seen with PositionY=-1115,
+                    // i.e. fallen out of the world, which is exactly the kind of invalid state that cascades into other
+                    // failures). Clamp Y to the player's current position; fall back to the object's only if we can't
+                    // read the player (better a coarse target than none).
                     Vector3 targetPos = Il2CppRaw.GetComponentWorldPosition(_selected);
+                    if (_psGetPosition != IntPtr.Zero)
+                    {
+                        Vector3 here = Il2CppRaw.InvokeVector3Getter(_playerService, _psGetPosition);
+                        targetPos.y = here.y; // keep the walk on the player's floor plane; only X/Z should change
+                    }
                     Il2CppRaw.InvokeWithVector3Float(_playerService, _psMoveXZ, targetPos, WalkSpeed);
                     MelonLogger.Msg($"[ActionMenu] '{name}': walking to {targetPos} via MoveXZ, will synthesize interact when in range.");
                 }
