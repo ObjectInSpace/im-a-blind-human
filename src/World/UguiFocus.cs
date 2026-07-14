@@ -79,7 +79,10 @@ namespace NoImNotAHumanAccess.World
                 // check matters: a control can stay active-in-hierarchy while becoming NON-interactable (e.g. the phone
                 // disables every dial button the moment you press Call). uGUI won't navigate off a disabled-but-selected
                 // control, so arrows wedge. Treating it as invalid here moves focus to a usable control and unsticks them.
+                // IsAlive first: after an alt-tab the currently-selected GameObject can be one Unity just destroyed, and
+                // GetGameObjectActiveInHierarchy would fault on it (same native crash as the array walk above).
                 bool currentValid = current != IntPtr.Zero
+                    && Il2CppRaw.IsAlive(current)
                     && Il2CppRaw.GetGameObjectActiveInHierarchy(current)
                     && active.Contains(current);
 
@@ -160,6 +163,13 @@ namespace NoImNotAHumanAccess.World
             foreach (IntPtr sel in Il2CppRaw.ReadObjectArray(arrayPtr))
             {
                 if (sel == IntPtr.Zero) continue;
+                // LIVENESS GUARD (the menu alt-tab crash): allSelectablesArray is a static Unity-managed list, and on an
+                // alt-tab Unity can DESTROY and rebuild the menu's UI while this array still holds the old entries for a
+                // frame. A destroyed Selectable keeps its managed wrapper but zeroes its native backing, so invoking
+                // get_interactable / get_gameObject on it below is an uncatchable native access violation — the reported
+                // "alt-tab away from the menu and back crashes" with no managed exception to log. Re-validate each entry
+                // is still a live component before touching it; skip the dead ones. See Il2CppRaw.IsAlive.
+                if (!Il2CppRaw.IsAlive(sel)) continue;
                 if (_getInteractable != IntPtr.Zero && !Il2CppRaw.InvokeBoolGetter(sel, _getInteractable)) continue;
                 IntPtr go = Il2CppRaw.InvokeObjectGetter(sel, _getGameObject);
                 if (go == IntPtr.Zero) continue;

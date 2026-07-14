@@ -77,6 +77,13 @@ namespace NoImNotAHumanAccess.World
         // active in the scene — readable Zenject-free, unlike CatController.IsCatActive (private setter, not on the
         // ICatController interface). _catInteractableClass identifies the cat among the interactables.
         private IntPtr _catInteractableClass; // _Code.Infrastructure.CatInteractable (identifies the cat among interactables)
+        // SaveInteractable identifier. Save is UNIQUELY dangerous among interactions: activating it kicks off the game's
+        // ASYNC save write (SaveAsync/SaveAsyncReserve are async state machines), during which the .sav is partially
+        // written. If the mod holds a stale pointer and faults (a native AV) inside that write window, the process dies
+        // mid-write and leaves a TRUNCATED/corrupt save that hard-crashes the NEXT launch during load. So for Save we
+        // "fire and detach": press the interact once, then immediately end activation and drop every forced pointer, so
+        // the mod dereferences nothing across the save write. _saveInteractableClass identifies it among interactables.
+        private IntPtr _saveInteractableClass; // _Code.Infrastructure.SaveInteractable
         // Cat night gate. The cat is petable during the DAY only — at night the entry is dead (Enter no-ops). Neither
         // CatInstance-presence nor CatController.IsCatActive distinguishes this (both stay true at night, confirmed
         // in-game), so we gate on the day/night controller's time of day directly.
@@ -121,6 +128,11 @@ namespace NoImNotAHumanAccess.World
         private IntPtr _activateObj;        // the object we're walking to + activating (zero = none)
         private int _activateFramesLeft;    // frames remaining in the walk-then-press window (timeout guard)
         private bool _interactPressed;      // one-shot: synthesize the interact key once we're in range, not per-frame
+        // FIRE-AND-DETACH for Save: when true, UpdateActivation ends the activation AND drops every forced pointer the
+        // instant the interact is pressed, instead of tracking the target across the following frames. Save triggers the
+        // game's ASYNC save write, so we must dereference nothing during that write window (a fault there truncates the
+        // .sav). Save has no leaveable view, so there's nothing the normal post-press tracking/reconcile would do anyway.
+        private bool _detachAfterPress;
         // TIMING IS WALL-CLOCK, NOT FRAME-COUNTED. The injected interact (Space) used to settle/hold for a fixed number
         // of FRAMES, which is a different DURATION at different framerates — so plugging in a higher-refresh monitor made
         // the held press too short for the game's interact to read, and the player had to press Enter twice. Seconds are
@@ -286,6 +298,9 @@ namespace NoImNotAHumanAccess.World
                 _activateFramesLeft = 240; // ~4s window to reach + engage, then give up (frame-count is fine for a coarse timeout)
                 _interactPressed = false;
                 _inRangeSettleUntil = 0f;
+                // Save fires the game's ASYNC save write — detach the instant we press so nothing is dereferenced across
+                // the write window (a mod-side fault there would truncate the .sav → an unloadable save next launch).
+                _detachAfterPress = _selectedIsInteractable && IsSave(_selected);
                 _speech.Speak($"Using {name}.", interrupt: true);
             }
             catch (Exception e)
@@ -569,6 +584,22 @@ namespace NoImNotAHumanAccess.World
                     PressInteractKey();
                     _interactPressed = true;
                     MelonLogger.Msg("[ActionMenu] in range, aimed + settled, injected interact (Space).");
+
+                    // FIRE-AND-DETACH (Save): stop TRACKING the object across frames (no reconcile that would deref a
+                    // pointer during the async save write), but do NOT clear focus or end activation on THIS tick.
+                    // PressInteractKey only QUEUES the Space edge — the game reads it over the NEXT frame(s), and the hold
+                    // is released later by Tick's wall-clock timer. Clearing IsTargeted this same tick pulled the focus
+                    // out from under the not-yet-consumed press, so the game's interact fired at an untargeted object and
+                    // did NOTHING (the "Save/Kombucha doesn't activate unless I also press Space" bug). So we just drop
+                    // the forced-focus bookkeeping (no more cross-frame deref) and let the activation window run its
+                    // normal course: the press lands with the object still targeted, then activation ends on engage/timeout
+                    // and ReconcileWhenFreeRoam (pointer-free) tidies focus.
+                    if (_detachAfterPress)
+                    {
+                        _focusedView = IntPtr.Zero;
+                        _focusSeenEngaged = false;
+                        MelonLogger.Msg("[ActionMenu] Save/consumable fired — stopped cross-frame tracking (focus left for the press to land).");
+                    }
                 }
             }
 
@@ -587,6 +618,7 @@ namespace NoImNotAHumanAccess.World
             _activateObj = IntPtr.Zero;
             _interactPressed = false;
             _inRangeSettleUntil = 0f;
+            _detachAfterPress = false;
         }
 
         // Inject Space DOWN (held). We deliberately DON'T release in the same call: an immediate release + a second
@@ -778,7 +810,13 @@ namespace NoImNotAHumanAccess.World
             {
                 ClearAllTargets(view);
                 IntPtr rt = Il2CppRaw.ReadObjectField(view, ownerClass, "_raycastTarget");
-                if (rt != IntPtr.Zero) Il2CppRaw.InvokeVoidWithBool(rt, _setIsTargeted, true);
+                // LIVENESS GUARD: rt is the _raycastTarget sub-object. ReadObjectField gives a non-zero managed pointer
+                // even when Unity has DESTROYED the underlying object (native half zeroed) — and invoking set_IsTargeted
+                // on that destroyed object dereferences the dead native half and access-violates in the runtime (observed
+                // in the Save crash dump: FocusTarget → InvokeVoidWithBool → il2cpp_runtime_invoke → AV). Confirm it's a
+                // live Unity object (m_CachedPtr non-zero) via the READ-only IsAlive before invoking.
+                if (rt != IntPtr.Zero && Il2CppRaw.IsAlive(rt))
+                    Il2CppRaw.InvokeVoidWithBool(rt, _setIsTargeted, true);
             }
             catch (Exception e)
             {
@@ -809,7 +847,7 @@ namespace NoImNotAHumanAccess.World
                     {
                         if (v == IntPtr.Zero || v == except) continue;
                         IntPtr rt = Il2CppRaw.ReadObjectField(v, _viewClass, "_raycastTarget");
-                        if (rt != IntPtr.Zero) Il2CppRaw.InvokeVoidWithBool(rt, _setIsTargeted, false);
+                        if (rt != IntPtr.Zero && Il2CppRaw.IsAlive(rt)) Il2CppRaw.InvokeVoidWithBool(rt, _setIsTargeted, false);
                     }
                 }
 
@@ -823,7 +861,7 @@ namespace NoImNotAHumanAccess.World
                         {
                             if (o == IntPtr.Zero || o == except) continue;
                             IntPtr rt = Il2CppRaw.ReadObjectField(o, _interactableClass, "_raycastTarget");
-                            if (rt != IntPtr.Zero) Il2CppRaw.InvokeVoidWithBool(rt, _setIsTargeted, false);
+                            if (rt != IntPtr.Zero && Il2CppRaw.IsAlive(rt)) Il2CppRaw.InvokeVoidWithBool(rt, _setIsTargeted, false);
                         }
                     }
                 }
@@ -1147,6 +1185,15 @@ namespace NoImNotAHumanAccess.World
             return IL2CPP.il2cpp_object_get_class(o) == _dialogInteractableClass;
         }
 
+        /// <summary>True if <paramref name="o"/>'s runtime class is <c>SaveInteractable</c>. Save alone kicks off the
+        /// game's ASYNC save write on activation, so it gets the fire-and-detach treatment (see _saveInteractableClass /
+        /// _detachAfterPress). Class-pointer match.</summary>
+        private bool IsSave(IntPtr o)
+        {
+            if (o == IntPtr.Zero || _saveInteractableClass == IntPtr.Zero) return false;
+            return IL2CPP.il2cpp_object_get_class(o) == _saveInteractableClass;
+        }
+
         /// <summary>
         /// Whether it's currently NIGHT, per the game's <c>IDayNightController.CurrentTimeOfDay</c> (ETimeOfDay:
         /// Day=0, Night=1). Used to hide the cat at night (it's petable in the day only). FAILS CLOSED (returns false ⇒
@@ -1307,6 +1354,8 @@ namespace NoImNotAHumanAccess.World
                 // StateObjects controller — the game's dig/rock progress, used to gate the minor (Ground fully dug) and
                 // the jump portal (TunnelBlocker rocks cleared). See DigComplete/RocksCleared.
                 _dialogInteractableClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure", "DialogInteractable");
+                // SaveInteractable — identified so GoToSelected can fire-and-detach it (see _saveInteractableClass).
+                _saveInteractableClass = Il2CppRaw.GetClass(GameAsm, "_Code.Infrastructure", "SaveInteractable");
                 _stateController = ZenjectResolver.Resolve("_Code.Infrastructure.StateObjects", "IStateObjectController");
                 if (_stateController != IntPtr.Zero)
                     _getState = Il2CppRaw.GetMethod(IL2CPP.il2cpp_object_get_class(_stateController), "GetState", 1);

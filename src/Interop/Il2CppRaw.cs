@@ -657,26 +657,50 @@ namespace NoImNotAHumanAccess.Interop
         /// <summary>
         /// Whether a cached Component/GameObject pointer still refers to a LIVE Unity object (not one Unity has
         /// destroyed). A destroyed <c>UnityEngine.Object</c> keeps its managed IL2CPP wrapper but zeroes its native
-        /// backing (<c>m_CachedPtr</c>), so its instance getters return null/zero WITHOUT crashing — but a raw
-        /// <c>il2cpp_runtime_invoke</c> that then chains onto that null native object (e.g. transform→position) is an
-        /// uncatchable access violation. Cross-frame cached pointers (an activation target, a forced-focus view) can be
-        /// destroyed between frames (scene change, despawn, an alt-tab-induced reload), so callers holding one across
-        /// frames MUST re-check this before dereferencing and drop the pointer when it goes false.
+        /// backing pointer field <c>m_CachedPtr</c>. Cross-frame cached pointers (an activation target, a forced-focus
+        /// view, a stale entry in Unity's static <c>Selectable.allSelectablesArray</c>) can be destroyed between frames
+        /// (scene change, despawn, alt-tab reload), so callers holding one across frames MUST re-check this before
+        /// dereferencing and drop the pointer when it goes false.
         ///
-        /// The probe is <c>Component.get_transform()</c> (works for Components) with a <c>GameObject.get_transform()</c>
-        /// fallback (works for GameObjects): both return zero on a destroyed object and a real transform on a live one,
-        /// and neither crashes on the destroyed-but-wrapped state. NOTE: this cannot save you from a pointer to memory
-        /// that's already been freed AND reused — nothing in-process can — so the real guarantee comes from not holding
-        /// raw pointers across frames without re-validating; this is that re-validation. False on zero/failure.
+        /// IMPLEMENTATION — READ, NEVER INVOKE. We read the <c>m_CachedPtr</c> FIELD directly
+        /// (<c>il2cpp_field_get_value</c>, a plain memory read at a fixed offset) and treat the object as alive iff it's
+        /// non-zero. We must NOT probe liveness by INVOKING an instance method (an earlier version called
+        /// <c>Component.get_transform()</c>): a Unity getter on a destroyed object dereferences the zeroed native half
+        /// INSIDE the native getter and access-violates in the runtime — i.e. the "guard" was itself the crash (observed
+        /// in the dump: IsAlive → InvokeObjectGetter → il2cpp_runtime_invoke → AV, from UguiFocus.EnsureSelection at the
+        /// menu). A field read never dispatches into native Unity code, so it can't fault that way. This still can't save
+        /// a pointer to memory already freed AND reused — nothing in-process can — but for the destroyed-but-wrapped case
+        /// (what actually occurs here) it's correct and safe. False on zero/failure.
         /// </summary>
-        public static bool IsAlive(IntPtr objPtr)
+        private static IntPtr _cachedPtrField = new IntPtr(-1); // -1 = unresolved; Zero = resolve failed; else the field handle
+        public static unsafe bool IsAlive(IntPtr objPtr)
         {
             if (objPtr == IntPtr.Zero) return false;
-            IntPtr compClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "Component");
-            IntPtr getTr = GetMethod(compClass, "get_transform", 0);
-            if (getTr != IntPtr.Zero && InvokeObjectGetter(objPtr, getTr) != IntPtr.Zero) return true;
-            // Not a Component (or transform read failed) — try treating it as a GameObject.
-            return GetGameObjectTransform(objPtr) != IntPtr.Zero;
+            try
+            {
+                // Resolve UnityEngine.Object.m_CachedPtr ONCE, off the UnityEngine.Object BASE class (not the runtime
+                // subclass — il2cpp_class_get_field_from_name doesn't search base classes, so looking it up on Button/
+                // Selectable/etc. would miss it and wrongly report everything dead). The base-class field handle reads
+                // correctly on any subclass instance (same offset). m_CachedPtr is the native backing pointer, zeroed
+                // when Unity destroys the object — the standard IL2CPP liveness signal Il2CppInterop's own ==null uses.
+                if (_cachedPtrField == new IntPtr(-1))
+                {
+                    IntPtr objClass = GetClass("UnityEngine.CoreModule.dll", "UnityEngine", "Object");
+                    _cachedPtrField = objClass != IntPtr.Zero
+                        ? IL2CPP.il2cpp_class_get_field_from_name(objClass, "m_CachedPtr") : IntPtr.Zero;
+                    MelonLogger.Msg($"[Il2CppRaw] IsAlive: m_CachedPtr field resolved={_cachedPtrField != IntPtr.Zero}.");
+                }
+                // FAIL OPEN: if we can't resolve the field, we cannot safely test liveness — but we must NOT invoke a
+                // method to check (that's what crashed). Returning TRUE keeps the pre-guard behavior (callers proceed as
+                // before, which worked for live objects) rather than silently disabling focus/activation. The guard only
+                // *adds* protection when the field is readable; it never makes things worse than no guard.
+                if (_cachedPtrField == IntPtr.Zero) return true;
+
+                IntPtr cached = IntPtr.Zero;
+                IL2CPP.il2cpp_field_get_value(objPtr, _cachedPtrField, (void*)(&cached));
+                return cached != IntPtr.Zero;
+            }
+            catch { return true; } // fail open — see above
         }
 
         /// <summary>Read a UnityEngine.Object's <c>name</c> (via <c>get_name</c>) from an object pointer, raw.
