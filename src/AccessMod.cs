@@ -1,12 +1,13 @@
 using System;
 using MelonLoader;
 using NoImNotAHumanAccess.Dialogue;
+using NoImNotAHumanAccess.Interop;
 using NoImNotAHumanAccess.Menus;
 using NoImNotAHumanAccess.Speech;
 using NoImNotAHumanAccess.World;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(NoImNotAHumanAccess.AccessMod), "I'm a Blind Human", "1.0.2", "objectinspace")]
+[assembly: MelonInfo(typeof(NoImNotAHumanAccess.AccessMod), "I'm a Blind Human", "1.0.3", "objectinspace")]
 [assembly: MelonGame("Trioskaz", "NoImNotAHuman")]
 
 namespace NoImNotAHumanAccess
@@ -89,8 +90,25 @@ namespace NoImNotAHumanAccess
         // natively — it's free (Enter took over activate) and a no-op when nothing's engaged, so it's safe anytime.
         private const KeyCode LeaveKey = KeyCode.Backspace;
 
+        // Alt-tab crash workaround (Unity UUM-126552, fixed upstream in 6000.3.14f1 — this game ships 6000.3.10f1).
+        // Default ON; turn off once the game updates its engine. See UiaEventSuppressor for the full diagnosis.
+        private MelonPreferences_Category? _prefs;
+        private MelonPreferences_Entry<bool>? _suppressUiaEvents;
+
         public override void OnInitializeMelon()
         {
+            // Applied FIRST and independently of the speech channel: this is an engine-crash workaround, and it must
+            // still take effect even if speech init fails below. Fails open — never throws into Melon init.
+            _prefs = MelonPreferences.CreateCategory("ImABlindHuman");
+            _suppressUiaEvents = _prefs.CreateEntry("SuppressUnityUiaEvents", true,
+                description: "Work around the Unity alt-tab crash (UUM-126552) by neutering UnityPlayer's "
+                           + "UiaRaiseAutomationEvent import. Safe: this mod speaks via UniversalSpeech, not Unity UIA. "
+                           + "Set false once the game ships Unity 6000.3.14f1 or newer.");
+            if (_suppressUiaEvents.Value)
+                UiaEventSuppressor.Apply(LoggerInstance);
+            else
+                LoggerInstance.Msg("[UiaSuppress] Disabled by preference; Unity's UIA events left intact.");
+
             LoggerInstance.Msg("Initializing native speech channel...");
             try
             {
